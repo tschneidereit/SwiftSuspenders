@@ -23,11 +23,11 @@ For all three definition types, it's possible to specify names, which allows usi
 
 These dependency bindings can then be injected into an object which defines the respective injection points using metadata:
 
-@[Injection]@
+@[Inject]@
 
 and
 
-@[Injection(name=NamedDependency)]@
+@[Inject(name=NamedDependency)]@
 
 h3. Example
 
