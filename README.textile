@@ -1,0 +1,61 @@
+h1. SwiftSuspenders
+
+SwiftSuspenders is a very basic metadata driven IOC (Inversion Of Control) solution for AS3. In its basic approach, it is similar to the "SmartyPants IOC framework":http://code.google.com/p/smartypants-ioc/, but it differs from SmartyPants in two respects: It is ridiculously inferior in capabilities and it is quite somewhat faster.
+
+Its main Raison d'être is supporting the very nice "RobotLegs":http://github.com/darscan/robotlegs AS3 MCVS framework by "Shaun Smith":http://shaun.boyblack.co.za/blog/ - hence the name.
+
+h2. Installation
+
+The easiest way to use SwiftSuspenders is by adding the provided swc file to your project. If you want to use the source, you have to add the following parameter to your MXMLC settings:
+
+@-keep-as3-metadata+=Inject@
+
+h2. Usage
+
+h3. Defining dependencies
+
+SwiftSuspenders supports three types of dependency definitions:
+* *value bindings*, which simply map an injection request to be satisfied by injecting the given object
+* *class bindings*, which map an injection request to be satisfied by injecting a new instance of the given class
+* *singleton bindings*, which map all injection requests for the given class by injecting the same shared instance, which itself gets created on first request
+
+For all three definition types, it's possible to specify names, which allows using multiple injection bindings to the same class.
+
+These dependency bindings can then be injected into an object which defines the respective injection points using metadata:
+
+@[Injection]@
+
+and
+
+@[Injection(name=NamedDependency)]@
+
+h3. Example
+
+Suppose you have a class into which you want to inject dependencies that looks like this (Note that I've left out import statements for brevity):
+
+bc. package
+{
+	public class MyDependentClass
+	{
+		[Inject]
+		public var firstDepency : MovieClip;
+		
+		[Inject(name=currentTime)]
+		public var secondDependency : Date;
+		
+		[Inject]
+		public var thirdDependency : Sprite;
+	}
+}
+
+p. To inject dependencies into an instance of this class, you would first define dependency mappings and then invoke @SwiftSuspendersInjector#injectInto@:
+
+bc. var injector : SwiftSuspendersInjector = new SwiftSuspendersInjector();
+injector.bindValue(MovieClip, new MovieClip());
+var currentTime : Date = new Date();
+injector.bindClass(Date, currentTime, 'currentTime');
+injector.bindSingleton(Sprite); //obviously, you wouldn't _really_ use Sprite singletons
+var injectee : MyDependentClass = new MyDependentClass();
+injector.injectInto(MyDependentClass);
+
+p. As this is a rather contrived and useless example, I urge you to check out "RobotLegs":http://github.com/darscan/robotlegs and its "examples":http://github.com/darscan/robotlegsdemos, which contain much better examples for using IOC in AS3.

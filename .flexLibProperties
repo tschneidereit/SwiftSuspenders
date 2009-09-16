@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flexLibProperties version="1">
+<includeClasses>
+<classEntry path="org.swiftsuspenders.InjectionConfig"/>
+<classEntry path="org.swiftsuspenders.SwiftSuspendersInjector"/>
+<classEntry path="org.swiftsuspenders.SwiftSuspendersReflector"/>
+</includeClasses>
+<includeResources/>
+<namespaceManifests/>
+</flexLibProperties>
