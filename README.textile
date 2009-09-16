@@ -33,7 +33,8 @@ h3. Example
 
 Suppose you have a class into which you want to inject dependencies that looks like this (Note that I've left out import statements for brevity):
 
-bc. package
+<pre>
+package
 {
 	public class MyDependentClass
 	{
@@ -47,15 +48,18 @@ bc. package
 		public var thirdDependency : Sprite;
 	}
 }
+</pre>
 
 p. To inject dependencies into an instance of this class, you would first define dependency mappings and then invoke @SwiftSuspendersInjector#injectInto@:
 
-bc. var injector : SwiftSuspendersInjector = new SwiftSuspendersInjector();
+<pre>
+var injector : SwiftSuspendersInjector = new SwiftSuspendersInjector();
 injector.bindValue(MovieClip, new MovieClip());
 var currentTime : Date = new Date();
 injector.bindClass(Date, currentTime, 'currentTime');
 injector.bindSingleton(Sprite); //obviously, you wouldn't _really_ use Sprite singletons
 var injectee : MyDependentClass = new MyDependentClass();
 injector.injectInto(MyDependentClass);
+</pre>
 
 p. As this is a rather contrived and useless example, I urge you to check out "RobotLegs":http://github.com/darscan/robotlegs and its "examples":http://github.com/darscan/robotlegsdemos, which contain much better examples for using IOC in AS3.
