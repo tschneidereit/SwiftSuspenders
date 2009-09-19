@@ -22,6 +22,8 @@
 
 package org.swiftsuspenders
 {
+	import flash.utils.Dictionary;
+
 	public class InjectionPoint
 	{
 		/*******************************************************************************************
