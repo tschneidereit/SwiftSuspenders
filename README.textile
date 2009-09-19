@@ -27,7 +27,7 @@ These dependency bindings can then be injected into an object which defines the 
 
 and
 
-@[Inject(name=NamedDependency)]@
+@[Inject(name="NamedDependency")]@
 
 h3. Example
 
@@ -41,7 +41,7 @@ package
 		[Inject]
 		public var firstDepency : MovieClip;
 		
-		[Inject(name=currentTime)]
+		[Inject(name="currentTime")]
 		public var secondDependency : Date;
 		
 		[Inject]
