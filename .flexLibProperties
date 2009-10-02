@@ -2,6 +2,7 @@
 <flexLibProperties version="1">
 <includeClasses>
 <classEntry path="org.swiftsuspenders.Injector"/>
+<classEntry path="org.swiftsuspenders.NoParamsConstructorInjectionPoint"/>
 <classEntry path="org.swiftsuspenders.InjectorError"/>
 <classEntry path="org.swiftsuspenders.MethodInjectionPoint"/>
 <classEntry path="org.swiftsuspenders.InjectionPoint"/>
