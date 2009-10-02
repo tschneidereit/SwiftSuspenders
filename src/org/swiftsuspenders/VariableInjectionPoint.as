@@ -33,6 +33,7 @@ package org.swiftsuspenders
 		private var propertyName : String;
 		private var propertyType : String;
 		
+		
 		/*******************************************************************************************
 		*								public methods											   *
 		*******************************************************************************************/
@@ -42,7 +43,7 @@ package org.swiftsuspenders
 		}
 		
 		override public function applyInjection(
-			target : Object, injector : Injector, singletons : Dictionary) : void
+			target : Object, injector : Injector, singletons : Dictionary) : Object
 		{
 			var config : InjectionConfig = mappings[propertyType];
 			if (!config)
@@ -56,8 +57,13 @@ package org.swiftsuspenders
 			}
 			var injection : Object = config.getResponse(target, injector, singletons);
 			target[propertyName] = injection;
+			return target;
 		}
 
+
+		/*******************************************************************************************
+		*								protected methods										   *
+		*******************************************************************************************/
 		override protected function initializeInjection(node : XML, injectorMappings : Dictionary) : void
 		{
 			var mappings : Dictionary;

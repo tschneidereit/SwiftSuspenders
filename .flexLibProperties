@@ -5,6 +5,7 @@
 <classEntry path="org.swiftsuspenders.InjectorError"/>
 <classEntry path="org.swiftsuspenders.MethodInjectionPoint"/>
 <classEntry path="org.swiftsuspenders.InjectionPoint"/>
+<classEntry path="org.swiftsuspenders.ConstructorInjectionPoint"/>
 <classEntry path="org.swiftsuspenders.Reflector"/>
 <classEntry path="org.swiftsuspenders.InjectionConfig"/>
 <classEntry path="org.swiftsuspenders.VariableInjectionPoint"/>

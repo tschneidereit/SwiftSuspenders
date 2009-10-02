@@ -29,9 +29,10 @@ package org.swiftsuspenders
 		/*******************************************************************************************
 		*								private properties										   *
 		*******************************************************************************************/
-		private var methodName : String;
-		private var mappings : Array;
-		private var parameterTypes : Array;
+		protected var methodName : String;
+		protected var mappings : Array;
+		protected var parameterTypes : Array;
+		
 		
 		/*******************************************************************************************
 		*								public methods											   *
@@ -42,7 +43,7 @@ package org.swiftsuspenders
 		}
 		
 		override public function applyInjection(
-			target : Object, injector : Injector, singletons : Dictionary) : void
+			target : Object, injector : Injector, singletons : Dictionary) : Object
 		{
 			var parameters : Array = [];
 			var length : int = mappings.length;
@@ -63,8 +64,13 @@ package org.swiftsuspenders
 			}
 			var method : Function = target[methodName];
 			method.apply(target, parameters);
+			return target;
 		}
 
+
+		/*******************************************************************************************
+		*								protected methods										   *
+		*******************************************************************************************/
 		override protected function initializeInjection(node : XML, injectorMappings : Dictionary) : void
 		{
 			var nameArgs : XMLList = node.arg.(@key == 'name');
@@ -74,6 +80,12 @@ package org.swiftsuspenders
 			mappings = [];
 			parameterTypes = [];
 			
+			gatherParameters(methodNode, nameArgs, injectorMappings);
+		}
+		
+		protected function gatherParameters(
+			methodNode : XML, nameArgs : XMLList, injectorMappings : Dictionary) : void
+		{
 			var i : int = 0;
 			for each (var parameter : XML in methodNode.parameter)
 			{
