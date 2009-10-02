@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<flexLibProperties includeAllClasses="false" version="1">
-  <includeClasses>
-    <classEntry path="org.swiftsuspenders.Injector"/>
-    <classEntry path="org.swiftsuspenders.InjectionPoint"/>
-    <classEntry path="org.swiftsuspenders.Reflector"/>
-    <classEntry path="org.swiftsuspenders.InjectionConfig"/>
-    <classEntry path="org.swiftsuspenders.InjectorError"/>
-  </includeClasses>
-  <includeResources/>
-  <namespaceManifests/>
+<flexLibProperties version="1">
+<includeClasses>
+<classEntry path="org.swiftsuspenders.Injector"/>
+<classEntry path="org.swiftsuspenders.InjectorError"/>
+<classEntry path="org.swiftsuspenders.MethodInjectionPoint"/>
+<classEntry path="org.swiftsuspenders.InjectionPoint"/>
+<classEntry path="org.swiftsuspenders.Reflector"/>
+<classEntry path="org.swiftsuspenders.InjectionConfig"/>
+<classEntry path="org.swiftsuspenders.VariableInjectionPoint"/>
+</includeClasses>
+<includeResources/>
+<namespaceManifests/>
 </flexLibProperties>

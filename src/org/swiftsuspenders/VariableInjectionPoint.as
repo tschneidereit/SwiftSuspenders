@@ -24,26 +24,59 @@ package org.swiftsuspenders
 {
 	import flash.utils.Dictionary;
 
-	public class InjectionPoint
+	public class VariableInjectionPoint extends InjectionPoint
 	{
 		/*******************************************************************************************
-		*								public properties										   *
+		*								private properties										   *
 		*******************************************************************************************/
+		private var mappings : Dictionary;
+		private var propertyName : String;
+		private var propertyType : String;
 		
 		/*******************************************************************************************
 		*								public methods											   *
 		*******************************************************************************************/
-		public function InjectionPoint(node : XML, injectorMappings : Dictionary)
+		public function VariableInjectionPoint(node : XML, injectorMappings : Dictionary)
 		{
-			initializeInjection(node, injectorMappings);
+			super(node, injectorMappings);
 		}
 		
-		public function applyInjection(target : Object, injector : Injector, singletons : Dictionary) : void
+		override public function applyInjection(
+			target : Object, injector : Injector, singletons : Dictionary) : void
 		{
+			var config : InjectionConfig = mappings[propertyType];
+			if (!config)
+			{
+				throw(
+					new InjectorError(
+						'Injector is missing a rule to handle injection into target ' + target + 
+						'. Target dependency: ' + propertyType
+					)
+				);
+			}
+			var injection : Object = config.getResponse(target, injector, singletons);
+			target[propertyName] = injection;
 		}
 
-		protected function initializeInjection(node : XML, injectorMappings : Dictionary) : void
+		override protected function initializeInjection(node : XML, injectorMappings : Dictionary) : void
 		{
+			var mappings : Dictionary;
+			if (node.hasOwnProperty('arg') && node.arg.(@key == 'name').length)
+			{
+				var name : String = node.arg.@value.toString();
+				mappings = injectorMappings[name];
+				if (!mappings)
+				{
+					injectorMappings[name] = new Dictionary();
+				}
+			}
+			else
+			{
+				mappings = injectorMappings;
+			}
+			this.mappings = mappings;
+			propertyType = node.parent().@type.toString();
+			propertyName = node.parent().@name.toString();
 		}
 	}
 }

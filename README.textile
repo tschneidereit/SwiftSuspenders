@@ -29,7 +29,13 @@ and
 
 @[Inject(name="NamedDependency")]@
 
-h3. Example
+The target for an injection binding can be either a public variable or a public method. For methods accepting multiple parameters, it's possible to define mixes of named and unnamed dependency bindings. In this case, trailing unnamed dependencies can simply be omitted in the metadata, whereas unnamed dependencies followed by named ones have to be declared as the empty string:
+
+@[Inject(name='', name="NamedDependency")]@
+
+h3. Examples
+
+h4. Injection into variables
 
 Suppose you have a class into which you want to inject dependencies that looks like this (Note that I've left out import statements for brevity):
 
@@ -59,7 +65,54 @@ var currentTime : Date = new Date();
 injector.mapClass(Date, currentTime, 'currentTime');
 injector.mapSingleton(Sprite); //obviously, you wouldn't _really_ use Sprite singletons
 var injectee : MyDependentClass = new MyDependentClass();
-injector.injectInto(MyDependentClass);
+injector.injectInto(injectee);
 </pre>
 
-p. As this is a rather contrived and useless example, I urge you to check out "RobotLegs":http://github.com/darscan/robotlegs and its "examples":http://github.com/darscan/robotlegsdemos, which contain much better examples for using IOC in AS3.
+h4. Injection into methods
+
+Suppose you have a class into which you want to inject dependencies that looks like this (Note that I've left out import statements for brevity):
+
+<pre>
+package
+{
+	public class MyDependentClass
+	{
+		private var myMovieClip : MovieClip;
+		private var currentTime : Date;
+		
+		[Inject]
+		public function setFirstDependency(injection : MovieClip) : void
+		{
+			myMovieClip = injection;
+		}
+		
+		[Inject(name="currentTime")]
+		public function setSecondDependency(injection : Date) : void
+		{
+			currentTime = injection;
+		}
+		
+		[Inject(name='', name="currentTime")]
+		public function setMultipleDependencies(movieClip : MovieClip, date : Date) : void
+		{
+			myMovieClip = movieClip;
+			currentTime = date;
+		}
+	}
+}
+</pre>
+
+p. To inject dependencies into an instance of this class, you would first define dependency mappings and then invoke @SwiftSuspendersInjector#injectInto@:
+
+<pre>
+var injector : SwiftSuspendersInjector = new SwiftSuspendersInjector();
+injector.mapValue(MovieClip, new MovieClip());
+var currentTime : Date = new Date();
+injector.mapValue(Date, currentTime, 'currentTime');
+var injectee : TestInjectee = new TestInjectee();
+injector.injectInto(injectee);
+</pre>
+
+In this case, the defined dependencies are partly redundant, which is waste- but otherwise not harmful.
+
+p. As these are a rather contrived and useless examples, I urge you to check out "RobotLegs":http://github.com/darscan/robotlegs and its "examples":http://github.com/darscan/robotlegsdemos, which contain much better examples for using IOC in AS3.
