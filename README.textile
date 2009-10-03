@@ -1,6 +1,6 @@
 h1. SwiftSuspenders
 
-SwiftSuspenders is a very basic metadata driven IOC (Inversion Of Control) solution for AS3. In its basic approach, it is similar to the "SmartyPants IOC framework":http://code.google.com/p/smartypants-ioc/, but it differs from SmartyPants in two respects: It is ridiculously inferior in capabilities and it is quite somewhat faster.
+SwiftSuspenders is a very basic metadata driven IOC (Inversion Of Control) solution for AS3. In its basic approach, it is similar to the "SmartyPants IOC framework":http://code.google.com/p/smartypants-ioc/, but it differs from SmartyPants in two respects: It is inferior in capabilities and it is quite somewhat faster.
 
 Its main Raison d'être is supporting the very nice "RobotLegs":http://github.com/darscan/robotlegs AS3 MCVS framework by "Shaun Smith":http://shaun.boyblack.co.za/blog/ - hence the name.
 
@@ -21,21 +21,26 @@ SwiftSuspenders supports three types of dependency definitions:
 
 For all three definition types, it's possible to specify names, which allows using multiple injection bindings to the same class.
 
-These dependency bindings can then be injected into an object which defines the respective injection points using metadata:
+h3. Defining injection points
+
+Dependency bindings can be injected into an object using constructor injection, setter injection or method injection (or a combination of these).
+setter and method injection require metadata for all injections to be added to the injectee class, whereas you only need to add metadata for named dependencies when using constructor injection:
 
 @[Inject]@
 
-and
+and for injecting named dependencies
 
 @[Inject(name="NamedDependency")]@
 
-The target for an injection binding can be either a public variable or a public method. For methods accepting multiple parameters, it's possible to define mixes of named and unnamed dependency bindings. In this case, trailing unnamed dependencies can simply be omitted in the metadata, whereas unnamed dependencies followed by named ones have to be declared as the empty string:
+When using named dependencies for constructor injection, the metadata has to be placed above the @class@ definition, not above the constructor. This is an unfortunate restriction the Flash Player imposes.
+
+For methods and constructors accepting multiple parameters, it's possible to define mixes of named and unnamed dependency bindings. In this case, trailing unnamed dependencies can simply be omitted in the metadata, whereas unnamed dependencies followed by named ones have to be declared as the empty string:
 
 @[Inject(name='', name="NamedDependency")]@
 
 h3. Examples
 
-h4. Injection into variables
+h4. Setter Injection
 
 Suppose you have a class into which you want to inject dependencies that looks like this (Note that I've left out import statements for brevity):
 
@@ -68,7 +73,7 @@ var injectee : MyDependentClass = new MyDependentClass();
 injector.injectInto(injectee);
 </pre>
 
-h4. Injection into methods
+h4. Method Injection
 
 Suppose you have a class into which you want to inject dependencies that looks like this (Note that I've left out import statements for brevity):
 
@@ -114,5 +119,39 @@ injector.injectInto(injectee);
 </pre>
 
 In this case, the defined dependencies are partly redundant, which is waste- but otherwise not harmful.
+
+h4. Constructor Injection
+
+Suppose you have a class into which you want to inject dependencies that looks like this (Note that I've left out import statements for brevity):
+
+<pre>
+package
+{
+	[Inject(name='', name="currentTime")]
+	public class MyDependentClass
+	{
+		private var myMovieClip : MovieClip;
+		private var currentTime : Date;
+		
+		public function MyDependentClass(movieClip : MovieClip, date : Date)
+		{
+			myMovieClip = movieClip;
+			currentTime = date;
+		}
+	}
+}
+</pre>
+
+p. To inject dependencies into an instance of this class, you would first define dependency mappings and then invoke @SwiftSuspendersInjector#instantiate@:
+
+<pre>
+var injector : SwiftSuspendersInjector = new SwiftSuspendersInjector();
+injector.mapValue(MovieClip, new MovieClip());
+var currentTime : Date = new Date();
+injector.mapValue(Date, currentTime, 'currentTime');
+var injectee : TestInjectee = injector.instantiate(TestInjectee);
+</pre>
+
+h3. More Information
 
 p. As these are a rather contrived and useless examples, I urge you to check out "RobotLegs":http://github.com/darscan/robotlegs and its "examples":http://github.com/darscan/robotlegsdemos, which contain much better examples for using IOC in AS3.
