@@ -23,8 +23,8 @@ For all three definition types, it's possible to specify names, which allows usi
 
 h3. Defining injection points
 
-Dependency bindings can be injected into an object using constructor injection, setter injection or method injection (or a combination of these).
-setter and method injection require metadata for all injections to be added to the injectee class, whereas you only need to add metadata for named dependencies when using constructor injection:
+Dependency bindings can be injected into an object using constructor injection, setter injection, field injection or method injection (or a combination of these).
+setter, field and method injection require metadata for all injections to be added to the injectee class, whereas you only need to add metadata for named dependencies when using constructor injection:
 
 @[Inject]@
 
@@ -40,7 +40,7 @@ For methods and constructors accepting multiple parameters, it's possible to def
 
 h3. Examples
 
-h4. Setter Injection
+h4. Field and Setter Injection
 
 Suppose you have a class into which you want to inject dependencies that looks like this (Note that I've left out import statements for brevity):
 
@@ -56,7 +56,11 @@ package
 		public var secondDependency : Date;
 		
 		[Inject]
-		public var thirdDependency : Sprite;
+		public function set thirdDependency(value : Sprite) : void
+		{
+			m_thirdDependency = value;
+		}
+		private var m_thirdDependency : Sprite;
 	}
 }
 </pre>
