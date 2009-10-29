@@ -45,10 +45,7 @@ package org.swiftsuspenders
 		override public function applyInjection(
 			target : Object, injector : Injector, singletons : Dictionary) : Object
 		{
-			
-			trace("applyInjection()");
 			var config : InjectionConfig = mappings[propertyType];
-			trace("config:" + config);
 			if (!config)
 			{
 				throw(
@@ -58,7 +55,6 @@ package org.swiftsuspenders
 					)
 				);
 			}
-			trace(propertyType);
 			var injection : Object = config.getResponse(target, injector, singletons);
 			target[propertyName] = injection;
 			return target;
