@@ -20,9 +20,13 @@
  * THE SOFTWARE.
  */
 
-package org.swiftsuspenders
+package org.swiftsuspenders.injectionpoints
 {
 	import flash.utils.Dictionary;
+	
+	import org.swiftsuspenders.InjectionConfig;
+	import org.swiftsuspenders.Injector;
+	import org.swiftsuspenders.InjectorError;
 
 	public class VariableInjectionPoint extends InjectionPoint
 	{

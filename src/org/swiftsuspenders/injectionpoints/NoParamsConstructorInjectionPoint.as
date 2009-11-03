@@ -20,31 +20,21 @@
  * THE SOFTWARE.
  */
 
-package org.swiftsuspenders
+package org.swiftsuspenders.injectionpoints
 {
 	import flash.utils.Dictionary;
-
-	public class InjectionPoint
+	import org.swiftsuspenders.Injector;
+	
+	public class NoParamsConstructorInjectionPoint extends InjectionPoint
 	{
-		/*******************************************************************************************
-		*								public methods											   *
-		*******************************************************************************************/
-		public function InjectionPoint(node : XML, injectorMappings : Dictionary)
+		public function NoParamsConstructorInjectionPoint()
 		{
-			initializeInjection(node, injectorMappings);
+			super(null, null);
 		}
 		
-		public function applyInjection(target : Object, injector : Injector, singletons : Dictionary) : Object
+		override public function applyInjection(target : Object, injector : Injector, singletons : Dictionary) : Object
 		{
-			return target;
-		}
-
-
-		/*******************************************************************************************
-		*								protected methods										   *
-		*******************************************************************************************/
-		protected function initializeInjection(node : XML, injectorMappings : Dictionary) : void
-		{
+			return new target();
 		}
 	}
 }
