@@ -89,7 +89,7 @@
     	<keep-as3-metadata name="Inject"/>
     </mxmlc>
     <!-- Execute TestRunner.swf as FlexUnit tests and publish reports -->
-    <flexunit swf="bin/TestRunner.swf" toDir="${report.loc}" haltonfailure="false" verbose="true" localTrusted="true"/>
+    <flexunit swf="bin/TestRunner.swf" toDir="${report.loc}" haltonfailure="true" verbose="true" localTrusted="true"/>
     <!-- Generate readable JUnit-style reports -->
     <junitreport todir="${report.loc}">
       <fileset dir="${report.loc}">
