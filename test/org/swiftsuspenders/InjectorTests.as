@@ -25,11 +25,12 @@ package org.swiftsuspenders
 	import mx.collections.ArrayCollection;
 	
 	import org.flexunit.Assert;
-	import org.swiftsuspenders.Injector;
 	import org.swiftsuspenders.support.injectees.ClassInjectee;
+	import org.swiftsuspenders.support.injectees.ComplexClassInjectee;
 	import org.swiftsuspenders.support.injectees.InterfaceInjectee;
 	import org.swiftsuspenders.support.injectees.MixedParametersConstructorInjectee;
 	import org.swiftsuspenders.support.injectees.MixedParametersMethodInjectee;
+	import org.swiftsuspenders.support.injectees.MultipleSingletonsOfSameClassInjectee;
 	import org.swiftsuspenders.support.injectees.NamedArrayCollectionInjectee;
 	import org.swiftsuspenders.support.injectees.NamedClassInjectee;
 	import org.swiftsuspenders.support.injectees.NamedInterfaceInjectee;
@@ -43,9 +44,11 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.support.injectees.TwoParametersConstructorInjectee;
 	import org.swiftsuspenders.support.injectees.TwoParametersMethodInjectee;
 	import org.swiftsuspenders.support.types.Clazz;
+	import org.swiftsuspenders.support.types.ComplexClazz;
 	import org.swiftsuspenders.support.types.Interface;
+	import org.swiftsuspenders.support.types.Interface2;
 	
-	public class SimpleInjectorTests
+	public class InjectorTests
 	{
 		protected var injector:Injector;
 		
@@ -113,6 +116,31 @@ package org.swiftsuspenders
 			injector.mapValue(Interface, value, NamedClassInjectee.NAME);
 			injector.injectInto(injectee);
 			Assert.assertStrictlyEquals("Named value should have been injected", value, injectee.property );
+		}
+
+		[Test]
+		public function bindValueNested():void
+		{
+			var injectee:ComplexClassInjectee = new ComplexClassInjectee();
+			var value:Clazz = new Clazz();
+			var complexValue:ComplexClazz = new ComplexClazz();
+			injector.mapValue(Clazz, value);
+			injector.mapValue(ComplexClazz, complexValue);
+			injector.injectInto(injectee);
+			Assert.assertStrictlyEquals("Complex Value should have been injected", complexValue, injectee.property  );
+			Assert.assertStrictlyEquals("Nested value should have been injected", value, injectee.property.value );
+		}
+		
+		[Test]
+		public function bindMultipleInterfacesToOneSingletonClass():void
+		{
+			var injectee:MultipleSingletonsOfSameClassInjectee = new MultipleSingletonsOfSameClassInjectee();
+			injector.mapSingletonOf(Interface, Clazz);
+			injector.mapSingletonOf(Interface2, Clazz);
+			injector.injectInto(injectee);
+			Assert.assertNotNull("Singleton Value for 'property1' should have been injected", injectee.property1 );
+			Assert.assertNotNull("Singleton Value for 'property2' should have been injected", injectee.property2 );
+			Assert.assertFalse("Singleton Values 'property1' and 'property2' should not be identical", injectee.property1 == injectee.property2 );
 		}
 		
 		[Test]

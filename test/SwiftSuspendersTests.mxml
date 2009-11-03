@@ -6,10 +6,10 @@
 	
 	<mx:Script>
 		<![CDATA[
-			import org.flexunit.runner.FlexUnitCore;
 			import org.flexunit.listeners.CIListener;
 			import org.flexunit.listeners.UIListener;
-			import org.swiftsuspenders.SwiftSuspendersTestSuite;
+			import org.flexunit.runner.FlexUnitCore;
+			import org.swiftsuspenders.suites.SwiftSuspendersTestSuite;
 			
 			private var core:FlexUnitCore;
 			

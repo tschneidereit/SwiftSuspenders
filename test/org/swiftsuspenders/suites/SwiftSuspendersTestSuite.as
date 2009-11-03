@@ -20,16 +20,22 @@
 * THE SOFTWARE.
 */
 
-package org.swiftsuspenders
+package org.swiftsuspenders.suites
 {
-	import org.swiftsuspenders.ComplexInjectorTests;
-	import org.swiftsuspenders.SimpleInjectorTests;
-
+	import org.swiftsuspenders.InjectorTests;
+	import org.swiftsuspenders.injectionpoints.MethodInjectionPointTest;
+	import org.swiftsuspenders.injectionpoints.NoParamsConstructorInjectionPointTests;
+	import org.swiftsuspenders.injectionpoints.VariableInjectionPointTests;
+	import org.swiftsuspenders.injectionpoints.ConstructorInjectionPointTests;
+	
 	[Suite]
 	[RunWith("org.flexunit.runners.Suite")]
 	public class SwiftSuspendersTestSuite
 	{
-		public var simpleInjectorTests:SimpleInjectorTests;
-		public var complexInjectorTests:ComplexInjectorTests;
+		public var injectorTests:InjectorTests;
+		public var variableInjectionPointTests:VariableInjectionPointTests;
+		public var methodInjectionPointTests:MethodInjectionPointTest;
+		public var noParamConstructorInjectionPoint:NoParamsConstructorInjectionPointTests;
+		public var constructorInjectionPointTests:ConstructorInjectionPointTests;
 	}
 }
