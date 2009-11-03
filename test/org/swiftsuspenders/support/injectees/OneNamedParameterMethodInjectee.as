@@ -20,15 +20,15 @@
 * THE SOFTWARE.
 */
 
-package org.swiftsuspenders.test.support.injectees
+package org.swiftsuspenders.support.injectees
 {
-	import org.swiftsuspenders.test.support.types.Clazz;
+	import org.swiftsuspenders.support.types.Clazz;
 
-	public class OneParameterMethodInjectee
+	public class OneNamedParameterMethodInjectee
 	{
 		private var m_dependency : Clazz;
 		
-		[Inject]
+		[Inject(name='namedDep')]
 		public function setDependency(dependency:Clazz):void
 		{
 			m_dependency = dependency;
@@ -38,7 +38,7 @@ package org.swiftsuspenders.test.support.injectees
 			return m_dependency;
 		}
 		
-		public function OneParameterMethodInjectee()
+		public function OneNamedParameterMethodInjectee()
 		{
 		}
 	}

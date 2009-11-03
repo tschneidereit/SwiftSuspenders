@@ -20,9 +20,16 @@
 * THE SOFTWARE.
 */
 
-package org.swiftsuspenders.test.support.types
+package org.swiftsuspenders
 {
-	public interface Interface
+	import org.swiftsuspenders.ComplexInjectorTests;
+	import org.swiftsuspenders.SimpleInjectorTests;
+
+	[Suite]
+	[RunWith("org.flexunit.runners.Suite")]
+	public class SwiftSuspendersTestSuite
 	{
+		public var simpleInjectorTests:SimpleInjectorTests;
+		public var complexInjectorTests:ComplexInjectorTests;
 	}
 }

@@ -20,25 +20,38 @@
 * THE SOFTWARE.
 */
 
-package org.swiftsuspenders.test.support.injectees
+package org.swiftsuspenders.support.injectees
 {
-	import org.swiftsuspenders.test.support.types.Clazz;
+	import org.swiftsuspenders.support.types.Clazz;
+	import org.swiftsuspenders.support.types.Interface;
 
-	public class SetterInjectee
+	public class MixedParametersMethodInjectee
 	{
-		private var m_property : Clazz;
+		private var m_dependency : Clazz;
+		private var m_dependency2 : Clazz;
+		private var m_dependency3 : Interface;
 		
-		[Inject]
-		public function set property(value:Clazz) : void
+		[Inject(name='namedDep', name='', name='namedDep2')]
+		public function setDependencies(dependency:Clazz, dependency2:Clazz, dependency3:Interface):void
 		{
-			m_property = value;
+			m_dependency = dependency;
+			m_dependency2 = dependency2;
+			m_dependency3 = dependency3;
 		}
-		public function get property() : Clazz
+		public function getDependency() : Clazz
 		{
-			return m_property;
+			return m_dependency;
+		}
+		public function getDependency2() : Clazz
+		{
+			return m_dependency2;
+		}
+		public function getDependency3() : Interface
+		{
+			return m_dependency3;
 		}
 		
-		public function SetterInjectee()
+		public function MixedParametersMethodInjectee()
 		{
 		}
 	}

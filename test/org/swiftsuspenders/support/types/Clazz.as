@@ -20,15 +20,11 @@
 * THE SOFTWARE.
 */
 
-package org.swiftsuspenders.test.support.injectees
+package org.swiftsuspenders.support.types
 {
-	import mx.collections.ArrayCollection;
-
-	public class NamedArrayCollectionInjectee
+	public class Clazz implements Interface, Interface2
 	{
-		[Inject(name="namedCollection")] public var ac:ArrayCollection;
-		
-		public function NamedArrayCollectionInjectee()
+		public function Clazz()
 		{
 		}
 	}

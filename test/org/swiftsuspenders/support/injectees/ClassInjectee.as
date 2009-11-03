@@ -20,18 +20,16 @@
 * THE SOFTWARE.
 */
 
-package org.swiftsuspenders.test.support.injectees
+package org.swiftsuspenders.support.injectees
 {
-	import org.swiftsuspenders.test.support.types.Clazz;
+	import org.swiftsuspenders.support.types.Clazz;
 
-	public class NamedClassInjectee
+	public class ClassInjectee
 	{
-		public static const NAME:String = 'Name';
-		
-		[Inject(named='Name')]
+		[Inject]
 		public var property:Clazz;
 		
-		public function NamedClassInjectee()
+		public function ClassInjectee()
 		{
 		}
 	}

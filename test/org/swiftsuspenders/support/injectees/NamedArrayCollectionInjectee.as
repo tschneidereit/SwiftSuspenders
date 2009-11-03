@@ -20,28 +20,16 @@
 * THE SOFTWARE.
 */
 
-package org.swiftsuspenders.test.support.injectees
+package org.swiftsuspenders.support.injectees
 {
-	import org.swiftsuspenders.test.support.types.Clazz;
+	import mx.collections.ArrayCollection;
 
-	public class TwoParametersConstructorInjectee
+	public class NamedArrayCollectionInjectee
 	{
-		private var m_dependency : Clazz;
-		private var m_dependency2 : String;
+		[Inject(name="namedCollection")] public var ac:ArrayCollection;
 		
-		public function getDependency() : Clazz
+		public function NamedArrayCollectionInjectee()
 		{
-			return m_dependency;
-		}
-		public function getDependency2() : String
-		{
-			return m_dependency2;
-		}
-		
-		public function TwoParametersConstructorInjectee(dependency:Clazz, dependency2:String)
-		{
-			m_dependency = dependency;
-			m_dependency2 = dependency2;
 		}
 	}
 }

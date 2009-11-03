@@ -20,7 +20,7 @@
 * THE SOFTWARE.
 */
 
-package org.swiftsuspenders.test.support.types
+package org.swiftsuspenders.support.types
 {
 	public class ComplexClazz implements ComplexInterface
 	{

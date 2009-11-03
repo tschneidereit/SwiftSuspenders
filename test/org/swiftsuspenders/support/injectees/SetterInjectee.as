@@ -20,9 +20,26 @@
 * THE SOFTWARE.
 */
 
-package org.swiftsuspenders.test.support.types
+package org.swiftsuspenders.support.injectees
 {
-	public interface Interface2
+	import org.swiftsuspenders.support.types.Clazz;
+
+	public class SetterInjectee
 	{
+		private var m_property : Clazz;
+		
+		[Inject]
+		public function set property(value:Clazz) : void
+		{
+			m_property = value;
+		}
+		public function get property() : Clazz
+		{
+			return m_property;
+		}
+		
+		public function SetterInjectee()
+		{
+		}
 	}
 }

@@ -20,17 +20,9 @@
 * THE SOFTWARE.
 */
 
-package org.swiftsuspenders.test.support.injectees
+package org.swiftsuspenders.support.types
 {
-	import org.swiftsuspenders.test.support.types.Clazz;
-
-	public class ClassInjectee
+	public interface Interface
 	{
-		[Inject]
-		public var property:Clazz;
-		
-		public function ClassInjectee()
-		{
-		}
 	}
 }

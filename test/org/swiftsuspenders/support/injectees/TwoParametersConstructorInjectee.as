@@ -20,12 +20,11 @@
 * THE SOFTWARE.
 */
 
-package org.swiftsuspenders.test.support.injectees
+package org.swiftsuspenders.support.injectees
 {
-	import org.swiftsuspenders.test.support.types.Clazz;
-	
-	[Inject(name='namedDependency', name='namedDependency2')]
-	public class TwoNamedParametersConstructorInjectee
+	import org.swiftsuspenders.support.types.Clazz;
+
+	public class TwoParametersConstructorInjectee
 	{
 		private var m_dependency : Clazz;
 		private var m_dependency2 : String;
@@ -39,7 +38,7 @@ package org.swiftsuspenders.test.support.injectees
 			return m_dependency2;
 		}
 		
-		public function TwoNamedParametersConstructorInjectee(dependency:Clazz, dependency2:String)
+		public function TwoParametersConstructorInjectee(dependency:Clazz, dependency2:String)
 		{
 			m_dependency = dependency;
 			m_dependency2 = dependency2;

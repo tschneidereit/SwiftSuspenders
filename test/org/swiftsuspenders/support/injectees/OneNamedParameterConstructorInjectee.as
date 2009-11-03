@@ -20,20 +20,23 @@
 * THE SOFTWARE.
 */
 
-package org.swiftsuspenders.test.support.injectees
+package org.swiftsuspenders.support.injectees
 {
-	import org.swiftsuspenders.test.support.types.Interface;
-	import org.swiftsuspenders.test.support.types.Interface2;
-
-	public class MultipleSingletonsOfSameClassInjectee
+	import org.swiftsuspenders.support.types.Clazz;
+	
+	[Inject(name='namedDependency')]
+	public class OneNamedParameterConstructorInjectee
 	{
-		[Inject]
-		public var property1:Interface;
-		[Inject]
-		public var property2:Interface2;
+		private var m_dependency : Clazz;
 		
-		public function MultipleSingletonsOfSameClassInjectee()
+		public function getDependency() : Clazz
 		{
+			return m_dependency;
+		}
+		
+		public function OneNamedParameterConstructorInjectee(dependency:Clazz)
+		{
+			m_dependency = dependency;
 		}
 	}
 }

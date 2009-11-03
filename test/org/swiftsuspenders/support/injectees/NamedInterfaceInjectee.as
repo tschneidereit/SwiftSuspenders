@@ -20,16 +20,18 @@
 * THE SOFTWARE.
 */
 
-package org.swiftsuspenders.test.support.injectees
+package org.swiftsuspenders.support.injectees
 {
-	import org.swiftsuspenders.test.support.types.Interface;
+	import org.swiftsuspenders.support.types.Interface;
 
-	public class InterfaceInjectee
+	public class NamedInterfaceInjectee
 	{
-		[Inject]
+		public static const NAME:String = 'Name';
+		
+		[Inject(named="Name")]
 		public var property:Interface;
 		
-		public function InterfaceInjectee()
+		public function NamedInterfaceInjectee()
 		{
 		}
 	}

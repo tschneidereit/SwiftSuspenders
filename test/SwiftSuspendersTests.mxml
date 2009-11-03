@@ -9,7 +9,7 @@
 			import org.flexunit.runner.FlexUnitCore;
 			import org.flexunit.listeners.CIListener;
 			import org.flexunit.listeners.UIListener;
-			import org.swiftsuspenders.test.SwiftSuspendersTestSuite;
+			import org.swiftsuspenders.SwiftSuspendersTestSuite;
 			
 			private var core:FlexUnitCore;
 			

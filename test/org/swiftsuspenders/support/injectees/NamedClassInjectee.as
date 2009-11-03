@@ -20,11 +20,18 @@
 * THE SOFTWARE.
 */
 
-package org.swiftsuspenders.test.support.types
+package org.swiftsuspenders.support.injectees
 {
-	public class Clazz implements Interface, Interface2
+	import org.swiftsuspenders.support.types.Clazz;
+
+	public class NamedClassInjectee
 	{
-		public function Clazz()
+		public static const NAME:String = 'Name';
+		
+		[Inject(named='Name')]
+		public var property:Clazz;
+		
+		public function NamedClassInjectee()
 		{
 		}
 	}

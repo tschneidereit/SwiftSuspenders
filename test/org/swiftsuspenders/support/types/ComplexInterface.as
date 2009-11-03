@@ -20,19 +20,9 @@
 * THE SOFTWARE.
 */
 
-package org.swiftsuspenders.test.support.injectees
+package org.swiftsuspenders.support.types
 {
-	import org.swiftsuspenders.test.support.types.Interface;
-
-	public class NamedInterfaceInjectee
+	public interface ComplexInterface
 	{
-		public static const NAME:String = 'Name';
-		
-		[Inject(named="Name")]
-		public var property:Interface;
-		
-		public function NamedInterfaceInjectee()
-		{
-		}
 	}
 }

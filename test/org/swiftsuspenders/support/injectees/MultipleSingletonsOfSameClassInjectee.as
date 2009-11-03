@@ -20,16 +20,20 @@
 * THE SOFTWARE.
 */
 
-package org.swiftsuspenders.test
+package org.swiftsuspenders.support.injectees
 {
-	import org.swiftsuspenders.test.tests.ComplexInjectorTests;
-	import org.swiftsuspenders.test.tests.SimpleInjectorTests;
+	import org.swiftsuspenders.support.types.Interface;
+	import org.swiftsuspenders.support.types.Interface2;
 
-	[Suite]
-	[RunWith("org.flexunit.runners.Suite")]
-	public class SwiftSuspendersTestSuite
+	public class MultipleSingletonsOfSameClassInjectee
 	{
-		public var simpleInjectorTests:SimpleInjectorTests;
-		public var complexInjectorTests:ComplexInjectorTests;
+		[Inject]
+		public var property1:Interface;
+		[Inject]
+		public var property2:Interface2;
+		
+		public function MultipleSingletonsOfSameClassInjectee()
+		{
+		}
 	}
 }

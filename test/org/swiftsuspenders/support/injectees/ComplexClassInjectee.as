@@ -20,9 +20,9 @@
 * THE SOFTWARE.
 */
 
-package org.swiftsuspenders.test.support.injectees
+package org.swiftsuspenders.support.injectees
 {
-	import org.swiftsuspenders.test.support.types.ComplexClazz;
+	import org.swiftsuspenders.support.types.ComplexClazz;
 
 	public class ComplexClassInjectee
 	{

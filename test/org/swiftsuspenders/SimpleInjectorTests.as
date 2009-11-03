@@ -20,30 +20,30 @@
 * THE SOFTWARE.
 */
 
-package org.swiftsuspenders.test.tests
+package org.swiftsuspenders
 {
 	import mx.collections.ArrayCollection;
 	
 	import org.flexunit.Assert;
 	import org.swiftsuspenders.Injector;
-	import org.swiftsuspenders.test.support.injectees.ClassInjectee;
-	import org.swiftsuspenders.test.support.injectees.InterfaceInjectee;
-	import org.swiftsuspenders.test.support.injectees.MixedParametersConstructorInjectee;
-	import org.swiftsuspenders.test.support.injectees.MixedParametersMethodInjectee;
-	import org.swiftsuspenders.test.support.injectees.NamedArrayCollectionInjectee;
-	import org.swiftsuspenders.test.support.injectees.NamedClassInjectee;
-	import org.swiftsuspenders.test.support.injectees.NamedInterfaceInjectee;
-	import org.swiftsuspenders.test.support.injectees.OneNamedParameterConstructorInjectee;
-	import org.swiftsuspenders.test.support.injectees.OneNamedParameterMethodInjectee;
-	import org.swiftsuspenders.test.support.injectees.OneParameterConstructorInjectee;
-	import org.swiftsuspenders.test.support.injectees.OneParameterMethodInjectee;
-	import org.swiftsuspenders.test.support.injectees.SetterInjectee;
-	import org.swiftsuspenders.test.support.injectees.TwoNamedParametersConstructorInjectee;
-	import org.swiftsuspenders.test.support.injectees.TwoNamedParametersMethodInjectee;
-	import org.swiftsuspenders.test.support.injectees.TwoParametersConstructorInjectee;
-	import org.swiftsuspenders.test.support.injectees.TwoParametersMethodInjectee;
-	import org.swiftsuspenders.test.support.types.Clazz;
-	import org.swiftsuspenders.test.support.types.Interface;
+	import org.swiftsuspenders.support.injectees.ClassInjectee;
+	import org.swiftsuspenders.support.injectees.InterfaceInjectee;
+	import org.swiftsuspenders.support.injectees.MixedParametersConstructorInjectee;
+	import org.swiftsuspenders.support.injectees.MixedParametersMethodInjectee;
+	import org.swiftsuspenders.support.injectees.NamedArrayCollectionInjectee;
+	import org.swiftsuspenders.support.injectees.NamedClassInjectee;
+	import org.swiftsuspenders.support.injectees.NamedInterfaceInjectee;
+	import org.swiftsuspenders.support.injectees.OneNamedParameterConstructorInjectee;
+	import org.swiftsuspenders.support.injectees.OneNamedParameterMethodInjectee;
+	import org.swiftsuspenders.support.injectees.OneParameterConstructorInjectee;
+	import org.swiftsuspenders.support.injectees.OneParameterMethodInjectee;
+	import org.swiftsuspenders.support.injectees.SetterInjectee;
+	import org.swiftsuspenders.support.injectees.TwoNamedParametersConstructorInjectee;
+	import org.swiftsuspenders.support.injectees.TwoNamedParametersMethodInjectee;
+	import org.swiftsuspenders.support.injectees.TwoParametersConstructorInjectee;
+	import org.swiftsuspenders.support.injectees.TwoParametersMethodInjectee;
+	import org.swiftsuspenders.support.types.Clazz;
+	import org.swiftsuspenders.support.types.Interface;
 	
 	public class SimpleInjectorTests
 	{

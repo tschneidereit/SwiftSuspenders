@@ -20,16 +20,16 @@
 * THE SOFTWARE.
 */
 
-package org.swiftsuspenders.test.tests
+package org.swiftsuspenders
 {
 	import org.flexunit.Assert;
 	import org.swiftsuspenders.Injector;
-	import org.swiftsuspenders.test.support.injectees.ComplexClassInjectee;
-	import org.swiftsuspenders.test.support.injectees.MultipleSingletonsOfSameClassInjectee;
-	import org.swiftsuspenders.test.support.types.Clazz;
-	import org.swiftsuspenders.test.support.types.ComplexClazz;
-	import org.swiftsuspenders.test.support.types.Interface;
-	import org.swiftsuspenders.test.support.types.Interface2;
+	import org.swiftsuspenders.support.injectees.ComplexClassInjectee;
+	import org.swiftsuspenders.support.injectees.MultipleSingletonsOfSameClassInjectee;
+	import org.swiftsuspenders.support.types.Clazz;
+	import org.swiftsuspenders.support.types.ComplexClazz;
+	import org.swiftsuspenders.support.types.Interface;
+	import org.swiftsuspenders.support.types.Interface2;
 	
 	public class ComplexInjectorTests
 	{

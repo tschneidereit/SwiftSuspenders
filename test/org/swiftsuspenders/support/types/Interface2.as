@@ -20,36 +20,9 @@
 * THE SOFTWARE.
 */
 
-package org.swiftsuspenders.test.support.injectees
+package org.swiftsuspenders.support.types
 {
-	import org.swiftsuspenders.test.support.types.Clazz;
-	import org.swiftsuspenders.test.support.types.Interface;
-
-	[Inject(name='namedDep', name='', name='namedDep2')]
-	public class MixedParametersConstructorInjectee
+	public interface Interface2
 	{
-		private var m_dependency : Clazz;
-		private var m_dependency2 : Clazz;
-		private var m_dependency3 : Interface;
-		
-		public function getDependency() : Clazz
-		{
-			return m_dependency;
-		}
-		public function getDependency2() : Clazz
-		{
-			return m_dependency2;
-		}
-		public function getDependency3() : Interface
-		{
-			return m_dependency3;
-		}
-		
-		public function MixedParametersConstructorInjectee(dependency:Clazz, dependency2:Clazz, dependency3:Interface):void
-		{
-			m_dependency = dependency;
-			m_dependency2 = dependency2;
-			m_dependency3 = dependency3;
-		}
 	}
 }

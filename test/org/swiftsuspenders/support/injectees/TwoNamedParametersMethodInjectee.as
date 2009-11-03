@@ -20,9 +20,33 @@
 * THE SOFTWARE.
 */
 
-package org.swiftsuspenders.test.support.types
+package org.swiftsuspenders.support.injectees
 {
-	public interface ComplexInterface
+	import org.swiftsuspenders.support.types.Clazz;
+	import org.swiftsuspenders.support.types.Interface;
+
+	public class TwoNamedParametersMethodInjectee
 	{
+		private var m_dependency : Clazz;
+		private var m_dependency2 : Interface;
+		
+		[Inject(name='namedDep', name='namedDep2')]
+		public function setDependencies(dependency:Clazz, dependency2:Interface):void
+		{
+			m_dependency = dependency;
+			m_dependency2 = dependency2;
+		}
+		public function getDependency() : Clazz
+		{
+			return m_dependency;
+		}
+		public function getDependency2() : Interface
+		{
+			return m_dependency2;
+		}
+		
+		public function TwoNamedParametersMethodInjectee()
+		{
+		}
 	}
 }

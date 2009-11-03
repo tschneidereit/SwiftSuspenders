@@ -20,12 +20,11 @@
 * THE SOFTWARE.
 */
 
-package org.swiftsuspenders.test.support.injectees
+package org.swiftsuspenders.support.injectees
 {
-	import org.swiftsuspenders.test.support.types.Clazz;
-	
-	[Inject(name='namedDependency')]
-	public class OneNamedParameterConstructorInjectee
+	import org.swiftsuspenders.support.types.Clazz;
+
+	public class OneParameterConstructorInjectee
 	{
 		private var m_dependency : Clazz;
 		
@@ -34,7 +33,7 @@ package org.swiftsuspenders.test.support.injectees
 			return m_dependency;
 		}
 		
-		public function OneNamedParameterConstructorInjectee(dependency:Clazz)
+		public function OneParameterConstructorInjectee(dependency:Clazz)
 		{
 			m_dependency = dependency;
 		}
