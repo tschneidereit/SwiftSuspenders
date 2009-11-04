@@ -9,10 +9,12 @@
 /report/*
 /dist/*
 
-.actionScriptProperties
-.flexProperties
-.flexLibProperties
-.project
+/.actionScriptProperties
+/.flexProperties
+/.flexLibProperties
+/.project
+/com.adobe.flexbuilder.project.prefs
+/org.eclipse.core.resources.prefs
 
 Icon
 Thumbs.db
