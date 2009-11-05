@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<project name="SwiftSuspenders" basedir="." default="usage">
+<project name="SwiftSuspenders" basedir="." default="test">
 
   <!-- set up a prefix for all environment variables -->
   <property environment="env."/>
@@ -57,17 +57,25 @@
   <target name="compile" depends="init">
     <echo>[compile] Compiling release SWC</echo>
     <echo>[compile] Using Flex SDK at: ${FLEX_HOME}</echo>
-    <!-- it won't let me use ${project.name} here for some reason :/ -->
-    <compc output="${bin.loc}/SwiftSuspenders-${swift.suspenders.version}.swc" incremental="true" static-link-runtime-shared-libraries="true">
-      <!-- include our Class packages into the build (com folder) -->
-      <include-sources dir="${main.src.loc}/org" includes="*"/>
-      <library-path dir="${lib.loc}" append="true">
-        <include name="*.swc"/>
-      </library-path>
-      <compiler.verbose-stacktraces>true</compiler.verbose-stacktraces>
-      <compiler.headless-server>true</compiler.headless-server>
-      <keep-as3-metadata name="Inject"/>
-    </compc>
+	<java jar="${FLEX_HOME}/lib/compc.jar" dir="${FLEX_HOME}/frameworks" fork="true" failonerror="true">
+      <!-- Build our SWC with a versioned name. -->
+      <arg value="-output=${bin.loc}/${project.name.versioned}.swc" />
+	
+      <!-- We want all the org package classes in the SWC being built. -->
+      <arg value="-include-sources=${main.src.loc}/org" />
+	
+      <!-- Include classes from SWCs in this folder, but only the ones we use. -->
+      <arg value="-library-path+=${lib.loc}" />
+	
+	  <!-- Keep the magic alive. -->
+      <arg value="-keep-as3-metadata+=Inject" />
+	
+	  <!-- Boolean mosh pit! -->
+      <arg value="-incremental=true" />
+      <arg value="-static-link-runtime-shared-libraries=true" />
+      <arg value="-verbose-stacktraces=true" />
+      <arg value="-headless-server=true" />
+	</java>
     <echo>[compile] Release SWC ${project.name}-${swift.suspenders.version}.swc created successfully</echo>
   </target>
   
@@ -75,19 +83,26 @@
   <target name="test" depends="compile">
     <echo>[test] Running Unit Tests</echo>
     <!-- Compile TestRunner.mxml as a SWF -->
-    <mxmlc file="${test.src.loc}/SwiftSuspendersTests.mxml" output="${bin.loc}/TestRunner.swf" incremental="true">
-      <source-path path-element="${main.src.loc}"/>
-      <library-path dir="${lib.loc}" append="true">
-        <include name="*.swc"/>
-      </library-path>
-        <library-path dir="${bin.loc}" append="true">
-          <include name="*.swc"/>
-        </library-path>
-      <default-background-color>0x000000</default-background-color>
-      <compiler.verbose-stacktraces>true</compiler.verbose-stacktraces>
-      <compiler.headless-server>true</compiler.headless-server>
-    	<keep-as3-metadata name="Inject"/>
-    </mxmlc>
+	<java jar="${FLEX_HOME}/lib/mxmlc.jar" dir="${FLEX_HOME}/frameworks" fork="true" failonerror="true">
+      <arg value="${test.src.loc}/SwiftSuspendersTests.mxml" />
+      <arg value="-source-path=${main.src.loc}" />
+	
+	  <!-- Flash those sweet legs. Blink and you'll miss 'em. -->
+      <arg value="-output=${bin.loc}/TestRunner.swf" />
+      <arg value="-default-size=200,200" />
+      <arg value="-default-background-color=0x000000" />
+
+	  <!-- Keep the magic alive. -->
+      <arg value="-keep-as3-metadata+=Inject" />
+		
+      <!-- Include classes from SWCs in this folder, but only the ones we use. -->
+      <arg value="-library-path+=${lib.loc}" />
+	
+	  <!-- So true. -->
+      <arg value="-incremental=true" />
+      <arg value="-verbose-stacktraces=true" />
+      <arg value="-headless-server=true" />
+	</java>
     <!-- Execute TestRunner.swf as FlexUnit tests and publish reports -->
     <flexunit swf="bin/TestRunner.swf" toDir="${report.loc}" haltonfailure="true" verbose="true" localTrusted="true"/>
     <!-- Generate readable JUnit-style reports -->
@@ -106,14 +121,16 @@
     <tstamp>
       <format property="docgen.time" pattern="MM/dd/yyyy hh:mm aa" unit="hour"/>
     </tstamp>
-    <exec executable="${asdoc.loc}" failonerror="true">
+
+    <java jar="${FLEX_HOME}/lib/asdoc.jar" dir="${FLEX_HOME}/frameworks" fork="true" failonerror="true">
       <arg line="-external-library-path ${lib.loc}"/>
       <arg line="-doc-sources ${main.src.loc}"/>
       <arg line="-source-path ${main.src.loc}"/>
       <arg line="-output ${doc.loc}"/>
+      <arg line="-footer 'SwiftSuspenders ${swift.suspenders.version} - Documentation generated at: ${docgen.time}'" />
       <arg line="-window-title 'SwiftSuspenders ${swift.suspenders.version}'"/>
       <arg line="-main-title 'SwiftSuspenders ${swift.suspenders.version}'"/>
-    </exec>
+	</java>
     <echo>[create-docs] ASDOC documentation generated successfully</echo>
   </target>
   

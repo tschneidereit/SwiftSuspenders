@@ -26,5 +26,4 @@
 			}
 		]]>
 	</mx:Script>
-	<fu:TestRunnerBase id="uiListener"/>
 </mx:Application>
