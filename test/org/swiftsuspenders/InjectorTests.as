@@ -30,6 +30,8 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.support.injectees.InterfaceInjectee;
 	import org.swiftsuspenders.support.injectees.MixedParametersConstructorInjectee;
 	import org.swiftsuspenders.support.injectees.MixedParametersMethodInjectee;
+	import org.swiftsuspenders.support.injectees.MultipleNamedSingletonsOfSameClassInjectee;
+	import org.swiftsuspenders.support.injectees.MultipleSingletonsOfSameClassInjectee;
 	import org.swiftsuspenders.support.injectees.MultipleSingletonsOfSameClassInjectee;
 	import org.swiftsuspenders.support.injectees.NamedArrayCollectionInjectee;
 	import org.swiftsuspenders.support.injectees.NamedClassInjectee;
@@ -39,11 +41,13 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.support.injectees.OneParameterConstructorInjectee;
 	import org.swiftsuspenders.support.injectees.OneParameterMethodInjectee;
 	import org.swiftsuspenders.support.injectees.SetterInjectee;
+	import org.swiftsuspenders.support.injectees.TwoNamedInterfaceFieldsInjectee;
 	import org.swiftsuspenders.support.injectees.TwoNamedParametersConstructorInjectee;
 	import org.swiftsuspenders.support.injectees.TwoNamedParametersMethodInjectee;
 	import org.swiftsuspenders.support.injectees.TwoParametersConstructorInjectee;
 	import org.swiftsuspenders.support.injectees.TwoParametersMethodInjectee;
 	import org.swiftsuspenders.support.types.Clazz;
+	import org.swiftsuspenders.support.types.Clazz2;
 	import org.swiftsuspenders.support.types.ComplexClazz;
 	import org.swiftsuspenders.support.types.Interface;
 	import org.swiftsuspenders.support.types.Interface2;
@@ -207,6 +211,18 @@ package org.swiftsuspenders
 		}
 		
 		[Test]
+		public function bindDifferentlyNamedSingletonsBySameInterface():void
+		{
+			var injectee:TwoNamedInterfaceFieldsInjectee = new TwoNamedInterfaceFieldsInjectee();
+			injector.mapSingletonOf(Interface, Clazz, 'Name1');
+			injector.mapSingletonOf(Interface, Clazz2, 'Name2');
+			injector.injectInto(injectee);
+			Assert.assertTrue('Property "property1" should be of type "Clazz"', injectee.property1 is Clazz);
+			Assert.assertTrue('Property "property2" should be of type "Clazz2"', injectee.property2 is Clazz2);
+			Assert.assertFalse('Properties "property1" and "property2" should have received different singletons', injectee.property1 == injectee.property2);
+		}
+		
+		[Test]
 		public function performSetterInjection():void
 		{
 			var injectee:SetterInjectee = new SetterInjectee();
@@ -346,6 +362,28 @@ package org.swiftsuspenders
 			var injectee:NamedArrayCollectionInjectee = injector.instantiate(NamedArrayCollectionInjectee);
 			Assert.assertNotNull("Instance 'ac' should have been injected for named ArrayCollection parameter", injectee.ac );
 			Assert.assertEquals("Instance field 'ac' should be identical to local variable 'ac'", ac, injectee.ac);
+		}
+		
+		[Test]
+		public function performMappedRuleInjection():void
+		{
+			var rule : InjectionConfig = injector.mapSingletonOf(Interface, Clazz);
+			injector.mapRule(Interface2, rule);
+			var injectee:MultipleSingletonsOfSameClassInjectee = injector.instantiate(MultipleSingletonsOfSameClassInjectee);
+			Assert.assertEquals("Instance field 'property1' should be identical to Instance field 'property2'", injectee.property1, injectee.property2);
+		}
+		
+		[Test]
+		public function performMappedNamedRuleInjection():void
+		{
+			var rule : InjectionConfig = injector.mapSingletonOf(Interface, Clazz);
+			injector.mapRule(Interface2, rule);
+			injector.mapRule(Interface, rule, 'name1');
+			injector.mapRule(Interface2, rule, 'name2');
+			var injectee:MultipleNamedSingletonsOfSameClassInjectee = injector.instantiate(MultipleNamedSingletonsOfSameClassInjectee);
+			Assert.assertEquals("Instance field 'property1' should be identical to Instance field 'property2'", injectee.property1, injectee.property2);
+			Assert.assertEquals("Instance field 'property1' should be identical to Instance field 'namedProperty1'", injectee.property1, injectee.namedProperty1);
+			Assert.assertEquals("Instance field 'property1' should be identical to Instance field 'namedProperty2'", injectee.property1, injectee.namedProperty2);
 		}
 		
 		[Test(expects="org.swiftsuspenders.InjectorError")]
