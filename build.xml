@@ -16,7 +16,7 @@
 
   <target name="usage">
       <echo message=""/>
-      <echo message="Robotlegs Build Usage"/>
+      <echo message="SwiftSuspenders Build Usage"/>
       <echo message="-----------------------------------"/>
       <echo message=""/>
       <echo message="Available targets are:"/>
@@ -24,7 +24,7 @@
       <echo message="test          --> Build SwiftSuspenders SWC and run unit tests"/>
       <echo message="asdoc         --> Build SwiftSuspenders SWC, test, and generate asdocs"/>
       <echo message="package       --> Build SwiftSuspenders SWC, test, and create release zip"/>
-	  <echo message="compile       --> Build SwiftSuspenders SWC"/>
+      <echo message="compile       --> Build SwiftSuspenders SWC"/>
       <echo message="clean         --> Remove all folders created by build script"/>
       <echo message="init          --> Clean and create build folders"/>
       <echo message=""/>
