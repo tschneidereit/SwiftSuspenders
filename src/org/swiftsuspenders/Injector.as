@@ -32,7 +32,7 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.injectionpoints.InjectionPoint;
 	import org.swiftsuspenders.injectionpoints.MethodInjectionPoint;
 	import org.swiftsuspenders.injectionpoints.NoParamsConstructorInjectionPoint;
-	import org.swiftsuspenders.injectionpoints.VariableInjectionPoint;
+	import org.swiftsuspenders.injectionpoints.PropertyInjectionPoint;
 
 	/**
 	 * @author tschneidereit
@@ -215,7 +215,7 @@ package org.swiftsuspenders
 			for each (node in description.factory.*.
 				(name() == 'variable' || name() == 'accessor').metadata.(@name == 'Inject'))
 			{
-				injectionPoint = new VariableInjectionPoint(node, m_mappings);
+				injectionPoint = new PropertyInjectionPoint(node, m_mappings);
 				injectionPoints.push(injectionPoint);
 			}
 		

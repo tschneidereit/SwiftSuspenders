@@ -28,7 +28,7 @@ package org.swiftsuspenders.injectionpoints
 	import org.swiftsuspenders.Injector;
 	import org.swiftsuspenders.InjectorError;
 
-	public class VariableInjectionPoint extends InjectionPoint
+	public class PropertyInjectionPoint extends InjectionPoint
 	{
 		/*******************************************************************************************
 		*								private properties										   *
@@ -41,7 +41,7 @@ package org.swiftsuspenders.injectionpoints
 		/*******************************************************************************************
 		*								public methods											   *
 		*******************************************************************************************/
-		public function VariableInjectionPoint(node : XML, injectorMappings : Dictionary)
+		public function PropertyInjectionPoint(node : XML, injectorMappings : Dictionary)
 		{
 			super(node, injectorMappings);
 		}
