@@ -25,7 +25,7 @@ package org.swiftsuspenders.suites
 	import org.swiftsuspenders.InjectorTests;
 	import org.swiftsuspenders.injectionpoints.MethodInjectionPointTest;
 	import org.swiftsuspenders.injectionpoints.NoParamsConstructorInjectionPointTests;
-	import org.swiftsuspenders.injectionpoints.VariableInjectionPointTests;
+	import org.swiftsuspenders.injectionpoints.PropertyInjectionPointTests;
 	import org.swiftsuspenders.injectionpoints.ConstructorInjectionPointTests;
 	
 	[Suite]
@@ -33,7 +33,7 @@ package org.swiftsuspenders.suites
 	public class SwiftSuspendersTestSuite
 	{
 		public var injectorTests:InjectorTests;
-		public var variableInjectionPointTests:VariableInjectionPointTests;
+		public var variableInjectionPointTests:PropertyInjectionPointTests;
 		public var methodInjectionPointTests:MethodInjectionPointTest;
 		public var noParamConstructorInjectionPoint:NoParamsConstructorInjectionPointTests;
 		public var constructorInjectionPointTests:ConstructorInjectionPointTests;
