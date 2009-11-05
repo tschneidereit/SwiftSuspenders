@@ -8,7 +8,9 @@
 
 	<mx:Script>
 		<![CDATA[
+			import org.flexunit.internals.TraceListener;
 			import org.flexunit.listeners.CIListener;
+			import org.flexunit.listeners.UIListener;
 			import org.flexunit.runner.FlexUnitCore;
 			import org.swiftsuspenders.suites.SwiftSuspendersTestSuite;
 
@@ -18,6 +20,8 @@
 			{
 				core=new FlexUnitCore();
 				core.addListener(new CIListener());
+				core.addListener(new TraceListener());
+				core.addListener(new UIListener(uiListener));
 				core.run(SwiftSuspendersTestSuite);
 			}
 		]]>
