@@ -8,14 +8,14 @@
 /doc/*
 /report/*
 /dist/*
-
+/.FlexUnitSettings/*
 /.actionScriptProperties
 /.flexProperties
 /.flexLibProperties
 /.project
 /com.adobe.flexbuilder.project.prefs
 /org.eclipse.core.resources.prefs
-
+FlexUnitApplication.mxml
 Icon
 Thumbs.db
 .DS_Store

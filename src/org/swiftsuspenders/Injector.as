@@ -66,7 +66,7 @@ package org.swiftsuspenders
 			whenAskedFor : Class, useValue : Object, named : String = "") : *
 		{
 			var config : InjectionConfig = new InjectionConfig(
-				whenAskedFor, useValue, InjectionConfig.INJECTION_TYPE_VALUE, named);
+				whenAskedFor, useValue, InjectionType.VALUE, named);
 			addMapping(config, named);
 			return config;
 		}
@@ -75,7 +75,7 @@ package org.swiftsuspenders
 			whenAskedFor : Class, instantiateClass : Class, named : String = "") : *
 		{
 			var config : InjectionConfig = new InjectionConfig(
-				whenAskedFor, instantiateClass, InjectionConfig.INJECTION_TYPE_CLASS, named);
+				whenAskedFor, instantiateClass, InjectionType.CLASS, named);
 			addMapping(config, named);
 			return config;
 		}
@@ -89,7 +89,7 @@ package org.swiftsuspenders
 			whenAskedFor : Class, useSingletonOf : Class, named : String = "") : *
 		{
 			var config : InjectionConfig = new InjectionConfig(
-				whenAskedFor, useSingletonOf, InjectionConfig.INJECTION_TYPE_SINGLETON, named);
+				whenAskedFor, useSingletonOf, InjectionType.SINGLETON, named);
 			addMapping(config, named);
 			return config;
 		}

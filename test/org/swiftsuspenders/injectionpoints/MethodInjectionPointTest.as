@@ -5,8 +5,8 @@ package  org.swiftsuspenders.injectionpoints
 	
 	import org.flexunit.Assert;
 	import org.swiftsuspenders.InjectionConfig;
+	import org.swiftsuspenders.InjectionType;
 	import org.swiftsuspenders.Injector;
-	import org.swiftsuspenders.injectionpoints.MethodInjectionPoint;
 	import org.swiftsuspenders.support.injectees.TwoParametersMethodInjectee;
 	import org.swiftsuspenders.support.nodes.InjectionNodes;
 	import org.swiftsuspenders.support.types.Clazz;
@@ -47,9 +47,9 @@ package  org.swiftsuspenders.injectionpoints
 		{
 			var configDictionary:Dictionary = new Dictionary();
 			var config_clazz : InjectionConfig = new InjectionConfig(
-				Clazz, Clazz, InjectionConfig.INJECTION_TYPE_SINGLETON, "");
+				Clazz, Clazz, InjectionType.SINGLETON, "");
 			var config_interface : InjectionConfig = new InjectionConfig(
-				Interface, Clazz, InjectionConfig.INJECTION_TYPE_SINGLETON, "");
+				Interface, Clazz, InjectionType.SINGLETON, "");
 			var fqcn_clazz:String = getQualifiedClassName(Clazz);
 			var fqcn_interface:String = getQualifiedClassName(Interface);
 			

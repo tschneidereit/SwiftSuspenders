@@ -22,13 +22,13 @@
 
 package org.swiftsuspenders.suites
 {
+	import org.swiftsuspenders.InjectionConfigTests;
 	import org.swiftsuspenders.InjectorTests;
 	import org.swiftsuspenders.ReflectorTests;
 	import org.swiftsuspenders.injectionpoints.ConstructorInjectionPointTests;
 	import org.swiftsuspenders.injectionpoints.MethodInjectionPointTest;
 	import org.swiftsuspenders.injectionpoints.NoParamsConstructorInjectionPointTests;
 	import org.swiftsuspenders.injectionpoints.PropertyInjectionPointTests;
-	import org.swiftsuspenders.injectionpoints.ConstructorInjectionPointTests;
 	
 	[Suite]
 	[RunWith("org.flexunit.runners.Suite")]
@@ -40,5 +40,6 @@ package org.swiftsuspenders.suites
 		public var methodInjectionPointTests:MethodInjectionPointTest;
 		public var noParamConstructorInjectionPoint:NoParamsConstructorInjectionPointTests;
 		public var constructorInjectionPointTests:ConstructorInjectionPointTests;
+		public var injectionConfigTests:InjectionConfigTests;
 	}
 }

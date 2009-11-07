@@ -5,12 +5,11 @@ package  org.swiftsuspenders.injectionpoints
 	
 	import org.flexunit.Assert;
 	import org.swiftsuspenders.InjectionConfig;
+	import org.swiftsuspenders.InjectionType;
 	import org.swiftsuspenders.Injector;
-	import org.swiftsuspenders.injectionpoints.ConstructorInjectionPoint;
 	import org.swiftsuspenders.support.injectees.TwoParametersConstructorInjectee;
 	import org.swiftsuspenders.support.nodes.InjectionNodes;
 	import org.swiftsuspenders.support.types.Clazz;
-	import org.swiftsuspenders.support.types.Interface;
 	
 	public class ConstructorInjectionPointTests
 	{
@@ -48,9 +47,9 @@ package  org.swiftsuspenders.injectionpoints
 		{
 			var configDictionary:Dictionary = new Dictionary();
 			var config_clazz : InjectionConfig = new InjectionConfig(
-				Clazz, Clazz, InjectionConfig.INJECTION_TYPE_SINGLETON, "");
+				Clazz, Clazz, InjectionType.SINGLETON, "");
 			var string_reference : InjectionConfig = new InjectionConfig(
-				String, STRING_REFERENCE, InjectionConfig.INJECTION_TYPE_VALUE, "");
+				String, STRING_REFERENCE, InjectionType.VALUE, "");
 			var fqcn_clazz:String = getQualifiedClassName(Clazz);
 			var fqcn_string:String = getQualifiedClassName(String);
 			
