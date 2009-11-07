@@ -25,7 +25,7 @@ package org.swiftsuspenders
 					return new InjectValueResult(injectionConfig);
 				case InjectionType.SINGLETON:
 					return new InjectSingletonResult(injectionConfig);
-					break;
+				default:break;
 			}
 			
 			return new InjectNullResult();
