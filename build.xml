@@ -84,7 +84,7 @@
     <echo>[test] Running Unit Tests</echo>
     <!-- Compile TestRunner.mxml as a SWF -->
 	<java jar="${FLEX_HOME}/lib/mxmlc.jar" dir="${FLEX_HOME}/frameworks" fork="true" failonerror="true">
-      <arg value="${test.src.loc}/SwiftSuspendersTests.mxml" />
+      <arg value="${test.src.loc}/SwiftSuspendersTestRunner.as" />
       <arg value="-source-path=${main.src.loc}" />
 	
 	  <!-- Flash those sweet legs. Blink and you'll miss 'em. -->
