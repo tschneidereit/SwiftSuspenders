@@ -62,7 +62,7 @@ package org.swiftsuspenders.injectionpoints
 					));
 				}
 				
-				var injection : Object = config.getResponse(target, injector, singletons);
+				var injection : Object = config.getResponse(injector, singletons);
 				parameters[i] = injection;
 			}
 			var method : Function = target[methodName];
