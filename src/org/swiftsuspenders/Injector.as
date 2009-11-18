@@ -96,7 +96,6 @@ package org.swiftsuspenders
 			
 			//get injection points or cache them if this targets' class wasn't encountered before
 			var injectionPoints : Array;
-			var postConstructMethodPoints : Array = [];
 			
 			var ctor : Class;
 			if (target is Proxy)
@@ -113,19 +112,11 @@ package org.swiftsuspenders
 			
 			injectionPoints = m_injectionPointLists[ctor] || getInjectionPoints(ctor);
 			
-			for each (var injectionPoint : InjectionPoint in injectionPoints)
+			var length : int = injectionPoints.length;
+			for (var i : int = 0; i < length; i++)
 			{
-				if(injectionPoint is PostConstructInjectionPoint)
-					postConstructMethodPoints.push(injectionPoint);
-				else
-					injectionPoint.applyInjection(target, this, m_singletons);
-			}
-			
-			postConstructMethodPoints.sortOn("order", Array.NUMERIC);
-			
-			for each (var postConstructMethodPoint : PostConstructInjectionPoint in postConstructMethodPoints)
-			{
-				postConstructMethodPoint.applyInjection(target, this, m_singletons);
+				var injectionPoint : InjectionPoint = injectionPoints[i];
+				injectionPoint.applyInjection(target, this, m_singletons);
 			}
 			
 			m_successfulInjections[target] = true;
@@ -226,11 +217,14 @@ package org.swiftsuspenders
 			}
 			
 			//get post construct methods
+			var postConstructMethodPoints : Array = [];
 			for each (node in description.factory.method.metadata.(@name == 'PostConstruct'))
 			{
 				injectionPoint = new PostConstructInjectionPoint(node, m_mappings);
-				injectionPoints.push(injectionPoint);
+				postConstructMethodPoints.push(injectionPoint);
 			}
+			postConstructMethodPoints.sortOn("order", Array.NUMERIC);
+			injectionPoints.push.apply(injectionPoints, postConstructMethodPoints);
 			
 			return injectionPoints;
 		}

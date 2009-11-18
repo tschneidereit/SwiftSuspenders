@@ -1,3 +1,10 @@
+/*
+* Copyright (c) 2009 the original author or authors
+* 
+* Permission is hereby granted to use, modify, and distribute this file 
+* in accordance with the terms of the license agreement accompanying it.
+*/
+
 package org.swiftsuspenders.injectionpoints
 {
 	import flash.utils.Dictionary;
@@ -6,9 +13,16 @@ package org.swiftsuspenders.injectionpoints
 	
 	public class PostConstructInjectionPoint extends InjectionPoint
 	{
+		/*******************************************************************************************
+		 *								private properties										   *
+		 *******************************************************************************************/
 		protected var methodName : String;
 		protected var orderValue:int;
 		
+		
+		/*******************************************************************************************
+		 *								public methods											   *
+		 *******************************************************************************************/
 		public function PostConstructInjectionPoint(node:XML, injectorMappings:Dictionary)
 		{
 			super(node, injectorMappings);
@@ -22,11 +36,14 @@ package org.swiftsuspenders.injectionpoints
 		override public function applyInjection(
 			target : Object, injector : Injector, singletons : Dictionary) : Object
 		{
-			var method : Function = target[methodName];
-			method.call();
+			target[methodName]();
 			return target;
 		}
 		
+		
+		/*******************************************************************************************
+		 *								protected methods										   *
+		 *******************************************************************************************/
 		override protected function initializeInjection(node : XML, injectorMappings : Dictionary) : void
 		{
 			var orderArg : XMLList = node.arg.(@key == 'order');
