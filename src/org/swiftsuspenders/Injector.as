@@ -234,23 +234,35 @@ package org.swiftsuspenders
 			var node : XML;
 			//first, clear out all "Inject" metadata, we want a clean slate to have the result 
 			//work the same in the Flash IDE and MXMLC
-			for each (node in description..metadata.(@name=='Inject'))
+			for each (node in description..metadata.(@name=='Inject' || @name=='PostConstruct'))
 			{
-				delete node.parent().metadata.(@name=='Inject')[0];
+				delete node.parent().metadata.(@name=='Inject' || @name=='PostConstruct')[0];
 			}
 			
 			//now, we create the new injection points based on the given xml file
 			var className:String = description.factory.@type;
 			for each (node in m_xmlMetadata.type.(@name == className).children())
 			{
-				var metaNode : XML = <metadata name='Inject'/>;
-				if (node.@injectionname.length())
+				var metaNode : XML = <metadata/>;
+				if (node.name() == 'postconstruct')
 				{
-					metaNode.appendChild(<arg key='name' value={node.@injectionname}/>);
+					metaNode.@name = 'PostConstruct';
+					if (node.@order.length())
+					{
+						metaNode.appendChild(<arg key='order' value={node.@order}/>);
+					}
 				}
-				for each (var arg : XML in node.arg)
+				else
 				{
-					metaNode.appendChild(<arg key='name' value={arg.@injectionname}/>);
+					metaNode.@name = 'Inject';
+					if (node.@injectionname.length())
+					{
+						metaNode.appendChild(<arg key='name' value={node.@injectionname}/>);
+					}
+					for each (var arg : XML in node.arg)
+					{
+						metaNode.appendChild(<arg key='name' value={arg.@injectionname}/>);
+					}
 				}
 				var typeNode : XML;
 				if (node.name() == 'constructor')
