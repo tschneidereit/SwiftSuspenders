@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2009 the original author or authors
- * 
- * Permission is hereby granted to use, modify, and distribute this file 
+ *
+ * Permission is hereby granted to use, modify, and distribute this file
  * in accordance with the terms of the license agreement accompanying it.
  */
 
@@ -24,7 +24,7 @@ package org.swiftsuspenders
 		{
 		}
 
-		public function classExtendsOrImplements(classOrClassName : Object, 
+		public function classExtendsOrImplements(classOrClassName : Object,
 			superclass : Class, application : ApplicationDomain = null) : Boolean
 		{
             var superclassName : String = getQualifiedClassName(superclass);
@@ -45,7 +45,7 @@ package org.swiftsuspenders
                 }
                 catch (e : Error)
                 {
-                    throw new Error("The class name " + classOrClassName + 
+                    throw new Error("The class name " + classOrClassName +
                     	" is not valid because of " + e + "\n" + e.getStackTrace());
                 }
             }
@@ -83,26 +83,18 @@ package org.swiftsuspenders
 			if (value is String)
 			{
 				fqcn = value;
-				if (replaceColons)
+				// Add colons if missing and desired.
+				if (!replaceColons && fqcn.indexOf('::') == -1)
 				{
-					fqcn = fqcn.replace('::', '.');
-				}
-				else if (fqcn.indexOf('::') == -1 && fqcn.indexOf('.') > -1)
-				{
-					var parts:Array = fqcn.split('.');
-					var lastPart:String = parts.pop();
-					fqcn = parts.join('.') + '::' + lastPart;
+					var lastDotIndex:int = fqcn.lastIndexOf('.');
+					return fqcn.substring(0, lastDotIndex) + '::' + fqcn.substring(lastDotIndex + 1);
 				}
 			}
 			else
 			{
 				fqcn = getQualifiedClassName(value);
-				if (replaceColons)
-				{
-					fqcn = fqcn.replace('::', '.');
-				}
 			}
-			return fqcn;
+			return replaceColons ? fqcn.replace('::', '.') : fqcn;
 		}
 	}
 }
