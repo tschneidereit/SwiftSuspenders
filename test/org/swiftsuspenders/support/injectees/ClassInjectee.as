@@ -29,8 +29,17 @@ package org.swiftsuspenders.support.injectees
 		[Inject]
 		public var property:Clazz;
 		
+		public var someProperty:Boolean;
+		
 		public function ClassInjectee()
 		{
+			someProperty = false;
+		}
+		
+		[PostConstruct(order=1)]
+		public function doSomeStuff():void
+		{
+			someProperty = true;
 		}
 	}
 }

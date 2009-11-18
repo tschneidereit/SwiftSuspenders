@@ -17,6 +17,7 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.injectionpoints.InjectionPoint;
 	import org.swiftsuspenders.injectionpoints.MethodInjectionPoint;
 	import org.swiftsuspenders.injectionpoints.NoParamsConstructorInjectionPoint;
+	import org.swiftsuspenders.injectionpoints.PostConstructInjectionPoint;
 	import org.swiftsuspenders.injectionpoints.PropertyInjectionPoint;
 
 	/**
@@ -95,6 +96,8 @@ package org.swiftsuspenders
 			
 			//get injection points or cache them if this targets' class wasn't encountered before
 			var injectionPoints : Array;
+			var postConstructMethodPoints : Array = [];
+			
 			var ctor : Class;
 			if (target is Proxy)
 			{
@@ -112,8 +115,19 @@ package org.swiftsuspenders
 			
 			for each (var injectionPoint : InjectionPoint in injectionPoints)
 			{
-				injectionPoint.applyInjection(target, this, m_singletons);
+				if(injectionPoint is PostConstructInjectionPoint)
+					postConstructMethodPoints.push(injectionPoint);
+				else
+					injectionPoint.applyInjection(target, this, m_singletons);
 			}
+			
+			postConstructMethodPoints.sortOn("order", Array.NUMERIC);
+			
+			for each (var postConstructMethodPoint : PostConstructInjectionPoint in postConstructMethodPoints)
+			{
+				postConstructMethodPoint.applyInjection(target, this, m_singletons);
+			}
+			
 			m_successfulInjections[target] = true;
 		}
 		
@@ -208,6 +222,13 @@ package org.swiftsuspenders
 			for each (node in description.factory.method.metadata.(@name == 'Inject'))
 			{
 				injectionPoint = new MethodInjectionPoint(node, m_mappings);
+				injectionPoints.push(injectionPoint);
+			}
+			
+			//get post construct methods
+			for each (node in description.factory.method.metadata.(@name == 'PostConstruct'))
+			{
+				injectionPoint = new PostConstructInjectionPoint(node, m_mappings);
 				injectionPoints.push(injectionPoint);
 			}
 			

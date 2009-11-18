@@ -30,6 +30,8 @@ package org.swiftsuspenders
             var superclassName : String = getQualifiedClassName(superclass);
 
             var actualClass : Class;
+			
+
 
             if (classOrClassName is Class)
             {

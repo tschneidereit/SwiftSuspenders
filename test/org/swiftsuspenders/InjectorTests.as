@@ -32,7 +32,6 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.support.injectees.MixedParametersMethodInjectee;
 	import org.swiftsuspenders.support.injectees.MultipleNamedSingletonsOfSameClassInjectee;
 	import org.swiftsuspenders.support.injectees.MultipleSingletonsOfSameClassInjectee;
-	import org.swiftsuspenders.support.injectees.MultipleSingletonsOfSameClassInjectee;
 	import org.swiftsuspenders.support.injectees.NamedArrayCollectionInjectee;
 	import org.swiftsuspenders.support.injectees.NamedClassInjectee;
 	import org.swiftsuspenders.support.injectees.NamedInterfaceInjectee;
@@ -40,6 +39,7 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.support.injectees.OneNamedParameterMethodInjectee;
 	import org.swiftsuspenders.support.injectees.OneParameterConstructorInjectee;
 	import org.swiftsuspenders.support.injectees.OneParameterMethodInjectee;
+	import org.swiftsuspenders.support.injectees.OrderedPostConstructInjectee;
 	import org.swiftsuspenders.support.injectees.SetterInjectee;
 	import org.swiftsuspenders.support.injectees.TwoNamedInterfaceFieldsInjectee;
 	import org.swiftsuspenders.support.injectees.TwoNamedParametersConstructorInjectee;
@@ -393,5 +393,24 @@ package org.swiftsuspenders
 			injector.injectInto(injectee);
 		}
 		
+		[Test]
+		public function postConstructIsCalled():void
+		{
+			var injectee:ClassInjectee = new ClassInjectee();
+			var value:Clazz = new Clazz();
+			injector.mapValue(Clazz, value);
+			injector.injectInto(injectee);
+				
+			Assert.assertTrue(injectee.someProperty);
+		}
+
+		[Test]
+		public function postConstructMethodsCalledAsOrdered():void
+		{
+			var injectee:OrderedPostConstructInjectee = new OrderedPostConstructInjectee();
+			injector.injectInto(injectee);	
+			
+			Assert.assertTrue(injectee.loadedAsOrdered);
+		}
 	}
 }
