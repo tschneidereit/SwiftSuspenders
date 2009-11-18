@@ -27,12 +27,8 @@ package org.swiftsuspenders
 		public function classExtendsOrImplements(classOrClassName : Object,
 			superclass : Class, application : ApplicationDomain = null) : Boolean
 		{
-            var superclassName : String = getQualifiedClassName(superclass);
-
             var actualClass : Class;
 			
-
-
             if (classOrClassName is Class)
             {
                 actualClass = Class(classOrClassName);
@@ -59,12 +55,11 @@ package org.swiftsuspenders
             if (actualClass == superclass)
                 return true;
 
-			// trace("describeType(actualClass): " + (describeType(actualClass)));
             var factoryDescription : XML = describeType(actualClass).factory[0];
 
 			return (factoryDescription.children().(
             	name() == "implementsInterface" || name() == "extendsClass").(
-            	attribute("type") == superclassName).length() > 0);
+            	attribute("type") == getQualifiedClassName(superclass)).length() > 0);
 		}
 
 		public function getClass(
