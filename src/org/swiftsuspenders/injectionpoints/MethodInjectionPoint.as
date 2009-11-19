@@ -8,9 +8,10 @@
 package org.swiftsuspenders.injectionpoints
 {
 	import flash.utils.Dictionary;
+	
+	import org.swiftsuspenders.InjectionConfig;
 	import org.swiftsuspenders.Injector;
 	import org.swiftsuspenders.InjectorError;
-	import org.swiftsuspenders.InjectionConfig;
 
 	public class MethodInjectionPoint extends InjectionPoint
 	{
@@ -20,6 +21,7 @@ package org.swiftsuspenders.injectionpoints
 		protected var methodName : String;
 		protected var mappings : Array;
 		protected var parameterTypes : Array;
+		protected var requiredParameters : int = 0;
 		
 		
 		/*******************************************************************************************
@@ -33,23 +35,7 @@ package org.swiftsuspenders.injectionpoints
 		override public function applyInjection(
 			target : Object, injector : Injector, singletons : Dictionary) : Object
 		{
-			var parameters : Array = [];
-			var length : int = mappings.length;
-			for (var i : int = 0; i < length; i++)
-			{
-				var config : InjectionConfig = mappings[i][parameterTypes[i]];
-				if (!config)
-				{
-					throw(new InjectorError(
-						'Injector is missing a rule to handle injection into target ' + target + 
-						'. Target dependency: ' + parameterTypes[i] + ', method: ' + methodName + 
-						', parameter: ' + (i + 1)
-					));
-				}
-				
-				var injection : Object = config.getResponse(injector, singletons);
-				parameters[i] = injection;
-			}
+			var parameters : Array = gatherParameterValues(target, injector, singletons);
 			var method : Function = target[methodName];
 			method.apply(target, parameters);
 			return target;
@@ -97,8 +83,39 @@ package org.swiftsuspenders.injectionpoints
 				}
 				mappings.push(parameterMappings);
 				parameterTypes.push(parameter.@type.toString());
+				if (parameter.@optional.toString() == 'false')
+				{
+					requiredParameters++;
+				}
 				i++;
 			}
+		}
+		
+		protected function gatherParameterValues(
+			target : Object, injector : Injector, singletons : Dictionary) : Array
+		{
+			var parameters : Array = [];
+			var length : int = mappings.length;
+			for (var i : int = 0; i < length; i++)
+			{
+				var config : InjectionConfig = mappings[i][parameterTypes[i]];
+				if (!config)
+				{
+					if (i >= requiredParameters)
+					{
+						break;
+					}
+					throw(new InjectorError(
+						'Injector is missing a rule to handle injection into target ' + target + 
+						'. Target dependency: ' + parameterTypes[i] + ', method: ' + methodName + 
+						', parameter: ' + (i + 1)
+					));
+				}
+				
+				var injection : Object = config.getResponse(injector, singletons);
+				parameters[i] = injection;
+			}
+			return parameters;
 		}
 	}
 }

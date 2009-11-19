@@ -7,6 +7,7 @@ package  org.swiftsuspenders.injectionpoints
 	import org.swiftsuspenders.InjectionConfig;
 	import org.swiftsuspenders.InjectionType;
 	import org.swiftsuspenders.Injector;
+	import org.swiftsuspenders.support.injectees.OneRequiredOneOptionalPropertyMethodInjectee;
 	import org.swiftsuspenders.support.injectees.TwoParametersMethodInjectee;
 	import org.swiftsuspenders.support.nodes.InjectionNodes;
 	import org.swiftsuspenders.support.types.Clazz;
@@ -17,13 +18,21 @@ package  org.swiftsuspenders.injectionpoints
 		[Test]
 		public function injectionOfTwoUnnamedPropertiesIntoMethod():void
 		{
-			var injectee:TwoParametersMethodInjectee = applyMethodInjectionToUnamedTwoParameterInjectee()
+			var injectee:TwoParametersMethodInjectee = applyMethodInjectionToUnnamedTwoParameterInjectee();
 			
 			Assert.assertTrue("dependency 1 should be Clazz instance", injectee.getDependency() is Clazz);		
 			Assert.assertTrue("dependency 2 should be Interface", injectee.getDependency2() is Interface);	
 		}
+		[Test]
+		public function injectionOfOneRequiredOneOptionalPropertyIntoMethod():void
+		{
+			var injectee:OneRequiredOneOptionalPropertyMethodInjectee = applyMethodInjectionToOneRequiredOneOptionalPropertyIntoMethod();
+			
+			Assert.assertTrue("dependency 1 should be Clazz instance", injectee.getDependency() is Clazz);		
+			Assert.assertTrue("dependency 2 should be null", injectee.getDependency2() == null);	
+		}
 		
-		private function applyMethodInjectionToUnamedTwoParameterInjectee():TwoParametersMethodInjectee
+		private function applyMethodInjectionToUnnamedTwoParameterInjectee():TwoParametersMethodInjectee
 		{
 			var injectee:TwoParametersMethodInjectee = new TwoParametersMethodInjectee()
 			var injector:Injector = new Injector();
@@ -43,6 +52,26 @@ package  org.swiftsuspenders.injectionpoints
 			return injectionPoint;
 		}
 		
+		private function applyMethodInjectionToOneRequiredOneOptionalPropertyIntoMethod():OneRequiredOneOptionalPropertyMethodInjectee
+		{
+			var injectee:OneRequiredOneOptionalPropertyMethodInjectee = new OneRequiredOneOptionalPropertyMethodInjectee();
+			var injector:Injector = new Injector();
+			var injectionPoint:MethodInjectionPoint = createOneRequiredOneOptionalPropertySingletonClazzAndInterfaceMethodInjectionPoint();
+			var singletons:Dictionary = new Dictionary();
+			
+			injectionPoint.applyInjection(injectee, injector, singletons);
+			
+			return injectee;
+		}
+
+		private function createOneRequiredOneOptionalPropertySingletonClazzAndInterfaceMethodInjectionPoint():MethodInjectionPoint
+		{
+			var node:XML = XML(InjectionNodes.METHOD_SET_DEPENDENCIES_INJECTION_NODE_ONE_REQUIRED_ONE_OPTIONAL_PARAMETER.metadata);
+			var mappings:Dictionary = createUnnamedPropertySingletonInjectionConfigDictionary();
+			var injectionPoint:MethodInjectionPoint = new MethodInjectionPoint(node, mappings);
+			return injectionPoint;
+		}
+		
 		private function createUnamedTwoPropertyPropertySingletonInjectionConfigDictionary():Dictionary
 		{
 			var configDictionary:Dictionary = new Dictionary();
@@ -55,6 +84,18 @@ package  org.swiftsuspenders.injectionpoints
 			
 			configDictionary[fqcn_clazz] = config_clazz;
 			configDictionary[fqcn_interface] = config_interface;
+			
+			return configDictionary;
+		}
+		
+		private function createUnnamedPropertySingletonInjectionConfigDictionary():Dictionary
+		{
+			var configDictionary:Dictionary = new Dictionary();
+			var config_clazz : InjectionConfig = new InjectionConfig(
+				Clazz, Clazz, InjectionType.SINGLETON, "");
+			var fqcn_clazz:String = getQualifiedClassName(Clazz);
+			
+			configDictionary[fqcn_clazz] = config_clazz;
 			
 			return configDictionary;
 		}

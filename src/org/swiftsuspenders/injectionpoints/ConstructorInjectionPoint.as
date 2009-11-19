@@ -36,24 +36,7 @@ package org.swiftsuspenders.injectionpoints
 		override public function applyInjection(
 			target : Object, injector : Injector, singletons : Dictionary) : Object
 		{
-			var parameters : Array = [];
-			var length : int = mappings.length;
-			for (var i : int = 0; i < length; i++)
-			{
-				var config : InjectionConfig = mappings[i][parameterTypes[i]];
-				if (!config)
-				{
-					throw(new InjectorError(
-						'Injector is missing a rule to handle injection into target ' + target + 
-						'. Target dependency: ' + parameterTypes[i] + ', method: ' + methodName + 
-						', parameter: ' + (i + 1)
-					));
-				}
-				
-				var injection : Object = config.getResponse(injector, singletons);
-				parameters[i] = injection;
-			}
-			var p : Array = parameters;
+			var p : Array = gatherParameterValues(target, injector, singletons);
 			//the only way to implement ctor injections, really!
 			switch (p.length)
 			{
