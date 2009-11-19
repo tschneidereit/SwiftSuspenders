@@ -25,6 +25,14 @@ package org.swiftsuspenders.support.nodes
 			   </constructor>
 			</factory>;
 		
+		public static const CONSTRUCTOR_INJECTION_NODE_TWO_OPTIONAL_PARAMETERS:XML = 
+			<factory type="org.swiftsuspenders.support.injectees::TwoParametersConstructorInjectee">
+				<constructor>
+				  <parameter index="1" type="org.swiftsuspenders.support.types::Clazz" optional="true"/>
+				  <parameter index="2" type="String" optional="true"/>
+			   </constructor>
+			</factory>;
+		
 		public static const METHOD_SET_DEPENDENCIES_INJECTION_NODE_TWO_PARAMETER:XML =         
 			<method name="setDependencies" declaredBy="org.swiftsuspenders.support.injectees::TwoParametersMethodInjectee" returnType="void">
 		      <parameter index="1" type="org.swiftsuspenders.support.types::Clazz" optional="false"/>
