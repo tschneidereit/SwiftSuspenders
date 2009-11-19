@@ -9,6 +9,8 @@ package org.swiftsuspenders
 	{
 		private static const CLAZZ_FQCN_COLON_NOTATION:String = "org.swiftsuspenders.support.types::Clazz";
 		private static const CLAZZ_FQCN_DOT_NOTATION:String = "org.swiftsuspenders.support.types.Clazz";
+		private static const CLASS_IN_ROOT_PACKAGE:Class = Date;
+		private static const CLASS_NAME_IN_ROOT_PACKAGE:String = "Date";
 		
 		private var reflector:Reflector;
 		
@@ -102,6 +104,38 @@ package org.swiftsuspenders
 			var fqcn:String = reflector.getFQCN(CLAZZ_FQCN_DOT_NOTATION, true);
 			
 			Assert.assertEquals(CLAZZ_FQCN_DOT_NOTATION,fqcn)
+		}
+		
+		[Test]
+		public function getFullyQualifiedClassNameFromClassInRootPackage():void
+		{
+			var fqcn:String = reflector.getFQCN(CLASS_IN_ROOT_PACKAGE);
+			
+			Assert.assertEquals(CLASS_NAME_IN_ROOT_PACKAGE,fqcn)
+		}
+		
+		[Test]
+		public function getFullyQualifiedClassNameFromClassStringInRootPackage():void
+		{
+			var fqcn:String = reflector.getFQCN(CLASS_NAME_IN_ROOT_PACKAGE);
+			
+			Assert.assertEquals(CLASS_NAME_IN_ROOT_PACKAGE,fqcn)
+		}
+		
+		[Test]
+		public function getFullyQualifiedClassNameFromClassInRootPackageReplacingColons():void
+		{
+			var fqcn:String = reflector.getFQCN(CLASS_IN_ROOT_PACKAGE, true);
+			
+			Assert.assertEquals(CLASS_NAME_IN_ROOT_PACKAGE,fqcn)
+		}
+		
+		[Test]
+		public function getFullyQualifiedClassNameFromClassStringInRootPackageReplacingColons():void
+		{
+			var fqcn:String = reflector.getFQCN(CLASS_NAME_IN_ROOT_PACKAGE, true);
+			
+			Assert.assertEquals(CLASS_NAME_IN_ROOT_PACKAGE,fqcn)
 		}
 	}
 }

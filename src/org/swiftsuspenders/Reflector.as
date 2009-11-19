@@ -82,6 +82,7 @@ package org.swiftsuspenders
 				if (!replaceColons && fqcn.indexOf('::') == -1)
 				{
 					var lastDotIndex:int = fqcn.lastIndexOf('.');
+					if (lastDotIndex == -1) return fqcn;
 					return fqcn.substring(0, lastDotIndex) + '::' + fqcn.substring(lastDotIndex + 1);
 				}
 			}
