@@ -2,7 +2,7 @@ h1. SwiftSuspenders
 
 SwiftSuspenders is a basic metadata driven IOC (Inversion Of Control) solution for AS3. In its basic approach, it is similar to the "SmartyPants IOC framework":http://code.google.com/p/smartypants-ioc/ by "Josh McDonald":http://flex.joshmcdonald.info/, but it differs from SmartyPants in two respects: It is inferior in capabilities and it is quite somewhat faster.
 
-Its main Raison d'être is supporting the very nice "Robotlegs":http://github.com/robotlegs/robotlegs-framework AS3 MCVS framework by "Shaun Smith":http://shaun.boyblack.co.za/blog/ - hence the name.
+Its main Raison d'être is supporting the very nice "Robotlegs":http://www.robotlegs.org/ AS3 MCVS framework by "Shaun Smith":http://shaun.boyblack.co.za/blog/ - hence the name.
 
 To enable using SwiftSuspenders in the Flash Professional IDE, which doesn't support keeping custom metadata, it's also possible to configure injection points using a simple XML configuration format.
 
@@ -219,4 +219,4 @@ var injectee : MyDependentClass = injector.instantiate(MyDependentClass);
 
 h3. More Information
 
-p. As these are a rather contrived and useless examples, I urge you to check out "RobotLegs":http://github.com/darscan/robotlegs and its "examples":http://github.com/darscan/robotlegsdemos, which contain much better examples for using IOC in AS3.
+p. As these are a rather contrived and useless examples, I urge you to check out "RobotLegs":http://www.robotlegs.org/ and its "examples":http://github.com/robotlegs/robotlegs-demos-Bundle, which contain much better examples for using IOC in AS3.
