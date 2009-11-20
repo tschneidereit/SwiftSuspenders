@@ -1,0 +1,6 @@
+h2. Contributors
+
+* "Till Schneidereit":http://github.com/tschneidereit
+* "Joel Hooks":http://github.com/joelhooks
+* "Robert Penner":http://github.com/robertpenner
+* "Shaun Smith":http://github.com/darscan
