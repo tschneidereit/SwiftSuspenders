@@ -393,6 +393,13 @@ package org.swiftsuspenders
 			injector.injectInto(injectee);
 		}
 		
+		[Test(expects="org.swiftsuspenders.InjectorError")]
+		public function haltOnMissingNamedDependency():void
+		{
+			var injectee:NamedClassInjectee = new NamedClassInjectee();
+			injector.injectInto(injectee);
+		}
+		
 		[Test]
 		public function postConstructIsCalled():void
 		{

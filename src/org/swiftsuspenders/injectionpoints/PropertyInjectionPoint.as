@@ -62,7 +62,7 @@ package org.swiftsuspenders.injectionpoints
 				mappings = injectorMappings[name];
 				if (!mappings)
 				{
-					injectorMappings[name] = new Dictionary();
+					mappings = injectorMappings[name] = new Dictionary();
 				}
 			}
 			else
