@@ -1,14 +1,18 @@
 h1. SwiftSuspenders
 
-SwiftSuspenders is a very basic metadata driven IOC (Inversion Of Control) solution for AS3. In its basic approach, it is similar to the "SmartyPants IOC framework":http://code.google.com/p/smartypants-ioc/, but it differs from SmartyPants in two respects: It is inferior in capabilities and it is quite somewhat faster.
+SwiftSuspenders is a basic metadata driven IOC (Inversion Of Control) solution for AS3. In its basic approach, it is similar to the "SmartyPants IOC framework":http://code.google.com/p/smartypants-ioc/ by "Josh McDonald":http://flex.joshmcdonald.info/, but it differs from SmartyPants in two respects: It is inferior in capabilities and it is quite somewhat faster.
 
-Its main Raison d'être is supporting the very nice "RobotLegs":http://github.com/darscan/robotlegs AS3 MCVS framework by "Shaun Smith":http://shaun.boyblack.co.za/blog/ - hence the name.
+Its main Raison d'être is supporting the very nice "Robotlegs":http://github.com/robotlegs/robotlegs-framework AS3 MCVS framework by "Shaun Smith":http://shaun.boyblack.co.za/blog/ - hence the name.
+
+To enable using SwiftSuspenders in the Flash Professional IDE, which doesn't support keeping custom metadata, it's also possible to configure injection points using a simple XML configuration format.
 
 h2. Installation
 
-The easiest way to use SwiftSuspenders is by adding the provided swc file to your project. If you want to use the source, you have to add the following parameter to your MXMLC settings:
+The easiest way to use SwiftSuspenders is by adding the provided SWC file to your project. If you want to use the source, you have to add the following parameters to your MXMLC settings:
 
 @-keep-as3-metadata+=Inject@
+
+@-keep-as3-metadata+=PostConstruct@
 
 h2. Usage
 
@@ -19,12 +23,14 @@ SwiftSuspenders supports three types of dependency definitions:
 * *class bindings*, which map an injection request to be satisfied by injecting a new instance of the given class
 * *singleton bindings*, which map all injection requests for the given class by injecting the same shared instance, which itself gets created on first request
 
-For all three definition types, it's possible to specify names, which allows using multiple injection bindings to the same class.
+Additionally, it's possible to re-use dependency mappings with @mapRule@.
+
+For all definition types, it's possible to specify names, which allows using multiple injection bindings to the same class.
 
 h3. Defining injection points
 
-Dependency bindings can be injected into an object using constructor injection, setter injection, field injection or method injection (or a combination of these).
-setter, field and method injection require metadata for all injections to be added to the injectee class, whereas you only need to add metadata for named dependencies when using constructor injection:
+Dependency bindings can be injected into an object using constructor, setter, property or method injection (or a combination of these).
+Setter, property and method injection require metadata for all injections to be added to the injectee class, whereas you only need to add metadata for named dependencies when using constructor injection:
 
 @[Inject]@
 
@@ -37,6 +43,61 @@ When using named dependencies for constructor injection, the metadata has to be 
 For methods and constructors accepting multiple parameters, it's possible to define mixes of named and unnamed dependency bindings. In this case, trailing unnamed dependencies can simply be omitted in the metadata, whereas unnamed dependencies followed by named ones have to be declared as the empty string:
 
 @[Inject(name='', name="NamedDependency")]@
+
+For methods and constructors, only the mandatory arguments have to have injection mappings. Optional arguments are added in order as long as mapping are available for them.
+
+Injection points apply to inheriting classes just as they do to the class they are defined for. Thus, it's possible to define injection points for a base class and use them with all derived classes (which in turn might specify additional injection points).
+
+h4. Problems with constructor injection
+
+A word of warning about constructor injection: Due to "a bug":http://bugs.adobe.com/jira/browse/FP-183 in the Flash Player, full type information for constructor arguments is only available after the affected class has been instantiated at least once. To work around this bug, SwiftSuspenders checks if type information for the arguments is available when performing constructor injection. If not, SwiftSuspenders will create one throw-away instance of the class. Because of this behavior, it is important not to start any complex processes in constructors of classes that are used with constructor injection.
+
+h3. PostConstruct: Automatically invoking methods on injection completion
+
+Instances of classes that depend on automatic DI are only ready to be used after the DI has completed. Annotating methods in the injectee class with the @[PostConstruct]@ metadata causes them to be invoked directly after all injections have completed and it is safe to use the instance. Multiple methods can be invoked in a defined order by using the @order@ parameter: @[PostConstruct(order=1)]@.
+
+h3. Error handling
+
+If a mapping for a requested injection is not found, an exception containing the target class and the requested property type.
+
+h3. XML configuration of injection points
+
+The @Injector@ takes an optional parameter specifying an XML configuration which, if provided, is used to configure all injection points.
+
+The configuration XML is a simple list of @<type/>@ nodes with their respective injections as child nodes. The target class is specified by the @name@ property. Setter and property injections are specified by @<field/>@ nodes, methods by @<method/>@ nodes and constructors by @<constructor/>@ nodes. For all injection types, the target property is given by the @name@ property and named injections are specified by adding the @injectionname@ property. For method and constructor injection, multiple named arguments can be defined by adding @<arg/>@ child-nodes with the same format as the other injection nodes.
+
+Injection types can still be acquired using runtime reflection, so it's not necessary to supply those.
+
+In addition to injection points, @PostConstruct@ method annotations can be specified as well, by adding @<postconstruct/>@ nodes.
+
+The following example code contains all possible configuration options:
+
+<pre>
+<types>
+	<type name='com.example.injectees::FirstInjectee'>
+		<field name='unnamedInjectionPoint'/>
+		<field name='namedInjectionPoint' injectionname='namedInjection'/>
+		<postconstruct name='firstPostConstructMethod' order='1'/>
+		<postconstruct name='secondPostConstructMethod' order='2'/>
+	</type>
+	<type name='com.example.injectees::SecondInjectee'>
+		<method name='unnamedInjectionMethod'/>
+		<method name='namedInjectionMethodWithOneArgument' injectionname='namedInjection'/>
+		<method name='namedInjectionMethodWithMultipleArguments'>
+			<arg injectionname='namedInjection'/>
+			<arg injectionname='namedInjection2' injectionname='namedInjection'/>
+		</method>
+	</type>
+	<type name='com.example.injectees::ThirdInjectee'>
+		<constructor>
+			<arg injectionname='namedInjection'/>
+			<arg injectionname='namedInjection2' injectionname='namedInjection'/>
+		</constructor>
+	</type>
+</types>
+</pre>
+
+Note that, to ensure functional equivalence between compiling with the Flash IDE and MXMLC (i.e. Flex), SwiftSuspenders ignores all metadata that might be present in the injectee classes if XML configuration is used.
 
 h3. Examples
 
