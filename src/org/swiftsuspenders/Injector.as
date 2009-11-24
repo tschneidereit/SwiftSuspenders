@@ -32,7 +32,7 @@ package org.swiftsuspenders
 		private var m_singletons : Dictionary;
 		private var m_injectionPointLists : Dictionary;
 		private var m_constructorInjectionPoints : Dictionary;
-		private var m_successfulInjections : Dictionary;
+		private var m_attendedToInjectees : Dictionary;
 		private var m_xmlMetadata : XML;
 		
 		/*******************************************************************************************
@@ -44,7 +44,7 @@ package org.swiftsuspenders
 			m_singletons = new Dictionary();
 			m_injectionPointLists = new Dictionary();
 			m_constructorInjectionPoints = new Dictionary();
-			m_successfulInjections = new Dictionary(true);
+			m_attendedToInjectees = new Dictionary(true);
 			m_xmlMetadata = xmlConfig;
 		}
 		
@@ -89,10 +89,11 @@ package org.swiftsuspenders
 		
 		public function injectInto(target : Object) : void
 		{
-			if (m_successfulInjections[target])
+			if (m_attendedToInjectees[target])
 			{
 				return;
 			}
+			m_attendedToInjectees[target] = true;
 			
 			//get injection points or cache them if this targets' class wasn't encountered before
 			var injectionPoints : Array;
@@ -119,7 +120,6 @@ package org.swiftsuspenders
 				injectionPoint.applyInjection(target, this, m_singletons);
 			}
 			
-			m_successfulInjections[target] = true;
 		}
 		
 		public function instantiate(clazz:Class):*
@@ -223,8 +223,11 @@ package org.swiftsuspenders
 				injectionPoint = new PostConstructInjectionPoint(node, m_mappings);
 				postConstructMethodPoints.push(injectionPoint);
 			}
-			postConstructMethodPoints.sortOn("order", Array.NUMERIC);
-			injectionPoints.push.apply(injectionPoints, postConstructMethodPoints);
+			if (postConstructMethodPoints.length > 0)
+			{
+				postConstructMethodPoints.sortOn("order", Array.NUMERIC);
+				injectionPoints.push.apply(injectionPoints, postConstructMethodPoints);
+			}
 			
 			return injectionPoints;
 		}

@@ -24,7 +24,7 @@ package org.swiftsuspenders
 {
 	import mx.collections.ArrayCollection;
 	
-	import org.flexunit.Assert;
+	import flexunit.framework.Assert;
 	import org.swiftsuspenders.support.injectees.ClassInjectee;
 	import org.swiftsuspenders.support.injectees.ComplexClassInjectee;
 	import org.swiftsuspenders.support.injectees.InterfaceInjectee;
@@ -40,6 +40,7 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.support.injectees.OneParameterConstructorInjectee;
 	import org.swiftsuspenders.support.injectees.OneParameterMethodInjectee;
 	import org.swiftsuspenders.support.injectees.OrderedPostConstructInjectee;
+	import org.swiftsuspenders.support.injectees.RecursiveInterfaceInjectee;
 	import org.swiftsuspenders.support.injectees.SetterInjectee;
 	import org.swiftsuspenders.support.injectees.TwoNamedInterfaceFieldsInjectee;
 	import org.swiftsuspenders.support.injectees.TwoNamedParametersConstructorInjectee;
@@ -384,6 +385,19 @@ package org.swiftsuspenders
 			Assert.assertEquals("Instance field 'property1' should be identical to Instance field 'property2'", injectee.property1, injectee.property2);
 			Assert.assertEquals("Instance field 'property1' should be identical to Instance field 'namedProperty1'", injectee.property1, injectee.namedProperty1);
 			Assert.assertEquals("Instance field 'property1' should be identical to Instance field 'namedProperty2'", injectee.property1, injectee.namedProperty2);
+		}
+		
+		[Test]
+		public function performInjectionIntoValueWithRecursiveSingeltonDependency():void
+		{
+			var valueInjectee : InterfaceInjectee = new InterfaceInjectee();
+			injector.mapValue(InterfaceInjectee, valueInjectee);
+			injector.mapSingletonOf(Interface, RecursiveInterfaceInjectee);
+			
+			injector.injectInto(valueInjectee);
+//			Assert.assertEquals("Instance field 'property1' should be identical to Instance field 'property2'", injectee.property1, injectee.property2);
+//			Assert.assertEquals("Instance field 'property1' should be identical to Instance field 'namedProperty1'", injectee.property1, injectee.namedProperty1);
+//			Assert.assertEquals("Instance field 'property1' should be identical to Instance field 'namedProperty2'", injectee.property1, injectee.namedProperty2);
 		}
 		
 		[Test(expects="org.swiftsuspenders.InjectorError")]
