@@ -17,7 +17,7 @@ package org.swiftsuspenders.injectionpoints
 			super(null, null);
 		}
 		
-		override public function applyInjection(target : Object, injector : Injector, singletons : Dictionary) : Object
+		override public function applyInjection(target : Object, singletons : Dictionary) : Object
 		{
 			return new target();
 		}

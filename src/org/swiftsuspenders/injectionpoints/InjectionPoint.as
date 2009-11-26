@@ -13,6 +13,12 @@ package org.swiftsuspenders.injectionpoints
 	public class InjectionPoint
 	{
 		/*******************************************************************************************
+		 *								protected properties									   *
+		 *******************************************************************************************/
+		protected var injectionName : String;
+		
+		
+		/*******************************************************************************************
 		*								public methods											   *
 		*******************************************************************************************/
 		public function InjectionPoint(node : XML, injectorMappings : Dictionary)
@@ -20,7 +26,7 @@ package org.swiftsuspenders.injectionpoints
 			initializeInjection(node, injectorMappings);
 		}
 		
-		public function applyInjection(target : Object, injector : Injector, singletons : Dictionary) : Object
+		public function applyInjection(target : Object, singletons : Dictionary) : Object
 		{
 			return target;
 		}

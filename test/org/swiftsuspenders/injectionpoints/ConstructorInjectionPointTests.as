@@ -29,10 +29,9 @@ package  org.swiftsuspenders.injectionpoints
 		public function injectionOfFirstOptionalPropertyIntoTwoOptionalParametersConstructor():void
 		{
 			var injector:Injector = new Injector();
-			
 			var mappings:Dictionary = new Dictionary();
 			var config_clazz : InjectionConfig = new InjectionConfig(
-				Clazz, Clazz, InjectionType.SINGLETON, "");
+				Clazz, Clazz, InjectionType.SINGLETON, "", injector);
 			var fqcn_clazz:String = getQualifiedClassName(Clazz);
 			mappings[fqcn_clazz] = config_clazz;
 			
@@ -41,7 +40,7 @@ package  org.swiftsuspenders.injectionpoints
 			
 			var singletons:Dictionary = new Dictionary();
 			var injectee:TwoOptionalParametersConstructorInjectee = 
-				injectionPoint.applyInjection(TwoOptionalParametersConstructorInjectee, injector, singletons) as TwoOptionalParametersConstructorInjectee;
+				injectionPoint.applyInjection(TwoOptionalParametersConstructorInjectee, singletons) as TwoOptionalParametersConstructorInjectee;
 			
 			
 			Assert.assertTrue("dependency 1 should be Clazz instance", injectee.getDependency() is Clazz);		
@@ -52,10 +51,9 @@ package  org.swiftsuspenders.injectionpoints
 		public function injectionOfSecondOptionalPropertyIntoTwoOptionalParametersConstructor():void
 		{
 			var injector:Injector = new Injector();
-			
 			var mappings:Dictionary = new Dictionary();
 			var string_reference : InjectionConfig = new InjectionConfig(
-				String, STRING_REFERENCE, InjectionType.VALUE, "");
+				String, STRING_REFERENCE, InjectionType.VALUE, "", injector);
 			var fqcn_string:String = getQualifiedClassName(String);
 			mappings[fqcn_string] = string_reference;
 			
@@ -64,7 +62,7 @@ package  org.swiftsuspenders.injectionpoints
 			
 			var singletons:Dictionary = new Dictionary();
 			var injectee:TwoOptionalParametersConstructorInjectee = 
-				injectionPoint.applyInjection(TwoOptionalParametersConstructorInjectee, injector, singletons) as TwoOptionalParametersConstructorInjectee;
+				injectionPoint.applyInjection(TwoOptionalParametersConstructorInjectee, singletons) as TwoOptionalParametersConstructorInjectee;
 			
 			
 			Assert.assertTrue("dependency 1 should be Clazz null", injectee.getDependency() == null);		
@@ -73,11 +71,10 @@ package  org.swiftsuspenders.injectionpoints
 		
 		private function applyConstructorInjectionToTwoUnamedParameterInjectee():TwoParametersConstructorInjectee
 		{
-			var injector:Injector = new Injector();
 			var injectionPoint:ConstructorInjectionPoint = createTwoPropertySingletonClazzAndInterfaceConstructorInjectionPoint();
 			var singletons:Dictionary = new Dictionary();
 			var injectee:TwoParametersConstructorInjectee = 
-					injectionPoint.applyInjection(TwoParametersConstructorInjectee, injector, singletons) as TwoParametersConstructorInjectee;
+					injectionPoint.applyInjection(TwoParametersConstructorInjectee, singletons) as TwoParametersConstructorInjectee;
 			
 			return injectee;
 		}
@@ -92,11 +89,12 @@ package  org.swiftsuspenders.injectionpoints
 		
 		private function createUnamedTwoPropertyPropertySingletonInjectionConfigDictionary():Dictionary
 		{
+			var injector:Injector = new Injector();
 			var configDictionary:Dictionary = new Dictionary();
 			var config_clazz : InjectionConfig = new InjectionConfig(
-				Clazz, Clazz, InjectionType.SINGLETON, "");
+				Clazz, Clazz, InjectionType.SINGLETON, "", injector);
 			var string_reference : InjectionConfig = new InjectionConfig(
-				String, STRING_REFERENCE, InjectionType.VALUE, "");
+				String, STRING_REFERENCE, InjectionType.VALUE, "", injector);
 			var fqcn_clazz:String = getQualifiedClassName(Clazz);
 			var fqcn_string:String = getQualifiedClassName(String);
 			

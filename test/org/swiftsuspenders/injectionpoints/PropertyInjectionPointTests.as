@@ -17,11 +17,10 @@ package org.swiftsuspenders.injectionpoints
 		public function injectionOfSinglePropertyIsApplied():void
 		{
 			var injectee:ClassInjectee = new ClassInjectee();
-			var injector:Injector = new Injector();
 			var injectionPoint:PropertyInjectionPoint = createSingleProertySingletonClazzVariableInjectionPoint();
 			var singletons:Dictionary = new Dictionary();
 			
-			injectionPoint.applyInjection(injectee, injector, singletons);
+			injectionPoint.applyInjection(injectee, singletons);
 			
 			Assert.assertTrue("injectee should contain Clazz instance", injectee.property is Clazz);
 		}
@@ -36,9 +35,10 @@ package org.swiftsuspenders.injectionpoints
 		
 		private function createUnamedSinglePropertySingletonInjectionConfigDictionary():Dictionary
 		{
+			var injector:Injector = new Injector();
 			var classConfigDisctionary:Dictionary = new Dictionary();
 			var config : InjectionConfig = new InjectionConfig(
-				Clazz, Clazz, InjectionType.SINGLETON, "");
+				Clazz, Clazz, InjectionType.SINGLETON, "", injector);
 			var fqcn:String = getQualifiedClassName(Clazz);
 			classConfigDisctionary[fqcn] = config;
 			return classConfigDisctionary;

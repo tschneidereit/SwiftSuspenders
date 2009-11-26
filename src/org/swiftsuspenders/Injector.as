@@ -52,7 +52,7 @@ package org.swiftsuspenders
 			whenAskedFor : Class, useValue : Object, named : String = "") : *
 		{
 			var config : InjectionConfig = new InjectionConfig(
-				whenAskedFor, useValue, InjectionType.VALUE, named);
+				whenAskedFor, useValue, InjectionType.VALUE, named, this);
 			addMapping(config, named);
 			return config;
 		}
@@ -61,7 +61,7 @@ package org.swiftsuspenders
 			whenAskedFor : Class, instantiateClass : Class, named : String = "") : *
 		{
 			var config : InjectionConfig = new InjectionConfig(
-				whenAskedFor, instantiateClass, InjectionType.CLASS, named);
+				whenAskedFor, instantiateClass, InjectionType.CLASS, named, this);
 			addMapping(config, named);
 			return config;
 		}
@@ -75,7 +75,7 @@ package org.swiftsuspenders
 			whenAskedFor : Class, useSingletonOf : Class, named : String = "") : *
 		{
 			var config : InjectionConfig = new InjectionConfig(
-				whenAskedFor, useSingletonOf, InjectionType.SINGLETON, named);
+				whenAskedFor, useSingletonOf, InjectionType.SINGLETON, named, this);
 			addMapping(config, named);
 			return config;
 		}
@@ -117,7 +117,7 @@ package org.swiftsuspenders
 			for (var i : int = 0; i < length; i++)
 			{
 				var injectionPoint : InjectionPoint = injectionPoints[i];
-				injectionPoint.applyInjection(target, this, m_singletons);
+				injectionPoint.applyInjection(target, m_singletons);
 			}
 			
 		}
@@ -130,7 +130,7 @@ package org.swiftsuspenders
 				getInjectionPoints(clazz);
 				injectionPoint = m_constructorInjectionPoints[clazz];
 			}
-			var instance : * = injectionPoint.applyInjection(clazz, this, m_singletons);
+			var instance : * = injectionPoint.applyInjection(clazz, m_singletons);
 			injectInto(instance);
 			return instance;
 		}
@@ -146,6 +146,11 @@ package org.swiftsuspenders
 			{
 				delete m_mappings[requestName];
 			}
+		}
+		
+		public function createChildInjector() : Injector
+		{
+			return new Injector();
 		}
 		
 		
