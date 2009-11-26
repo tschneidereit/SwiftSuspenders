@@ -33,8 +33,7 @@ package org.swiftsuspenders.injectionpoints
 			return orderValue;
 		}
 
-		override public function applyInjection(
-			target : Object, injector : Injector, singletons : Dictionary) : Object
+		override public function applyInjection(target : Object, singletons : Dictionary) : Object
 		{
 			target[methodName]();
 			return target;
