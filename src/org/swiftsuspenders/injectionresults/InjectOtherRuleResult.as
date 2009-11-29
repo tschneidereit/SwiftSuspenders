@@ -7,30 +7,27 @@
 
 package org.swiftsuspenders.injectionresults
 {
-	import org.swiftsuspenders.Injector;
-	
-	public class InjectValueResult implements IInjectionResult
+	import org.swiftsuspenders.InjectionConfig;
+
+	public class InjectOtherRuleResult implements IInjectionResult
 	{
 		/*******************************************************************************************
 		 *								private properties										   *
 		 *******************************************************************************************/
-		private var m_value : Object
-		private var m_injector : Injector;
+		private var m_rule : InjectionConfig;
 		
 		
 		/*******************************************************************************************
 		 *								public methods											   *
 		 *******************************************************************************************/
-		public function InjectValueResult(value : Object, injector : Injector)
+		public function InjectOtherRuleResult(rule : InjectionConfig)
 		{
-			m_value = value;
-			m_injector = injector;
+			m_rule = rule;
 		}
 		
 		public function getResponse() : Object
 		{
-			m_injector.injectInto(m_value);
-			return m_value;
+			return m_rule.getResponse();
 		}
 	}
 }

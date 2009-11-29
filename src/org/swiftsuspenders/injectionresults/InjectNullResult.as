@@ -13,7 +13,7 @@ package org.swiftsuspenders.injectionresults
 
 	public class InjectNullResult implements IInjectionResult
 	{
-		public function getResponse(injector : Injector, singletons : Dictionary) : Object
+		public function getResponse() : Object
 		{
 			return {};
 		}

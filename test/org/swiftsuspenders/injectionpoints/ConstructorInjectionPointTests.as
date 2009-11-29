@@ -7,6 +7,8 @@ package  org.swiftsuspenders.injectionpoints
 	import org.swiftsuspenders.InjectionConfig;
 	import org.swiftsuspenders.InjectionType;
 	import org.swiftsuspenders.Injector;
+	import org.swiftsuspenders.injectionresults.InjectSingletonResult;
+	import org.swiftsuspenders.injectionresults.InjectValueResult;
 	import org.swiftsuspenders.support.injectees.TwoOptionalParametersConstructorInjectee;
 	import org.swiftsuspenders.support.injectees.TwoParametersConstructorInjectee;
 	import org.swiftsuspenders.support.nodes.InjectionNodes;
@@ -31,8 +33,8 @@ package  org.swiftsuspenders.injectionpoints
 			var injector:Injector = new Injector();
 			var singletons:Dictionary = new Dictionary();
 			var mappings:Dictionary = new Dictionary();
-			var config_clazz : InjectionConfig = new InjectionConfig(
-				Clazz, Clazz, InjectionType.SINGLETON, "", injector, singletons);
+			var config_clazz : InjectionConfig = new InjectionConfig(Clazz, "", injector);
+			config_clazz.setResult(new InjectSingletonResult(Clazz, singletons, injector));
 			var fqcn_clazz:String = getQualifiedClassName(Clazz);
 			mappings[fqcn_clazz] = config_clazz;
 			
@@ -53,8 +55,8 @@ package  org.swiftsuspenders.injectionpoints
 			var injector:Injector = new Injector();
 			var singletons:Dictionary = new Dictionary();
 			var mappings:Dictionary = new Dictionary();
-			var string_reference : InjectionConfig = new InjectionConfig(
-				String, STRING_REFERENCE, InjectionType.VALUE, "", injector, singletons);
+			var string_reference : InjectionConfig = new InjectionConfig(String, "", injector);
+			string_reference.setResult(new InjectValueResult(STRING_REFERENCE, injector));
 			var fqcn_string:String = getQualifiedClassName(String);
 			mappings[fqcn_string] = string_reference;
 			
@@ -91,10 +93,10 @@ package  org.swiftsuspenders.injectionpoints
 			var injector:Injector = new Injector();
 			var singletons:Dictionary = new Dictionary();
 			var configDictionary:Dictionary = new Dictionary();
-			var config_clazz : InjectionConfig = new InjectionConfig(
-				Clazz, Clazz, InjectionType.SINGLETON, "", injector, singletons);
-			var string_reference : InjectionConfig = new InjectionConfig(
-				String, STRING_REFERENCE, InjectionType.VALUE, "", injector, singletons);
+			var config_clazz : InjectionConfig = new InjectionConfig(Clazz, "", injector);
+			config_clazz.setResult(new InjectSingletonResult(Clazz, singletons, injector));
+			var string_reference : InjectionConfig = new InjectionConfig(String, "", injector);
+			string_reference.setResult(new InjectValueResult(STRING_REFERENCE, injector));
 			var fqcn_clazz:String = getQualifiedClassName(Clazz);
 			var fqcn_string:String = getQualifiedClassName(String);
 			

@@ -19,14 +19,15 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.injectionpoints.NoParamsConstructorInjectionPoint;
 	import org.swiftsuspenders.injectionpoints.PostConstructInjectionPoint;
 	import org.swiftsuspenders.injectionpoints.PropertyInjectionPoint;
+	import org.swiftsuspenders.injectionresults.InjectClassResult;
+	import org.swiftsuspenders.injectionresults.InjectOtherRuleResult;
+	import org.swiftsuspenders.injectionresults.InjectSingletonResult;
+	import org.swiftsuspenders.injectionresults.InjectValueResult;
 
-	/**
-	 * @author tschneidereit
-	 */
 	public class Injector
 	{
 		/*******************************************************************************************
-		*								protected/ private properties							   *
+		*								private properties										   *
 		*******************************************************************************************/
 		private var m_mappings : Dictionary;
 		private var m_singletons : Dictionary;
@@ -34,6 +35,7 @@ package org.swiftsuspenders
 		private var m_constructorInjectionPoints : Dictionary;
 		private var m_attendedToInjectees : Dictionary;
 		private var m_xmlMetadata : XML;
+		
 		
 		/*******************************************************************************************
 		*								public methods											   *
@@ -48,21 +50,18 @@ package org.swiftsuspenders
 			m_xmlMetadata = xmlConfig;
 		}
 		
-		public function mapValue(
-			whenAskedFor : Class, useValue : Object, named : String = "") : *
+		public function mapValue(whenAskedFor : Class, useValue : Object, named : String = "") : *
 		{
-			var config : InjectionConfig = new InjectionConfig(
-				whenAskedFor, useValue, InjectionType.VALUE, named, this, m_singletons);
-			addMapping(config, named);
+			var config : InjectionConfig = getMappingConfig(whenAskedFor, named);
+			config.setResult(new InjectValueResult(useValue, this));
 			return config;
 		}
 		
 		public function mapClass(
-			whenAskedFor : Class, instantiateClass : Class, named : String = "") : *
+				whenAskedFor : Class, instantiateClass : Class, named : String = "") : *
 		{
-			var config : InjectionConfig = new InjectionConfig(
-				whenAskedFor, instantiateClass, InjectionType.CLASS, named, this, m_singletons);
-			addMapping(config, named);
+			var config : InjectionConfig = getMappingConfig(whenAskedFor, named);
+			config.setResult(new InjectClassResult(instantiateClass, this));
 			return config;
 		}
 		
@@ -74,16 +73,24 @@ package org.swiftsuspenders
 		public function mapSingletonOf(
 			whenAskedFor : Class, useSingletonOf : Class, named : String = "") : *
 		{
-			var config : InjectionConfig = new InjectionConfig(
-				whenAskedFor, useSingletonOf, InjectionType.SINGLETON, named, this, m_singletons);
-			addMapping(config, named);
+			var config : InjectionConfig = getMappingConfig(whenAskedFor, named);
+			var singletons : Dictionary = m_singletons;
+			if (named)
+			{
+				singletons = singletons[named];
+				if (!singletons)
+				{
+					singletons = m_singletons[named] = new Dictionary();
+				}
+			}
+			config.setResult(new InjectSingletonResult(useSingletonOf, singletons, this));
 			return config;
 		}
 		
-		public function mapRule(
-			whenAskedFor : Class, useRule : *, named : String = "") : *
+		public function mapRule(whenAskedFor : Class, useRule : *, named : String = "") : *
 		{
-			addMapping(useRule, named, getQualifiedClassName(whenAskedFor));
+			var config : InjectionConfig = getMappingConfig(whenAskedFor, named);
+			config.setResult(new InjectOtherRuleResult(useRule));
 			return useRule;
 		}
 		
@@ -157,26 +164,24 @@ package org.swiftsuspenders
 		/*******************************************************************************************
 		*								protected/ private methods								   *
 		*******************************************************************************************/
-		private function addMapping(
-			config : InjectionConfig, named : String, requestName : String = null) : void
+		private function getMappingConfig(request : Class, named : String) : InjectionConfig
 		{
-			if (!requestName)
-			{
-				requestName = getQualifiedClassName(config.request);
-			}
+			var requestName : String = getQualifiedClassName(request);
+			var mappings : Dictionary = m_mappings;
 			if (named)
 			{
-				var nameMappings : Dictionary = m_mappings[named];
-				if (!nameMappings)
+				mappings = mappings[named];
+				if (!mappings)
 				{
-					nameMappings = m_mappings[named] = new Dictionary();
+					mappings = m_mappings[named] = new Dictionary();
 				}
-				nameMappings[requestName] = config;
 			}
-			else
+			var config : InjectionConfig = mappings[requestName];
+			if (!config)
 			{
-				m_mappings[requestName] = config;
+				config = mappings[requestName] = new InjectionConfig(request, named, this);
 			}
+			return config;
 		}
 		
 		private function getInjectionPoints(clazz : Class) : Array

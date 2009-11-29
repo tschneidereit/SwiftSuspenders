@@ -9,8 +9,6 @@ package org.swiftsuspenders.injectionpoints
 {
 	import flash.utils.Dictionary;
 	
-	import org.swiftsuspenders.Injector;
-	
 	public class PostConstructInjectionPoint extends InjectionPoint
 	{
 		/*******************************************************************************************
