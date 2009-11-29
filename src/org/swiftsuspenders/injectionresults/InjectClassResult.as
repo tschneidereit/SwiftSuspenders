@@ -7,30 +7,29 @@
 
 package org.swiftsuspenders.injectionresults
 {
-	import flash.utils.Dictionary;
-	
-	import org.swiftsuspenders.InjectionConfig;
 	import org.swiftsuspenders.Injector;
-	
+
 	public class InjectClassResult implements IInjectionResult
 	{
 		/*******************************************************************************************
 		 *								private properties										   *
 		 *******************************************************************************************/
-		private var config:InjectionConfig;
+		private var m_responseType : Class;
+		private var m_injector : Injector;
 		
 		
 		/*******************************************************************************************
 		 *								public methods											   *
 		 *******************************************************************************************/
-		public function InjectClassResult(config:InjectionConfig)
+		public function InjectClassResult(responseType : Class, injector : Injector)
 		{
-			this.config = config;
+			m_responseType = responseType;
+			m_injector = injector;
 		}
 		
-		public function getResponse(injector:Injector, singletons:Dictionary):Object
+		public function getResponse() : Object
 		{
-			return injector.instantiate(Class(config.response));
+			return m_injector.instantiate(m_responseType);
 		}
 	}
 }

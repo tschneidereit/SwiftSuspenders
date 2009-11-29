@@ -7,6 +7,7 @@ package  org.swiftsuspenders.injectionpoints
 	import org.swiftsuspenders.InjectionConfig;
 	import org.swiftsuspenders.InjectionType;
 	import org.swiftsuspenders.Injector;
+	import org.swiftsuspenders.injectionresults.InjectSingletonResult;
 	import org.swiftsuspenders.support.injectees.OneRequiredOneOptionalPropertyMethodInjectee;
 	import org.swiftsuspenders.support.injectees.TwoParametersMethodInjectee;
 	import org.swiftsuspenders.support.nodes.InjectionNodes;
@@ -74,10 +75,10 @@ package  org.swiftsuspenders.injectionpoints
 			var injector:Injector = new Injector();
 			var singletons:Dictionary = new Dictionary();
 			var configDictionary:Dictionary = new Dictionary();
-			var config_clazz : InjectionConfig = new InjectionConfig(
-				Clazz, Clazz, InjectionType.SINGLETON, "", injector, singletons);
-			var config_interface : InjectionConfig = new InjectionConfig(
-				Interface, Clazz, InjectionType.SINGLETON, "", injector, singletons);
+			var config_clazz : InjectionConfig = new InjectionConfig(Clazz, "", injector);
+			config_clazz.setResult(new InjectSingletonResult(Clazz, singletons, injector));
+			var config_interface : InjectionConfig = new InjectionConfig(Interface, "", injector);
+			config_interface.setResult(new InjectSingletonResult(Clazz, singletons, injector));
 			var fqcn_clazz:String = getQualifiedClassName(Clazz);
 			var fqcn_interface:String = getQualifiedClassName(Interface);
 			
@@ -92,8 +93,8 @@ package  org.swiftsuspenders.injectionpoints
 			var injector:Injector = new Injector();
 			var singletons:Dictionary = new Dictionary();
 			var configDictionary:Dictionary = new Dictionary();
-			var config_clazz : InjectionConfig = new InjectionConfig(
-				Clazz, Clazz, InjectionType.SINGLETON, "", injector, singletons);
+			var config_clazz : InjectionConfig = new InjectionConfig(Clazz, "", injector);
+			config_clazz.setResult(new InjectSingletonResult(Clazz, singletons, injector));
 			var fqcn_clazz:String = getQualifiedClassName(Clazz);
 			
 			configDictionary[fqcn_clazz] = config_clazz;

@@ -3,6 +3,9 @@ package org.swiftsuspenders
 	import flash.utils.Dictionary;
 	
 	import org.flexunit.Assert;
+	import org.swiftsuspenders.injectionresults.InjectClassResult;
+	import org.swiftsuspenders.injectionresults.InjectSingletonResult;
+	import org.swiftsuspenders.injectionresults.InjectValueResult;
 	import org.swiftsuspenders.support.types.Clazz;
 	
 	public class InjectionConfigTests
@@ -24,8 +27,7 @@ package org.swiftsuspenders
 		[Test]
 		public function configIsInstantiated():void
 		{
-			var config : InjectionConfig = new InjectionConfig(
-				Clazz, Clazz, InjectionType.SINGLETON, "", null, null);	
+			var config : InjectionConfig = new InjectionConfig(Clazz, "", null);
 			
 			Assert.assertTrue(config is InjectionConfig);
 		}
@@ -34,8 +36,8 @@ package org.swiftsuspenders
 		public function injectionTypeValueReturnsRespone():void
 		{
 			var response:Clazz = new Clazz();
-			var config : InjectionConfig = new InjectionConfig(
-				Clazz, response, InjectionType.VALUE, "", injector, null);	
+			var config : InjectionConfig = new InjectionConfig(Clazz, "", injector);
+			config.setResult(new InjectValueResult(response, injector));
 			var returnedResponse:Object = config.getResponse();
 			
 			Assert.assertStrictlyEquals(response, returnedResponse);
@@ -44,8 +46,8 @@ package org.swiftsuspenders
 		[Test]
 		public function injectionTypeClassReturnsRespone():void
 		{
-			var config : InjectionConfig = new InjectionConfig(
-				Clazz, Clazz, InjectionType.CLASS, "", injector, null);
+			var config : InjectionConfig = new InjectionConfig(Clazz, "", injector);
+			config.setResult(new InjectClassResult(Clazz, injector));
 			var returnedResponse:Object = config.getResponse();
 			
 			Assert.assertTrue( returnedResponse is Clazz);
@@ -55,8 +57,8 @@ package org.swiftsuspenders
 		public function injectionTypeSingletonReturnsResponse():void
 		{
 			var singletons:Dictionary = new Dictionary();
-			var config : InjectionConfig = new InjectionConfig(
-				Clazz, Clazz, InjectionType.SINGLETON, "", injector, singletons);
+			var config : InjectionConfig = new InjectionConfig(Clazz, "", injector);
+			config.setResult(new InjectSingletonResult(Clazz, singletons, injector));
 			var returnedResponse:Object = config.getResponse();	
 			
 			Assert.assertTrue( returnedResponse is Clazz);
@@ -66,30 +68,19 @@ package org.swiftsuspenders
 		public function singletonIsAddedToUsedDictionaryOnFirstResponse():void
 		{
 			var singletons:Dictionary = new Dictionary();
-			var config : InjectionConfig = new InjectionConfig(
-				Clazz, Clazz, InjectionType.SINGLETON, "", injector, singletons);
+			var config : InjectionConfig = new InjectionConfig(Clazz, "", injector);
+			config.setResult(new InjectSingletonResult(Clazz, singletons, injector));
 			var returnedResponse:Object = config.getResponse();
 			
 			Assert.assertTrue( singletons[Clazz] == returnedResponse );			
 		}
 		
 		[Test]
-		public function namedSingletonIsAddedToUsedDictionaryOnFirstResponse():void
-		{
-			var singletons:Dictionary = new Dictionary();
-			var config : InjectionConfig = new InjectionConfig(
-				Clazz, Clazz, InjectionType.SINGLETON, "named", injector, singletons);	
-			var returnedResponse:Object = config.getResponse();
-			
-			Assert.assertTrue( singletons["named"][Clazz] == returnedResponse );			
-		}
-		
-		[Test]
 		public function sameSingletonIsReturnedOnSecondResponse():void
 		{
 			var singletons:Dictionary = new Dictionary();
-			var config : InjectionConfig = new InjectionConfig(
-				Clazz, Clazz, InjectionType.SINGLETON, "", injector, singletons);
+			var config : InjectionConfig = new InjectionConfig(Clazz, "", injector);
+			config.setResult(new InjectSingletonResult(Clazz, singletons, injector));
 			var returnedResponse:Object = config.getResponse();	
 			var secondResponse:Object = config.getResponse();
 			
@@ -100,8 +91,8 @@ package org.swiftsuspenders
 		public function sameNamedSingletonIsReturnedOnSecondResponse():void
 		{
 			var singletons:Dictionary = new Dictionary();
-			var config : InjectionConfig = new InjectionConfig(
-				Clazz, Clazz, InjectionType.SINGLETON, "named", injector, singletons);	
+			var config : InjectionConfig = new InjectionConfig(Clazz, "named", injector);	
+			config.setResult(new InjectSingletonResult(Clazz, singletons, injector));
 			var returnedResponse:Object = config.getResponse();
 			var secondResponse:Object = config.getResponse();
 			

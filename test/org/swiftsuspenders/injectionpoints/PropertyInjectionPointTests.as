@@ -5,8 +5,8 @@ package org.swiftsuspenders.injectionpoints
 	
 	import org.flexunit.Assert;
 	import org.swiftsuspenders.InjectionConfig;
-	import org.swiftsuspenders.InjectionType;
 	import org.swiftsuspenders.Injector;
+	import org.swiftsuspenders.injectionresults.InjectSingletonResult;
 	import org.swiftsuspenders.support.injectees.ClassInjectee;
 	import org.swiftsuspenders.support.nodes.InjectionNodes;
 	import org.swiftsuspenders.support.types.Clazz;
@@ -37,8 +37,8 @@ package org.swiftsuspenders.injectionpoints
 			var injector:Injector = new Injector();
 			var singletons:Dictionary = new Dictionary();
 			var classConfigDisctionary:Dictionary = new Dictionary();
-			var config : InjectionConfig = new InjectionConfig(
-				Clazz, Clazz, InjectionType.SINGLETON, "", injector, singletons);
+			var config : InjectionConfig = new InjectionConfig(Clazz, "", injector);
+			config.setResult(new InjectSingletonResult(Clazz, singletons, injector));
 			var fqcn:String = getQualifiedClassName(Clazz);
 			classConfigDisctionary[fqcn] = config;
 			return classConfigDisctionary;
