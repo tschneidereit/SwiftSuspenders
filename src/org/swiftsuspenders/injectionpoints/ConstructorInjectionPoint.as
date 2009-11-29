@@ -33,9 +33,9 @@ package org.swiftsuspenders.injectionpoints
 			super(node, injectorMappings);
 		}
 		
-		override public function applyInjection(target : Object, singletons : Dictionary) : Object
+		override public function applyInjection(target : Object) : Object
 		{
-			var p : Array = gatherParameterValues(target, singletons);
+			var p : Array = gatherParameterValues(target);
 			//the only way to implement ctor injections, really!
 			switch (p.length)
 			{
