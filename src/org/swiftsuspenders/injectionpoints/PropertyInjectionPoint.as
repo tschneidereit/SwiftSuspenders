@@ -31,7 +31,7 @@ package org.swiftsuspenders.injectionpoints
 			super(node, injectorMappings);
 		}
 		
-		override public function applyInjection(target : Object, singletons : Dictionary) : Object
+		override public function applyInjection(target : Object) : Object
 		{
 			var config : InjectionConfig = mappings[propertyType];
 			if (!config)
@@ -43,7 +43,7 @@ package org.swiftsuspenders.injectionpoints
 					)
 				);
 			}
-			var injection : Object = config.getResponse(singletons);
+			var injection : Object = config.getResponse();
 			target[propertyName] = injection;
 			return target;
 		}

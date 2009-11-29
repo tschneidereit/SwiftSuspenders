@@ -8,7 +8,6 @@
 package org.swiftsuspenders.injectionpoints
 {
 	import flash.utils.Dictionary;
-	import org.swiftsuspenders.Injector;
 
 	public class InjectionPoint
 	{
@@ -26,7 +25,7 @@ package org.swiftsuspenders.injectionpoints
 			initializeInjection(node, injectorMappings);
 		}
 		
-		public function applyInjection(target : Object, singletons : Dictionary) : Object
+		public function applyInjection(target : Object) : Object
 		{
 			return target;
 		}

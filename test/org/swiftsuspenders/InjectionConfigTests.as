@@ -25,7 +25,7 @@ package org.swiftsuspenders
 		public function configIsInstantiated():void
 		{
 			var config : InjectionConfig = new InjectionConfig(
-				Clazz, Clazz, InjectionType.SINGLETON, "", null);	
+				Clazz, Clazz, InjectionType.SINGLETON, "", null, null);	
 			
 			Assert.assertTrue(config is InjectionConfig);
 		}
@@ -35,8 +35,8 @@ package org.swiftsuspenders
 		{
 			var response:Clazz = new Clazz();
 			var config : InjectionConfig = new InjectionConfig(
-				Clazz, response, InjectionType.VALUE, "", injector);	
-			var returnedResponse:Object = config.getResponse(null);
+				Clazz, response, InjectionType.VALUE, "", injector, null);	
+			var returnedResponse:Object = config.getResponse();
 			
 			Assert.assertStrictlyEquals(response, returnedResponse);
 		}
@@ -45,8 +45,8 @@ package org.swiftsuspenders
 		public function injectionTypeClassReturnsRespone():void
 		{
 			var config : InjectionConfig = new InjectionConfig(
-				Clazz, Clazz, InjectionType.CLASS, "", injector);
-			var returnedResponse:Object = config.getResponse(null);
+				Clazz, Clazz, InjectionType.CLASS, "", injector, null);
+			var returnedResponse:Object = config.getResponse();
 			
 			Assert.assertTrue( returnedResponse is Clazz);
 		}
@@ -56,8 +56,8 @@ package org.swiftsuspenders
 		{
 			var singletons:Dictionary = new Dictionary();
 			var config : InjectionConfig = new InjectionConfig(
-				Clazz, Clazz, InjectionType.SINGLETON, "", injector);
-			var returnedResponse:Object = config.getResponse(singletons);	
+				Clazz, Clazz, InjectionType.SINGLETON, "", injector, singletons);
+			var returnedResponse:Object = config.getResponse();	
 			
 			Assert.assertTrue( returnedResponse is Clazz);
 		}
@@ -67,8 +67,8 @@ package org.swiftsuspenders
 		{
 			var singletons:Dictionary = new Dictionary();
 			var config : InjectionConfig = new InjectionConfig(
-				Clazz, Clazz, InjectionType.SINGLETON, "", injector);
-			var returnedResponse:Object = config.getResponse(singletons);
+				Clazz, Clazz, InjectionType.SINGLETON, "", injector, singletons);
+			var returnedResponse:Object = config.getResponse();
 			
 			Assert.assertTrue( singletons[Clazz] == returnedResponse );			
 		}
@@ -78,8 +78,8 @@ package org.swiftsuspenders
 		{
 			var singletons:Dictionary = new Dictionary();
 			var config : InjectionConfig = new InjectionConfig(
-				Clazz, Clazz, InjectionType.SINGLETON, "named", injector);	
-			var returnedResponse:Object = config.getResponse(singletons);	
+				Clazz, Clazz, InjectionType.SINGLETON, "named", injector, singletons);	
+			var returnedResponse:Object = config.getResponse();
 			
 			Assert.assertTrue( singletons["named"][Clazz] == returnedResponse );			
 		}
@@ -89,9 +89,9 @@ package org.swiftsuspenders
 		{
 			var singletons:Dictionary = new Dictionary();
 			var config : InjectionConfig = new InjectionConfig(
-				Clazz, Clazz, InjectionType.SINGLETON, "", injector);
-			var returnedResponse:Object = config.getResponse(singletons);	
-			var secondResponse:Object = config.getResponse(singletons);
+				Clazz, Clazz, InjectionType.SINGLETON, "", injector, singletons);
+			var returnedResponse:Object = config.getResponse();	
+			var secondResponse:Object = config.getResponse();
 			
 			Assert.assertStrictlyEquals( returnedResponse, secondResponse )
 		}
@@ -101,9 +101,9 @@ package org.swiftsuspenders
 		{
 			var singletons:Dictionary = new Dictionary();
 			var config : InjectionConfig = new InjectionConfig(
-				Clazz, Clazz, InjectionType.SINGLETON, "named", injector);	
-			var returnedResponse:Object = config.getResponse(singletons);	
-			var secondResponse:Object = config.getResponse(singletons);
+				Clazz, Clazz, InjectionType.SINGLETON, "named", injector, singletons);	
+			var returnedResponse:Object = config.getResponse();
+			var secondResponse:Object = config.getResponse();
 			
 			Assert.assertStrictlyEquals( returnedResponse, secondResponse )
 		}
