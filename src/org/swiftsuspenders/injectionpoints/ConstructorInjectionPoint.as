@@ -7,19 +7,16 @@
 
 package org.swiftsuspenders.injectionpoints
 {
-	import flash.utils.Dictionary;
 	import flash.utils.describeType;
 	
-	import org.swiftsuspenders.InjectionConfig;
 	import org.swiftsuspenders.Injector;
-	import org.swiftsuspenders.InjectorError;
 	
 	public class ConstructorInjectionPoint extends MethodInjectionPoint
 	{
 		/*******************************************************************************************
 		*								public methods											   *
 		*******************************************************************************************/
-		public function ConstructorInjectionPoint(node : XML, injectorMappings : Dictionary, clazz : Class)
+		public function ConstructorInjectionPoint(node : XML, clazz : Class, injector : Injector)
 		{
 			/*
 			  In many cases, the flash player doesn't give us type information for constructors until 
@@ -30,7 +27,7 @@ package org.swiftsuspenders.injectionpoints
 			{
 				node = createDummyInstance(node, clazz);
 			}
-			super(node, injectorMappings);
+			super(node, injector);
 		}
 		
 		override public function applyInjection(target : Object) : Object
@@ -57,13 +54,12 @@ package org.swiftsuspenders.injectionpoints
 		/*******************************************************************************************
 		*								protected methods										   *
 		*******************************************************************************************/
-		override protected function initializeInjection(node : XML, injectorMappings : Dictionary) : void
+		override protected function initializeInjection(node : XML, injector : Injector) : void
 		{
 			var nameArgs : XMLList = node.parent().metadata.(@name == 'Inject').arg.(@key == 'name');
-			mappings = [];
-			parameterTypes = [];
+			methodName = 'constructor';
 			
-			gatherParameters(node, nameArgs, injectorMappings);
+			gatherParameters(node, nameArgs, injector);
 		}
 		
 		/*******************************************************************************************

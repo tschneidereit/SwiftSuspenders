@@ -7,9 +7,10 @@
 
 package org.swiftsuspenders.injectionpoints
 {
-	import flash.utils.Dictionary;
+	import flash.utils.getDefinitionByName;
 	
 	import org.swiftsuspenders.InjectionConfig;
+	import org.swiftsuspenders.Injector;
 	import org.swiftsuspenders.InjectorError;
 
 	public class PropertyInjectionPoint extends InjectionPoint
@@ -17,23 +18,23 @@ package org.swiftsuspenders.injectionpoints
 		/*******************************************************************************************
 		*								private properties										   *
 		*******************************************************************************************/
-		private var mappings : Dictionary;
 		private var propertyName : String;
 		private var propertyType : String;
+		private var m_injectionConfig : InjectionConfig;
 		
 		
 		/*******************************************************************************************
 		*								public methods											   *
 		*******************************************************************************************/
-		public function PropertyInjectionPoint(node : XML, injectorMappings : Dictionary)
+		public function PropertyInjectionPoint(node : XML, injector : Injector)
 		{
-			super(node, injectorMappings);
+			super(node, injector);
 		}
 		
 		override public function applyInjection(target : Object) : Object
 		{
-			var config : InjectionConfig = mappings[propertyType];
-			if (!config)
+			var injection : Object = m_injectionConfig.getResponse();
+			if (!injection)
 			{
 				throw(
 					new InjectorError(
@@ -42,7 +43,6 @@ package org.swiftsuspenders.injectionpoints
 					)
 				);
 			}
-			var injection : Object = config.getResponse();
 			target[propertyName] = injection;
 			return target;
 		}
@@ -51,25 +51,12 @@ package org.swiftsuspenders.injectionpoints
 		/*******************************************************************************************
 		*								protected methods										   *
 		*******************************************************************************************/
-		override protected function initializeInjection(node : XML, injectorMappings : Dictionary) : void
+		override protected function initializeInjection(node : XML, injector : Injector) : void
 		{
-			var mappings : Dictionary;
-			if (node.hasOwnProperty('arg') && node.arg.(@key == 'name').length)
-			{
-				injectionName = node.arg.@value.toString();
-				mappings = injectorMappings[injectionName];
-				if (!mappings)
-				{
-					mappings = injectorMappings[injectionName] = new Dictionary();
-				}
-			}
-			else
-			{
-				mappings = injectorMappings;
-			}
-			this.mappings = mappings;
 			propertyType = node.parent().@type.toString();
 			propertyName = node.parent().@name.toString();
+			m_injectionConfig = injector.getMapping(Class(getDefinitionByName(propertyType)), 
+				node.arg.attribute('value').toString());
 		}
 	}
 }

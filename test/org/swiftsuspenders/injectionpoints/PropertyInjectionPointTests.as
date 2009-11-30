@@ -27,21 +27,17 @@ package org.swiftsuspenders.injectionpoints
 		private function createSingleProertySingletonClazzVariableInjectionPoint():PropertyInjectionPoint
 		{
 			var node:XML = XML(InjectionNodes.PROPERTY_INJECTION_NODE.metadata);
-			var mappings:Dictionary = createUnamedSinglePropertySingletonInjectionConfigDictionary();
-			var injectionPoint:PropertyInjectionPoint = new PropertyInjectionPoint(node, mappings);
+			var injector : Injector = createUnnamedSinglePropertySingletonInjectionInjector();
+			var injectionPoint:PropertyInjectionPoint = new PropertyInjectionPoint(node, injector);
 			return injectionPoint;
 		}
 		
-		private function createUnamedSinglePropertySingletonInjectionConfigDictionary():Dictionary
+		private function createUnnamedSinglePropertySingletonInjectionInjector() : Injector
 		{
 			var injector:Injector = new Injector();
-			var singletons:Dictionary = new Dictionary();
-			var classConfigDisctionary:Dictionary = new Dictionary();
-			var config : InjectionConfig = new InjectionConfig(Clazz, "", injector);
-			config.setResult(new InjectSingletonResult(Clazz, singletons, injector));
-			var fqcn:String = getQualifiedClassName(Clazz);
-			classConfigDisctionary[fqcn] = config;
-			return classConfigDisctionary;
+			injector.mapSingleton(Clazz);
+			
+			return injector;
 		}
 		
 		//TODO: Add multiple injection point tests
