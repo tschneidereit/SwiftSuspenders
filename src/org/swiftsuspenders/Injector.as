@@ -52,7 +52,7 @@ package org.swiftsuspenders
 		
 		public function mapValue(whenAskedFor : Class, useValue : Object, named : String = "") : *
 		{
-			var config : InjectionConfig = getMappingConfig(whenAskedFor, named);
+			var config : InjectionConfig = getMapping(whenAskedFor, named);
 			config.setResult(new InjectValueResult(useValue, this));
 			return config;
 		}
@@ -60,7 +60,7 @@ package org.swiftsuspenders
 		public function mapClass(
 				whenAskedFor : Class, instantiateClass : Class, named : String = "") : *
 		{
-			var config : InjectionConfig = getMappingConfig(whenAskedFor, named);
+			var config : InjectionConfig = getMapping(whenAskedFor, named);
 			config.setResult(new InjectClassResult(instantiateClass, this));
 			return config;
 		}
@@ -73,7 +73,7 @@ package org.swiftsuspenders
 		public function mapSingletonOf(
 			whenAskedFor : Class, useSingletonOf : Class, named : String = "") : *
 		{
-			var config : InjectionConfig = getMappingConfig(whenAskedFor, named);
+			var config : InjectionConfig = getMapping(whenAskedFor, named);
 			var singletons : Dictionary = m_singletons;
 			if (named)
 			{
@@ -89,9 +89,29 @@ package org.swiftsuspenders
 		
 		public function mapRule(whenAskedFor : Class, useRule : *, named : String = "") : *
 		{
-			var config : InjectionConfig = getMappingConfig(whenAskedFor, named);
+			var config : InjectionConfig = getMapping(whenAskedFor, named);
 			config.setResult(new InjectOtherRuleResult(useRule));
 			return useRule;
+		}
+		
+		public function getMapping(whenAskedFor : Class, named : String = null) : InjectionConfig
+		{
+			var requestName : String = getQualifiedClassName(whenAskedFor);
+			var mappings : Dictionary = m_mappings;
+			if (named)
+			{
+				mappings = mappings[named];
+				if (!mappings)
+				{
+					mappings = m_mappings[named] = new Dictionary();
+				}
+			}
+			var config : InjectionConfig = mappings[requestName];
+			if (!config)
+			{
+				config = mappings[requestName] = new InjectionConfig(whenAskedFor, named, this);
+			}
+			return config;
 		}
 		
 		public function injectInto(target : Object) : void
@@ -164,26 +184,6 @@ package org.swiftsuspenders
 		/*******************************************************************************************
 		*								protected/ private methods								   *
 		*******************************************************************************************/
-		private function getMappingConfig(request : Class, named : String) : InjectionConfig
-		{
-			var requestName : String = getQualifiedClassName(request);
-			var mappings : Dictionary = m_mappings;
-			if (named)
-			{
-				mappings = mappings[named];
-				if (!mappings)
-				{
-					mappings = m_mappings[named] = new Dictionary();
-				}
-			}
-			var config : InjectionConfig = mappings[requestName];
-			if (!config)
-			{
-				config = mappings[requestName] = new InjectionConfig(request, named, this);
-			}
-			return config;
-		}
-		
 		private function getInjectionPoints(clazz : Class) : Array
 		{
 			var description : XML = describeType(clazz);
@@ -205,7 +205,7 @@ package org.swiftsuspenders
 			if (node)
 			{
 				m_constructorInjectionPoints[clazz] = 
-						new ConstructorInjectionPoint(node, m_mappings, clazz);
+					new ConstructorInjectionPoint(node, clazz, this);
 			}
 			else
 			{
@@ -215,14 +215,14 @@ package org.swiftsuspenders
 			for each (node in description.factory.*.
 				(name() == 'variable' || name() == 'accessor').metadata.(@name == 'Inject'))
 			{
-				injectionPoint = new PropertyInjectionPoint(node, m_mappings);
+				injectionPoint = new PropertyInjectionPoint(node, this);
 				injectionPoints.push(injectionPoint);
 			}
 		
 			//get injection points for methods
 			for each (node in description.factory.method.metadata.(@name == 'Inject'))
 			{
-				injectionPoint = new MethodInjectionPoint(node, m_mappings);
+				injectionPoint = new MethodInjectionPoint(node, this);
 				injectionPoints.push(injectionPoint);
 			}
 			
@@ -230,7 +230,7 @@ package org.swiftsuspenders
 			var postConstructMethodPoints : Array = [];
 			for each (node in description.factory.method.metadata.(@name == 'PostConstruct'))
 			{
-				injectionPoint = new PostConstructInjectionPoint(node, m_mappings);
+				injectionPoint = new PostConstructInjectionPoint(node, this);
 				postConstructMethodPoints.push(injectionPoint);
 			}
 			if (postConstructMethodPoints.length > 0)

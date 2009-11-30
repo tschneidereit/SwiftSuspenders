@@ -7,9 +7,11 @@
 
 package org.swiftsuspenders.injectionpoints
 {
-	import flash.utils.Dictionary;
+	import flash.utils.getDefinitionByName;
+	import flash.utils.getQualifiedClassName;
 	
 	import org.swiftsuspenders.InjectionConfig;
+	import org.swiftsuspenders.Injector;
 	import org.swiftsuspenders.InjectorError;
 
 	public class MethodInjectionPoint extends InjectionPoint
@@ -18,17 +20,16 @@ package org.swiftsuspenders.injectionpoints
 		*								private properties										   *
 		*******************************************************************************************/
 		protected var methodName : String;
-		protected var mappings : Array;
-		protected var parameterTypes : Array;
+		protected var m_injectionConfigs : Array;
 		protected var requiredParameters : int = 0;
 		
 		
 		/*******************************************************************************************
 		*								public methods											   *
 		*******************************************************************************************/
-		public function MethodInjectionPoint(node : XML, injectorMappings : Dictionary)
+		public function MethodInjectionPoint(node : XML, injector : Injector)
 		{
-			super(node, injectorMappings);
+			super(node, injector);
 		}
 		
 		override public function applyInjection(target : Object) : Object
@@ -43,44 +44,47 @@ package org.swiftsuspenders.injectionpoints
 		/*******************************************************************************************
 		*								protected methods										   *
 		*******************************************************************************************/
-		override protected function initializeInjection(node : XML, injectorMappings : Dictionary) : void
+		override protected function initializeInjection(node : XML, injector : Injector) : void
 		{
 			var nameArgs : XMLList = node.arg.(@key == 'name');
 			var methodNode : XML = node.parent();
-			
 			methodName = methodNode.@name.toString();
-			mappings = [];
-			parameterTypes = [];
 			
-			gatherParameters(methodNode, nameArgs, injectorMappings);
+			gatherParameters(methodNode, nameArgs, injector);
 		}
 		
 		protected function gatherParameters(
-			methodNode : XML, nameArgs : XMLList, injectorMappings : Dictionary) : void
+			methodNode : XML, nameArgs : XMLList, injector : Injector) : void
 		{
+			m_injectionConfigs = [];
 			var i : int = 0;
 			for each (var parameter : XML in methodNode.parameter)
 			{
-				var parameterMappings : Dictionary;
 				var injectionName : String;
 				if (nameArgs[i])
 				{
 					injectionName = nameArgs[i].@value.toString();
 				}
-				if (injectionName)
+				var parameterTypeName : String = parameter.@type.toString();
+				var parameterType : Class;
+				if (parameterTypeName == '*')
 				{
-					parameterMappings = injectorMappings[injectionName];
-					if (!parameterMappings)
+					if (parameter.@optional.toString() == 'false')
 					{
-						parameterMappings = injectorMappings[injectionName] = new Dictionary();
+						//TODO: Find a way to trace name of affected class here
+						throw new Error('Error in method definition of injectee. Required ' + 
+							'parameters can\'t have type "*".');
+					}
+					else
+					{
+						parameterTypeName = null;
 					}
 				}
 				else
 				{
-					parameterMappings = injectorMappings;
+					parameterType = Class(getDefinitionByName(parameterTypeName));
 				}
-				mappings.push(parameterMappings);
-				parameterTypes.push(parameter.@type.toString());
+				m_injectionConfigs.push(injector.getMapping(parameterType, injectionName));
 				if (parameter.@optional.toString() == 'false')
 				{
 					requiredParameters++;
@@ -92,11 +96,12 @@ package org.swiftsuspenders.injectionpoints
 		protected function gatherParameterValues(target : Object) : Array
 		{
 			var parameters : Array = [];
-			var length : int = mappings.length;
+			var length : int = m_injectionConfigs.length;
 			for (var i : int = 0; i < length; i++)
 			{
-				var config : InjectionConfig = mappings[i][parameterTypes[i]];
-				if (!config)
+				var config : InjectionConfig = m_injectionConfigs[i];
+				var injection : Object = config.getResponse();
+				if (!injection)
 				{
 					if (i >= requiredParameters)
 					{
@@ -104,12 +109,11 @@ package org.swiftsuspenders.injectionpoints
 					}
 					throw(new InjectorError(
 						'Injector is missing a rule to handle injection into target ' + target + 
-						'. Target dependency: ' + parameterTypes[i] + ', method: ' + methodName + 
-						', parameter: ' + (i + 1)
+						'. Target dependency: ' + getQualifiedClassName(config.request) + 
+						', method: ' + methodName + ', parameter: ' + (i + 1)
 					));
 				}
 				
-				var injection : Object = config.getResponse();
 				parameters[i] = injection;
 			}
 			return parameters;

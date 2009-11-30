@@ -7,22 +7,16 @@
 
 package org.swiftsuspenders.injectionpoints
 {
-	import flash.utils.Dictionary;
+	import org.swiftsuspenders.Injector;
 
 	public class InjectionPoint
 	{
 		/*******************************************************************************************
-		 *								protected properties									   *
-		 *******************************************************************************************/
-		protected var injectionName : String;
-		
-		
-		/*******************************************************************************************
 		*								public methods											   *
 		*******************************************************************************************/
-		public function InjectionPoint(node : XML, injectorMappings : Dictionary)
+		public function InjectionPoint(node : XML, injector : Injector)
 		{
-			initializeInjection(node, injectorMappings);
+			initializeInjection(node, injector);
 		}
 		
 		public function applyInjection(target : Object) : Object
@@ -34,7 +28,7 @@ package org.swiftsuspenders.injectionpoints
 		/*******************************************************************************************
 		*								protected methods										   *
 		*******************************************************************************************/
-		protected function initializeInjection(node : XML, injectorMappings : Dictionary) : void
+		protected function initializeInjection(node : XML, injector : Injector) : void
 		{
 		}
 	}
