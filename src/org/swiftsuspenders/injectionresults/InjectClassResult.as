@@ -9,13 +9,12 @@ package org.swiftsuspenders.injectionresults
 {
 	import org.swiftsuspenders.Injector;
 
-	public class InjectClassResult implements IInjectionResult
+	public class InjectClassResult extends InjectionResult
 	{
 		/*******************************************************************************************
 		 *								private properties										   *
 		 *******************************************************************************************/
 		private var m_responseType : Class;
-		private var m_injector : Injector;
 		
 		
 		/*******************************************************************************************
@@ -24,10 +23,10 @@ package org.swiftsuspenders.injectionresults
 		public function InjectClassResult(responseType : Class, injector : Injector)
 		{
 			m_responseType = responseType;
-			m_injector = injector;
+			super(injector);
 		}
 		
-		public function getResponse() : Object
+		override public function getResponse() : Object
 		{
 			return m_injector.instantiate(m_responseType);
 		}

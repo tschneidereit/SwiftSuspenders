@@ -8,28 +8,31 @@
 package org.swiftsuspenders.injectionresults
 {
 	import org.swiftsuspenders.Injector;
-	
-	public class InjectValueResult extends InjectionResult
+
+	public class InjectionResult
 	{
 		/*******************************************************************************************
-		 *								private properties										   *
+		 *								protected properties									   *
 		 *******************************************************************************************/
-		private var m_value : Object
+		protected var m_injector : Injector;
 		
 		
 		/*******************************************************************************************
 		 *								public methods											   *
 		 *******************************************************************************************/
-		public function InjectValueResult(value : Object, injector : Injector)
+		public function InjectionResult(injector : Injector)
 		{
-			m_value = value;
-			super(injector);
+			m_injector = injector;
 		}
 		
-		override public function getResponse() : Object
+		public function getResponse() : Object
 		{
-			m_injector.injectInto(m_value);
-			return m_value;
+			return null;
+		}
+		
+		public function setInjector(injector : Injector) : void
+		{
+			m_injector = injector;
 		}
 	}
 }

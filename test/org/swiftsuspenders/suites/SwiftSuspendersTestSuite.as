@@ -22,6 +22,7 @@
 
 package org.swiftsuspenders.suites
 {
+	import org.swiftsuspenders.ChildInjectorTests;
 	import org.swiftsuspenders.InjectionConfigTests;
 	import org.swiftsuspenders.InjectorTests;
 	import org.swiftsuspenders.ReflectorTests;
@@ -43,5 +44,6 @@ package org.swiftsuspenders.suites
 		public var noParamConstructorInjectionPoint:NoParamsConstructorInjectionPointTests;
 		public var constructorInjectionPointTests:ConstructorInjectionPointTests;
 		public var injectionConfigTests:InjectionConfigTests;
+		public var childInjectorTests : ChildInjectorTests;
 	}
 }

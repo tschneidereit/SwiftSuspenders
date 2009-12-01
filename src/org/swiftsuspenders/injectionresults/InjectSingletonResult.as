@@ -11,7 +11,7 @@ package org.swiftsuspenders.injectionresults
 	
 	import org.swiftsuspenders.Injector;
 
-	public class InjectSingletonResult implements IInjectionResult
+	public class InjectSingletonResult extends InjectionResult
 	{
 		/*******************************************************************************************
 		 *								private properties										   *
@@ -19,7 +19,6 @@ package org.swiftsuspenders.injectionresults
 		private var m_singletons : Dictionary;
 		private var m_responseType : Class;
 		private var m_response : Object;
-		private var m_injector : Injector;
 		
 		
 		/*******************************************************************************************
@@ -30,10 +29,10 @@ package org.swiftsuspenders.injectionresults
 		{
 			m_singletons = singletons;
 			m_responseType = responseType;
-			m_injector = injector;
+			super(injector);
 		}
 		
-		public function getResponse() : Object
+		override public function getResponse() : Object
 		{
 			return m_response || createResponse();
 		}

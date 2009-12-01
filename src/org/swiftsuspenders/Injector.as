@@ -29,6 +29,7 @@ package org.swiftsuspenders
 		/*******************************************************************************************
 		*								private properties										   *
 		*******************************************************************************************/
+		private var m_parentInjector : Injector;
 		private var m_mappings : Dictionary;
 		private var m_singletons : Dictionary;
 		private var m_injectionPointLists : Dictionary;
@@ -177,12 +178,24 @@ package org.swiftsuspenders
 		
 		public function createChildInjector() : Injector
 		{
-			return new Injector();
+			var injector : Injector = new Injector();
+			injector.setParentInjector(this);
+			return injector;
 		}
 		
 		
 		/*******************************************************************************************
-		*								protected/ private methods								   *
+		*								internal methods										   *
+		*******************************************************************************************/
+		internal function getParentMapping(
+				whenAskedFor : Class, named : String = null) : InjectionConfig
+		{
+			return m_parentInjector ? m_parentInjector.getMapping(whenAskedFor, named) : null;
+		}
+		
+		
+		/*******************************************************************************************
+		*								private methods											   *
 		*******************************************************************************************/
 		private function getInjectionPoints(clazz : Class) : Array
 		{
@@ -300,6 +313,11 @@ package org.swiftsuspenders
 			var parentInjectionPoints : Array = m_injectionPointLists[parentClassName] || 
 					getInjectionPoints(Class(getDefinitionByName(parentClassName)));
 			injectionPoints.push.apply(injectionPoints, parentInjectionPoints);
+		}
+		
+		private function setParentInjector(parentInjector : Injector) : void
+		{
+			m_parentInjector = parentInjector;
 		}
 	}
 }

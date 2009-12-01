@@ -9,7 +9,7 @@ package org.swiftsuspenders.injectionresults
 {
 	import org.swiftsuspenders.InjectionConfig;
 
-	public class InjectOtherRuleResult implements IInjectionResult
+	public class InjectOtherRuleResult extends InjectionResult
 	{
 		/*******************************************************************************************
 		 *								private properties										   *
@@ -23,9 +23,10 @@ package org.swiftsuspenders.injectionresults
 		public function InjectOtherRuleResult(rule : InjectionConfig)
 		{
 			m_rule = rule;
+			super(null);
 		}
 		
-		public function getResponse() : Object
+		override public function getResponse() : Object
 		{
 			return m_rule.getResponse();
 		}
