@@ -132,7 +132,7 @@ p. To inject dependencies into an instance of this class, you would first define
 var injector : SwiftSuspendersInjector = new SwiftSuspendersInjector();
 injector.mapValue(MovieClip, new MovieClip());
 var currentTime : Date = new Date();
-injector.mapClass(Date, currentTime, 'currentTime');
+injector.mapValue(Date, currentTime, 'currentTime');
 injector.mapSingleton(Sprite); //obviously, you wouldn't _really_ use Sprite singletons
 var injectee : MyDependentClass = new MyDependentClass();
 injector.injectInto(injectee);
