@@ -166,14 +166,16 @@ package org.swiftsuspenders
 		public function unmap(clazz : Class, named : String = "") : void
 		{
 			var requestName : String = getQualifiedClassName(clazz);
+			var mapping : InjectionConfig;
 			if (named && m_mappings[named])
 			{
-				delete Dictionary(m_mappings[named])[requestName];
+				mapping = Dictionary(m_mappings[named])[requestName];
 			}
 			else
 			{
-				delete m_mappings[requestName];
+				mapping = m_mappings[requestName];
 			}
+			mapping.setResult(null);
 		}
 		
 		public function createChildInjector() : Injector
