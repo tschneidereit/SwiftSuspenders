@@ -25,7 +25,7 @@ package org.swiftsuspenders.injectionpoints
 			 */ 
 			if (node.parameter.(@type == '*').length() == node.parameter.@type.length())
 			{
-				node = createDummyInstance(node, clazz);
+				createDummyInstance(node, clazz);
 			}
 			super(node, injector);
 		}
@@ -65,7 +65,7 @@ package org.swiftsuspenders.injectionpoints
 		/*******************************************************************************************
 		*								private methods											   *
 		*******************************************************************************************/
-		private function createDummyInstance(constructorNode : XML, clazz : Class) : XML
+		private function createDummyInstance(constructorNode : XML, clazz : Class) : void
 		{
 			try
 			{
@@ -88,7 +88,7 @@ package org.swiftsuspenders.injectionpoints
 			{
 				trace(error);
 			}
-			return describeType(clazz).factory.constructor[0];
+			constructorNode.setChildren(describeType(clazz).factory.constructor[0].children());
 		}
 	}
 }

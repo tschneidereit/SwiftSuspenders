@@ -22,9 +22,10 @@
 
 package org.swiftsuspenders
 {
+	import flexunit.framework.Assert;
+	
 	import mx.collections.ArrayCollection;
 	
-	import flexunit.framework.Assert;
 	import org.swiftsuspenders.support.injectees.ClassInjectee;
 	import org.swiftsuspenders.support.injectees.ComplexClassInjectee;
 	import org.swiftsuspenders.support.injectees.InterfaceInjectee;
@@ -328,6 +329,23 @@ package org.swiftsuspenders
 		[Test]
 		public function performConstructorInjectionWithOneNamedParameter():void
 		{
+			injector.mapClass(Clazz, Clazz, 'namedDependency');
+			var injectee:OneNamedParameterConstructorInjectee = injector.instantiate(OneNamedParameterConstructorInjectee);
+			Assert.assertNotNull("Instance of Class should have been injected for named Clazz parameter", injectee.getDependency() );
+		}
+		
+		[Test]
+		public function performXMLConfiguredConstructorInjectionWithOneNamedParameter():void
+		{
+			var diConfig:XML =
+				<types>
+					<type name='org.swiftsuspenders.support.injectees::OneNamedParameterConstructorInjectee'>
+						<constructor>
+							<arg injectionname="namedDependency" />
+						</constructor>
+					</type>
+				</types>;
+			injector = new Injector(diConfig);
 			injector.mapClass(Clazz, Clazz, 'namedDependency');
 			var injectee:OneNamedParameterConstructorInjectee = injector.instantiate(OneNamedParameterConstructorInjectee);
 			Assert.assertNotNull("Instance of Class should have been injected for named Clazz parameter", injectee.getDependency() );
