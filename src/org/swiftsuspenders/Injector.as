@@ -184,6 +184,11 @@ package org.swiftsuspenders
 			injector.setParentInjector(this);
 			return injector;
 		}
+
+		public function setParentInjector(parentInjector : Injector) : void
+		{
+			m_parentInjector = parentInjector;
+		}
 		
 		
 		/*******************************************************************************************
@@ -315,11 +320,6 @@ package org.swiftsuspenders
 			var parentInjectionPoints : Array = m_injectionPointLists[parentClassName] || 
 					getInjectionPoints(Class(getDefinitionByName(parentClassName)));
 			injectionPoints.push.apply(injectionPoints, parentInjectionPoints);
-		}
-		
-		private function setParentInjector(parentInjector : Injector) : void
-		{
-			m_parentInjector = parentInjector;
 		}
 	}
 }
