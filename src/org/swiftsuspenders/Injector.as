@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009 the original author or authors
+ * Copyright (c) 2009-2010 the original author or authors
  * 
  * Permission is hereby granted to use, modify, and distribute this file 
  * in accordance with the terms of the license agreement accompanying it.
@@ -305,6 +305,11 @@ package org.swiftsuspenders
 				else
 				{
 					typeNode = description.factory.*.(attribute('name') == node.@name)[0];
+					if (!typeNode)
+					{
+						throw new InjectorError('Error in XML configuration: Class "' + className +
+							'" doesn\'t contain the instance member "' + node.@name + '"');
+					}
 				}
 				typeNode.appendChild(metaNode);
 			}
