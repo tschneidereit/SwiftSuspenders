@@ -161,7 +161,8 @@ package org.swiftsuspenders
 			if (!mapping)
 			{
 				throw new InjectorError('Error while removing an injector mapping: ' +
-					'No mapping defined for class ' + clazz + ', named "' + named + '"');
+					'No mapping defined for class ' + getQualifiedClassName(clazz) +
+					', named "' + named + '"');
 			}
 			mapping.setResult(null);
 		}
@@ -182,6 +183,18 @@ package org.swiftsuspenders
 				return false;
 			}
 			return mapping.hasResponse();
+		}
+
+		public function getMappingResponse(clazz : Class, named : String = '') : *
+		{
+			var mapping : InjectionConfig = getConfigurationForRequest(clazz, named);
+			if (!mapping || !mapping.hasResponse())
+			{
+				throw new InjectorError('Error while getting mapping response: ' +
+					'No mapping defined for class ' + getQualifiedClassName(clazz) +
+					', named "' + named + '"');
+			}
+			return mapping.getResponse();
 		}
 		
 		public function createChildInjector() : Injector

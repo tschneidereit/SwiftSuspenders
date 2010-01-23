@@ -488,5 +488,33 @@ package org.swiftsuspenders
 			injector.mapClass(Clazz, Clazz, 'namedClass');
 			Assert.assertTrue(injector.hasMapping(Clazz, 'namedClass'));
 		}
+
+		[Test(expects="org.swiftsuspenders.InjectorError")]
+		public function getMappingResponseFailsForUnmappedUnnamedClass():void
+		{
+			Assert.assertNull(injector.getMappingResponse(Clazz));
+		}
+
+		[Test(expects="org.swiftsuspenders.InjectorError")]
+		public function getMappingResponseFailsForUnmappedNamedClass():void
+		{
+			Assert.assertNull(injector.getMappingResponse(Clazz, 'namedClass'));
+		}
+
+		[Test]
+		public function getMappingResponseSucceedsForMappedUnnamedClass():void
+		{
+			var clazz : Clazz = new Clazz();
+			injector.mapValue(Clazz, clazz);
+			Assert.assertObjectEquals(injector.getMappingResponse(Clazz), clazz);
+		}
+
+		[Test]
+		public function getMappingResponseSucceedsForMappedNamedClass():void
+		{
+			var clazz : Clazz = new Clazz();
+			injector.mapValue(Clazz, clazz, 'namedClass');
+			Assert.assertObjectEquals(injector.getMappingResponse(Clazz, 'namedClass'), clazz);
+		}
 	}
 }
