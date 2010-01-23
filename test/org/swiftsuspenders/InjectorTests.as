@@ -447,9 +447,35 @@ package org.swiftsuspenders
 		public function postConstructMethodsCalledAsOrdered():void
 		{
 			var injectee:OrderedPostConstructInjectee = new OrderedPostConstructInjectee();
-			injector.injectInto(injectee);	
-			
+			injector.injectInto(injectee);
+
 			Assert.assertTrue(injectee.loadedAsOrdered);
+		}
+
+		[Test]
+		public function hasMappingFailsForUnmappedUnnamedClass():void
+		{
+			Assert.assertFalse(injector.hasMapping(Clazz));
+		}
+
+		[Test]
+		public function hasMappingFailsForUnmappedNamedClass():void
+		{
+			Assert.assertFalse(injector.hasMapping(Clazz, 'namedClass'));
+		}
+
+		[Test]
+		public function hasMappingSucceedsForMappedUnnamedClass():void
+		{
+			injector.mapClass(Clazz, Clazz);
+			Assert.assertTrue(injector.hasMapping(Clazz));
+		}
+
+		[Test]
+		public function hasMappingSucceedsForMappedNamedClass():void
+		{
+			injector.mapClass(Clazz, Clazz, 'namedClass');
+			Assert.assertTrue(injector.hasMapping(Clazz, 'namedClass'));
 		}
 	}
 }

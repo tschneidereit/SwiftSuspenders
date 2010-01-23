@@ -98,15 +98,7 @@ package org.swiftsuspenders
 		public function getMapping(whenAskedFor : Class, named : String = null) : InjectionConfig
 		{
 			var requestName : String = getQualifiedClassName(whenAskedFor);
-			var mappings : Dictionary = m_mappings;
-			if (named)
-			{
-				mappings = mappings[named];
-				if (!mappings)
-				{
-					mappings = m_mappings[named] = new Dictionary();
-				}
-			}
+			var mappings : Dictionary = getConfigurationsMapForRequest(requestName, named);
 			var config : InjectionConfig = mappings[requestName];
 			if (!config)
 			{
@@ -165,17 +157,31 @@ package org.swiftsuspenders
 		
 		public function unmap(clazz : Class, named : String = "") : void
 		{
-			var requestName : String = getQualifiedClassName(clazz);
-			var mapping : InjectionConfig;
-			if (named && m_mappings[named])
+			var mapping : InjectionConfig = getConfigurationForRequest(clazz, named);
+			if (!mapping)
 			{
-				mapping = Dictionary(m_mappings[named])[requestName];
-			}
-			else
-			{
-				mapping = m_mappings[requestName];
+				throw new InjectorError('Error while removing an injector mapping: ' +
+					'No mapping defined for class ' + clazz + ', named "' + named + '"');
 			}
 			mapping.setResult(null);
+		}
+
+		private function getConfigurationForRequest(clazz : Class, named : String) : InjectionConfig
+		{
+			var requestName : String = getQualifiedClassName(clazz);
+			var mappings : Dictionary = getConfigurationsMapForRequest(requestName, named);
+			var mapping : InjectionConfig = mappings[requestName];
+			return mapping;
+		}
+
+		public function hasMapping(clazz : Class, named : String = '') : Boolean
+		{
+			var mapping : InjectionConfig = getConfigurationForRequest(clazz, named);
+			if (!mapping)
+			{
+				return false;
+			}
+			return mapping.hasResponse();
 		}
 		
 		public function createChildInjector() : Injector
@@ -260,6 +266,21 @@ package org.swiftsuspenders
 			}
 			
 			return injectionPoints;
+		}
+
+		private function getConfigurationsMapForRequest(
+			requestName : String, named : String = null) : Dictionary
+		{
+			if (!named)
+			{
+				return m_mappings;
+			}
+			var mappings : Dictionary = m_mappings[named];
+			if (!mappings)
+			{
+				mappings = m_mappings[named] = new Dictionary();
+			}
+			return mappings;
 		}
 		
 		private function createInjectionPointsFromConfigXML(description : XML) : void
