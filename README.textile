@@ -27,6 +27,8 @@ SwiftSuspenders supports the following features as described in more details lat
  * singletons (which are created lazily on first injection and then reused for each additional injection of the same rule)
  * rules (which allows sharing singletons between multiple mapping rules)
 * creating child injectors which share their parents' injection mappings but can define additional mappings complementing or replacing the parents' ones
+* querying for the existence of injection rules using Injector#hasMapping
+* direct application of injection rules using Injector#getMappingResponse
 
 h2. Installation
 
@@ -77,6 +79,18 @@ A word of warning about constructor injection: Due to "a bug":http://bugs.adobe.
 h3. PostConstruct: Automatically invoking methods on injection completion
 
 Instances of classes that depend on automatic DI are only ready to be used after the DI has completed. Annotating methods in the injectee class with the @[PostConstruct]@ metadata causes them to be invoked directly after all injections have completed and it is safe to use the instance. Multiple methods can be invoked in a defined order by using the @order@ parameter: @[PostConstruct(order=1)]@.
+
+h3. Querying for injection mapping existence
+
+As of version 1.5, SwiftSuspenders supports querying for the existence of mapping rules for any request using @Injector#hasMapping@.
+@hasMapping@ expects a class or an interface and optionally a name for the mapping and returns @true@ if a request for this class/ name combination can be satisfied. Otherwise, it returns @false@.
+
+h3. Directly applying injection mappings
+
+As of version 1.5, SwiftSuspenders supports directly applying injection mappings using @Injector#getMappingResponse@.
+@getMappingResponse@ expects a class or an interface and optionally a name for the mapping and returns the mapping's result if one is defined. Otherwise, an exception is thrown.
+
+The returned value depends on the mapping defined for the relevant request. E.g., if a singleton mapping has been defined for the request, the shared singleton instance will be returned instead of creating a new instance of the class.
 
 h3. Error handling
 
