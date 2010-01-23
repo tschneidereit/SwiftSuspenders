@@ -49,6 +49,20 @@ package org.swiftsuspenders
 			}
 			return null;
 		}
+
+		public function hasResponse() : Boolean
+		{
+			if (m_result)
+			{
+				return true;
+			}
+			var parentConfig : InjectionConfig = m_injector.getParentMapping(request, injectionName);
+			if (parentConfig)
+			{
+				return true;
+			}
+			return false;
+		}
 		
 		public function setResult(result : InjectionResult) : void
 		{
