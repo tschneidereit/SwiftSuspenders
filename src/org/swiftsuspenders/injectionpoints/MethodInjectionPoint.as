@@ -101,7 +101,7 @@ package org.swiftsuspenders.injectionpoints
 			{
 				var config : InjectionConfig = m_injectionConfigs[i];
 				var injection : Object = config.getResponse();
-				if (!injection)
+				if (injection == null)
 				{
 					if (i >= requiredParameters)
 					{

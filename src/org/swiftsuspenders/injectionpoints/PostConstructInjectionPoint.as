@@ -45,7 +45,7 @@ package org.swiftsuspenders.injectionpoints
 		{
 			var orderArg : XMLList = node.arg.(@key == 'order');
 			var methodNode : XML = node.parent();
-			orderValue = int(orderArg.@value)
+			orderValue = int(orderArg.@value);
 			methodName = methodNode.@name.toString();
 		}
 	}
