@@ -43,6 +43,7 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.support.injectees.OrderedPostConstructInjectee;
 	import org.swiftsuspenders.support.injectees.RecursiveInterfaceInjectee;
 	import org.swiftsuspenders.support.injectees.SetterInjectee;
+	import org.swiftsuspenders.support.injectees.StringInjectee;
 	import org.swiftsuspenders.support.injectees.TwoNamedInterfaceFieldsInjectee;
 	import org.swiftsuspenders.support.injectees.TwoNamedParametersConstructorInjectee;
 	import org.swiftsuspenders.support.injectees.TwoNamedParametersMethodInjectee;
@@ -113,7 +114,7 @@ package org.swiftsuspenders
 			injector.injectInto(injectee);
 			Assert.assertStrictlyEquals("Named value should have been injected", value, injectee.property );
 		}
-		
+
 		[Test]
 		public function bindNamedValueByInterface():void
 		{
@@ -122,6 +123,16 @@ package org.swiftsuspenders
 			injector.mapValue(Interface, value, NamedClassInjectee.NAME);
 			injector.injectInto(injectee);
 			Assert.assertStrictlyEquals("Named value should have been injected", value, injectee.property );
+		}
+
+		[Test]
+		public function bindFalsyValue():void
+		{
+			var injectee:StringInjectee = new StringInjectee();
+			var value:String = '';
+			injector.mapValue(String, value);
+			injector.injectInto(injectee);
+			Assert.assertStrictlyEquals("Value should have been injected", value, injectee.property );
 		}
 
 		[Test]
