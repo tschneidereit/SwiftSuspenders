@@ -34,7 +34,7 @@ package org.swiftsuspenders.injectionpoints
 		override public function applyInjection(target : Object) : Object
 		{
 			var injection : Object = m_injectionConfig.getResponse();
-			if (!injection)
+			if (injection == null)
 			{
 				throw(
 					new InjectorError(
