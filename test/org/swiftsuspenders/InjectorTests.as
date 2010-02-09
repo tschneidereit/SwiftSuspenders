@@ -49,6 +49,7 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.support.injectees.TwoNamedParametersMethodInjectee;
 	import org.swiftsuspenders.support.injectees.TwoParametersConstructorInjectee;
 	import org.swiftsuspenders.support.injectees.TwoParametersMethodInjectee;
+	import org.swiftsuspenders.support.injectees.XMLInjectee;
 	import org.swiftsuspenders.support.types.Clazz;
 	import org.swiftsuspenders.support.types.Clazz2;
 	import org.swiftsuspenders.support.types.ComplexClazz;
@@ -427,6 +428,16 @@ package org.swiftsuspenders
 //			Assert.assertEquals("Instance field 'property1' should be identical to Instance field 'property2'", injectee.property1, injectee.property2);
 //			Assert.assertEquals("Instance field 'property1' should be identical to Instance field 'namedProperty1'", injectee.property1, injectee.namedProperty1);
 //			Assert.assertEquals("Instance field 'property1' should be identical to Instance field 'namedProperty2'", injectee.property1, injectee.namedProperty2);
+		}
+
+		[Test]
+		public function injectXMLValue() : void
+		{
+			var injectee : XMLInjectee = new XMLInjectee();
+			var value : XML = <test/>;
+			injector.mapValue(XML, value);
+			injector.injectInto(injectee);
+			Assert.assertEquals('injected value should be indentical to mapped value', injectee.property, value);
 		}
 		
 		[Test(expects="org.swiftsuspenders.InjectorError")]
