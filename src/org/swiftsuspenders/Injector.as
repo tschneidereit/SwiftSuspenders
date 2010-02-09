@@ -99,7 +99,7 @@ package org.swiftsuspenders
 			var injectionPoints : Array;
 			
 			var ctor : Class;
-			if (target is Proxy)
+			if (target is Proxy || target is XML)
 			{
 				//for classes extending Proxy, we can't access the 'constructor' property because 
 				//the Proxy will throw if we try. So let's take the scenic route ...
