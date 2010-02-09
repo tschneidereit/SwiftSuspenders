@@ -503,13 +503,13 @@ package org.swiftsuspenders
 		[Test(expects="org.swiftsuspenders.InjectorError")]
 		public function getMappingResponseFailsForUnmappedUnnamedClass():void
 		{
-			Assert.assertNull(injector.getMappingResponse(Clazz));
+			Assert.assertNull(injector.getInstance(Clazz));
 		}
 
 		[Test(expects="org.swiftsuspenders.InjectorError")]
 		public function getMappingResponseFailsForUnmappedNamedClass():void
 		{
-			Assert.assertNull(injector.getMappingResponse(Clazz, 'namedClass'));
+			Assert.assertNull(injector.getInstance(Clazz, 'namedClass'));
 		}
 
 		[Test]
@@ -517,7 +517,7 @@ package org.swiftsuspenders
 		{
 			var clazz : Clazz = new Clazz();
 			injector.mapValue(Clazz, clazz);
-			Assert.assertObjectEquals(injector.getMappingResponse(Clazz), clazz);
+			Assert.assertObjectEquals(injector.getInstance(Clazz), clazz);
 		}
 
 		[Test]
@@ -525,7 +525,7 @@ package org.swiftsuspenders
 		{
 			var clazz : Clazz = new Clazz();
 			injector.mapValue(Clazz, clazz, 'namedClass');
-			Assert.assertObjectEquals(injector.getMappingResponse(Clazz, 'namedClass'), clazz);
+			Assert.assertObjectEquals(injector.getInstance(Clazz, 'namedClass'), clazz);
 		}
 	}
 }

@@ -28,7 +28,7 @@ SwiftSuspenders supports the following features as described in more details lat
  * rules (which allows sharing singletons between multiple mapping rules)
 * creating child injectors which share their parents' injection mappings but can define additional mappings complementing or replacing the parents' ones
 * querying for the existence of injection rules using Injector#hasMapping
-* direct application of injection rules using Injector#getMappingResponse
+* direct application of injection rules using Injector#getInstance
 
 h2. Installation
 
@@ -87,8 +87,8 @@ As of version 1.5, SwiftSuspenders supports querying for the existence of mappin
 
 h3. Directly applying injection mappings
 
-As of version 1.5, SwiftSuspenders supports directly applying injection mappings using @Injector#getMappingResponse@.
-@getMappingResponse@ expects a class or an interface and optionally a name for the mapping and returns the mapping's result if one is defined. Otherwise, an exception is thrown.
+As of version 1.5, SwiftSuspenders supports directly applying injection mappings using @Injector#getInstance@.
+@getInstance@ expects a class or an interface and optionally a name for the mapping and returns the mapping's result if one is defined. Otherwise, an exception is thrown.
 
 The returned value depends on the mapping defined for the relevant request. E.g., if a singleton mapping has been defined for the request, the shared singleton instance will be returned instead of creating a new instance of the class.
 

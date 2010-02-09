@@ -185,7 +185,7 @@ package org.swiftsuspenders
 			return mapping.hasResponse();
 		}
 
-		public function getMappingResponse(clazz : Class, named : String = '') : *
+		public function getInstance(clazz : Class, named : String = '') : *
 		{
 			var mapping : InjectionConfig = getConfigurationForRequest(clazz, named);
 			if (!mapping || !mapping.hasResponse())
