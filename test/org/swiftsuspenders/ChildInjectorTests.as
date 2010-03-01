@@ -8,14 +8,16 @@
 package org.swiftsuspenders
 {
 	import flexunit.framework.Assert;
-	
+
+	import org.swiftsuspenders.support.injectees.ClassInjectee;
 	import org.swiftsuspenders.support.injectees.childinjectors.LeftRobotFoot;
 	import org.swiftsuspenders.support.injectees.childinjectors.RightRobotFoot;
 	import org.swiftsuspenders.support.injectees.childinjectors.RobotBody;
 	import org.swiftsuspenders.support.injectees.childinjectors.RobotFoot;
 	import org.swiftsuspenders.support.injectees.childinjectors.RobotLeg;
 	import org.swiftsuspenders.support.injectees.childinjectors.RobotToes;
-	
+	import org.swiftsuspenders.support.types.Clazz;
+
 	public class ChildInjectorTests
 	{
 		protected var injector:Injector;
@@ -80,6 +82,22 @@ package org.swiftsuspenders
 				robotBody.rightLeg.foot.toes is RobotToes);
 			Assert.assertTrue('Left Robotfoot should have a toes', 
 				robotBody.leftLeg.foot.toes is RobotToes);
+		}
+
+		[Test]
+		public function childInjectorUsesParentsMapOfWorkedInjectees() : void
+		{
+			var childInjector : Injector = injector.createChildInjector();
+			var class1 : Clazz = new Clazz();
+			var class2 : Clazz = new Clazz();
+			injector.mapValue(Clazz, class1);
+			childInjector.mapValue(Clazz, class2);
+
+			var injectee : ClassInjectee = injector.instantiate(ClassInjectee);
+			childInjector.injectInto(injectee);
+			Assert.assertEquals(
+				'injectee.property isn\' overwritten by second injection through child injector',
+				injectee.property, class1);
 		}
 	}
 }

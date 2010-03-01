@@ -206,7 +206,17 @@ package org.swiftsuspenders
 
 		public function setParentInjector(parentInjector : Injector) : void
 		{
+			//restore own map of worked injectees if parent injector is removed
+			if (m_parentInjector && !parentInjector)
+			{
+				m_attendedToInjectees = new Dictionary(true);
+			}
 			m_parentInjector = parentInjector;
+			//use parent's map of worked injectees
+			if (parentInjector)
+			{
+				m_attendedToInjectees = parentInjector.attendedToInjectees;
+			}
 		}
 		
 		
@@ -218,7 +228,12 @@ package org.swiftsuspenders
 		{
 			return m_parentInjector ? m_parentInjector.getMapping(whenAskedFor, named) : null;
 		}
-		
+
+		internal function get attendedToInjectees() : Dictionary
+		{
+			return m_attendedToInjectees;
+		}
+
 		
 		/*******************************************************************************************
 		*								private methods											   *
