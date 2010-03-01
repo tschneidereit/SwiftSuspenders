@@ -56,31 +56,18 @@ package org.swiftsuspenders
 		[Test]
 		public function injectionTypeSingletonReturnsResponse():void
 		{
-			var singletons:Dictionary = new Dictionary();
 			var config : InjectionConfig = new InjectionConfig(Clazz, "", injector);
-			config.setResult(new InjectSingletonResult(Clazz, singletons, injector));
+			config.setResult(new InjectSingletonResult(Clazz, injector));
 			var returnedResponse:Object = config.getResponse();	
 			
 			Assert.assertTrue( returnedResponse is Clazz);
 		}
 		
 		[Test]
-		public function singletonIsAddedToUsedDictionaryOnFirstResponse():void
-		{
-			var singletons:Dictionary = new Dictionary();
-			var config : InjectionConfig = new InjectionConfig(Clazz, "", injector);
-			config.setResult(new InjectSingletonResult(Clazz, singletons, injector));
-			var returnedResponse:Object = config.getResponse();
-			
-			Assert.assertTrue( singletons[Clazz] == returnedResponse );			
-		}
-		
-		[Test]
 		public function sameSingletonIsReturnedOnSecondResponse():void
 		{
-			var singletons:Dictionary = new Dictionary();
 			var config : InjectionConfig = new InjectionConfig(Clazz, "", injector);
-			config.setResult(new InjectSingletonResult(Clazz, singletons, injector));
+			config.setResult(new InjectSingletonResult(Clazz, injector));
 			var returnedResponse:Object = config.getResponse();	
 			var secondResponse:Object = config.getResponse();
 			
@@ -90,9 +77,8 @@ package org.swiftsuspenders
 		[Test]
 		public function sameNamedSingletonIsReturnedOnSecondResponse():void
 		{
-			var singletons:Dictionary = new Dictionary();
-			var config : InjectionConfig = new InjectionConfig(Clazz, "named", injector);	
-			config.setResult(new InjectSingletonResult(Clazz, singletons, injector));
+			var config : InjectionConfig = new InjectionConfig(Clazz, "named", injector);
+			config.setResult(new InjectSingletonResult(Clazz, injector));
 			var returnedResponse:Object = config.getResponse();
 			var secondResponse:Object = config.getResponse();
 			

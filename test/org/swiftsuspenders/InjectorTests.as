@@ -527,5 +527,17 @@ package org.swiftsuspenders
 			injector.mapValue(Clazz, clazz, 'namedClass');
 			Assert.assertObjectEquals(injector.getInstance(Clazz, 'namedClass'), clazz);
 		}
+
+		[Test]
+		public function injectorRemovesSingletonInstanceOnRuleRemoval() : void
+		{
+			injector.mapSingleton(Clazz);
+			var injectee1 : ClassInjectee = injector.instantiate(ClassInjectee);
+			injector.unmap(Clazz);
+			injector.mapSingleton(Clazz);
+			var injectee2 : ClassInjectee = injector.instantiate(ClassInjectee);
+			Assert.assertFalse('injectee1.property is not the same instance as injectee2.property',
+				injectee1.property == injectee2.property);
+		}
 	}
 }

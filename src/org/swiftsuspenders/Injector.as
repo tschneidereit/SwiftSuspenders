@@ -31,7 +31,6 @@ package org.swiftsuspenders
 		*******************************************************************************************/
 		private var m_parentInjector : Injector;
 		private var m_mappings : Dictionary;
-		private var m_singletons : Dictionary;
 		private var m_injectionPointLists : Dictionary;
 		private var m_constructorInjectionPoints : Dictionary;
 		private var m_attendedToInjectees : Dictionary;
@@ -44,7 +43,6 @@ package org.swiftsuspenders
 		public function Injector(xmlConfig : XML = null)
 		{
 			m_mappings = new Dictionary();
-			m_singletons = new Dictionary();
 			m_injectionPointLists = new Dictionary();
 			m_constructorInjectionPoints = new Dictionary();
 			m_attendedToInjectees = new Dictionary(true);
@@ -75,16 +73,7 @@ package org.swiftsuspenders
 			whenAskedFor : Class, useSingletonOf : Class, named : String = "") : *
 		{
 			var config : InjectionConfig = getMapping(whenAskedFor, named);
-			var singletons : Dictionary = m_singletons;
-			if (named)
-			{
-				singletons = singletons[named];
-				if (!singletons)
-				{
-					singletons = m_singletons[named] = new Dictionary();
-				}
-			}
-			config.setResult(new InjectSingletonResult(useSingletonOf, singletons, this));
+			config.setResult(new InjectSingletonResult(useSingletonOf, this));
 			return config;
 		}
 		
