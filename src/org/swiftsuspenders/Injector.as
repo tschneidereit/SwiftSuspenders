@@ -84,14 +84,14 @@ package org.swiftsuspenders
 			return useRule;
 		}
 		
-		public function getMapping(whenAskedFor : Class, named : String = null) : InjectionConfig
+		public function getMapping(whenAskedFor : Class, named : String = "") : InjectionConfig
 		{
 			var requestName : String = getQualifiedClassName(whenAskedFor);
-			var mappings : Dictionary = getConfigurationsMapForRequest(requestName, named);
-			var config : InjectionConfig = mappings[requestName];
+			var config : InjectionConfig = m_mappings[requestName + '#' + named];
 			if (!config)
 			{
-				config = mappings[requestName] = new InjectionConfig(whenAskedFor, named, this);
+				config = m_mappings[requestName + '#' + named] =
+					new InjectionConfig(whenAskedFor, named, this);
 			}
 			return config;
 		}
@@ -104,7 +104,7 @@ package org.swiftsuspenders
 			}
 			m_attendedToInjectees[target] = true;
 			
-			//get injection points or cache them if this targets' class wasn't encountered before
+			//get injection points or cache them if this target's class wasn't encountered before
 			var injectionPoints : Array;
 			
 			var ctor : Class;
@@ -280,24 +280,7 @@ package org.swiftsuspenders
 		private function getConfigurationForRequest(clazz : Class, named : String) : InjectionConfig
 		{
 			var requestName : String = getQualifiedClassName(clazz);
-			var mappings : Dictionary = getConfigurationsMapForRequest(requestName, named);
-			var mapping : InjectionConfig = mappings[requestName];
-			return mapping;
-		}
-
-		private function getConfigurationsMapForRequest(
-			requestName : String, named : String = null) : Dictionary
-		{
-			if (!named)
-			{
-				return m_mappings;
-			}
-			var mappings : Dictionary = m_mappings[named];
-			if (!mappings)
-			{
-				mappings = m_mappings[named] = new Dictionary();
-			}
-			return mappings;
+			return m_mappings[requestName + '#' + named];
 		}
 		
 		private function createInjectionPointsFromConfigXML(description : XML) : void

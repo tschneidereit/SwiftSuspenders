@@ -60,7 +60,7 @@ package org.swiftsuspenders.injectionpoints
 			var i : int = 0;
 			for each (var parameter : XML in methodNode.parameter)
 			{
-				var injectionName : String;
+				var injectionName : String = '';
 				if (nameArgs[i])
 				{
 					injectionName = nameArgs[i].@value.toString();
