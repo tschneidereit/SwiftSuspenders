@@ -156,14 +156,6 @@ package org.swiftsuspenders
 			mapping.setResult(null);
 		}
 
-		private function getConfigurationForRequest(clazz : Class, named : String) : InjectionConfig
-		{
-			var requestName : String = getQualifiedClassName(clazz);
-			var mappings : Dictionary = getConfigurationsMapForRequest(requestName, named);
-			var mapping : InjectionConfig = mappings[requestName];
-			return mapping;
-		}
-
 		public function hasMapping(clazz : Class, named : String = '') : Boolean
 		{
 			var mapping : InjectionConfig = getConfigurationForRequest(clazz, named);
@@ -283,6 +275,14 @@ package org.swiftsuspenders
 			}
 			
 			return injectionPoints;
+		}
+
+		private function getConfigurationForRequest(clazz : Class, named : String) : InjectionConfig
+		{
+			var requestName : String = getQualifiedClassName(clazz);
+			var mappings : Dictionary = getConfigurationsMapForRequest(requestName, named);
+			var mapping : InjectionConfig = mappings[requestName];
+			return mapping;
 		}
 
 		private function getConfigurationsMapForRequest(
