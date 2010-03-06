@@ -107,18 +107,7 @@ package org.swiftsuspenders
 			//get injection points or cache them if this target's class wasn't encountered before
 			var injectionPoints : Array;
 			
-			var ctor : Class;
-			if (target is Proxy || target is XML)
-			{
-				//for classes extending Proxy, we can't access the 'constructor' property because 
-				//the Proxy will throw if we try. So let's take the scenic route ...
-				var name : String = getQualifiedClassName(target);
-				ctor = Class(getDefinitionByName(name));
-			}
-			else
-			{
-				ctor = target.constructor;
-			}
+			var ctor : Class = getConstructor(target);
 			
 			injectionPoints = m_injectionPointLists[ctor] || getInjectionPoints(ctor);
 			
