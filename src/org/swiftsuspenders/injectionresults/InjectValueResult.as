@@ -28,7 +28,6 @@ package org.swiftsuspenders.injectionresults
 		
 		override public function getResponse() : Object
 		{
-			m_injector.injectInto(m_value);
 			return m_value;
 		}
 	}

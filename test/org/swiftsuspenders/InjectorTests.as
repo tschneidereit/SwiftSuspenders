@@ -137,16 +137,13 @@ package org.swiftsuspenders
 		}
 
 		[Test]
-		public function bindValueNested():void
+		public function boundValueIsNotInjectedInto() : void
 		{
-			var injectee:ComplexClassInjectee = new ComplexClassInjectee();
-			var value:Clazz = new Clazz();
-			var complexValue:ComplexClazz = new ComplexClazz();
-			injector.mapValue(Clazz, value);
-			injector.mapValue(ComplexClazz, complexValue);
+			var injectee:RecursiveInterfaceInjectee = new RecursiveInterfaceInjectee();
+			var value:InterfaceInjectee = new InterfaceInjectee();
+			injector.mapValue(InterfaceInjectee, value);
 			injector.injectInto(injectee);
-			Assert.assertStrictlyEquals("Complex Value should have been injected", complexValue, injectee.property  );
-			Assert.assertStrictlyEquals("Nested value should have been injected", value, injectee.property.value );
+			Assert.assertNull('value shouldn\'t have been injected into', value.property);
 		}
 		
 		[Test]
@@ -171,6 +168,18 @@ package org.swiftsuspenders
 			Assert.assertNotNull("Instance of Class should have been injected", injectee.property );
 			injector.injectInto(injectee2);
 			Assert.assertFalse("Injected values should be different", injectee.property == injectee2.property );
+		}
+
+		[Test]
+		public function boundClassIsInjectedInto():void
+		{
+			var injectee:ComplexClassInjectee = new ComplexClassInjectee();
+			var value:Clazz = new Clazz();
+			injector.mapValue(Clazz, value);
+			injector.mapClass(ComplexClazz, ComplexClazz);
+			injector.injectInto(injectee);
+			Assert.assertNotNull("Complex Value should have been injected", injectee.property  );
+			Assert.assertStrictlyEquals("Nested value should have been injected", value, injectee.property.value );
 		}
 		
 		[Test]
