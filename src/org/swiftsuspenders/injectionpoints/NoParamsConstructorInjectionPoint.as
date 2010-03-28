@@ -7,9 +7,6 @@
 
 package org.swiftsuspenders.injectionpoints
 {
-	import flash.utils.Dictionary;
-	import org.swiftsuspenders.Injector;
-	
 	public class NoParamsConstructorInjectionPoint extends InjectionPoint
 	{
 		public function NoParamsConstructorInjectionPoint()
@@ -17,7 +14,7 @@ package org.swiftsuspenders.injectionpoints
 			super(null, null);
 		}
 		
-		override public function applyInjection(target : Object, injector : Injector, singletons : Dictionary) : Object
+		override public function applyInjection(target : Object) : Object
 		{
 			return new target();
 		}

@@ -62,14 +62,13 @@ package org.swiftsuspenders
             	attribute("type") == getQualifiedClassName(superclass)).length() > 0);
 		}
 
-		public function getClass(
-			value : *, applicationDomain : ApplicationDomain = null) : Class
+		public function getClass(value : *, applicationDomain : ApplicationDomain = null) : Class
 		{
 			if (value is Class)
 			{
 				return value;
 			}
-			return value.constructor;
+			return getConstructor(value);
 		}
 
 		public function getFQCN(value : *, replaceColons : Boolean = false) : String

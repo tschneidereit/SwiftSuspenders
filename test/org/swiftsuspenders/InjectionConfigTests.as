@@ -3,6 +3,9 @@ package org.swiftsuspenders
 	import flash.utils.Dictionary;
 	
 	import org.flexunit.Assert;
+	import org.swiftsuspenders.injectionresults.InjectClassResult;
+	import org.swiftsuspenders.injectionresults.InjectSingletonResult;
+	import org.swiftsuspenders.injectionresults.InjectValueResult;
 	import org.swiftsuspenders.support.types.Clazz;
 	
 	public class InjectionConfigTests
@@ -24,8 +27,7 @@ package org.swiftsuspenders
 		[Test]
 		public function configIsInstantiated():void
 		{
-			var config : InjectionConfig = new InjectionConfig(
-				Clazz, Clazz, InjectionType.SINGLETON, "");	
+			var config : InjectionConfig = new InjectionConfig(Clazz, "", null);
 			
 			Assert.assertTrue(config is InjectionConfig);
 		}
@@ -34,9 +36,9 @@ package org.swiftsuspenders
 		public function injectionTypeValueReturnsRespone():void
 		{
 			var response:Clazz = new Clazz();
-			var config : InjectionConfig = new InjectionConfig(
-				Clazz, response, InjectionType.VALUE, "");	
-			var returnedResponse:Object = config.getResponse( injector, null);
+			var config : InjectionConfig = new InjectionConfig(Clazz, "", injector);
+			config.setResult(new InjectValueResult(response, injector));
+			var returnedResponse:Object = config.getResponse();
 			
 			Assert.assertStrictlyEquals(response, returnedResponse);
 		}
@@ -44,9 +46,9 @@ package org.swiftsuspenders
 		[Test]
 		public function injectionTypeClassReturnsRespone():void
 		{
-			var config : InjectionConfig = new InjectionConfig(
-				Clazz, Clazz, InjectionType.CLASS, "");	
-			var returnedResponse:Object = config.getResponse( injector, null);
+			var config : InjectionConfig = new InjectionConfig(Clazz, "", injector);
+			config.setResult(new InjectClassResult(Clazz, injector));
+			var returnedResponse:Object = config.getResponse();
 			
 			Assert.assertTrue( returnedResponse is Clazz);
 		}
@@ -54,44 +56,20 @@ package org.swiftsuspenders
 		[Test]
 		public function injectionTypeSingletonReturnsResponse():void
 		{
-			var singletons:Dictionary = new Dictionary();
-			var config : InjectionConfig = new InjectionConfig(
-				Clazz, Clazz, InjectionType.SINGLETON, "");	
-			var returnedResponse:Object = config.getResponse( injector, singletons);	
+			var config : InjectionConfig = new InjectionConfig(Clazz, "", injector);
+			config.setResult(new InjectSingletonResult(Clazz, injector));
+			var returnedResponse:Object = config.getResponse();	
 			
 			Assert.assertTrue( returnedResponse is Clazz);
 		}
 		
 		[Test]
-		public function singletonIsAddedToUsedDictionaryOnFirstResponse():void
-		{
-			var singletons:Dictionary = new Dictionary();
-			var config : InjectionConfig = new InjectionConfig(
-				Clazz, Clazz, InjectionType.SINGLETON, "");	
-			var returnedResponse:Object = config.getResponse( injector, singletons);	
-			
-			Assert.assertTrue( singletons[Clazz] == returnedResponse );			
-		}
-		
-		[Test]
-		public function namedSingletonIsAddedToUsedDictionaryOnFirstResponse():void
-		{
-			var singletons:Dictionary = new Dictionary();
-			var config : InjectionConfig = new InjectionConfig(
-				Clazz, Clazz, InjectionType.SINGLETON, "named");	
-			var returnedResponse:Object = config.getResponse( injector, singletons);	
-			
-			Assert.assertTrue( singletons["named"][Clazz] == returnedResponse );			
-		}
-		
-		[Test]
 		public function sameSingletonIsReturnedOnSecondResponse():void
 		{
-			var singletons:Dictionary = new Dictionary();
-			var config : InjectionConfig = new InjectionConfig(
-				Clazz, Clazz, InjectionType.SINGLETON, "");	
-			var returnedResponse:Object = config.getResponse( injector, singletons);	
-			var secondResponse:Object = config.getResponse( injector, singletons);
+			var config : InjectionConfig = new InjectionConfig(Clazz, "", injector);
+			config.setResult(new InjectSingletonResult(Clazz, injector));
+			var returnedResponse:Object = config.getResponse();	
+			var secondResponse:Object = config.getResponse();
 			
 			Assert.assertStrictlyEquals( returnedResponse, secondResponse )
 		}
@@ -99,11 +77,10 @@ package org.swiftsuspenders
 		[Test]
 		public function sameNamedSingletonIsReturnedOnSecondResponse():void
 		{
-			var singletons:Dictionary = new Dictionary();
-			var config : InjectionConfig = new InjectionConfig(
-				Clazz, Clazz, InjectionType.SINGLETON, "named");	
-			var returnedResponse:Object = config.getResponse( injector, singletons);	
-			var secondResponse:Object = config.getResponse( injector, singletons);
+			var config : InjectionConfig = new InjectionConfig(Clazz, "named", injector);
+			config.setResult(new InjectSingletonResult(Clazz, injector));
+			var returnedResponse:Object = config.getResponse();
+			var secondResponse:Object = config.getResponse();
 			
 			Assert.assertStrictlyEquals( returnedResponse, secondResponse )
 		}

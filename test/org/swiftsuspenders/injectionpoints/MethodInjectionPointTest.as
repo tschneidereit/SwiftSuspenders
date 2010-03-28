@@ -7,6 +7,7 @@ package  org.swiftsuspenders.injectionpoints
 	import org.swiftsuspenders.InjectionConfig;
 	import org.swiftsuspenders.InjectionType;
 	import org.swiftsuspenders.Injector;
+	import org.swiftsuspenders.injectionresults.InjectSingletonResult;
 	import org.swiftsuspenders.support.injectees.OneRequiredOneOptionalPropertyMethodInjectee;
 	import org.swiftsuspenders.support.injectees.TwoParametersMethodInjectee;
 	import org.swiftsuspenders.support.nodes.InjectionNodes;
@@ -37,9 +38,8 @@ package  org.swiftsuspenders.injectionpoints
 			var injectee:TwoParametersMethodInjectee = new TwoParametersMethodInjectee()
 			var injector:Injector = new Injector();
 			var injectionPoint:MethodInjectionPoint = createTwoPropertySingletonClazzAndInterfaceMethodInjectionPoint();
-			var singletons:Dictionary = new Dictionary();
 			
-			injectionPoint.applyInjection(injectee, injector, singletons);
+			injectionPoint.applyInjection(injectee);
 			
 			return injectee;
 		}
@@ -47,19 +47,17 @@ package  org.swiftsuspenders.injectionpoints
 		private function createTwoPropertySingletonClazzAndInterfaceMethodInjectionPoint():MethodInjectionPoint
 		{
 			var node:XML = XML(InjectionNodes.METHOD_SET_DEPENDENCIES_INJECTION_NODE_TWO_PARAMETER.metadata);
-			var mappings:Dictionary = createUnamedTwoPropertyPropertySingletonInjectionConfigDictionary();
-			var injectionPoint:MethodInjectionPoint = new MethodInjectionPoint(node, mappings);
+			var injector : Injector = createUnnamedTwoPropertyPropertySingletonInjectionInjector();
+			var injectionPoint:MethodInjectionPoint = new MethodInjectionPoint(node, injector);
 			return injectionPoint;
 		}
 		
 		private function applyMethodInjectionToOneRequiredOneOptionalPropertyIntoMethod():OneRequiredOneOptionalPropertyMethodInjectee
 		{
 			var injectee:OneRequiredOneOptionalPropertyMethodInjectee = new OneRequiredOneOptionalPropertyMethodInjectee();
-			var injector:Injector = new Injector();
 			var injectionPoint:MethodInjectionPoint = createOneRequiredOneOptionalPropertySingletonClazzAndInterfaceMethodInjectionPoint();
-			var singletons:Dictionary = new Dictionary();
 			
-			injectionPoint.applyInjection(injectee, injector, singletons);
+			injectionPoint.applyInjection(injectee);
 			
 			return injectee;
 		}
@@ -67,37 +65,26 @@ package  org.swiftsuspenders.injectionpoints
 		private function createOneRequiredOneOptionalPropertySingletonClazzAndInterfaceMethodInjectionPoint():MethodInjectionPoint
 		{
 			var node:XML = XML(InjectionNodes.METHOD_SET_DEPENDENCIES_INJECTION_NODE_ONE_REQUIRED_ONE_OPTIONAL_PARAMETER.metadata);
-			var mappings:Dictionary = createUnnamedPropertySingletonInjectionConfigDictionary();
-			var injectionPoint:MethodInjectionPoint = new MethodInjectionPoint(node, mappings);
+			var injector : Injector = createUnnamedPropertySingletonInjectionInjector();
+			var injectionPoint:MethodInjectionPoint = new MethodInjectionPoint(node, injector);
 			return injectionPoint;
 		}
 		
-		private function createUnamedTwoPropertyPropertySingletonInjectionConfigDictionary():Dictionary
+		private function createUnnamedTwoPropertyPropertySingletonInjectionInjector() : Injector
 		{
-			var configDictionary:Dictionary = new Dictionary();
-			var config_clazz : InjectionConfig = new InjectionConfig(
-				Clazz, Clazz, InjectionType.SINGLETON, "");
-			var config_interface : InjectionConfig = new InjectionConfig(
-				Interface, Clazz, InjectionType.SINGLETON, "");
-			var fqcn_clazz:String = getQualifiedClassName(Clazz);
-			var fqcn_interface:String = getQualifiedClassName(Interface);
+			var injector:Injector = new Injector();
+			injector.mapSingleton(Clazz);
+			injector.mapSingletonOf(Interface, Clazz);
 			
-			configDictionary[fqcn_clazz] = config_clazz;
-			configDictionary[fqcn_interface] = config_interface;
-			
-			return configDictionary;
+			return injector;
 		}
 		
-		private function createUnnamedPropertySingletonInjectionConfigDictionary():Dictionary
+		private function createUnnamedPropertySingletonInjectionInjector() : Injector
 		{
-			var configDictionary:Dictionary = new Dictionary();
-			var config_clazz : InjectionConfig = new InjectionConfig(
-				Clazz, Clazz, InjectionType.SINGLETON, "");
-			var fqcn_clazz:String = getQualifiedClassName(Clazz);
+			var injector:Injector = new Injector();
+			injector.mapSingleton(Clazz);
 			
-			configDictionary[fqcn_clazz] = config_clazz;
-			
-			return configDictionary;
+			return injector;
 		}
 	}
 }
