@@ -5,12 +5,12 @@
 * in accordance with the terms of the license agreement accompanying it.
 */
 
-package org.swiftsuspenders
+package org.swiftsuspenders.support.injectees.childinjectors
 {
-	public class InjectionType
+	public class RobotToes
 	{
-		public static const VALUE : int = 0;
-		public static const CLASS : int = 1;
-		public static const SINGLETON : int = 2;
+		public function RobotToes()
+		{
+		}
 	}
 }

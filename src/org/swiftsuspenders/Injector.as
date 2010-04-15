@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009 the original author or authors
+ * Copyright (c) 2009-2010 the original author or authors
  * 
  * Permission is hereby granted to use, modify, and distribute this file 
  * in accordance with the terms of the license agreement accompanying it.
@@ -19,21 +19,23 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.injectionpoints.NoParamsConstructorInjectionPoint;
 	import org.swiftsuspenders.injectionpoints.PostConstructInjectionPoint;
 	import org.swiftsuspenders.injectionpoints.PropertyInjectionPoint;
+	import org.swiftsuspenders.injectionresults.InjectClassResult;
+	import org.swiftsuspenders.injectionresults.InjectOtherRuleResult;
+	import org.swiftsuspenders.injectionresults.InjectSingletonResult;
+	import org.swiftsuspenders.injectionresults.InjectValueResult;
 
-	/**
-	 * @author tschneidereit
-	 */
 	public class Injector
 	{
 		/*******************************************************************************************
-		*								protected/ private properties							   *
+		*								private properties										   *
 		*******************************************************************************************/
+		private var m_parentInjector : Injector;
 		private var m_mappings : Dictionary;
-		private var m_singletons : Dictionary;
 		private var m_injectionPointLists : Dictionary;
 		private var m_constructorInjectionPoints : Dictionary;
 		private var m_attendedToInjectees : Dictionary;
 		private var m_xmlMetadata : XML;
+		
 		
 		/*******************************************************************************************
 		*								public methods											   *
@@ -41,28 +43,24 @@ package org.swiftsuspenders
 		public function Injector(xmlConfig : XML = null)
 		{
 			m_mappings = new Dictionary();
-			m_singletons = new Dictionary();
 			m_injectionPointLists = new Dictionary();
 			m_constructorInjectionPoints = new Dictionary();
 			m_attendedToInjectees = new Dictionary(true);
 			m_xmlMetadata = xmlConfig;
 		}
 		
-		public function mapValue(
-			whenAskedFor : Class, useValue : Object, named : String = "") : *
+		public function mapValue(whenAskedFor : Class, useValue : Object, named : String = "") : *
 		{
-			var config : InjectionConfig = new InjectionConfig(
-				whenAskedFor, useValue, InjectionType.VALUE, named);
-			addMapping(config, named);
+			var config : InjectionConfig = getMapping(whenAskedFor, named);
+			config.setResult(new InjectValueResult(useValue, this));
 			return config;
 		}
 		
 		public function mapClass(
-			whenAskedFor : Class, instantiateClass : Class, named : String = "") : *
+				whenAskedFor : Class, instantiateClass : Class, named : String = "") : *
 		{
-			var config : InjectionConfig = new InjectionConfig(
-				whenAskedFor, instantiateClass, InjectionType.CLASS, named);
-			addMapping(config, named);
+			var config : InjectionConfig = getMapping(whenAskedFor, named);
+			config.setResult(new InjectClassResult(instantiateClass, this));
 			return config;
 		}
 		
@@ -74,17 +72,28 @@ package org.swiftsuspenders
 		public function mapSingletonOf(
 			whenAskedFor : Class, useSingletonOf : Class, named : String = "") : *
 		{
-			var config : InjectionConfig = new InjectionConfig(
-				whenAskedFor, useSingletonOf, InjectionType.SINGLETON, named);
-			addMapping(config, named);
+			var config : InjectionConfig = getMapping(whenAskedFor, named);
+			config.setResult(new InjectSingletonResult(useSingletonOf, this));
 			return config;
 		}
 		
-		public function mapRule(
-			whenAskedFor : Class, useRule : *, named : String = "") : *
+		public function mapRule(whenAskedFor : Class, useRule : *, named : String = "") : *
 		{
-			addMapping(useRule, named, getQualifiedClassName(whenAskedFor));
+			var config : InjectionConfig = getMapping(whenAskedFor, named);
+			config.setResult(new InjectOtherRuleResult(useRule));
 			return useRule;
+		}
+		
+		public function getMapping(whenAskedFor : Class, named : String = "") : InjectionConfig
+		{
+			var requestName : String = getQualifiedClassName(whenAskedFor);
+			var config : InjectionConfig = m_mappings[requestName + '#' + named];
+			if (!config)
+			{
+				config = m_mappings[requestName + '#' + named] =
+					new InjectionConfig(whenAskedFor, named, this);
+			}
+			return config;
 		}
 		
 		public function injectInto(target : Object) : void
@@ -95,21 +104,10 @@ package org.swiftsuspenders
 			}
 			m_attendedToInjectees[target] = true;
 			
-			//get injection points or cache them if this targets' class wasn't encountered before
+			//get injection points or cache them if this target's class wasn't encountered before
 			var injectionPoints : Array;
 			
-			var ctor : Class;
-			if (target is Proxy || target is XML)
-			{
-				//for classes extending Proxy, we can't access the 'constructor' property because 
-				//the Proxy will throw if we try. So let's take the scenic route ...
-				var name : String = getQualifiedClassName(target);
-				ctor = Class(getDefinitionByName(name));
-			}
-			else
-			{
-				ctor = target.constructor;
-			}
+			var ctor : Class = getConstructor(target);
 			
 			injectionPoints = m_injectionPointLists[ctor] || getInjectionPoints(ctor);
 			
@@ -117,7 +115,7 @@ package org.swiftsuspenders
 			for (var i : int = 0; i < length; i++)
 			{
 				var injectionPoint : InjectionPoint = injectionPoints[i];
-				injectionPoint.applyInjection(target, this, m_singletons);
+				injectionPoint.applyInjection(target);
 			}
 			
 		}
@@ -130,50 +128,86 @@ package org.swiftsuspenders
 				getInjectionPoints(clazz);
 				injectionPoint = m_constructorInjectionPoints[clazz];
 			}
-			var instance : * = injectionPoint.applyInjection(clazz, this, m_singletons);
+			var instance : * = injectionPoint.applyInjection(clazz);
 			injectInto(instance);
 			return instance;
 		}
 		
 		public function unmap(clazz : Class, named : String = "") : void
 		{
-			var requestName : String = getQualifiedClassName(clazz);
-			if (named && m_mappings[named])
+			var mapping : InjectionConfig = getConfigurationForRequest(clazz, named);
+			if (!mapping)
 			{
-				delete Dictionary(m_mappings[named])[requestName];
+				throw new InjectorError('Error while removing an injector mapping: ' +
+					'No mapping defined for class ' + getQualifiedClassName(clazz) +
+					', named "' + named + '"');
 			}
-			else
+			mapping.setResult(null);
+		}
+
+		public function hasMapping(clazz : Class, named : String = '') : Boolean
+		{
+			var mapping : InjectionConfig = getConfigurationForRequest(clazz, named);
+			if (!mapping)
 			{
-				delete m_mappings[requestName];
+				return false;
+			}
+			return mapping.hasResponse();
+		}
+
+		public function getInstance(clazz : Class, named : String = '') : *
+		{
+			var mapping : InjectionConfig = getConfigurationForRequest(clazz, named);
+			if (!mapping || !mapping.hasResponse())
+			{
+				throw new InjectorError('Error while getting mapping response: ' +
+					'No mapping defined for class ' + getQualifiedClassName(clazz) +
+					', named "' + named + '"');
+			}
+			return mapping.getResponse();
+		}
+		
+		public function createChildInjector() : Injector
+		{
+			var injector : Injector = new Injector();
+			injector.setParentInjector(this);
+			return injector;
+		}
+
+		public function setParentInjector(parentInjector : Injector) : void
+		{
+			//restore own map of worked injectees if parent injector is removed
+			if (m_parentInjector && !parentInjector)
+			{
+				m_attendedToInjectees = new Dictionary(true);
+			}
+			m_parentInjector = parentInjector;
+			//use parent's map of worked injectees
+			if (parentInjector)
+			{
+				m_attendedToInjectees = parentInjector.attendedToInjectees;
 			}
 		}
 		
 		
 		/*******************************************************************************************
-		*								protected/ private methods								   *
+		*								internal methods										   *
 		*******************************************************************************************/
-		private function addMapping(
-			config : InjectionConfig, named : String, requestName : String = null) : void
+		internal function getParentMapping(
+				whenAskedFor : Class, named : String = null) : InjectionConfig
 		{
-			if (!requestName)
-			{
-				requestName = getQualifiedClassName(config.request);
-			}
-			if (named)
-			{
-				var nameMappings : Dictionary = m_mappings[named];
-				if (!nameMappings)
-				{
-					nameMappings = m_mappings[named] = new Dictionary();
-				}
-				nameMappings[requestName] = config;
-			}
-			else
-			{
-				m_mappings[requestName] = config;
-			}
+			return m_parentInjector ? m_parentInjector.getMapping(whenAskedFor, named) : null;
 		}
+
+		internal function get attendedToInjectees() : Dictionary
+		{
+			return m_attendedToInjectees;
+		}
+
 		
+		/*******************************************************************************************
+		*								private methods											   *
+		*******************************************************************************************/
 		private function getInjectionPoints(clazz : Class) : Array
 		{
 			var description : XML = describeType(clazz);
@@ -195,7 +229,7 @@ package org.swiftsuspenders
 			if (node)
 			{
 				m_constructorInjectionPoints[clazz] = 
-						new ConstructorInjectionPoint(node, m_mappings, clazz);
+					new ConstructorInjectionPoint(node, clazz, this);
 			}
 			else
 			{
@@ -205,14 +239,14 @@ package org.swiftsuspenders
 			for each (node in description.factory.*.
 				(name() == 'variable' || name() == 'accessor').metadata.(@name == 'Inject'))
 			{
-				injectionPoint = new PropertyInjectionPoint(node, m_mappings);
+				injectionPoint = new PropertyInjectionPoint(node, this);
 				injectionPoints.push(injectionPoint);
 			}
 		
 			//get injection points for methods
 			for each (node in description.factory.method.metadata.(@name == 'Inject'))
 			{
-				injectionPoint = new MethodInjectionPoint(node, m_mappings);
+				injectionPoint = new MethodInjectionPoint(node, this);
 				injectionPoints.push(injectionPoint);
 			}
 			
@@ -220,7 +254,7 @@ package org.swiftsuspenders
 			var postConstructMethodPoints : Array = [];
 			for each (node in description.factory.method.metadata.(@name == 'PostConstruct'))
 			{
-				injectionPoint = new PostConstructInjectionPoint(node, m_mappings);
+				injectionPoint = new PostConstructInjectionPoint(node, this);
 				postConstructMethodPoints.push(injectionPoint);
 			}
 			if (postConstructMethodPoints.length > 0)
@@ -230,6 +264,12 @@ package org.swiftsuspenders
 			}
 			
 			return injectionPoints;
+		}
+
+		private function getConfigurationForRequest(clazz : Class, named : String) : InjectionConfig
+		{
+			var requestName : String = getQualifiedClassName(clazz);
+			return m_mappings[requestName + '#' + named];
 		}
 		
 		private function createInjectionPointsFromConfigXML(description : XML) : void
@@ -275,6 +315,11 @@ package org.swiftsuspenders
 				else
 				{
 					typeNode = description.factory.*.(attribute('name') == node.@name)[0];
+					if (!typeNode)
+					{
+						throw new InjectorError('Error in XML configuration: Class "' + className +
+							'" doesn\'t contain the instance member "' + node.@name + '"');
+					}
 				}
 				typeNode.appendChild(metaNode);
 			}

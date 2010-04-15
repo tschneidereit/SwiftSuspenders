@@ -1,34 +1,34 @@
 /*
-* Copyright (c) 2009 the original author or authors
-* 
-* Permission is hereby granted to use, modify, and distribute this file 
-* in accordance with the terms of the license agreement accompanying it.
-*/
+ * Copyright (c) 2010 the original author or authors
+ *
+ * Permission is hereby granted to use, modify, and distribute this file
+ * in accordance with the terms of the license agreement accompanying it.
+ */
 
 package org.swiftsuspenders.injectionresults
 {
-	import org.swiftsuspenders.Injector;
-	
-	public class InjectValueResult extends InjectionResult
+	import org.swiftsuspenders.InjectionConfig;
+
+	public class InjectOtherRuleResult extends InjectionResult
 	{
 		/*******************************************************************************************
 		 *								private properties										   *
 		 *******************************************************************************************/
-		private var m_value : Object
+		private var m_rule : InjectionConfig;
 		
 		
 		/*******************************************************************************************
 		 *								public methods											   *
 		 *******************************************************************************************/
-		public function InjectValueResult(value : Object, injector : Injector)
+		public function InjectOtherRuleResult(rule : InjectionConfig)
 		{
-			m_value = value;
-			super(injector);
+			m_rule = rule;
+			super(null);
 		}
 		
 		override public function getResponse() : Object
 		{
-			return m_value;
+			return m_rule.getResponse();
 		}
 	}
 }

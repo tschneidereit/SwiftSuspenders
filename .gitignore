@@ -13,6 +13,7 @@
 /.flexProperties
 /.flexLibProperties
 /.project
+/*.iml
 /com.adobe.flexbuilder.project.prefs
 /org.eclipse.core.resources.prefs
 FlexUnitApplication.mxml

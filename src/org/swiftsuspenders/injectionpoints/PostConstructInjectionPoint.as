@@ -7,8 +7,6 @@
 
 package org.swiftsuspenders.injectionpoints
 {
-	import flash.utils.Dictionary;
-	
 	import org.swiftsuspenders.Injector;
 	
 	public class PostConstructInjectionPoint extends InjectionPoint
@@ -23,9 +21,9 @@ package org.swiftsuspenders.injectionpoints
 		/*******************************************************************************************
 		 *								public methods											   *
 		 *******************************************************************************************/
-		public function PostConstructInjectionPoint(node:XML, injectorMappings:Dictionary)
+		public function PostConstructInjectionPoint(node:XML, injector : Injector)
 		{
-			super(node, injectorMappings);
+			super(node, injector);
 		}
 		
 		public function get order():int
@@ -33,8 +31,7 @@ package org.swiftsuspenders.injectionpoints
 			return orderValue;
 		}
 
-		override public function applyInjection(
-			target : Object, injector : Injector, singletons : Dictionary) : Object
+		override public function applyInjection(target : Object) : Object
 		{
 			target[methodName]();
 			return target;
@@ -44,11 +41,11 @@ package org.swiftsuspenders.injectionpoints
 		/*******************************************************************************************
 		 *								protected methods										   *
 		 *******************************************************************************************/
-		override protected function initializeInjection(node : XML, injectorMappings : Dictionary) : void
+		override protected function initializeInjection(node : XML, injector : Injector) : void
 		{
 			var orderArg : XMLList = node.arg.(@key == 'order');
 			var methodNode : XML = node.parent();
-			orderValue = int(orderArg.@value)
+			orderValue = int(orderArg.@value);
 			methodName = methodNode.@name.toString();
 		}
 	}

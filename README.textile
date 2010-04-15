@@ -6,6 +6,30 @@ Its main Raison d'être is supporting the very nice "Robotlegs":http://www.robot
 
 To enable using SwiftSuspenders in the Flash Professional IDE, which doesn't support keeping custom metadata, it's also possible to configure injection points using a simple XML configuration format.
 
+h2. Features
+
+SwiftSuspenders supports the following features as described in more details later in the documentation:
+
+* metadata based annotation of injection points
+* XML based annotation of injection points for working with the Flash Professional IDE (which doesn't support custom metadata annotations as of version CS4)
+* injecting into
+
+ * properties (i.e. setters)
+ * variables
+ * methods (with support for optional arguments)
+ * constructors (with support for optional arguments)
+* named injections, allowing for more specific binding of injections than just by their type. (See "Defining injection points")
+* [PostConstruct] annotations for invoking methods after all injections have been applied
+* mapping
+
+ * values
+ * classes (of which new instances are created for each injection)
+ * singletons (which are created lazily on first injection and then reused for each additional injection of the same rule)
+ * rules (which allows sharing singletons between multiple mapping rules)
+* creating child injectors which share their parents' injection mappings but can define additional mappings complementing or replacing the parents' ones
+* querying for the existence of injection rules using Injector#hasMapping
+* direct application of injection rules using Injector#getInstance
+
 h2. Installation
 
 The easiest way to use SwiftSuspenders is by adding the provided SWC file to your project. If you want to use the source, you have to add the following parameters to your MXMLC settings:
@@ -56,9 +80,96 @@ h3. PostConstruct: Automatically invoking methods on injection completion
 
 Instances of classes that depend on automatic DI are only ready to be used after the DI has completed. Annotating methods in the injectee class with the @[PostConstruct]@ metadata causes them to be invoked directly after all injections have completed and it is safe to use the instance. Multiple methods can be invoked in a defined order by using the @order@ parameter: @[PostConstruct(order=1)]@.
 
+h3. Querying for injection mapping existence
+
+As of version 1.5, SwiftSuspenders supports querying for the existence of mapping rules for any request using @Injector#hasMapping@.
+@hasMapping@ expects a class or an interface and optionally a name for the mapping and returns @true@ if a request for this class/ name combination can be satisfied. Otherwise, it returns @false@.
+
+h3. Directly applying injection mappings
+
+As of version 1.5, SwiftSuspenders supports directly applying injection mappings using @Injector#getInstance@.
+@getInstance@ expects a class or an interface and optionally a name for the mapping and returns the mapping's result if one is defined. Otherwise, an exception is thrown.
+
+The returned value depends on the mapping defined for the relevant request. E.g., if a singleton mapping has been defined for the request, the shared singleton instance will be returned instead of creating a new instance of the class.
+
 h3. Error handling
 
 If a mapping for a requested injection is not found, an exception containing the target class and the requested property type.
+
+h3. Child Injectors
+
+As of version 1.5, SwiftSuspenders supports creating child injectors. These are dependent on their parent injector and automatically inherit all rule mappings the parent has. Additionally, they can have their own rule mappings, complementing or overriding the parent mappings.
+
+The main use-case for this feature is as a solution to the so-called "robot legs problem". When using Dependency Injection, one often wants to create very similar object trees that have only slight differences. A good illustration is a simplified robot, that can be built using identical parts for its legs but needs different parts for the left and the right foot. Using normal Dependency Injection, one would have to subclass the RobotLeg class for each leg only to enable specifying different injections for each foot. The subclasses would then have to implement boilerplate code to apply the injection to the variable the parent expects the foot in:
+<pre>
+public class Robot
+{
+	[Inject] public var leftLeg : LeftRobotLeg;
+	[Inject] public var rightLeg : RightRobotLeg;
+}
+public class RobotLeg
+{
+	protected var foot : RobotFoot;
+}
+
+public class LeftRobotLeg extends RobotLeg
+{
+	[Inject] public function set foot (foot : LeftRobotFoot) : void
+	{
+		this.foot = foot;
+	}
+}
+
+public class RightRobotLeg extends RobotLeg
+{
+	[Inject] public function set foot (foot : RightRobotFoot) : void
+	{
+		this.foot = foot;
+	}
+}
+
+public class RobotConstruction
+{
+	var injector : Injector = new Injector();
+	injector.mapClass(LeftRobotLeg, LeftRobotLeg);
+	injector.mapClass(RightRobotLeg, RightRobotLeg);
+	injector.mapClass(LeftRobotFoot, LeftRobotFoot);
+	injector.mapClass(RightRobotFoot, RightRobotFoot);
+	var robot : Robot = injector.instantiate(Robot);
+}
+</pre>
+
+Using child injectors, the robot can be built with just the RobotLeg class, while still supplying different feet for each leg:
+<pre>
+public class Robot
+{
+	[Inject(name='leftLeg')] public var leftLeg : RobotLeg;
+	[Inject(name='rightLeg')] public var rightLeg : RobotLeg;
+}
+public class RobotLeg
+{
+	protected var foot : RobotFoot;
+}
+
+public class RobotConstruction
+{
+	var injector : Injector = new Injector();
+	var leftLegRule : InjectionConfig = injector.mapClass(RobotLeg, RobotLeg, 'leftLeg'); //store a reference to the rule
+	var leftLegInjector : Injector = injector.createChildInjector(); //create a child injector
+	leftLegInjector.mapClass(RobotFoot, LeftRobotFoot); //create a mapping for the correct foot in the child injector
+	leftLegRule.setInjector(leftLegInjector); //instruct SwiftSuspenders to use the child injector for all dependency injections in the left leg object tree
+	//and the same for the right leg:
+	var rightLegInjector : Injector = injector.createChildInjector();
+	rightLegInjector.mapClass(RobotFoot, RightRobotFoot);
+	rightLegRule.setInjector(rightLegInjector);
+	//finally, create the object tree by instantiating the Robot class:
+	var robot : Robot = injector.instantiate(Robot);
+}
+</pre>
+
+The child injectors forward all injection requests they don't have a mapping for to their parent injector. This enables sharing additional rules between the injectors. For example, the robot feet might have toes that work the same for both feet, so a mapping for these could be added to the main injector instead of adding the mappings to both child injectors. (Note though, that applying a rule from the parent injector will make SwiftSuspenders leave the child injector, so any additional injections further down the object tree won't have mappings from the child injector applied to them. It's possible to branch out into the child injectors by using @setInjector@ on subsequent mapping rules, though.)
+
+Injectors can be nested freely to create configuration trees of arbitrary complexity.
 
 h3. XML configuration of injection points
 
