@@ -102,6 +102,7 @@
 	
 	  <!-- So true. -->
       <arg value="-incremental=true" />
+      <arg value="-static-link-runtime-shared-libraries=true" />
       <arg value="-verbose-stacktraces=true" />
       <arg value="-headless-server=true" />
 	</java>
