@@ -99,5 +99,25 @@ package org.swiftsuspenders
 				'injectee.property isn\' overwritten by second injection through child injector',
 				injectee.property, class1);
 		}
+        
+        [Test]
+        public function childInjectorHasMappingWhenExistsOnParentInjector():void
+        {
+            var childInjector : Injector = injector.createChildInjector();
+            var class1 : Clazz = new Clazz();
+            injector.mapValue(Clazz, class1);  
+            
+            Assert.assertTrue('Child injector should return true for hasMapping that exists on parent injector',
+                childInjector.hasMapping(Clazz));
+        }
+        
+        [Test]
+        public function childInjectorDoesNotHaveMappingWhenDoesNotExistOnParentInjector():void
+        {
+            var childInjector : Injector = injector.createChildInjector();
+            
+            Assert.assertFalse('Child injector should not return true for hasMapping that does not exists on parent injector',
+                childInjector.hasMapping(Clazz));
+        }        
 	}
 }

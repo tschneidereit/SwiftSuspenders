@@ -269,7 +269,10 @@ package org.swiftsuspenders
 		private function getConfigurationForRequest(clazz : Class, named : String) : InjectionConfig
 		{
 			var requestName : String = getQualifiedClassName(clazz);
-			return m_mappings[requestName + '#' + named];
+            var config:InjectionConfig = m_mappings[requestName + '#' + named];
+            if(m_parentInjector && !config && m_parentInjector.hasMapping(clazz, named))
+                config = getParentMapping(clazz, named);
+			return config;
 		}
 		
 		private function createInjectionPointsFromConfigXML(description : XML) : void
