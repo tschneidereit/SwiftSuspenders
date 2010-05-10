@@ -37,8 +37,8 @@ package org.swiftsuspenders
 		{
 			var response:Clazz = new Clazz();
 			var config : InjectionConfig = new InjectionConfig(Clazz, "", injector);
-			config.setResult(new InjectValueResult(response, injector));
-			var returnedResponse:Object = config.getResponse();
+			config.setResult(new InjectValueResult(response));
+			var returnedResponse:Object = config.getResponse(injector);
 			
 			Assert.assertStrictlyEquals(response, returnedResponse);
 		}
@@ -47,8 +47,8 @@ package org.swiftsuspenders
 		public function injectionTypeClassReturnsRespone():void
 		{
 			var config : InjectionConfig = new InjectionConfig(Clazz, "", injector);
-			config.setResult(new InjectClassResult(Clazz, injector));
-			var returnedResponse:Object = config.getResponse();
+			config.setResult(new InjectClassResult(Clazz));
+			var returnedResponse:Object = config.getResponse(injector);
 			
 			Assert.assertTrue( returnedResponse is Clazz);
 		}
@@ -57,8 +57,8 @@ package org.swiftsuspenders
 		public function injectionTypeSingletonReturnsResponse():void
 		{
 			var config : InjectionConfig = new InjectionConfig(Clazz, "", injector);
-			config.setResult(new InjectSingletonResult(Clazz, injector));
-			var returnedResponse:Object = config.getResponse();	
+			config.setResult(new InjectSingletonResult(Clazz));
+			var returnedResponse:Object = config.getResponse(injector);
 			
 			Assert.assertTrue( returnedResponse is Clazz);
 		}
@@ -67,9 +67,9 @@ package org.swiftsuspenders
 		public function sameSingletonIsReturnedOnSecondResponse():void
 		{
 			var config : InjectionConfig = new InjectionConfig(Clazz, "", injector);
-			config.setResult(new InjectSingletonResult(Clazz, injector));
-			var returnedResponse:Object = config.getResponse();	
-			var secondResponse:Object = config.getResponse();
+			config.setResult(new InjectSingletonResult(Clazz));
+			var returnedResponse:Object = config.getResponse(injector);
+			var secondResponse:Object = config.getResponse(injector);
 			
 			Assert.assertStrictlyEquals( returnedResponse, secondResponse )
 		}
@@ -78,9 +78,9 @@ package org.swiftsuspenders
 		public function sameNamedSingletonIsReturnedOnSecondResponse():void
 		{
 			var config : InjectionConfig = new InjectionConfig(Clazz, "named", injector);
-			config.setResult(new InjectSingletonResult(Clazz, injector));
-			var returnedResponse:Object = config.getResponse();
-			var secondResponse:Object = config.getResponse();
+			config.setResult(new InjectSingletonResult(Clazz));
+			var returnedResponse:Object = config.getResponse(injector);
+			var secondResponse:Object = config.getResponse(injector);
 			
 			Assert.assertStrictlyEquals( returnedResponse, secondResponse )
 		}

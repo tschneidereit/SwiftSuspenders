@@ -32,9 +32,9 @@ package org.swiftsuspenders.injectionpoints
 			super(node, injector);
 		}
 		
-		override public function applyInjection(target : Object) : Object
+		override public function applyInjection(target : Object, injector : Injector) : Object
 		{
-			var parameters : Array = gatherParameterValues(target);
+			var parameters : Array = gatherParameterValues(target, injector);
 			var method : Function = target[methodName];
 			method.apply(target, parameters);
 			return target;
@@ -93,14 +93,14 @@ package org.swiftsuspenders.injectionpoints
 			}
 		}
 		
-		protected function gatherParameterValues(target : Object) : Array
+		protected function gatherParameterValues(target : Object, injector : Injector) : Array
 		{
 			var parameters : Array = [];
 			var length : int = m_injectionConfigs.length;
 			for (var i : int = 0; i < length; i++)
 			{
 				var config : InjectionConfig = m_injectionConfigs[i];
-				var injection : Object = config.getResponse();
+				var injection : Object = config.getResponse(injector);
 				if (injection == null)
 				{
 					if (i >= requiredParameters)

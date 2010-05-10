@@ -52,7 +52,7 @@ package org.swiftsuspenders
 		public function mapValue(whenAskedFor : Class, useValue : Object, named : String = "") : *
 		{
 			var config : InjectionConfig = getMapping(whenAskedFor, named);
-			config.setResult(new InjectValueResult(useValue, this));
+			config.setResult(new InjectValueResult(useValue));
 			return config;
 		}
 		
@@ -60,7 +60,7 @@ package org.swiftsuspenders
 				whenAskedFor : Class, instantiateClass : Class, named : String = "") : *
 		{
 			var config : InjectionConfig = getMapping(whenAskedFor, named);
-			config.setResult(new InjectClassResult(instantiateClass, this));
+			config.setResult(new InjectClassResult(instantiateClass));
 			return config;
 		}
 		
@@ -73,7 +73,7 @@ package org.swiftsuspenders
 			whenAskedFor : Class, useSingletonOf : Class, named : String = "") : *
 		{
 			var config : InjectionConfig = getMapping(whenAskedFor, named);
-			config.setResult(new InjectSingletonResult(useSingletonOf, this));
+			config.setResult(new InjectSingletonResult(useSingletonOf));
 			return config;
 		}
 		
@@ -115,7 +115,7 @@ package org.swiftsuspenders
 			for (var i : int = 0; i < length; i++)
 			{
 				var injectionPoint : InjectionPoint = injectionPoints[i];
-				injectionPoint.applyInjection(target);
+				injectionPoint.applyInjection(target, this);
 			}
 			
 		}
@@ -128,7 +128,7 @@ package org.swiftsuspenders
 				getInjectionPoints(clazz);
 				injectionPoint = m_constructorInjectionPoints[clazz];
 			}
-			var instance : * = injectionPoint.applyInjection(clazz);
+			var instance : * = injectionPoint.applyInjection(clazz, this);
 			injectInto(instance);
 			return instance;
 		}
@@ -152,19 +152,19 @@ package org.swiftsuspenders
 			{
 				return false;
 			}
-			return mapping.hasResponse();
+			return mapping.hasResponse(this);
 		}
 
 		public function getInstance(clazz : Class, named : String = '') : *
 		{
 			var mapping : InjectionConfig = getConfigurationForRequest(clazz, named);
-			if (!mapping || !mapping.hasResponse())
+			if (!mapping || !mapping.hasResponse(this))
 			{
 				throw new InjectorError('Error while getting mapping response: ' +
 					'No mapping defined for class ' + getQualifiedClassName(clazz) +
 					', named "' + named + '"');
 			}
-			return mapping.getResponse();
+			return mapping.getResponse(this);
 		}
 		
 		public function createChildInjector() : Injector

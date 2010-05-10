@@ -8,6 +8,7 @@
 package org.swiftsuspenders.injectionresults
 {
 	import org.swiftsuspenders.InjectionConfig;
+	import org.swiftsuspenders.Injector;
 
 	public class InjectOtherRuleResult extends InjectionResult
 	{
@@ -23,12 +24,11 @@ package org.swiftsuspenders.injectionresults
 		public function InjectOtherRuleResult(rule : InjectionConfig)
 		{
 			m_rule = rule;
-			super(null);
 		}
 		
-		override public function getResponse() : Object
+		override public function getResponse(injector : Injector) : Object
 		{
-			return m_rule.getResponse();
+			return m_rule.getResponse(injector);
 		}
 	}
 }

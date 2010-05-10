@@ -31,9 +31,9 @@ package org.swiftsuspenders.injectionpoints
 			super(node, injector);
 		}
 		
-		override public function applyInjection(target : Object) : Object
+		override public function applyInjection(target : Object, injector : Injector) : Object
 		{
-			var injection : Object = m_injectionConfig.getResponse();
+			var injection : Object = m_injectionConfig.getResponse(injector);
 			if (injection == null)
 			{
 				throw(

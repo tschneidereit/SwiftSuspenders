@@ -19,7 +19,7 @@ package org.swiftsuspenders.injectionpoints
 			initializeInjection(node, injector);
 		}
 		
-		public function applyInjection(target : Object) : Object
+		public function applyInjection(target : Object, injector : Injector) : Object
 		{
 			return target;
 		}

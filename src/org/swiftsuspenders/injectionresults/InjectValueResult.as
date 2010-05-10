@@ -14,19 +14,18 @@ package org.swiftsuspenders.injectionresults
 		/*******************************************************************************************
 		 *								private properties										   *
 		 *******************************************************************************************/
-		private var m_value : Object
+		private var m_value : Object;
 		
 		
 		/*******************************************************************************************
 		 *								public methods											   *
 		 *******************************************************************************************/
-		public function InjectValueResult(value : Object, injector : Injector)
+		public function InjectValueResult(value : Object)
 		{
 			m_value = value;
-			super(injector);
 		}
 		
-		override public function getResponse() : Object
+		override public function getResponse(injector : Injector) : Object
 		{
 			return m_value;
 		}

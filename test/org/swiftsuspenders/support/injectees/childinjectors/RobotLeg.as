@@ -10,6 +10,6 @@ package org.swiftsuspenders.support.injectees.childinjectors
 	public class RobotLeg
 	{
 		[Inject]
-		public var foot : RobotFoot;
+		public var ankle : RobotAnkle;
 	}
 }

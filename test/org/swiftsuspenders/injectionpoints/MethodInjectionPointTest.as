@@ -35,11 +35,11 @@ package  org.swiftsuspenders.injectionpoints
 		
 		private function applyMethodInjectionToUnnamedTwoParameterInjectee():TwoParametersMethodInjectee
 		{
-			var injectee:TwoParametersMethodInjectee = new TwoParametersMethodInjectee()
+			var injectee:TwoParametersMethodInjectee = new TwoParametersMethodInjectee();
 			var injector:Injector = new Injector();
 			var injectionPoint:MethodInjectionPoint = createTwoPropertySingletonClazzAndInterfaceMethodInjectionPoint();
 			
-			injectionPoint.applyInjection(injectee);
+			injectionPoint.applyInjection(injectee, injector);
 			
 			return injectee;
 		}
@@ -54,10 +54,11 @@ package  org.swiftsuspenders.injectionpoints
 		
 		private function applyMethodInjectionToOneRequiredOneOptionalPropertyIntoMethod():OneRequiredOneOptionalPropertyMethodInjectee
 		{
+			var injector:Injector = new Injector();
 			var injectee:OneRequiredOneOptionalPropertyMethodInjectee = new OneRequiredOneOptionalPropertyMethodInjectee();
 			var injectionPoint:MethodInjectionPoint = createOneRequiredOneOptionalPropertySingletonClazzAndInterfaceMethodInjectionPoint();
 			
-			injectionPoint.applyInjection(injectee);
+			injectionPoint.applyInjection(injectee, injector);
 			
 			return injectee;
 		}

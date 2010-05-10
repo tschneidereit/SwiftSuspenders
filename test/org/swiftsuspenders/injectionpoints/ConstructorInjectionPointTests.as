@@ -29,7 +29,7 @@ package  org.swiftsuspenders.injectionpoints
 				new ConstructorInjectionPoint(node, TwoParametersConstructorInjectee, injector);
 			
 			var injectee:TwoParametersConstructorInjectee = 
-				injectionPoint.applyInjection(TwoParametersConstructorInjectee) as TwoParametersConstructorInjectee;
+				injectionPoint.applyInjection(TwoParametersConstructorInjectee, injector) as TwoParametersConstructorInjectee;
 			
 			Assert.assertTrue("dependency 1 should be Clazz instance", injectee.getDependency() is Clazz);		
 			Assert.assertTrue("dependency 2 should be 'stringReference'", injectee.getDependency2() == STRING_REFERENCE);	
@@ -45,7 +45,7 @@ package  org.swiftsuspenders.injectionpoints
 			var injectionPoint:ConstructorInjectionPoint = new ConstructorInjectionPoint(node, TwoParametersConstructorInjectee, injector);
 			
 			var injectee:TwoOptionalParametersConstructorInjectee = 
-				injectionPoint.applyInjection(TwoOptionalParametersConstructorInjectee) as TwoOptionalParametersConstructorInjectee;
+				injectionPoint.applyInjection(TwoOptionalParametersConstructorInjectee, injector) as TwoOptionalParametersConstructorInjectee;
 			
 			
 			Assert.assertTrue("dependency 1 should be Clazz instance", injectee.getDependency() is Clazz);		
@@ -62,7 +62,7 @@ package  org.swiftsuspenders.injectionpoints
 			var injectionPoint:ConstructorInjectionPoint = new ConstructorInjectionPoint(node, TwoParametersConstructorInjectee, injector);
 			
 			var injectee:TwoOptionalParametersConstructorInjectee = 
-				injectionPoint.applyInjection(TwoOptionalParametersConstructorInjectee) as TwoOptionalParametersConstructorInjectee;
+				injectionPoint.applyInjection(TwoOptionalParametersConstructorInjectee, injector) as TwoOptionalParametersConstructorInjectee;
 			
 			
 			Assert.assertTrue("dependency 1 should be Clazz null", injectee.getDependency() == null);		

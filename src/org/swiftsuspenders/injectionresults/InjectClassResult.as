@@ -20,15 +20,14 @@ package org.swiftsuspenders.injectionresults
 		/*******************************************************************************************
 		 *								public methods											   *
 		 *******************************************************************************************/
-		public function InjectClassResult(responseType : Class, injector : Injector)
+		public function InjectClassResult(responseType : Class)
 		{
 			m_responseType = responseType;
-			super(injector);
 		}
 		
-		override public function getResponse() : Object
+		override public function getResponse(injector : Injector) : Object
 		{
-			return m_injector.instantiate(m_responseType);
+			return injector.instantiate(m_responseType);
 		}
 	}
 }

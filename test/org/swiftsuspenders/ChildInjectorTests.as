@@ -12,6 +12,7 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.support.injectees.ClassInjectee;
 	import org.swiftsuspenders.support.injectees.childinjectors.LeftRobotFoot;
 	import org.swiftsuspenders.support.injectees.childinjectors.RightRobotFoot;
+	import org.swiftsuspenders.support.injectees.childinjectors.RobotAnkle;
 	import org.swiftsuspenders.support.injectees.childinjectors.RobotBody;
 	import org.swiftsuspenders.support.injectees.childinjectors.RobotFoot;
 	import org.swiftsuspenders.support.injectees.childinjectors.RobotLeg;
@@ -41,47 +42,76 @@ package org.swiftsuspenders
 		public function injectorUsesChildInjectorForSpecifiedRule() : void
 		{
 			injector.mapClass(RobotFoot, RobotFoot);
-			
+
 			var leftFootRule : InjectionConfig = injector.mapClass(RobotLeg, RobotLeg, 'leftLeg');
 			var leftChildInjector : Injector = injector.createChildInjector();
+			leftChildInjector.mapClass(RobotAnkle, RobotAnkle);
 			leftChildInjector.mapClass(RobotFoot, LeftRobotFoot);
+
 			leftFootRule.setInjector(leftChildInjector);
-			
 			var rightFootRule : InjectionConfig = injector.mapClass(RobotLeg, RobotLeg, 'rightLeg');
 			var rightChildInjector : Injector = injector.createChildInjector();
+			rightChildInjector.mapClass(RobotAnkle, RobotAnkle);
 			rightChildInjector.mapClass(RobotFoot, RightRobotFoot);
 			rightFootRule.setInjector(rightChildInjector);
 			
 			var robotBody : RobotBody = injector.instantiate(RobotBody);
 			
 			Assert.assertTrue('Right RobotLeg should have a RightRobotFoot', 
-				robotBody.rightLeg.foot is RightRobotFoot);
+				robotBody.rightLeg.ankle.foot is RightRobotFoot);
 			Assert.assertTrue('Left RobotLeg should have a LeftRobotFoot', 
-				robotBody.leftLeg.foot is LeftRobotFoot);
+				robotBody.leftLeg.ankle.foot is LeftRobotFoot);
 		}
-		
+
 		[Test]
 		public function childInjectorUsesParentInjectorForMissingRules() : void
 		{
 			injector.mapClass(RobotFoot, RobotFoot);
 			injector.mapClass(RobotToes, RobotToes);
-			
+
+			var leftFootRule : InjectionConfig = injector.mapClass(RobotLeg, RobotLeg, 'leftLeg');
+			var leftChildInjector : Injector = injector.createChildInjector();
+			leftChildInjector.mapClass(RobotAnkle, RobotAnkle);
+			leftChildInjector.mapClass(RobotFoot, LeftRobotFoot);
+			leftFootRule.setInjector(leftChildInjector);
+
+			var rightFootRule : InjectionConfig = injector.mapClass(RobotLeg, RobotLeg, 'rightLeg');
+			var rightChildInjector : Injector = injector.createChildInjector();
+			rightChildInjector.mapClass(RobotAnkle, RobotAnkle);
+			rightChildInjector.mapClass(RobotFoot, RightRobotFoot);
+			rightFootRule.setInjector(rightChildInjector);
+
+			var robotBody : RobotBody = injector.instantiate(RobotBody);
+
+			Assert.assertTrue('Right RobotFoot should have toes',
+				robotBody.rightLeg.ankle.foot.toes is RobotToes);
+			Assert.assertTrue('Left Robotfoot should have a toes',
+				robotBody.leftLeg.ankle.foot.toes is RobotToes);
+		}
+
+		[Test]
+		public function childInjectorDoesntReturnToParentAfterUsingParentInjectorForMissingRules() : void
+		{
+			injector.mapClass(RobotAnkle, RobotAnkle);
+			injector.mapClass(RobotFoot, RobotFoot);
+			injector.mapClass(RobotToes, RobotToes);
+
 			var leftFootRule : InjectionConfig = injector.mapClass(RobotLeg, RobotLeg, 'leftLeg');
 			var leftChildInjector : Injector = injector.createChildInjector();
 			leftChildInjector.mapClass(RobotFoot, LeftRobotFoot);
 			leftFootRule.setInjector(leftChildInjector);
-			
+
 			var rightFootRule : InjectionConfig = injector.mapClass(RobotLeg, RobotLeg, 'rightLeg');
 			var rightChildInjector : Injector = injector.createChildInjector();
 			rightChildInjector.mapClass(RobotFoot, RightRobotFoot);
 			rightFootRule.setInjector(rightChildInjector);
-			
+
 			var robotBody : RobotBody = injector.instantiate(RobotBody);
-			
-			Assert.assertTrue('Right RobotFoot should have toes', 
-				robotBody.rightLeg.foot.toes is RobotToes);
-			Assert.assertTrue('Left Robotfoot should have a toes', 
-				robotBody.leftLeg.foot.toes is RobotToes);
+
+			Assert.assertTrue('Right RobotFoot should have RightRobotFoot',
+				robotBody.rightLeg.ankle.foot is RightRobotFoot);
+			Assert.assertTrue('Left RobotFoot should have LeftRobotFoot',
+				robotBody.leftLeg.ankle.foot is LeftRobotFoot);
 		}
 
 		[Test]

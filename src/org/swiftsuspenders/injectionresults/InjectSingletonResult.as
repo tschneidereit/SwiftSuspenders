@@ -21,24 +21,23 @@ package org.swiftsuspenders.injectionresults
 		/*******************************************************************************************
 		 *								public methods											   *
 		 *******************************************************************************************/
-		public function InjectSingletonResult(responseType : Class, injector : Injector)
+		public function InjectSingletonResult(responseType : Class)
 		{
 			m_responseType = responseType;
-			super(injector);
 		}
 		
-		override public function getResponse() : Object
+		override public function getResponse(injector : Injector) : Object
 		{
-			return m_response ||= createResponse();
+			return m_response ||= createResponse(injector);
 		}
 		
 		
 		/*******************************************************************************************
 		 *								private methods											   *
 		 *******************************************************************************************/
-		private function createResponse() : Object
+		private function createResponse(injector : Injector) : Object
 		{
-			return m_injector.instantiate(m_responseType);
+			return injector.instantiate(m_responseType);
 		}
 	}
 }

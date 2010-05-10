@@ -7,6 +7,8 @@
 
 package org.swiftsuspenders.injectionpoints
 {
+	import org.swiftsuspenders.Injector;
+
 	public class NoParamsConstructorInjectionPoint extends InjectionPoint
 	{
 		public function NoParamsConstructorInjectionPoint()
@@ -14,7 +16,7 @@ package org.swiftsuspenders.injectionpoints
 			super(null, null);
 		}
 		
-		override public function applyInjection(target : Object) : Object
+		override public function applyInjection(target : Object, injector : Injector) : Object
 		{
 			return new target();
 		}

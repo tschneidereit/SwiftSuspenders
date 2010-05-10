@@ -16,10 +16,11 @@ package org.swiftsuspenders.injectionpoints
 		[Test]
 		public function injectionOfSinglePropertyIsApplied():void
 		{
+			var injector:Injector = new Injector();
 			var injectee:ClassInjectee = new ClassInjectee();
 			var injectionPoint:PropertyInjectionPoint = createSingleProertySingletonClazzVariableInjectionPoint();
 			
-			injectionPoint.applyInjection(injectee);
+			injectionPoint.applyInjection(injectee, injector);
 			
 			Assert.assertTrue("injectee should contain Clazz instance", injectee.property is Clazz);
 		}

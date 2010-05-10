@@ -12,27 +12,15 @@ package org.swiftsuspenders.injectionresults
 	public class InjectionResult
 	{
 		/*******************************************************************************************
-		 *								protected properties									   *
-		 *******************************************************************************************/
-		protected var m_injector : Injector;
-		
-		
-		/*******************************************************************************************
 		 *								public methods											   *
 		 *******************************************************************************************/
-		public function InjectionResult(injector : Injector)
+		public function InjectionResult()
 		{
-			m_injector = injector;
 		}
 		
-		public function getResponse() : Object
+		public function getResponse(injector : Injector) : Object
 		{
 			return null;
-		}
-		
-		public function setInjector(injector : Injector) : void
-		{
-			m_injector = injector;
 		}
 	}
 }
