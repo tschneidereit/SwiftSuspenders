@@ -82,7 +82,7 @@ package org.swiftsuspenders.injectionpoints
 				}
 				else
 				{
-					parameterType = Class(getDefinitionByName(parameterTypeName));
+					parameterType = Class(injector.getApplicationDomain().getDefinition(parameterTypeName));
 				}
 				m_injectionConfigs.push(injector.getMapping(parameterType, injectionName));
 				if (parameter.@optional.toString() == 'false')

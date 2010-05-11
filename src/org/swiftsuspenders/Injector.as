@@ -7,6 +7,7 @@
 
 package org.swiftsuspenders
 {
+	import flash.system.ApplicationDomain;
 	import flash.utils.Dictionary;
 	import flash.utils.Proxy;
 	import flash.utils.describeType;
@@ -30,6 +31,7 @@ package org.swiftsuspenders
 		*								private properties										   *
 		*******************************************************************************************/
 		private var m_parentInjector : Injector;
+        private var m_applicationDomain:ApplicationDomain;
 		private var m_mappings : Dictionary;
 		private var m_injectionPointLists : Dictionary;
 		private var m_constructorInjectionPoints : Dictionary;
@@ -167,12 +169,23 @@ package org.swiftsuspenders
 			return mapping.getResponse(this);
 		}
 		
-		public function createChildInjector() : Injector
+		public function createChildInjector(applicationDomain:ApplicationDomain=null) : Injector
 		{
 			var injector : Injector = new Injector();
+            injector.setApplicationDomain(applicationDomain);
 			injector.setParentInjector(this);
 			return injector;
 		}
+        
+        public function setApplicationDomain(applicationDomain:ApplicationDomain):void
+        {
+            m_applicationDomain = applicationDomain;
+        }
+        
+        public function getApplicationDomain():ApplicationDomain
+        {
+            return m_applicationDomain ? m_applicationDomain : ApplicationDomain.currentDomain;
+        }
 
 		public function setParentInjector(parentInjector : Injector) : void
 		{
