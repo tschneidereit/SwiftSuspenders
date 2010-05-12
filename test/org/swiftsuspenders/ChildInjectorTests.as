@@ -8,7 +8,7 @@
 package org.swiftsuspenders
 {
 	import flexunit.framework.Assert;
-
+	
 	import org.swiftsuspenders.support.injectees.ClassInjectee;
 	import org.swiftsuspenders.support.injectees.childinjectors.LeftRobotFoot;
 	import org.swiftsuspenders.support.injectees.childinjectors.RightRobotFoot;
@@ -151,7 +151,7 @@ package org.swiftsuspenders
         }  
         
         [Test]
-        public function grandChildInjectorSuppliesResultAfterGetInstanceHasBeenUsed():void
+        public function grandChildInjectorSuppliesInjectionFromAncestor():void
         {
             var childInjector:Injector;
             var grandChildInjector:Injector;
@@ -160,12 +160,11 @@ package org.swiftsuspenders
             injector.mapSingleton(Clazz);
             childInjector = injector.createChildInjector();
             grandChildInjector = childInjector.createChildInjector();
-            childClazzInstance = childInjector.getInstance(Clazz);
             
             grandChildInjector.injectInto(injectee);
             
             Assert.assertTrue("injectee has been injected with Clazz instance from grandChildInjector", 
-                injectee.property == childClazzInstance); 
+                injectee.property is Clazz); 
         }
 	}
 }
