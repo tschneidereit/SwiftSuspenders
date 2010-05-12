@@ -148,6 +148,24 @@ package org.swiftsuspenders
             
             Assert.assertFalse('Child injector should not return true for hasMapping that does not exists on parent injector',
                 childInjector.hasMapping(Clazz));
-        }        
+        }  
+        
+        [Test]
+        public function grandChildInjectorSuppliesResultAfterGetInstanceHasBeenUsed():void
+        {
+            var childInjector:Injector;
+            var grandChildInjector:Injector;
+            var childClazzInstance:Clazz;
+            var injectee:ClassInjectee = new ClassInjectee();
+            injector.mapSingleton(Clazz);
+            childInjector = injector.createChildInjector();
+            grandChildInjector = childInjector.createChildInjector();
+            childClazzInstance = childInjector.getInstance(Clazz);
+            
+            grandChildInjector.injectInto(injectee);
+            
+            Assert.assertTrue("injectee has been injected with Clazz instance from grandChildInjector", 
+                injectee.property == childClazzInstance); 
+        }
 	}
 }
