@@ -548,5 +548,23 @@ package org.swiftsuspenders
 			Assert.assertFalse('injectee1.property is not the same instance as injectee2.property',
 				injectee1.property == injectee2.property);
 		}
+        
+        [Test]
+        public function childInjectorSuppliesResultAfterGetInstanceHasBeenUsed():void
+        {
+            var child:Injector;
+            var grandChild:Injector;
+            var childClazzInstance:Clazz;
+            var injectee:ClassInjectee = new ClassInjectee();
+            injector.mapSingleton(Clazz);
+            child = injector.createChildInjector();
+            grandChild = child.createChildInjector();
+            childClazzInstance = child.getInstance(Clazz);
+            
+            grandChild.injectInto(injectee);
+            
+            Assert.assertTrue("injectee has been injected with Clazz instance from grandChild injector", 
+                injectee.property == childClazzInstance); 
+        }
 	}
 }
