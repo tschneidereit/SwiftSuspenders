@@ -202,14 +202,30 @@ package org.swiftsuspenders
 			}
 		}
 		
+		public function getParentInjector() : Injector
+		{
+			return m_parentInjector;
+		}
+		
 		
 		/*******************************************************************************************
 		*								internal methods										   *
 		*******************************************************************************************/
-		internal function getParentMapping(
+		internal function getAncestorMapping(
 				whenAskedFor : Class, named : String = null) : InjectionConfig
 		{
-			return m_parentInjector ? m_parentInjector.getMapping(whenAskedFor, named) : null;
+			var parent : Injector = m_parentInjector;
+			while (parent)
+			{
+				var parentConfig : InjectionConfig =
+					parent.getConfigurationForRequest(whenAskedFor, named, false);
+				if (parentConfig)
+				{
+					return parentConfig;
+				}
+				parent = parent.getParentInjector();
+			}
+			return null;
 		}
 
 		internal function get attendedToInjectees() : Dictionary
@@ -279,13 +295,15 @@ package org.swiftsuspenders
 			return injectionPoints;
 		}
 
-		private function getConfigurationForRequest(clazz : Class, named : String) : InjectionConfig
+		private function getConfigurationForRequest(
+			clazz : Class, named : String, traverseAncestors : Boolean = true) : InjectionConfig
 		{
 			var requestName : String = getQualifiedClassName(clazz);
 			var config:InjectionConfig = m_mappings[requestName + '#' + named];
-			if(!config && m_parentInjector && m_parentInjector.hasMapping(clazz, named))
+			if(!config && traverseAncestors &&
+				m_parentInjector && m_parentInjector.hasMapping(clazz, named))
 			{
-				config = getParentMapping(clazz, named);
+				config = getAncestorMapping(clazz, named);
 			}
 			return config;
 		}

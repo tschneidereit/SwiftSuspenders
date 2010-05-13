@@ -34,20 +34,17 @@ package org.swiftsuspenders
 			this.injectionName = injectionName;
 		}
 		
-		public function getResponse(injector : Injector, traverseInjectorsTree : Boolean = true) : Object
+		public function getResponse(injector : Injector) : Object
 		{
 			if (m_result)
 			{
 				return m_result.getResponse(m_injector || injector);
 			}
-			if (!traverseInjectorsTree)
-			{
-				return null;
-			}
-			var parentConfig : InjectionConfig = (m_injector || injector).getParentMapping(request, injectionName);
+			var parentConfig : InjectionConfig =
+				(m_injector || injector).getAncestorMapping(request, injectionName);
 			if (parentConfig)
 			{
-				return parentConfig.getResponse(injector, false);
+				return parentConfig.getResponse(injector);
 			}
 			return null;
 		}
@@ -58,12 +55,9 @@ package org.swiftsuspenders
 			{
 				return true;
 			}
-			var parentConfig : InjectionConfig = (m_injector || injector).getParentMapping(request, injectionName);
-			if (parentConfig)
-			{
-				return true;
-			}
-			return false;
+			var parentConfig : InjectionConfig =
+				(m_injector || injector).getAncestorMapping(request, injectionName);
+			return parentConfig != null;
 		}
 		
 		public function setResult(result : InjectionResult) : void
