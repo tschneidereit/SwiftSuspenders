@@ -93,7 +93,7 @@ package org.swiftsuspenders
 			if (!config)
 			{
 				config = m_mappings[requestName + '#' + named] =
-					new InjectionConfig(whenAskedFor, named, this);
+					new InjectionConfig(whenAskedFor, named);
 			}
 			return config;
 		}

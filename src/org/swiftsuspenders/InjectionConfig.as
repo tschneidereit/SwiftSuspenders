@@ -28,7 +28,7 @@ package org.swiftsuspenders
 		/*******************************************************************************************
 		 *								public methods											   *
 		 *******************************************************************************************/
-		public function InjectionConfig(request : Class, injectionName : String, injector : Injector)
+		public function InjectionConfig(request : Class, injectionName : String)
 		{
 			this.request = request;
 			this.injectionName = injectionName;

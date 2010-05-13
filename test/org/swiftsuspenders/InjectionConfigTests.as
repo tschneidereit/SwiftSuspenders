@@ -27,7 +27,7 @@ package org.swiftsuspenders
 		[Test]
 		public function configIsInstantiated():void
 		{
-			var config : InjectionConfig = new InjectionConfig(Clazz, "", null);
+			var config : InjectionConfig = new InjectionConfig(Clazz, "");
 			
 			Assert.assertTrue(config is InjectionConfig);
 		}
@@ -36,7 +36,7 @@ package org.swiftsuspenders
 		public function injectionTypeValueReturnsRespone():void
 		{
 			var response:Clazz = new Clazz();
-			var config : InjectionConfig = new InjectionConfig(Clazz, "", injector);
+			var config : InjectionConfig = new InjectionConfig(Clazz, "");
 			config.setResult(new InjectValueResult(response));
 			var returnedResponse:Object = config.getResponse(injector);
 			
@@ -46,7 +46,7 @@ package org.swiftsuspenders
 		[Test]
 		public function injectionTypeClassReturnsRespone():void
 		{
-			var config : InjectionConfig = new InjectionConfig(Clazz, "", injector);
+			var config : InjectionConfig = new InjectionConfig(Clazz, "");
 			config.setResult(new InjectClassResult(Clazz));
 			var returnedResponse:Object = config.getResponse(injector);
 			
@@ -56,7 +56,7 @@ package org.swiftsuspenders
 		[Test]
 		public function injectionTypeSingletonReturnsResponse():void
 		{
-			var config : InjectionConfig = new InjectionConfig(Clazz, "", injector);
+			var config : InjectionConfig = new InjectionConfig(Clazz, "");
 			config.setResult(new InjectSingletonResult(Clazz));
 			var returnedResponse:Object = config.getResponse(injector);
 			
@@ -66,7 +66,7 @@ package org.swiftsuspenders
 		[Test]
 		public function sameSingletonIsReturnedOnSecondResponse():void
 		{
-			var config : InjectionConfig = new InjectionConfig(Clazz, "", injector);
+			var config : InjectionConfig = new InjectionConfig(Clazz, "");
 			config.setResult(new InjectSingletonResult(Clazz));
 			var returnedResponse:Object = config.getResponse(injector);
 			var secondResponse:Object = config.getResponse(injector);
@@ -77,7 +77,7 @@ package org.swiftsuspenders
 		[Test]
 		public function sameNamedSingletonIsReturnedOnSecondResponse():void
 		{
-			var config : InjectionConfig = new InjectionConfig(Clazz, "named", injector);
+			var config : InjectionConfig = new InjectionConfig(Clazz, "named");
 			config.setResult(new InjectSingletonResult(Clazz));
 			var returnedResponse:Object = config.getResponse(injector);
 			var secondResponse:Object = config.getResponse(injector);
