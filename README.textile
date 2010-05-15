@@ -167,11 +167,15 @@ public class RobotConstruction
 }
 </pre>
 
-The child injectors forward all injection requests they don't have a mapping for to their parent injector. This enables sharing additional rules between the injectors. For example, the robot feet might have toes that work the same for both feet, so a mapping for these could be added to the main injector instead of adding the mappings to both child injectors. (Note though, that applying a rule from the parent injector will make SwiftSuspenders leave the child injector, so any additional injections further down the object tree won't have mappings from the child injector applied to them. It's possible to branch out into the child injectors by using @setInjector@ on subsequent mapping rules, though.)
+The child injectors forward all injection requests they don't have a mapping for to their parent injector. This enables sharing additional rules between the injectors. For example, the robot feet might have toes that work the same for both feet, so a mapping for these could be added to the main injector instead of adding the mappings to both child injectors.
+
+If a mapping from a parent (or other ancestor) injector is used, that doesn't mean that the child injector isn't used for subsequent injections anymore. I.e., you can have "holes" in your child injector's mappings that get filled by an ancestor injector and still define other mappings in your child injector that you want to have applied later on in the object tree that is constructed through DI.
 
 Injectors can be nested freely to create configuration trees of arbitrary complexity.
 
 h3. XML configuration of injection points
+
+*Important note: It's possible to use metadata in Flash CS3/4/5, so the main reason for XML-based injection points configuration is moot. In order to keep all metadata in your application intact, check the "Export SWC" option in the "Publish Settings" dialog. See "this blog post":http://www.patrickmowrer.com/2010/03/03/compiling-custom-as3-metadata-flash-professional for details.*
 
 The @Injector@ takes an optional parameter specifying an XML configuration which, if provided, is used to configure all injection points.
 
