@@ -219,7 +219,7 @@ package org.swiftsuspenders
 			{
 				var parentConfig : InjectionConfig =
 					parent.getConfigurationForRequest(whenAskedFor, named, false);
-				if (parentConfig)
+				if (parentConfig && parentConfig.hasOwnResponse())
 				{
 					return parentConfig;
 				}
