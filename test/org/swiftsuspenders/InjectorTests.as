@@ -548,5 +548,11 @@ package org.swiftsuspenders
 			Assert.assertFalse('injectee1.property is not the same instance as injectee2.property',
 				injectee1.property == injectee2.property);
 		}
+
+		[Test(expects="org.swiftsuspenders.InjectorError")]
+		public function instantiateThrowsMeaningfulErrorOnInterfaceInstantiation() : void
+		{
+			injector.instantiate(Interface);
+		}
 	}
 }

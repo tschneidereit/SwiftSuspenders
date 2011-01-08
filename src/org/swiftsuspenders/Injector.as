@@ -240,6 +240,10 @@ package org.swiftsuspenders
 		private function getInjectionPoints(clazz : Class) : Array
 		{
 			var description : XML = describeType(clazz);
+			if (description.@name != 'Object' && description.factory.extendsClass.length() == 0)
+			{
+				throw new InjectorError('Interfaces can\'t be used as instantiatable classes.');
+			}
 			var injectionPoints : Array = [];
 			m_injectionPointLists[clazz] = injectionPoints;
 			m_injectionPointLists[description.@name.toString()] = injectionPoints;
