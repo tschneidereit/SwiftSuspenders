@@ -22,6 +22,7 @@
 
 package org.swiftsuspenders.suites
 {
+	import org.swiftsuspenders.ApplicationDomainTests;
 	import org.swiftsuspenders.ChildInjectorTests;
 	import org.swiftsuspenders.GetConstructorTests;
 	import org.swiftsuspenders.InjectionConfigTests;
@@ -32,7 +33,7 @@ package org.swiftsuspenders.suites
 	import org.swiftsuspenders.injectionpoints.NoParamsConstructorInjectionPointTests;
 	import org.swiftsuspenders.injectionpoints.PostConstructInjectionPointTests;
 	import org.swiftsuspenders.injectionpoints.PropertyInjectionPointTests;
-	
+
 	[Suite]
 	[RunWith("org.flexunit.runners.Suite")]
 	public class SwiftSuspendersTestSuite
@@ -47,5 +48,6 @@ package org.swiftsuspenders.suites
 		public var injectionConfigTests:InjectionConfigTests;
 		public var childInjectorTests : ChildInjectorTests;
 		public var getConstructorTests : GetConstructorTests;
+		public var applicationDomainTests : ApplicationDomainTests;
 	}
 }
