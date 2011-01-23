@@ -61,6 +61,7 @@ package org.swiftsuspenders
 		[After]
 		public function runAfterEachTest():void
 		{
+			Injector.purgeInjectionPointsCache();
 			injector = null;
 			_weaklyKeyedDomainHolder = null;
 			_supportSWFLoadingCallback = null;

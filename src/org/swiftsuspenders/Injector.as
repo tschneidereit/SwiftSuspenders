@@ -30,11 +30,11 @@ package org.swiftsuspenders
 		/*******************************************************************************************
 		*								private properties										   *
 		*******************************************************************************************/
+		private static var INJECTION_POINTS_CACHE : Dictionary = new Dictionary(true);
 		private var m_parentInjector : Injector;
         private var m_applicationDomain:ApplicationDomain;
 		private var m_mappings : Dictionary;
-		private var m_injectionPointLists : Dictionary;
-		private var m_constructorInjectionPoints : Dictionary;
+		private var m_injecteeDescriptions : Dictionary;
 		private var m_attendedToInjectees : Dictionary;
 		private var m_xmlMetadata : XML;
 		
@@ -45,8 +45,14 @@ package org.swiftsuspenders
 		public function Injector(xmlConfig : XML = null)
 		{
 			m_mappings = new Dictionary();
-			m_injectionPointLists = new Dictionary();
-			m_constructorInjectionPoints = new Dictionary();
+			if (xmlConfig != null)
+			{
+				m_injecteeDescriptions = new Dictionary(true);
+			}
+			else
+			{
+				m_injecteeDescriptions = INJECTION_POINTS_CACHE;
+			}
 			m_attendedToInjectees = new Dictionary(true);
 			m_xmlMetadata = xmlConfig;
 		}
@@ -105,31 +111,30 @@ package org.swiftsuspenders
 				return;
 			}
 			m_attendedToInjectees[target] = true;
-			
+
 			//get injection points or cache them if this target's class wasn't encountered before
-			var injectionPoints : Array;
-			
-			var ctor : Class = getConstructor(target);
-			
-			injectionPoints = m_injectionPointLists[ctor] || getInjectionPoints(ctor);
-			
+			var targetClass : Class = getConstructor(target);
+			var injecteeDescription : InjecteeDescription =
+					m_injecteeDescriptions[targetClass] || getInjectionPoints(targetClass);
+
+			var injectionPoints : Array = injecteeDescription.injectionPoints;
 			var length : int = injectionPoints.length;
 			for (var i : int = 0; i < length; i++)
 			{
 				var injectionPoint : InjectionPoint = injectionPoints[i];
 				injectionPoint.applyInjection(target, this);
 			}
-			
+
 		}
 		
 		public function instantiate(clazz:Class):*
 		{
-			var injectionPoint : InjectionPoint = m_constructorInjectionPoints[clazz];
-			if (!injectionPoint)
+			var injecteeDescription : InjecteeDescription = m_injecteeDescriptions[clazz];
+			if (!injecteeDescription)
 			{
-				getInjectionPoints(clazz);
-				injectionPoint = m_constructorInjectionPoints[clazz];
+				injecteeDescription = getInjectionPoints(clazz);
 			}
+			var injectionPoint : InjectionPoint = injecteeDescription.ctor;
 			var instance : * = injectionPoint.applyInjection(clazz, this);
 			injectInto(instance);
 			return instance;
@@ -206,6 +211,11 @@ package org.swiftsuspenders
 		{
 			return m_parentInjector;
 		}
+
+		public static function purgeInjectionPointsCache() : void
+		{
+			INJECTION_POINTS_CACHE = new Dictionary(true);
+		}
 		
 		
 		/*******************************************************************************************
@@ -237,7 +247,7 @@ package org.swiftsuspenders
 		/*******************************************************************************************
 		*								private methods											   *
 		*******************************************************************************************/
-		private function getInjectionPoints(clazz : Class) : Array
+		private function getInjectionPoints(clazz : Class) : InjecteeDescription
 		{
 			var description : XML = describeType(clazz);
 			if (description.@name != 'Object' && description.factory.extendsClass.length() == 0)
@@ -245,8 +255,6 @@ package org.swiftsuspenders
 				throw new InjectorError('Interfaces can\'t be used as instantiatable classes.');
 			}
 			var injectionPoints : Array = [];
-			m_injectionPointLists[clazz] = injectionPoints;
-			m_injectionPointLists[description.@name.toString()] = injectionPoints;
 			var node : XML;
 			
 			// This is where we have to wire in the XML...
@@ -255,19 +263,19 @@ package org.swiftsuspenders
 				createInjectionPointsFromConfigXML(description);
 				addParentInjectionPoints(description, injectionPoints);
 			}
-			
-			var injectionPoint : InjectionPoint;
+
 			//get constructor injections
+			var ctorInjectionPoint : InjectionPoint;
 			node = description.factory.constructor[0];
 			if (node)
 			{
-				m_constructorInjectionPoints[clazz] = 
-					new ConstructorInjectionPoint(node, clazz, this);
+				ctorInjectionPoint = new ConstructorInjectionPoint(node, clazz, this);
 			}
 			else
 			{
-				m_constructorInjectionPoints[clazz] = new NoParamsConstructorInjectionPoint();
+				ctorInjectionPoint = new NoParamsConstructorInjectionPoint();
 			}
+			var injectionPoint : InjectionPoint;
 			//get injection points for variables
 			for each (node in description.factory.*.
 				(name() == 'variable' || name() == 'accessor').metadata.(@name == 'Inject'))
@@ -295,8 +303,11 @@ package org.swiftsuspenders
 				postConstructMethodPoints.sortOn("order", Array.NUMERIC);
 				injectionPoints.push.apply(injectionPoints, postConstructMethodPoints);
 			}
-			
-			return injectionPoints;
+
+			var injecteeDescription : InjecteeDescription =
+					new InjecteeDescription(ctorInjectionPoint, injectionPoints);
+			m_injecteeDescriptions[clazz] = injecteeDescription;
+			return injecteeDescription;
 		}
 
 		private function getConfigurationForRequest(
@@ -372,9 +383,26 @@ package org.swiftsuspenders
 			{
 				return;
 			}
-			var parentInjectionPoints : Array = m_injectionPointLists[parentClassName] || 
-					getInjectionPoints(Class(getDefinitionByName(parentClassName)));
+			var parentClass : Class = Class(getDefinitionByName(parentClassName));
+			var parentDescription : InjecteeDescription =
+					m_injecteeDescriptions[parentClass] || getInjectionPoints(parentClass);
+			var parentInjectionPoints : Array = parentDescription.injectionPoints;
+
 			injectionPoints.push.apply(injectionPoints, parentInjectionPoints);
 		}
+	}
+}
+
+import org.swiftsuspenders.injectionpoints.InjectionPoint;
+
+final class InjecteeDescription
+{
+	public var ctor : InjectionPoint;
+	public var injectionPoints : Array;
+
+	public function InjecteeDescription(ctor : InjectionPoint, injectionPoints : Array)
+	{
+		this.ctor = ctor;
+		this.injectionPoints = injectionPoints;
 	}
 }

@@ -65,6 +65,13 @@ package org.swiftsuspenders
 		{
 			injector = new Injector();
 		}
+
+		[After]
+		public function teardown():void
+		{
+			Injector.purgeInjectionPointsCache();
+			injector = null;
+		}
 		
 		[Test]
 		public function unbind():void

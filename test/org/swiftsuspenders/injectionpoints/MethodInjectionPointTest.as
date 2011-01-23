@@ -1,13 +1,7 @@
 package  org.swiftsuspenders.injectionpoints
 {
-	import flash.utils.Dictionary;
-	import flash.utils.getQualifiedClassName;
-	
 	import org.flexunit.Assert;
-	import org.swiftsuspenders.InjectionConfig;
-	import org.swiftsuspenders.InjectionType;
 	import org.swiftsuspenders.Injector;
-	import org.swiftsuspenders.injectionresults.InjectSingletonResult;
 	import org.swiftsuspenders.support.injectees.OneRequiredOneOptionalPropertyMethodInjectee;
 	import org.swiftsuspenders.support.injectees.TwoParametersMethodInjectee;
 	import org.swiftsuspenders.support.nodes.InjectionNodes;
@@ -16,12 +10,25 @@ package  org.swiftsuspenders.injectionpoints
 
 	public class MethodInjectionPointTest
 	{
+		protected var injector:Injector;
+
+		[Before]
+		public function runBeforeEachTest():void
+		{
+			injector = new Injector();
+		}
+
+		[After]
+		public function teardown():void
+		{
+			Injector.purgeInjectionPointsCache();
+			injector = null;
+		}
 		[Test]
 		public function injectionOfTwoUnnamedPropertiesIntoMethod():void
 		{
 			var injectee:TwoParametersMethodInjectee = new TwoParametersMethodInjectee();
 			var node:XML = XML(InjectionNodes.METHOD_SET_DEPENDENCIES_INJECTION_NODE_TWO_PARAMETER.metadata);
-			var injector:Injector = new Injector();
 			injector.mapSingleton(Clazz);
 			injector.mapSingletonOf(Interface, Clazz);
 			var injectionPoint:MethodInjectionPoint = new MethodInjectionPoint(node);
@@ -36,7 +43,6 @@ package  org.swiftsuspenders.injectionpoints
 		{
 			var injectee:OneRequiredOneOptionalPropertyMethodInjectee = new OneRequiredOneOptionalPropertyMethodInjectee();
 			var node:XML = XML(InjectionNodes.METHOD_SET_DEPENDENCIES_INJECTION_NODE_ONE_REQUIRED_ONE_OPTIONAL_PARAMETER.metadata);
-			var injector:Injector = new Injector();
 			injector.mapSingleton(Clazz);
 			var injectionPoint:MethodInjectionPoint = new MethodInjectionPoint(node);
 

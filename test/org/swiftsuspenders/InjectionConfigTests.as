@@ -18,11 +18,12 @@ package org.swiftsuspenders
 		{
 			injector = new Injector();
 		}
-		
+
 		[After]
 		public function teardown():void
 		{
-			injector = null;	
+			Injector.purgeInjectionPointsCache();
+			injector = null;
 		}
 		
 		[Test]

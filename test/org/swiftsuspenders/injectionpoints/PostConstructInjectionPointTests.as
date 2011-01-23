@@ -1,18 +1,17 @@
 package  org.swiftsuspenders.injectionpoints
 {
-	import flash.utils.Dictionary;
-	import flash.utils.getQualifiedClassName;
-	
 	import org.flexunit.Assert;
-	import org.swiftsuspenders.InjectionConfig;
-	import org.swiftsuspenders.InjectionType;
 	import org.swiftsuspenders.Injector;
 	import org.swiftsuspenders.support.injectees.ClassInjectee;
-	import org.swiftsuspenders.support.nodes.InjectionNodes;
-	import org.swiftsuspenders.support.types.Clazz;
-	
+
 	public class PostConstructInjectionPointTests
 	{
+		[After]
+		public function teardown():void
+		{
+			Injector.purgeInjectionPointsCache();
+		}
+		
 		[Test]
 		public function invokeXMLConfiguredPostConstructMethod():void
 		{

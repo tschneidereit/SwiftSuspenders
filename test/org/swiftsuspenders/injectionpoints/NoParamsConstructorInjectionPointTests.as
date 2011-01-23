@@ -1,7 +1,6 @@
 package org.swiftsuspenders.injectionpoints
 {
 	import org.flexunit.Assert;
-	import org.swiftsuspenders.injectionpoints.NoParamsConstructorInjectionPoint;
 
 	public class NoParamsConstructorInjectionPointTests
 	{

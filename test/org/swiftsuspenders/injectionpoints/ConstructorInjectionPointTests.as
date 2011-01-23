@@ -1,26 +1,34 @@
 package  org.swiftsuspenders.injectionpoints
 {
-	import flash.utils.Dictionary;
-	import flash.utils.getQualifiedClassName;
-	
 	import org.flexunit.Assert;
-	import org.swiftsuspenders.InjectionConfig;
 	import org.swiftsuspenders.Injector;
-	import org.swiftsuspenders.injectionresults.InjectSingletonResult;
-	import org.swiftsuspenders.injectionresults.InjectValueResult;
 	import org.swiftsuspenders.support.injectees.TwoOptionalParametersConstructorInjectee;
 	import org.swiftsuspenders.support.injectees.TwoParametersConstructorInjectee;
 	import org.swiftsuspenders.support.nodes.InjectionNodes;
 	import org.swiftsuspenders.support.types.Clazz;
-	
+
 	public class ConstructorInjectionPointTests
 	{
 		public static const STRING_REFERENCE:String = "stringReference";
+
+		protected var injector:Injector;
+
+		[Before]
+		public function runBeforeEachTest():void
+		{
+			injector = new Injector();
+		}
+
+		[After]
+		public function teardown():void
+		{
+			Injector.purgeInjectionPointsCache();
+			injector = null;
+		}
 		
 		[Test]
 		public function injectionOfTwoUnnamedPropertiesIntoConstructor():void
 		{
-			var injector:Injector = new Injector();
 			injector.mapSingleton(Clazz);
 			injector.mapValue(String, STRING_REFERENCE);
 			
@@ -38,7 +46,6 @@ package  org.swiftsuspenders.injectionpoints
 		[Test]
 		public function injectionOfFirstOptionalPropertyIntoTwoOptionalParametersConstructor():void
 		{
-			var injector:Injector = new Injector();
 			injector.mapSingleton(Clazz);
 			
 			var node:XML = XML(InjectionNodes.CONSTRUCTOR_INJECTION_NODE_TWO_OPTIONAL_PARAMETERS.constructor);
@@ -55,7 +62,6 @@ package  org.swiftsuspenders.injectionpoints
 		[Test]
 		public function injectionOfSecondOptionalPropertyIntoTwoOptionalParametersConstructor():void
 		{
-			var injector:Injector = new Injector();
 			injector.mapValue(String, STRING_REFERENCE);
 			
 			var node:XML = XML(InjectionNodes.CONSTRUCTOR_INJECTION_NODE_TWO_OPTIONAL_PARAMETERS.constructor);
