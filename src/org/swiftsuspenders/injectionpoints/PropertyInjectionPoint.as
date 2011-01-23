@@ -7,8 +7,6 @@
 
 package org.swiftsuspenders.injectionpoints
 {
-	import flash.utils.getDefinitionByName;
-	
 	import org.swiftsuspenders.InjectionConfig;
 	import org.swiftsuspenders.Injector;
 	import org.swiftsuspenders.InjectorError;
@@ -18,32 +16,33 @@ package org.swiftsuspenders.injectionpoints
 		/*******************************************************************************************
 		*								private properties										   *
 		*******************************************************************************************/
-		private var propertyName : String;
-		private var propertyType : String;
-		private var m_injectionConfig : InjectionConfig;
-		
+		private var _propertyName : String;
+		private var _propertyType : String;
+		private var _injectionName : String;
+
 		
 		/*******************************************************************************************
 		*								public methods											   *
 		*******************************************************************************************/
-		public function PropertyInjectionPoint(node : XML, injector : Injector)
+		public function PropertyInjectionPoint(node : XML, injector : Injector = null)
 		{
-			super(node, injector);
+			super(node, null);
 		}
 		
 		override public function applyInjection(target : Object, injector : Injector) : Object
 		{
-			var injection : Object = m_injectionConfig.getResponse(injector);
+			var injectionConfig : InjectionConfig = injector.getMapping(Class(
+					injector.getApplicationDomain().getDefinition(_propertyType)), _injectionName);
+			var injection : Object = injectionConfig.getResponse(injector);
 			if (injection == null)
 			{
-				throw(
-					new InjectorError(
-						'Injector is missing a rule to handle injection into target ' + target + 
-						'. Target dependency: ' + propertyType
-					)
-				);
+				throw(new InjectorError(
+						'Injector is missing a rule to handle injection into property "' +
+						_propertyName + '" of object "' + target +
+						'". Target dependency: "' + _propertyType + '", named "' + _injectionName +
+						'"'));
 			}
-			target[propertyName] = injection;
+			target[_propertyName] = injection;
 			return target;
 		}
 
@@ -51,12 +50,11 @@ package org.swiftsuspenders.injectionpoints
 		/*******************************************************************************************
 		*								protected methods										   *
 		*******************************************************************************************/
-		override protected function initializeInjection(node : XML, injector : Injector) : void
+		override protected function initializeInjection(node : XML) : void
 		{
-			propertyType = node.parent().@type.toString();
-			propertyName = node.parent().@name.toString();
-			m_injectionConfig = injector.getMapping(Class(injector.getApplicationDomain().getDefinition(propertyType)), 
-				node.arg.attribute('value').toString());
+			_propertyType = node.parent().@type.toString();
+			_propertyName = node.parent().@name.toString();
+			_injectionName = node.arg.attribute('value').toString();
 		}
 	}
 }

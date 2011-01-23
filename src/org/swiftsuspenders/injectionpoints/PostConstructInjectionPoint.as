@@ -21,7 +21,7 @@ package org.swiftsuspenders.injectionpoints
 		/*******************************************************************************************
 		 *								public methods											   *
 		 *******************************************************************************************/
-		public function PostConstructInjectionPoint(node:XML, injector : Injector)
+		public function PostConstructInjectionPoint(node:XML, injector : Injector = null)
 		{
 			super(node, injector);
 		}
@@ -41,7 +41,7 @@ package org.swiftsuspenders.injectionpoints
 		/*******************************************************************************************
 		 *								protected methods										   *
 		 *******************************************************************************************/
-		override protected function initializeInjection(node : XML, injector : Injector) : void
+		override protected function initializeInjection(node : XML) : void
 		{
 			var orderArg : XMLList = node.arg.(@key == 'order');
 			var methodNode : XML = node.parent();

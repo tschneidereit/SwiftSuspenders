@@ -272,7 +272,7 @@ package org.swiftsuspenders
 			for each (node in description.factory.*.
 				(name() == 'variable' || name() == 'accessor').metadata.(@name == 'Inject'))
 			{
-				injectionPoint = new PropertyInjectionPoint(node, this);
+				injectionPoint = new PropertyInjectionPoint(node);
 				injectionPoints.push(injectionPoint);
 			}
 		

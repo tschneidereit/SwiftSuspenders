@@ -18,7 +18,7 @@ package org.swiftsuspenders.injectionpoints
 		
 		override public function applyInjection(target : Object, injector : Injector) : Object
 		{
-			return new target();
+			return new (target as Class)();
 		}
 	}
 }

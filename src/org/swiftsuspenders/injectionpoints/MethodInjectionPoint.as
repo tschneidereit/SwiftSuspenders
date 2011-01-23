@@ -7,9 +7,8 @@
 
 package org.swiftsuspenders.injectionpoints
 {
-	import flash.utils.getDefinitionByName;
 	import flash.utils.getQualifiedClassName;
-	
+
 	import org.swiftsuspenders.InjectionConfig;
 	import org.swiftsuspenders.Injector;
 	import org.swiftsuspenders.InjectorError;
@@ -20,14 +19,14 @@ package org.swiftsuspenders.injectionpoints
 		*								private properties										   *
 		*******************************************************************************************/
 		protected var methodName : String;
-		protected var m_injectionConfigs : Array;
+		protected var _parameterInjectionConfigs : Array;
 		protected var requiredParameters : int = 0;
 		
 		
 		/*******************************************************************************************
 		*								public methods											   *
 		*******************************************************************************************/
-		public function MethodInjectionPoint(node : XML, injector : Injector)
+		public function MethodInjectionPoint(node : XML, injector : Injector = null)
 		{
 			super(node, injector);
 		}
@@ -44,19 +43,18 @@ package org.swiftsuspenders.injectionpoints
 		/*******************************************************************************************
 		*								protected methods										   *
 		*******************************************************************************************/
-		override protected function initializeInjection(node : XML, injector : Injector) : void
+		override protected function initializeInjection(node : XML) : void
 		{
 			var nameArgs : XMLList = node.arg.(@key == 'name');
 			var methodNode : XML = node.parent();
 			methodName = methodNode.@name.toString();
 			
-			gatherParameters(methodNode, nameArgs, injector);
+			gatherParameters(methodNode, nameArgs);
 		}
 		
-		protected function gatherParameters(
-			methodNode : XML, nameArgs : XMLList, injector : Injector) : void
+		protected function gatherParameters(methodNode : XML, nameArgs : XMLList) : void
 		{
-			m_injectionConfigs = [];
+			_parameterInjectionConfigs = [];
 			var i : int = 0;
 			for each (var parameter : XML in methodNode.parameter)
 			{
@@ -66,25 +64,21 @@ package org.swiftsuspenders.injectionpoints
 					injectionName = nameArgs[i].@value.toString();
 				}
 				var parameterTypeName : String = parameter.@type.toString();
-				var parameterType : Class;
 				if (parameterTypeName == '*')
 				{
 					if (parameter.@optional.toString() == 'false')
 					{
 						//TODO: Find a way to trace name of affected class here
-						throw new Error('Error in method definition of injectee. Required ' + 
-							'parameters can\'t have type "*".');
+						throw new InjectorError('Error in method definition of injectee. ' +
+							'Required parameters can\'t have type "*".');
 					}
 					else
 					{
 						parameterTypeName = null;
 					}
 				}
-				else
-				{
-					parameterType = Class(injector.getApplicationDomain().getDefinition(parameterTypeName));
-				}
-				m_injectionConfigs.push(injector.getMapping(parameterType, injectionName));
+				_parameterInjectionConfigs.push(
+						new ParameterInjectionConfig(parameterTypeName, injectionName));
 				if (parameter.@optional.toString() == 'false')
 				{
 					requiredParameters++;
@@ -96,10 +90,13 @@ package org.swiftsuspenders.injectionpoints
 		protected function gatherParameterValues(target : Object, injector : Injector) : Array
 		{
 			var parameters : Array = [];
-			var length : int = m_injectionConfigs.length;
+			var length : int = _parameterInjectionConfigs.length;
 			for (var i : int = 0; i < length; i++)
 			{
-				var config : InjectionConfig = m_injectionConfigs[i];
+				var parameterConfig : ParameterInjectionConfig = _parameterInjectionConfigs[i];
+				var config : InjectionConfig = injector.getMapping(Class(
+						injector.getApplicationDomain().getDefinition(parameterConfig.typeName)),
+						parameterConfig.injectionName);
 				var injection : Object = config.getResponse(injector);
 				if (injection == null)
 				{
@@ -118,5 +115,17 @@ package org.swiftsuspenders.injectionpoints
 			}
 			return parameters;
 		}
+	}
+}
+
+final class ParameterInjectionConfig
+{
+	public var typeName : String;
+	public var injectionName : String;
+
+	public final function ParameterInjectionConfig(typeName : String, injectionName : String)
+	{
+		this.typeName = typeName;
+		this.injectionName = injectionName;
 	}
 }

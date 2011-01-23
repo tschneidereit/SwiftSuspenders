@@ -16,7 +16,7 @@ package org.swiftsuspenders.injectionpoints
 		[Test]
 		public function injectionOfSinglePropertyIsApplied():void
 		{
-			var injector:Injector = new Injector();
+			var injector : Injector = createUnnamedSinglePropertySingletonInjectionInjector();
 			var injectee:ClassInjectee = new ClassInjectee();
 			var injectionPoint:PropertyInjectionPoint = createSingleProertySingletonClazzVariableInjectionPoint();
 			
@@ -28,8 +28,7 @@ package org.swiftsuspenders.injectionpoints
 		private function createSingleProertySingletonClazzVariableInjectionPoint():PropertyInjectionPoint
 		{
 			var node:XML = XML(InjectionNodes.PROPERTY_INJECTION_NODE.metadata);
-			var injector : Injector = createUnnamedSinglePropertySingletonInjectionInjector();
-			var injectionPoint:PropertyInjectionPoint = new PropertyInjectionPoint(node, injector);
+			var injectionPoint:PropertyInjectionPoint = new PropertyInjectionPoint(node);
 			return injectionPoint;
 		}
 		

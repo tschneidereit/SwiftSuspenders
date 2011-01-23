@@ -39,12 +39,18 @@ package org.swiftsuspenders.support.nodes
 		      <parameter index="2" type="org.swiftsuspenders.support.types::Interface" optional="false"/>
 		      <metadata name="Inject"/>
 		    </method>;
-		
-		public static const METHOD_SET_DEPENDENCIES_INJECTION_NODE_ONE_REQUIRED_ONE_OPTIONAL_PARAMETER:XML =         
-			<method name="setDependencies" declaredBy="org.swiftsuspenders.support.injectees::OneRequiredOneOptionalPropertyMethodInjectee" returnType="void">
-		      <parameter index="1" type="org.swiftsuspenders.support.types::Clazz" optional="false"/>
-		      <parameter index="2" type="org.swiftsuspenders.support.types::Interface" optional="true"/>
-		      <metadata name="Inject"/>
-		    </method>;
+
+		public static const METHOD_SET_DEPENDENCIES_INJECTION_NODE_ONE_REQUIRED_ONE_OPTIONAL_PARAMETER:XML =
+				<method name="setDependencies" declaredBy="org.swiftsuspenders.support.injectees::OneRequiredOneOptionalPropertyMethodInjectee" returnType="void">
+					<parameter index="1" type="org.swiftsuspenders.support.types::Clazz" optional="false"/>
+					<parameter index="2" type="org.swiftsuspenders.support.types::Interface" optional="true"/>
+					<metadata name="Inject"/>
+				</method>;
+
+		public static const METHOD_NODE_WITH_UNTYPED_PARAMETER:XML =
+				<method name="setDependencies" declaredBy="org.swiftsuspenders.support.injectees::OneRequiredOneOptionalPropertyMethodInjectee" returnType="void">
+					<parameter index="1" type="*" optional="false"/>
+					<metadata name="Inject"/>
+				</method>;
 	}
 }

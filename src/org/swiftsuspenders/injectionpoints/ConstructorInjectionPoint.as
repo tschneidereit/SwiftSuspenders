@@ -8,15 +8,16 @@
 package org.swiftsuspenders.injectionpoints
 {
 	import flash.utils.describeType;
-	
+
 	import org.swiftsuspenders.Injector;
-	
+
 	public class ConstructorInjectionPoint extends MethodInjectionPoint
 	{
 		/*******************************************************************************************
 		*								public methods											   *
 		*******************************************************************************************/
-		public function ConstructorInjectionPoint(node : XML, clazz : Class, injector : Injector)
+		public function ConstructorInjectionPoint(
+				node : XML, clazz : Class, injector : Injector = null)
 		{
 			/*
 			  In many cases, the flash player doesn't give us type information for constructors until 
@@ -55,12 +56,12 @@ package org.swiftsuspenders.injectionpoints
 		/*******************************************************************************************
 		*								protected methods										   *
 		*******************************************************************************************/
-		override protected function initializeInjection(node : XML, injector : Injector) : void
+		override protected function initializeInjection(node : XML) : void
 		{
 			var nameArgs : XMLList = node.parent().metadata.(@name == 'Inject').arg.(@key == 'name');
 			methodName = 'constructor';
 			
-			gatherParameters(node, nameArgs, injector);
+			gatherParameters(node, nameArgs);
 		}
 		
 		/*******************************************************************************************

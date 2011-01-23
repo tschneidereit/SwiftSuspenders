@@ -16,7 +16,7 @@ package org.swiftsuspenders.injectionpoints
 		*******************************************************************************************/
 		public function InjectionPoint(node : XML, injector : Injector)
 		{
-			initializeInjection(node, injector);
+			initializeInjection(node);
 		}
 		
 		public function applyInjection(target : Object, injector : Injector) : Object
@@ -28,7 +28,7 @@ package org.swiftsuspenders.injectionpoints
 		/*******************************************************************************************
 		*								protected methods										   *
 		*******************************************************************************************/
-		protected function initializeInjection(node : XML, injector : Injector) : void
+		protected function initializeInjection(node : XML) : void
 		{
 		}
 	}
