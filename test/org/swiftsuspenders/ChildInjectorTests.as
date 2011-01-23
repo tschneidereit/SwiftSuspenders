@@ -173,7 +173,6 @@ package org.swiftsuspenders
 		{
 			injector.mapRule(Injector, new InjectorCopyRule());
 			injector.mapClass(InjectorInjectee, InjectorInjectee);
-			injector.mapClass(InjectorInjectee, InjectorInjectee);
 			var injectee : InjectorInjectee = injector.getInstance(InjectorInjectee);
 			Assert.assertNotNull('Injection has been applied to injectorInjectee', injectee.injector);
 			Assert.assertTrue('injectorInjectee.injector is child of main injector',

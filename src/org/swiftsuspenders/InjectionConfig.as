@@ -7,6 +7,8 @@
 
 package org.swiftsuspenders
 {
+	import flash.utils.getQualifiedClassName;
+
 	import org.swiftsuspenders.injectionresults.InjectionResult;
 
 	public class InjectionConfig
@@ -67,6 +69,14 @@ package org.swiftsuspenders
 
 		public function setResult(result : InjectionResult) : void
 		{
+			if (m_result != null && result != null)
+			{
+				trace('Warning: Injector already has a rule for type "' +
+						getQualifiedClassName(request) + '", named "' + injectionName + '".\n ' +
+						'If you have overwritten this mapping intentionally you can use ' +
+						'"injector.unmap()" prior to your replacement mapping in order to ' +
+						'avoid seeing this message.');
+			}
 			m_result = result;
 		}
 

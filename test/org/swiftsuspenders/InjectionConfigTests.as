@@ -1,13 +1,14 @@
 package org.swiftsuspenders
 {
-	import flash.utils.Dictionary;
-	
-	import org.flexunit.Assert;
+	import flexunit.framework.Assert;
+
 	import org.swiftsuspenders.injectionresults.InjectClassResult;
+	import org.swiftsuspenders.injectionresults.InjectOtherRuleResult;
 	import org.swiftsuspenders.injectionresults.InjectSingletonResult;
 	import org.swiftsuspenders.injectionresults.InjectValueResult;
 	import org.swiftsuspenders.support.types.Clazz;
-	
+	import org.swiftsuspenders.support.types.ClazzExtension;
+
 	public class InjectionConfigTests
 	{
 		private var injector:Injector;
@@ -15,7 +16,7 @@ package org.swiftsuspenders
 		[Before]
 		public function setup():void
 		{
-			injector = new Injector()
+			injector = new Injector();
 		}
 		
 		[After]
@@ -71,9 +72,9 @@ package org.swiftsuspenders
 			var returnedResponse:Object = config.getResponse(injector);
 			var secondResponse:Object = config.getResponse(injector);
 			
-			Assert.assertStrictlyEquals( returnedResponse, secondResponse )
+			Assert.assertStrictlyEquals( returnedResponse, secondResponse );
 		}
-		
+
 		[Test]
 		public function sameNamedSingletonIsReturnedOnSecondResponse():void
 		{
@@ -81,8 +82,35 @@ package org.swiftsuspenders
 			config.setResult(new InjectSingletonResult(Clazz));
 			var returnedResponse:Object = config.getResponse(injector);
 			var secondResponse:Object = config.getResponse(injector);
-			
-			Assert.assertStrictlyEquals( returnedResponse, secondResponse )
+
+			Assert.assertStrictlyEquals( returnedResponse, secondResponse );
+		}
+
+		[Test]
+		public function callingSetResultBetweenUsagesChangesResponse():void
+		{
+			var config : InjectionConfig = new InjectionConfig(Clazz, '');
+			config.setResult(new InjectSingletonResult(Clazz));
+			var returnedResponse:Object = config.getResponse(injector);
+			config.setResult(null);
+			config.setResult(new InjectClassResult(Clazz));
+			var secondResponse:Object = config.getResponse(injector);
+
+			Assert.assertFalse('First result doesn\'t equal second result',
+					returnedResponse == secondResponse );
+		}
+
+		[Test]
+		public function injectionTypeOtherRuleReturnsOtherRulesResponse():void
+		{
+			var config : InjectionConfig = new InjectionConfig(Clazz, "");
+			var otherConfig : InjectionConfig = new InjectionConfig(ClazzExtension, "");
+			otherConfig.setResult(new InjectClassResult(ClazzExtension));
+			config.setResult(new InjectOtherRuleResult(otherConfig));
+			var returnedResponse:Object = config.getResponse(injector);
+
+			Assert.assertTrue( returnedResponse is Clazz);
+			Assert.assertTrue( returnedResponse is ClazzExtension);
 		}
 	}
 }
