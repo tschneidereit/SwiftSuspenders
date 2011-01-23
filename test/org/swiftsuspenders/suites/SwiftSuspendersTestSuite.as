@@ -25,6 +25,7 @@ package org.swiftsuspenders.suites
 	import org.swiftsuspenders.ApplicationDomainTests;
 	import org.swiftsuspenders.ChildInjectorTests;
 	import org.swiftsuspenders.GetConstructorTests;
+	import org.swiftsuspenders.InjectMethodTests;
 	import org.swiftsuspenders.InjectionConfigTests;
 	import org.swiftsuspenders.InjectorTests;
 	import org.swiftsuspenders.ReflectorTests;
@@ -39,6 +40,7 @@ package org.swiftsuspenders.suites
 	public class SwiftSuspendersTestSuite
 	{
 		public var injectorTests:InjectorTests;
+		public var injectMethodTests:InjectMethodTests;
 		public var propertyInjectionPointTests:PropertyInjectionPointTests;
 		public var reflectorTests:ReflectorTests;
 		public var methodInjectionPointTests:MethodInjectionPointTest;

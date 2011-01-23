@@ -30,14 +30,16 @@ package org.swiftsuspenders
 		/*******************************************************************************************
 		*								private properties										   *
 		*******************************************************************************************/
+		private static var _currentInjector : Injector;
+		
 		private var m_parentInjector : Injector;
-        private var m_applicationDomain:ApplicationDomain;
+		private var m_applicationDomain:ApplicationDomain;
 		private var m_mappings : Dictionary;
 		private var m_injectionPointLists : Dictionary;
 		private var m_constructorInjectionPoints : Dictionary;
 		private var m_attendedToInjectees : Dictionary;
 		private var m_xmlMetadata : XML;
-		
+
 		
 		/*******************************************************************************************
 		*								public methods											   *
@@ -105,6 +107,9 @@ package org.swiftsuspenders
 				return;
 			}
 			m_attendedToInjectees[target] = true;
+
+			var previousInjector : Injector = _currentInjector;
+			_currentInjector = this;
 			
 			//get injection points or cache them if this target's class wasn't encountered before
 			var injectionPoints : Array;
@@ -119,11 +124,14 @@ package org.swiftsuspenders
 				var injectionPoint : InjectionPoint = injectionPoints[i];
 				injectionPoint.applyInjection(target, this);
 			}
-			
+
+			_currentInjector = previousInjector;
 		}
 		
 		public function instantiate(clazz:Class):*
 		{
+			var previousInjector : Injector = _currentInjector;
+			_currentInjector = this;
 			var injectionPoint : InjectionPoint = m_constructorInjectionPoints[clazz];
 			if (!injectionPoint)
 			{
@@ -132,6 +140,7 @@ package org.swiftsuspenders
 			}
 			var instance : * = injectionPoint.applyInjection(clazz, this);
 			injectInto(instance);
+			_currentInjector = previousInjector;
 			return instance;
 		}
 		
@@ -375,6 +384,11 @@ package org.swiftsuspenders
 			var parentInjectionPoints : Array = m_injectionPointLists[parentClassName] || 
 					getInjectionPoints(Class(getDefinitionByName(parentClassName)));
 			injectionPoints.push.apply(injectionPoints, parentInjectionPoints);
+		}
+
+		public static function get currentInjector() : Injector
+		{
+			return _currentInjector;
 		}
 	}
 }
