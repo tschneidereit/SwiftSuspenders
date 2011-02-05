@@ -91,7 +91,7 @@ package org.swiftsuspenders
 		}
 		
 		[Test]
-		public function bindValue():void
+		public function injectorInjectsBoundValueIntoAllInjectees():void
 		{
 			var injectee:ClassInjectee = new ClassInjectee();
 			var injectee2:ClassInjectee = new ClassInjectee();
