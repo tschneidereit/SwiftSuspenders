@@ -10,6 +10,7 @@ package  org.swiftsuspenders.injectionpoints
 	import org.flexunit.Assert;
 	import org.swiftsuspenders.Injector;
 	import org.swiftsuspenders.support.injectees.OneRequiredOneOptionalPropertyMethodInjectee;
+	import org.swiftsuspenders.support.injectees.OptionalOneRequiredParameterMethodInjectee;
 	import org.swiftsuspenders.support.injectees.TwoParametersMethodInjectee;
 	import org.swiftsuspenders.support.nodes.InjectionNodes;
 	import org.swiftsuspenders.support.types.Clazz;
@@ -64,6 +65,18 @@ package  org.swiftsuspenders.injectionpoints
 		{
 			var node:XML = XML(InjectionNodes.METHOD_NODE_WITH_UNTYPED_PARAMETER.metadata);
 			var injectionPoint:MethodInjectionPoint = new MethodInjectionPoint(node);
+		}
+
+		[Test]
+		public function injectionAttemptWithUnmappedOptionalMethodInjectionDoesntThrow():void
+		{
+			var injectee:OptionalOneRequiredParameterMethodInjectee = new OptionalOneRequiredParameterMethodInjectee();
+			var node:XML = XML(InjectionNodes.OPTIONAL_METHOD_INJECTION_NODE_WITH_REQUIRED_PARAMETER.metadata);
+			var injectionPoint:MethodInjectionPoint = new MethodInjectionPoint(node);
+
+			injectionPoint.applyInjection(injectee, injector);
+
+			Assert.assertNull("dependency must be null", injectee.getDependency());
 		}
 	}
 }

@@ -41,6 +41,7 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.support.injectees.OneParameterConstructorInjectee;
 	import org.swiftsuspenders.support.injectees.OneParameterMethodInjectee;
 	import org.swiftsuspenders.support.injectees.OptionalClassInjectee;
+	import org.swiftsuspenders.support.injectees.OptionalOneRequiredParameterMethodInjectee;
 	import org.swiftsuspenders.support.injectees.OrderedPostConstructInjectee;
 	import org.swiftsuspenders.support.injectees.RecursiveInterfaceInjectee;
 	import org.swiftsuspenders.support.injectees.SetterInjectee;
@@ -564,10 +565,18 @@ package org.swiftsuspenders
 		}
 
 		[Test]
-		public function injectorDoesntThrowWhenAttemptingUnmappedOptionalInjection() : void
+		public function injectorDoesntThrowWhenAttemptingUnmappedOptionalPropertyInjection() : void
 		{
 			var injectee : OptionalClassInjectee = injector.instantiate(OptionalClassInjectee);
 			Assert.assertNull("injectee mustn\'t contain Clazz instance", injectee.property);
+		}
+
+		[Test]
+		public function injectorDoesntThrowWhenAttemptingUnmappedOptionalMethodInjection() : void
+		{
+			var injectee : OptionalOneRequiredParameterMethodInjectee =
+					injector.instantiate(OptionalOneRequiredParameterMethodInjectee);
+			Assert.assertNull("injectee mustn\'t contain Clazz instance", injectee.getDependency());
 		}
 	}
 }
