@@ -14,7 +14,7 @@ package org.swiftsuspenders.injectionpoints
 		/*******************************************************************************************
 		*								public methods											   *
 		*******************************************************************************************/
-		public function InjectionPoint(node : XML, injector : Injector)
+		public function InjectionPoint(node : XML)
 		{
 			initializeInjection(node);
 		}

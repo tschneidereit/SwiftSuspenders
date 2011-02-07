@@ -34,7 +34,7 @@ package  org.swiftsuspenders.injectionpoints
 			
 			var node : XML = XML(InjectionNodes.CONSTRUCTOR_INJECTION_NODE_TWO_ARGUMENT.constructor);
 			var injectionPoint:ConstructorInjectionPoint = 
-				new ConstructorInjectionPoint(node, TwoParametersConstructorInjectee, injector);
+				new ConstructorInjectionPoint(node, TwoParametersConstructorInjectee);
 			
 			var injectee:TwoParametersConstructorInjectee = 
 				injectionPoint.applyInjection(TwoParametersConstructorInjectee, injector) as TwoParametersConstructorInjectee;
@@ -49,7 +49,7 @@ package  org.swiftsuspenders.injectionpoints
 			injector.mapSingleton(Clazz);
 			
 			var node:XML = XML(InjectionNodes.CONSTRUCTOR_INJECTION_NODE_TWO_OPTIONAL_PARAMETERS.constructor);
-			var injectionPoint:ConstructorInjectionPoint = new ConstructorInjectionPoint(node, TwoParametersConstructorInjectee, injector);
+			var injectionPoint:ConstructorInjectionPoint = new ConstructorInjectionPoint(node, TwoParametersConstructorInjectee);
 			
 			var injectee:TwoOptionalParametersConstructorInjectee = 
 				injectionPoint.applyInjection(TwoOptionalParametersConstructorInjectee, injector) as TwoOptionalParametersConstructorInjectee;
@@ -65,7 +65,7 @@ package  org.swiftsuspenders.injectionpoints
 			injector.mapValue(String, STRING_REFERENCE);
 			
 			var node:XML = XML(InjectionNodes.CONSTRUCTOR_INJECTION_NODE_TWO_OPTIONAL_PARAMETERS.constructor);
-			var injectionPoint:ConstructorInjectionPoint = new ConstructorInjectionPoint(node, TwoParametersConstructorInjectee, injector);
+			var injectionPoint:ConstructorInjectionPoint = new ConstructorInjectionPoint(node, TwoParametersConstructorInjectee);
 			
 			var injectee:TwoOptionalParametersConstructorInjectee = 
 				injectionPoint.applyInjection(TwoOptionalParametersConstructorInjectee, injector) as TwoOptionalParametersConstructorInjectee;

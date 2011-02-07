@@ -26,9 +26,9 @@ package org.swiftsuspenders.injectionpoints
 		/*******************************************************************************************
 		*								public methods											   *
 		*******************************************************************************************/
-		public function MethodInjectionPoint(node : XML, injector : Injector = null)
+		public function MethodInjectionPoint(node : XML)
 		{
-			super(node, injector);
+			super(node);
 		}
 		
 		override public function applyInjection(target : Object, injector : Injector) : Object

@@ -21,9 +21,9 @@ package org.swiftsuspenders.injectionpoints
 		/*******************************************************************************************
 		 *								public methods											   *
 		 *******************************************************************************************/
-		public function PostConstructInjectionPoint(node:XML, injector : Injector = null)
+		public function PostConstructInjectionPoint(node:XML)
 		{
-			super(node, injector);
+			super(node);
 		}
 		
 		public function get order():int

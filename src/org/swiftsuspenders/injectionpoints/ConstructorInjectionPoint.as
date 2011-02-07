@@ -16,8 +16,7 @@ package org.swiftsuspenders.injectionpoints
 		/*******************************************************************************************
 		*								public methods											   *
 		*******************************************************************************************/
-		public function ConstructorInjectionPoint(
-				node : XML, clazz : Class, injector : Injector = null)
+		public function ConstructorInjectionPoint(node : XML, clazz : Class)
 		{
 			/*
 			  In many cases, the flash player doesn't give us type information for constructors until 
@@ -28,7 +27,7 @@ package org.swiftsuspenders.injectionpoints
 			{
 				createDummyInstance(node, clazz);
 			}
-			super(node, injector);
+			super(node);
 		}
 		
 		override public function applyInjection(target : Object, injector : Injector) : Object
