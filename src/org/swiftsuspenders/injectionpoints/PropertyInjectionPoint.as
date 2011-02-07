@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009 the original author or authors
+ * Copyright (c) 2009-2011 the original author or authors
  * 
  * Permission is hereby granted to use, modify, and distribute this file 
  * in accordance with the terms of the license agreement accompanying it.
@@ -60,7 +60,8 @@ package org.swiftsuspenders.injectionpoints
 			_propertyType = node.parent().@type.toString();
 			_propertyName = node.parent().@name.toString();
 			_injectionName = node.arg.(@key == 'name').attribute('value').toString();
-			_injectionIsOptional = node.arg.(@key == 'optional').length() != 0;
+			_injectionIsOptional = node.arg.(@key == 'optional' &&
+					(@value == 'true' || @value == '1')).length() != 0;
 		}
 	}
 }

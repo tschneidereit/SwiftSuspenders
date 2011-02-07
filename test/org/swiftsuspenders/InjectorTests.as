@@ -40,6 +40,7 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.support.injectees.OneNamedParameterMethodInjectee;
 	import org.swiftsuspenders.support.injectees.OneParameterConstructorInjectee;
 	import org.swiftsuspenders.support.injectees.OneParameterMethodInjectee;
+	import org.swiftsuspenders.support.injectees.OptionalClassInjectee;
 	import org.swiftsuspenders.support.injectees.OrderedPostConstructInjectee;
 	import org.swiftsuspenders.support.injectees.RecursiveInterfaceInjectee;
 	import org.swiftsuspenders.support.injectees.SetterInjectee;
@@ -560,6 +561,13 @@ package org.swiftsuspenders
 		public function instantiateThrowsMeaningfulErrorOnInterfaceInstantiation() : void
 		{
 			injector.instantiate(Interface);
+		}
+
+		[Test]
+		public function injectorDoesntThrowWhenAttemptingUnmappedOptionalInjection() : void
+		{
+			var injectee : OptionalClassInjectee = injector.instantiate(OptionalClassInjectee);
+			Assert.assertNull("injectee mustn\'t contain Clazz instance", injectee.property);
 		}
 	}
 }
