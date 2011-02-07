@@ -19,6 +19,7 @@ package org.swiftsuspenders.injectionpoints
 		private var _propertyName : String;
 		private var _propertyType : String;
 		private var _injectionName : String;
+		private var _injectionIsOptional : Boolean;
 
 		
 		/*******************************************************************************************
@@ -36,6 +37,10 @@ package org.swiftsuspenders.injectionpoints
 			var injection : Object = injectionConfig.getResponse(injector);
 			if (injection == null)
 			{
+				if (_injectionIsOptional)
+				{
+					return target;
+				}
 				throw(new InjectorError(
 						'Injector is missing a rule to handle injection into property "' +
 						_propertyName + '" of object "' + target +
@@ -55,6 +60,7 @@ package org.swiftsuspenders.injectionpoints
 			_propertyType = node.parent().@type.toString();
 			_propertyName = node.parent().@name.toString();
 			_injectionName = node.arg.attribute('value').toString();
+			_injectionIsOptional = node.arg.(@key == 'optional').length() != 0;
 		}
 	}
 }
