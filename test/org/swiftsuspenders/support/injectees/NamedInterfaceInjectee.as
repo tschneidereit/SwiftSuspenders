@@ -28,7 +28,7 @@ package org.swiftsuspenders.support.injectees
 	{
 		public static const NAME:String = 'Name';
 		
-		[Inject(named="Name")]
+		[Inject(name="Name")]
 		public var property:Interface;
 		
 		public function NamedInterfaceInjectee()

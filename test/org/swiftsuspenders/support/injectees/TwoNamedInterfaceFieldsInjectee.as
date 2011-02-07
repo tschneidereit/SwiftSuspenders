@@ -26,9 +26,9 @@ package org.swiftsuspenders.support.injectees
 	
 	public class TwoNamedInterfaceFieldsInjectee
 	{
-		[Inject(named="Name1")]
+		[Inject(name="Name1")]
 		public var property1:Interface;
-		[Inject(named="Name2")]
+		[Inject(name="Name2")]
 		public var property2:Interface;
 		
 		public function TwoNamedInterfaceFieldsInjectee()
