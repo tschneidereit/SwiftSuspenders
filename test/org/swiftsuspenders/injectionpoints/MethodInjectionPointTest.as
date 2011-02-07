@@ -56,7 +56,7 @@ package  org.swiftsuspenders.injectionpoints
 		public function gatheringParametersForMethodsWithUnTypedParamertsThrowException() : void
 		{
 			var node:XML = XML(InjectionNodes.METHOD_NODE_WITH_UNTYPED_PARAMETER.metadata);
-			var injectionPoint:MethodInjectionPoint = new MethodInjectionPoint(node, null);
+			var injectionPoint:MethodInjectionPoint = new MethodInjectionPoint(node);
 
 		}
 	}

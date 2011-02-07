@@ -269,7 +269,7 @@ package org.swiftsuspenders
 			node = description.factory.constructor[0];
 			if (node)
 			{
-				ctorInjectionPoint = new ConstructorInjectionPoint(node, clazz, this);
+				ctorInjectionPoint = new ConstructorInjectionPoint(node, clazz);
 			}
 			else
 			{
@@ -287,7 +287,7 @@ package org.swiftsuspenders
 			//get injection points for methods
 			for each (node in description.factory.method.metadata.(@name == 'Inject'))
 			{
-				injectionPoint = new MethodInjectionPoint(node, this);
+				injectionPoint = new MethodInjectionPoint(node);
 				injectionPoints.push(injectionPoint);
 			}
 			
@@ -295,7 +295,7 @@ package org.swiftsuspenders
 			var postConstructMethodPoints : Array = [];
 			for each (node in description.factory.method.metadata.(@name == 'PostConstruct'))
 			{
-				injectionPoint = new PostConstructInjectionPoint(node, this);
+				injectionPoint = new PostConstructInjectionPoint(node);
 				postConstructMethodPoints.push(injectionPoint);
 			}
 			if (postConstructMethodPoints.length > 0)
