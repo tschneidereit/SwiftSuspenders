@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2009-2011 the original author or authors
+ *
+ * Permission is hereby granted to use, modify, and distribute this file
+ * in accordance with the terms of the license agreement accompanying it.
+ */
+
 package  org.swiftsuspenders.injectionpoints
 {
 	import org.flexunit.Assert;
@@ -57,7 +64,6 @@ package  org.swiftsuspenders.injectionpoints
 		{
 			var node:XML = XML(InjectionNodes.METHOD_NODE_WITH_UNTYPED_PARAMETER.metadata);
 			var injectionPoint:MethodInjectionPoint = new MethodInjectionPoint(node);
-
 		}
 	}
 }
