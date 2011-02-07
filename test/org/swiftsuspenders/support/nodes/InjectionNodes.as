@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2009-2011 the original author or authors
+ *
+ * Permission is hereby granted to use, modify, and distribute this file
+ * in accordance with the terms of the license agreement accompanying it.
+ */
+
 package org.swiftsuspenders.support.nodes
 {
 	public class InjectionNodes
@@ -10,7 +17,7 @@ package org.swiftsuspenders.support.nodes
 		public static const OPTIONAL_PROPERTY_INJECTION_NODE:XML =
 				<variable name="property" type="org.swiftsuspenders.support.types::Clazz">
 					<metadata name="Inject">
-						<arg key="optional"/>
+						<arg key="optional" value='true'/>
 					</metadata>
 				</variable>;
 
