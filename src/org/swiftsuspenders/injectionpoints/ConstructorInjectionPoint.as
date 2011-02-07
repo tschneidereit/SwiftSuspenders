@@ -58,7 +58,6 @@ package org.swiftsuspenders.injectionpoints
 		override protected function initializeInjection(node : XML) : void
 		{
 			var nameArgs : XMLList = node.parent().metadata.(@name == 'Inject').arg.(@key == 'name');
-			methodName = 'constructor';
 			
 			gatherParameters(node, nameArgs);
 		}

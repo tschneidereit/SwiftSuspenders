@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009 the original author or authors
+ * Copyright (c) 2009-2011 the original author or authors
  * 
  * Permission is hereby granted to use, modify, and distribute this file 
  * in accordance with the terms of the license agreement accompanying it.
@@ -18,10 +18,12 @@ package org.swiftsuspenders.injectionpoints
 		/*******************************************************************************************
 		*								private properties										   *
 		*******************************************************************************************/
-		protected var methodName : String;
 		protected var _parameterInjectionConfigs : Array;
-		protected var requiredParameters : int = 0;
-		
+		protected var _requiredParameters : int = 0;
+
+		private  var _injectionIsOptional : Boolean;
+		private var _methodName : String;
+
 		
 		/*******************************************************************************************
 		*								public methods											   *
@@ -34,7 +36,11 @@ package org.swiftsuspenders.injectionpoints
 		override public function applyInjection(target : Object, injector : Injector) : Object
 		{
 			var parameters : Array = gatherParameterValues(target, injector);
-			var method : Function = target[methodName];
+			if (!parameters && _injectionIsOptional)
+			{
+				return target;
+			}
+			var method : Function = target[_methodName];
 			method.apply(target, parameters);
 			return target;
 		}
@@ -47,7 +53,9 @@ package org.swiftsuspenders.injectionpoints
 		{
 			var nameArgs : XMLList = node.arg.(@key == 'name');
 			var methodNode : XML = node.parent();
-			methodName = methodNode.@name.toString();
+			_methodName = methodNode.@name;
+			_injectionIsOptional = node.arg.(@key == 'optional' &&
+					(@value == 'true' || @value == '1')).length() != 0;
 			
 			gatherParameters(methodNode, nameArgs);
 		}
@@ -61,12 +69,12 @@ package org.swiftsuspenders.injectionpoints
 				var injectionName : String = '';
 				if (nameArgs[i])
 				{
-					injectionName = nameArgs[i].@value.toString();
+					injectionName = nameArgs[i].@value;
 				}
-				var parameterTypeName : String = parameter.@type.toString();
+				var parameterTypeName : String = parameter.@type;
 				if (parameterTypeName == '*')
 				{
-					if (parameter.@optional.toString() == 'false')
+					if (parameter.@optional == 'false' || parameter.@optional == '0')
 					{
 						//TODO: Find a way to trace name of affected class here
 						throw new InjectorError('Error in method definition of injectee. ' +
@@ -79,9 +87,9 @@ package org.swiftsuspenders.injectionpoints
 				}
 				_parameterInjectionConfigs.push(
 						new ParameterInjectionConfig(parameterTypeName, injectionName));
-				if (parameter.@optional.toString() == 'false')
+				if (parameter.@optional == 'false')
 				{
-					requiredParameters++;
+					_requiredParameters++;
 				}
 				i++;
 			}
@@ -100,14 +108,18 @@ package org.swiftsuspenders.injectionpoints
 				var injection : Object = config.getResponse(injector);
 				if (injection == null)
 				{
-					if (i >= requiredParameters)
+					if (i >= _requiredParameters)
 					{
 						break;
+					}
+					if (_injectionIsOptional)
+					{
+						return null;
 					}
 					throw(new InjectorError(
 						'Injector is missing a rule to handle injection into target ' + target + 
 						'. Target dependency: ' + getQualifiedClassName(config.request) + 
-						', method: ' + methodName + ', parameter: ' + (i + 1)
+						', method: ' + _methodName + ', parameter: ' + (i + 1)
 					));
 				}
 				

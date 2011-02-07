@@ -21,33 +21,41 @@ package org.swiftsuspenders.support.nodes
 					</metadata>
 				</variable>;
 
-		public static const NAMED_INJECTION_NODE:XML =  
+		public static const NAMED_INJECTION_NODE:XML =
 			<metadata name="Inject">
 				<arg key="name" value="namedCollection"/>
 			</metadata>;
-		
-		public static const CONSTRUCTOR_INJECTION_NODE_SINGLE_ARGUMENT:XML = 
+
+		public static const CONSTRUCTOR_INJECTION_NODE_SINGLE_ARGUMENT:XML =
 			<constructor>
 				<parameter index="1" type="org.swiftsuspenders.support.types::Clazz" optional="false"/>
 			</constructor>;
-		
-		public static const CONSTRUCTOR_INJECTION_NODE_TWO_ARGUMENT:XML = 
+
+		public static const CONSTRUCTOR_INJECTION_NODE_TWO_ARGUMENT:XML =
 			<factory type="org.swiftsuspenders.support.injectees::TwoParametersConstructorInjectee">
 				<constructor>
 				  <parameter index="1" type="org.swiftsuspenders.support.types::Clazz" optional="false"/>
 				  <parameter index="2" type="String" optional="false"/>
 			   </constructor>
 			</factory>;
-		
-		public static const CONSTRUCTOR_INJECTION_NODE_TWO_OPTIONAL_PARAMETERS:XML = 
+
+		public static const CONSTRUCTOR_INJECTION_NODE_TWO_OPTIONAL_PARAMETERS:XML =
 			<factory type="org.swiftsuspenders.support.injectees::TwoParametersConstructorInjectee">
 				<constructor>
 				  <parameter index="1" type="org.swiftsuspenders.support.types::Clazz" optional="true"/>
 				  <parameter index="2" type="String" optional="true"/>
 			   </constructor>
 			</factory>;
-		
-		public static const METHOD_SET_DEPENDENCIES_INJECTION_NODE_TWO_PARAMETER:XML =         
+
+		public static const OPTIONAL_METHOD_INJECTION_NODE_WITH_REQUIRED_PARAMETER:XML =
+				<method name="setDependencies" declaredBy="org.swiftsuspenders.support.injectees::TwoParametersMethodInjectee" returnType="void">
+					<parameter index="1" type="org.swiftsuspenders.support.types::Clazz" optional="false"/>
+					<metadata name="Inject">
+						<arg key="optional" value='true'/>
+					</metadata>
+				</method>;
+
+		public static const METHOD_SET_DEPENDENCIES_INJECTION_NODE_TWO_PARAMETER:XML =
 			<method name="setDependencies" declaredBy="org.swiftsuspenders.support.injectees::TwoParametersMethodInjectee" returnType="void">
 		      <parameter index="1" type="org.swiftsuspenders.support.types::Clazz" optional="false"/>
 		      <parameter index="2" type="org.swiftsuspenders.support.types::Interface" optional="false"/>
