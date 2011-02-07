@@ -59,7 +59,7 @@ package org.swiftsuspenders.injectionpoints
 		{
 			_propertyType = node.parent().@type.toString();
 			_propertyName = node.parent().@name.toString();
-			_injectionName = node.arg.attribute('value').toString();
+			_injectionName = node.arg.(@key == 'name').attribute('value').toString();
 			_injectionIsOptional = node.arg.(@key == 'optional').length() != 0;
 		}
 	}
