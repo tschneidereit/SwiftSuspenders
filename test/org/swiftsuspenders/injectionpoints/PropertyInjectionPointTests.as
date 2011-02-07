@@ -22,6 +22,7 @@ package org.swiftsuspenders.injectionpoints
 			Injector.purgeInjectionPointsCache();
 			injector = null;
 		}
+
 		[Test]
 		public function injectionOfSinglePropertyIsApplied():void
 		{
@@ -34,7 +35,17 @@ package org.swiftsuspenders.injectionpoints
 			
 			Assert.assertTrue("injectee should contain Clazz instance", injectee.property is Clazz);
 		}
-		
-		//TODO: Add multiple injection point tests
+
+		[Test]
+		public function injectionAttemptWithUnmappedOptionalPropertyDoesntThrow():void
+		{
+			var injectee:ClassInjectee = new ClassInjectee();
+			var node:XML = XML(InjectionNodes.OPTIONAL_PROPERTY_INJECTION_NODE.metadata);
+			var injectionPoint:PropertyInjectionPoint = new PropertyInjectionPoint(node);
+
+			injectionPoint.applyInjection(injectee, injector);
+
+			Assert.assertNull("injectee mustn\'t contain Clazz instance", injectee.property);
+		}
 	}
 }
