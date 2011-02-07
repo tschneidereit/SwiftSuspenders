@@ -23,8 +23,8 @@ package org.swiftsuspenders
 		/*******************************************************************************************
 		 *								private properties										   *
 		 *******************************************************************************************/
-		private var m_injector : Injector;
-		private var m_result : InjectionResult;
+		private var _injector : Injector;
+		private var _result : InjectionResult;
 
 
 		/*******************************************************************************************
@@ -38,12 +38,12 @@ package org.swiftsuspenders
 
 		public function getResponse(injector : Injector) : Object
 		{
-			if (m_result)
+			if (_result)
 			{
-				return m_result.getResponse(m_injector || injector);
+				return _result.getResponse(_injector || injector);
 			}
 			var parentConfig : InjectionConfig =
-				(m_injector || injector).getAncestorMapping(request, injectionName);
+				(_injector || injector).getAncestorMapping(request, injectionName);
 			if (parentConfig)
 			{
 				return parentConfig.getResponse(injector);
@@ -53,23 +53,23 @@ package org.swiftsuspenders
 
 		public function hasResponse(injector : Injector) : Boolean
 		{
-			if (m_result)
+			if (_result)
 			{
 				return true;
 			}
 			var parentConfig : InjectionConfig =
-				(m_injector || injector).getAncestorMapping(request, injectionName);
+				(_injector || injector).getAncestorMapping(request, injectionName);
 			return parentConfig != null;
 		}
 
 		public function hasOwnResponse() : Boolean
 		{
-			return m_result != null;
+			return _result != null;
 		}
 
 		public function setResult(result : InjectionResult) : void
 		{
-			if (m_result != null && result != null)
+			if (_result != null && result != null)
 			{
 				trace('Warning: Injector already has a rule for type "' +
 						getQualifiedClassName(request) + '", named "' + injectionName + '".\n ' +
@@ -77,12 +77,12 @@ package org.swiftsuspenders
 						'"injector.unmap()" prior to your replacement mapping in order to ' +
 						'avoid seeing this message.');
 			}
-			m_result = result;
+			_result = result;
 		}
 
 		public function setInjector(injector : Injector) : void
 		{
-			m_injector = injector;
+			_injector = injector;
 		}
 	}
 }

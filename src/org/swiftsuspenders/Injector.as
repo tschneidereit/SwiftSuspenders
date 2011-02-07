@@ -31,12 +31,12 @@ package org.swiftsuspenders
 		*								private properties										   *
 		*******************************************************************************************/
 		private static var INJECTION_POINTS_CACHE : Dictionary = new Dictionary(true);
-		private var m_parentInjector : Injector;
-        private var m_applicationDomain:ApplicationDomain;
-		private var m_mappings : Dictionary;
-		private var m_injecteeDescriptions : Dictionary;
-		private var m_attendedToInjectees : Dictionary;
-		private var m_xmlMetadata : XML;
+		private var _parentInjector : Injector;
+        private var _applicationDomain:ApplicationDomain;
+		private var _mappings : Dictionary;
+		private var _injecteeDescriptions : Dictionary;
+		private var _attendedToInjectees : Dictionary;
+		private var _xmlMetadata : XML;
 		
 		
 		/*******************************************************************************************
@@ -44,17 +44,17 @@ package org.swiftsuspenders
 		*******************************************************************************************/
 		public function Injector(xmlConfig : XML = null)
 		{
-			m_mappings = new Dictionary();
+			_mappings = new Dictionary();
 			if (xmlConfig != null)
 			{
-				m_injecteeDescriptions = new Dictionary(true);
+				_injecteeDescriptions = new Dictionary(true);
 			}
 			else
 			{
-				m_injecteeDescriptions = INJECTION_POINTS_CACHE;
+				_injecteeDescriptions = INJECTION_POINTS_CACHE;
 			}
-			m_attendedToInjectees = new Dictionary(true);
-			m_xmlMetadata = xmlConfig;
+			_attendedToInjectees = new Dictionary(true);
+			_xmlMetadata = xmlConfig;
 		}
 		
 		public function mapValue(whenAskedFor : Class, useValue : Object, named : String = "") : *
@@ -95,10 +95,10 @@ package org.swiftsuspenders
 		public function getMapping(whenAskedFor : Class, named : String = "") : InjectionConfig
 		{
 			var requestName : String = getQualifiedClassName(whenAskedFor);
-			var config : InjectionConfig = m_mappings[requestName + '#' + named];
+			var config : InjectionConfig = _mappings[requestName + '#' + named];
 			if (!config)
 			{
-				config = m_mappings[requestName + '#' + named] =
+				config = _mappings[requestName + '#' + named] =
 					new InjectionConfig(whenAskedFor, named);
 			}
 			return config;
@@ -106,16 +106,16 @@ package org.swiftsuspenders
 		
 		public function injectInto(target : Object) : void
 		{
-			if (m_attendedToInjectees[target])
+			if (_attendedToInjectees[target])
 			{
 				return;
 			}
-			m_attendedToInjectees[target] = true;
+			_attendedToInjectees[target] = true;
 
 			//get injection points or cache them if this target's class wasn't encountered before
 			var targetClass : Class = getConstructor(target);
 			var injecteeDescription : InjecteeDescription =
-					m_injecteeDescriptions[targetClass] || getInjectionPoints(targetClass);
+					_injecteeDescriptions[targetClass] || getInjectionPoints(targetClass);
 
 			var injectionPoints : Array = injecteeDescription.injectionPoints;
 			var length : int = injectionPoints.length;
@@ -129,7 +129,7 @@ package org.swiftsuspenders
 		
 		public function instantiate(clazz:Class):*
 		{
-			var injecteeDescription : InjecteeDescription = m_injecteeDescriptions[clazz];
+			var injecteeDescription : InjecteeDescription = _injecteeDescriptions[clazz];
 			if (!injecteeDescription)
 			{
 				injecteeDescription = getInjectionPoints(clazz);
@@ -184,32 +184,32 @@ package org.swiftsuspenders
         
         public function setApplicationDomain(applicationDomain:ApplicationDomain):void
         {
-            m_applicationDomain = applicationDomain;
+            _applicationDomain = applicationDomain;
         }
         
         public function getApplicationDomain():ApplicationDomain
         {
-            return m_applicationDomain ? m_applicationDomain : ApplicationDomain.currentDomain;
+            return _applicationDomain ? _applicationDomain : ApplicationDomain.currentDomain;
         }
 
 		public function setParentInjector(parentInjector : Injector) : void
 		{
 			//restore own map of worked injectees if parent injector is removed
-			if (m_parentInjector && !parentInjector)
+			if (_parentInjector && !parentInjector)
 			{
-				m_attendedToInjectees = new Dictionary(true);
+				_attendedToInjectees = new Dictionary(true);
 			}
-			m_parentInjector = parentInjector;
+			_parentInjector = parentInjector;
 			//use parent's map of worked injectees
 			if (parentInjector)
 			{
-				m_attendedToInjectees = parentInjector.attendedToInjectees;
+				_attendedToInjectees = parentInjector.attendedToInjectees;
 			}
 		}
 		
 		public function getParentInjector() : Injector
 		{
-			return m_parentInjector;
+			return _parentInjector;
 		}
 
 		public static function purgeInjectionPointsCache() : void
@@ -224,7 +224,7 @@ package org.swiftsuspenders
 		internal function getAncestorMapping(
 				whenAskedFor : Class, named : String = null) : InjectionConfig
 		{
-			var parent : Injector = m_parentInjector;
+			var parent : Injector = _parentInjector;
 			while (parent)
 			{
 				var parentConfig : InjectionConfig =
@@ -240,7 +240,7 @@ package org.swiftsuspenders
 
 		internal function get attendedToInjectees() : Dictionary
 		{
-			return m_attendedToInjectees;
+			return _attendedToInjectees;
 		}
 
 		
@@ -258,7 +258,7 @@ package org.swiftsuspenders
 			var node : XML;
 			
 			// This is where we have to wire in the XML...
-			if(m_xmlMetadata)
+			if(_xmlMetadata)
 			{
 				createInjectionPointsFromConfigXML(description);
 				addParentInjectionPoints(description, injectionPoints);
@@ -306,7 +306,7 @@ package org.swiftsuspenders
 
 			var injecteeDescription : InjecteeDescription =
 					new InjecteeDescription(ctorInjectionPoint, injectionPoints);
-			m_injecteeDescriptions[clazz] = injecteeDescription;
+			_injecteeDescriptions[clazz] = injecteeDescription;
 			return injecteeDescription;
 		}
 
@@ -314,9 +314,9 @@ package org.swiftsuspenders
 			clazz : Class, named : String, traverseAncestors : Boolean = true) : InjectionConfig
 		{
 			var requestName : String = getQualifiedClassName(clazz);
-			var config:InjectionConfig = m_mappings[requestName + '#' + named];
+			var config:InjectionConfig = _mappings[requestName + '#' + named];
 			if(!config && traverseAncestors &&
-				m_parentInjector && m_parentInjector.hasMapping(clazz, named))
+				_parentInjector && _parentInjector.hasMapping(clazz, named))
 			{
 				config = getAncestorMapping(clazz, named);
 			}
@@ -335,7 +335,7 @@ package org.swiftsuspenders
 			
 			//now, we create the new injection points based on the given xml file
 			var className:String = description.factory.@type;
-			for each (node in m_xmlMetadata.type.(@name == className).children())
+			for each (node in _xmlMetadata.type.(@name == className).children())
 			{
 				var metaNode : XML = <metadata/>;
 				if (node.name() == 'postconstruct')
@@ -385,7 +385,7 @@ package org.swiftsuspenders
 			}
 			var parentClass : Class = Class(getDefinitionByName(parentClassName));
 			var parentDescription : InjecteeDescription =
-					m_injecteeDescriptions[parentClass] || getInjectionPoints(parentClass);
+					_injecteeDescriptions[parentClass] || getInjectionPoints(parentClass);
 			var parentInjectionPoints : Array = parentDescription.injectionPoints;
 
 			injectionPoints.push.apply(injectionPoints, parentInjectionPoints);

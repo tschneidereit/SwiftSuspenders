@@ -14,8 +14,8 @@ package org.swiftsuspenders.injectionresults
 		/*******************************************************************************************
 		 *								private properties										   *
 		 *******************************************************************************************/
-		private var m_responseType : Class;
-		private var m_response : Object;
+		private var _responseType : Class;
+		private var _response : Object;
 		
 		
 		/*******************************************************************************************
@@ -23,12 +23,12 @@ package org.swiftsuspenders.injectionresults
 		 *******************************************************************************************/
 		public function InjectSingletonResult(responseType : Class)
 		{
-			m_responseType = responseType;
+			_responseType = responseType;
 		}
 		
 		override public function getResponse(injector : Injector) : Object
 		{
-			return m_response ||= createResponse(injector);
+			return _response ||= createResponse(injector);
 		}
 		
 		
@@ -37,7 +37,7 @@ package org.swiftsuspenders.injectionresults
 		 *******************************************************************************************/
 		private function createResponse(injector : Injector) : Object
 		{
-			return injector.instantiate(m_responseType);
+			return injector.instantiate(_responseType);
 		}
 	}
 }
