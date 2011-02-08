@@ -87,7 +87,7 @@ package org.swiftsuspenders
 				var className : String = getQualifiedClassName(ClassInjectee);
 				var injecteeType : Class = Class(_loaderDomain.getDefinition(className));
 				var injectee : Object = new injecteeType();
-				injector.mapClass(Clazz,
+				injector.map(Clazz).toType(
 						Class(_loaderDomain.getDefinition(getQualifiedClassName(Clazz))));
 				injector.injectInto(injectee);
 				
