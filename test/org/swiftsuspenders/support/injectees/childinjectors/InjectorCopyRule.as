@@ -7,17 +7,17 @@
 
 package org.swiftsuspenders.support.injectees.childinjectors
 {
-	import org.swiftsuspenders.InjectionConfig;
+	import org.swiftsuspenders.InjectionRule;
 	import org.swiftsuspenders.Injector;
 
-	public class InjectorCopyRule extends InjectionConfig
+	public class InjectorCopyRule extends InjectionRule
 	{
 		public function InjectorCopyRule()
 		{
 			super(Injector, "");
 		}
 
-		override public function getResponse(injector:Injector):Object
+		override public function apply(injector:Injector):Object
 		{
 			return injector.createChildInjector();
 		}

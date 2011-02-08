@@ -52,13 +52,13 @@ package org.swiftsuspenders
 		{
 			injector.mapClass(RobotFoot, RobotFoot);
 
-			var leftFootRule : InjectionConfig = injector.mapClass(RobotLeg, RobotLeg, 'leftLeg');
+			var leftFootRule : InjectionRule = injector.mapClass(RobotLeg, RobotLeg, 'leftLeg');
 			var leftChildInjector : Injector = injector.createChildInjector();
 			leftChildInjector.mapClass(RobotAnkle, RobotAnkle);
 			leftChildInjector.mapClass(RobotFoot, LeftRobotFoot);
 
 			leftFootRule.setInjector(leftChildInjector);
-			var rightFootRule : InjectionConfig = injector.mapClass(RobotLeg, RobotLeg, 'rightLeg');
+			var rightFootRule : InjectionRule = injector.mapClass(RobotLeg, RobotLeg, 'rightLeg');
 			var rightChildInjector : Injector = injector.createChildInjector();
 			rightChildInjector.mapClass(RobotAnkle, RobotAnkle);
 			rightChildInjector.mapClass(RobotFoot, RightRobotFoot);
@@ -78,13 +78,13 @@ package org.swiftsuspenders
 			injector.mapClass(RobotFoot, RobotFoot);
 			injector.mapClass(RobotToes, RobotToes);
 
-			var leftFootRule : InjectionConfig = injector.mapClass(RobotLeg, RobotLeg, 'leftLeg');
+			var leftFootRule : InjectionRule = injector.mapClass(RobotLeg, RobotLeg, 'leftLeg');
 			var leftChildInjector : Injector = injector.createChildInjector();
 			leftChildInjector.mapClass(RobotAnkle, RobotAnkle);
 			leftChildInjector.mapClass(RobotFoot, LeftRobotFoot);
 			leftFootRule.setInjector(leftChildInjector);
 
-			var rightFootRule : InjectionConfig = injector.mapClass(RobotLeg, RobotLeg, 'rightLeg');
+			var rightFootRule : InjectionRule = injector.mapClass(RobotLeg, RobotLeg, 'rightLeg');
 			var rightChildInjector : Injector = injector.createChildInjector();
 			rightChildInjector.mapClass(RobotAnkle, RobotAnkle);
 			rightChildInjector.mapClass(RobotFoot, RightRobotFoot);
@@ -105,12 +105,12 @@ package org.swiftsuspenders
 			injector.mapClass(RobotFoot, RobotFoot);
 			injector.mapClass(RobotToes, RobotToes);
 
-			var leftFootRule : InjectionConfig = injector.mapClass(RobotLeg, RobotLeg, 'leftLeg');
+			var leftFootRule : InjectionRule = injector.mapClass(RobotLeg, RobotLeg, 'leftLeg');
 			var leftChildInjector : Injector = injector.createChildInjector();
 			leftChildInjector.mapClass(RobotFoot, LeftRobotFoot);
 			leftFootRule.setInjector(leftChildInjector);
 
-			var rightFootRule : InjectionConfig = injector.mapClass(RobotLeg, RobotLeg, 'rightLeg');
+			var rightFootRule : InjectionRule = injector.mapClass(RobotLeg, RobotLeg, 'rightLeg');
 			var rightChildInjector : Injector = injector.createChildInjector();
 			rightChildInjector.mapClass(RobotFoot, RightRobotFoot);
 			rightFootRule.setInjector(rightChildInjector);

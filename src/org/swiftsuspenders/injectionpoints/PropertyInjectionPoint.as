@@ -7,7 +7,7 @@
 
 package org.swiftsuspenders.injectionpoints
 {
-	import org.swiftsuspenders.InjectionConfig;
+	import org.swiftsuspenders.InjectionRule;
 	import org.swiftsuspenders.Injector;
 	import org.swiftsuspenders.InjectorError;
 
@@ -32,9 +32,9 @@ package org.swiftsuspenders.injectionpoints
 		
 		override public function applyInjection(target : Object, injector : Injector) : Object
 		{
-			var injectionConfig : InjectionConfig = injector.getMapping(Class(
+			var injectionConfig : InjectionRule = injector.getMapping(Class(
 					injector.getApplicationDomain().getDefinition(_propertyType)), _injectionName);
-			var injection : Object = injectionConfig.getResponse(injector);
+			var injection : Object = injectionConfig.apply(injector);
 			if (injection == null)
 			{
 				if (_injectionIsOptional)
