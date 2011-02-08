@@ -37,7 +37,7 @@ package  org.swiftsuspenders.injectionpoints
 		public function injectionOfTwoUnnamedPropertiesIntoConstructor():void
 		{
 			injector.mapSingleton(Clazz);
-			injector.mapValue(String, STRING_REFERENCE);
+			injector.map(String).toValue(STRING_REFERENCE);
 			
 			var node : XML = XML(InjectionNodes.CONSTRUCTOR_INJECTION_NODE_TWO_ARGUMENT.constructor);
 			var injectionPoint:ConstructorInjectionPoint = 
@@ -69,7 +69,7 @@ package  org.swiftsuspenders.injectionpoints
 		[Test]
 		public function injectionOfSecondOptionalPropertyIntoTwoOptionalParametersConstructor():void
 		{
-			injector.mapValue(String, STRING_REFERENCE);
+			injector.map(String).toValue(STRING_REFERENCE);
 			
 			var node:XML = XML(InjectionNodes.CONSTRUCTOR_INJECTION_NODE_TWO_OPTIONAL_PARAMETERS.constructor);
 			var injectionPoint:ConstructorInjectionPoint = new ConstructorInjectionPoint(node, TwoParametersConstructorInjectee);

@@ -11,6 +11,7 @@ package org.swiftsuspenders
 
 	import org.swiftsuspenders.dependencyproviders.ClassProvider;
 	import org.swiftsuspenders.dependencyproviders.DependencyProvider;
+	import org.swiftsuspenders.dependencyproviders.ValueProvider;
 
 	public class InjectionRule
 	{
@@ -36,6 +37,12 @@ package org.swiftsuspenders
 		public function toType(type : Class) : DependencyProvider
 		{
 			setProvider(new ClassProvider(type));
+			return _provider;
+		}
+
+		public function toValue(value : Object) : DependencyProvider
+		{
+			setProvider(new ValueProvider(value));
 			return _provider;
 		}
 

@@ -135,8 +135,8 @@ package org.swiftsuspenders
 			var childInjector : Injector = injector.createChildInjector();
 			var class1 : Clazz = new Clazz();
 			var class2 : Clazz = new Clazz();
-			injector.mapValue(Clazz, class1);
-			childInjector.mapValue(Clazz, class2);
+			injector.map(Clazz).toValue(class1);
+			childInjector.map(Clazz).toValue(class2);
 
 			var injectee : ClassInjectee = injector.instantiate(ClassInjectee);
 			childInjector.injectInto(injectee);
@@ -150,7 +150,7 @@ package org.swiftsuspenders
         {
             var childInjector : Injector = injector.createChildInjector();
             var class1 : Clazz = new Clazz();
-            injector.mapValue(Clazz, class1);  
+            injector.map(Clazz).toValue(class1);  
             
             Assert.assertTrue('Child injector should return true for hasMapping that exists on parent injector',
                 childInjector.hasMapping(Clazz));
