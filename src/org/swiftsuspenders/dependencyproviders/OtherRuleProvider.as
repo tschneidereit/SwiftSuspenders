@@ -5,30 +5,30 @@
  * in accordance with the terms of the license agreement accompanying it.
  */
 
-package org.swiftsuspenders.injectionresults
+package org.swiftsuspenders.dependencyproviders
 {
-	import org.swiftsuspenders.InjectionConfig;
+	import org.swiftsuspenders.InjectionRule;
 	import org.swiftsuspenders.Injector;
 
-	public class InjectOtherRuleResult extends InjectionResult
+	public class OtherRuleProvider implements DependencyProvider
 	{
 		/*******************************************************************************************
 		 *								private properties										   *
 		 *******************************************************************************************/
-		private var _rule : InjectionConfig;
+		private var _rule : InjectionRule;
 		
 		
 		/*******************************************************************************************
 		 *								public methods											   *
 		 *******************************************************************************************/
-		public function InjectOtherRuleResult(rule : InjectionConfig)
+		public function OtherRuleProvider(rule : InjectionRule)
 		{
 			_rule = rule;
 		}
 		
-		override public function getResponse(injector : Injector) : Object
+		public function apply(injector : Injector) : Object
 		{
-			return _rule.getResponse(injector);
+			return _rule.apply(injector);
 		}
 
 		override public function equals(otherResult : InjectionResult) : Boolean

@@ -5,16 +5,16 @@
  * in accordance with the terms of the license agreement accompanying it.
  */
 
-package org.swiftsuspenders.injectionresults
+package org.swiftsuspenders.dependencyproviders
 {
 	import org.swiftsuspenders.Injector;
 
-	public class InjectionResult
+	public class DependencyProvider
 	{
 		/*******************************************************************************************
 		 *								public methods											   *
 		 *******************************************************************************************/
-		public function InjectionResult()
+		public function DependencyProvider()
 		{
 		}
 		

@@ -5,11 +5,11 @@
  * in accordance with the terms of the license agreement accompanying it.
  */
 
-package org.swiftsuspenders.injectionresults
+package org.swiftsuspenders.dependencyproviders
 {
 	import org.swiftsuspenders.Injector;
 
-	public class InjectSingletonResult extends InjectionResult
+	public class SingletonProvider implements DependencyProvider
 	{
 		/*******************************************************************************************
 		 *								private properties										   *
@@ -21,12 +21,12 @@ package org.swiftsuspenders.injectionresults
 		/*******************************************************************************************
 		 *								public methods											   *
 		 *******************************************************************************************/
-		public function InjectSingletonResult(responseType : Class)
+		public function SingletonProvider(responseType : Class)
 		{
 			_responseType = responseType;
 		}
 		
-		override public function getResponse(injector : Injector) : Object
+		public function apply(injector : Injector) : Object
 		{
 			return _response ||= createResponse(injector);
 		}

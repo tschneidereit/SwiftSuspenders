@@ -5,11 +5,11 @@
 * in accordance with the terms of the license agreement accompanying it.
 */
 
-package org.swiftsuspenders.injectionresults
+package org.swiftsuspenders.dependencyproviders
 {
 	import org.swiftsuspenders.Injector;
 	
-	public class InjectValueResult extends InjectionResult
+	public class ValueProvider implements DependencyProvider
 	{
 		/*******************************************************************************************
 		 *								private properties										   *
@@ -20,12 +20,12 @@ package org.swiftsuspenders.injectionresults
 		/*******************************************************************************************
 		 *								public methods											   *
 		 *******************************************************************************************/
-		public function InjectValueResult(value : Object)
+		public function ValueProvider(value : Object)
 		{
 			_value = value;
 		}
 		
-		override public function getResponse(injector : Injector) : Object
+		public function apply(injector : Injector) : Object
 		{
 			return _value;
 		}

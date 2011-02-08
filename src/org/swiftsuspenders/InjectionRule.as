@@ -11,7 +11,7 @@ package org.swiftsuspenders
 
 	import org.swiftsuspenders.injectionresults.InjectionResult;
 
-	public class InjectionConfig
+	public class InjectionRule
 	{
 		/*******************************************************************************************
 		 *								public properties										   *
@@ -30,7 +30,7 @@ package org.swiftsuspenders
 		/*******************************************************************************************
 		 *								public methods											   *
 		 *******************************************************************************************/
-		public function InjectionConfig(request : Class, injectionName : String)
+		public function InjectionRule(request : Class, injectionName : String)
 		{
 			this.request = request;
 			this.injectionName = injectionName;
@@ -42,7 +42,7 @@ package org.swiftsuspenders
 			{
 				return _result.getResponse(_injector || injector);
 			}
-			var parentConfig : InjectionConfig =
+			var parentConfig : InjectionRule =
 				(_injector || injector).getAncestorMapping(request, injectionName);
 			if (parentConfig)
 			{
@@ -57,7 +57,7 @@ package org.swiftsuspenders
 			{
 				return true;
 			}
-			var parentConfig : InjectionConfig =
+			var parentConfig : InjectionRule =
 				(_injector || injector).getAncestorMapping(request, injectionName);
 			return parentConfig != null;
 		}
