@@ -33,7 +33,7 @@ package org.swiftsuspenders.injectionpoints
 		[Test]
 		public function injectionOfSinglePropertyIsApplied():void
 		{
-			injector.mapSingleton(Clazz);
+			injector.mapSingletonOf(Clazz, Clazz);
 			var injectee:ClassInjectee = new ClassInjectee();
 			var node:XML = XML(InjectionNodes.PROPERTY_INJECTION_NODE.metadata);
 			var injectionPoint:PropertyInjectionPoint = new PropertyInjectionPoint(node);

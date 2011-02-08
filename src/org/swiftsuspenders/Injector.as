@@ -67,11 +67,6 @@ package org.swiftsuspenders
 			return getMapping(type, name) || createRule(type, name);
 		}
 		
-		public function mapSingleton(whenAskedFor : Class, named : String = "") : *
-		{
-			return mapSingletonOf(whenAskedFor, whenAskedFor, named);
-		}
-		
 		public function mapSingletonOf(
 			whenAskedFor : Class, useSingletonOf : Class, named : String = "") : *
 		{
