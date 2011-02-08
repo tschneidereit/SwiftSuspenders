@@ -184,7 +184,7 @@ package org.swiftsuspenders
 		[Test]
 		public function injectorCanCreateChildInjectorDuringInjection():void
 		{
-			injector.mapRule(Injector, new InjectorCopyRule());
+			injector.map(Injector).toRule(new InjectorCopyRule());
 			injector.map(InjectorInjectee).toType(InjectorInjectee);
 			var injectee : InjectorInjectee = injector.getInstance(InjectorInjectee);
 			Assert.assertNotNull('Injection has been applied to injectorInjectee', injectee.injector);
