@@ -12,6 +12,7 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.dependencyproviders.ClassProvider;
 	import org.swiftsuspenders.dependencyproviders.DependencyProvider;
 	import org.swiftsuspenders.dependencyproviders.OtherRuleProvider;
+	import org.swiftsuspenders.dependencyproviders.SingletonProvider;
 	import org.swiftsuspenders.dependencyproviders.ValueProvider;
 
 	public class InjectionRule
@@ -38,6 +39,12 @@ package org.swiftsuspenders
 		public function toType(type : Class) : DependencyProvider
 		{
 			setProvider(new ClassProvider(type));
+			return _provider;
+		}
+
+		public function toSingleton(type : Class) : DependencyProvider
+		{
+			setProvider(new SingletonProvider(type));
 			return _provider;
 		}
 

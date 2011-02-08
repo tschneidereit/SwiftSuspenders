@@ -67,14 +67,6 @@ package org.swiftsuspenders
 			return getMapping(type, name) || createRule(type, name);
 		}
 		
-		public function mapSingletonOf(
-			whenAskedFor : Class, useSingletonOf : Class, named : String = "") : *
-		{
-			var config : InjectionRule = getMapping(whenAskedFor, named) || createRule(whenAskedFor);
-			config.setProvider(new SingletonProvider(useSingletonOf));
-			return config;
-		}
-		
 		public function getMapping(requestType : Class, named : String = "") : InjectionRule
 		{
 			return _mappings[getQualifiedClassName(requestType) + named] || createRule(requestType, named);
