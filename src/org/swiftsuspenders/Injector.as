@@ -75,13 +75,6 @@ package org.swiftsuspenders
 			return config;
 		}
 		
-		public function mapRule(whenAskedFor : Class, useRule : *, named : String = "") : *
-		{
-			var config : InjectionRule = getMapping(whenAskedFor, named) || createRule(whenAskedFor);
-			config.setProvider(new OtherRuleProvider(useRule));
-			return useRule;
-		}
-		
 		public function getMapping(requestType : Class, named : String = "") : InjectionRule
 		{
 			return _mappings[getQualifiedClassName(requestType) + named] || createRule(requestType, named);
