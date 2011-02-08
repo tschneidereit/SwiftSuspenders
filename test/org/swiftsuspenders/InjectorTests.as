@@ -159,8 +159,8 @@ package org.swiftsuspenders
 		public function bindMultipleInterfacesToOneSingletonClass():void
 		{
 			var injectee:MultipleSingletonsOfSameClassInjectee = new MultipleSingletonsOfSameClassInjectee();
-			injector.mapSingletonOf(Interface, Clazz);
-			injector.mapSingletonOf(Interface2, Clazz);
+			injector.map(Interface).toSingleton(Clazz);
+			injector.map(Interface2).toSingleton(Clazz);
 			injector.injectInto(injectee);
 			Assert.assertNotNull("Singleton Value for 'property1' should have been injected", injectee.property1 );
 			Assert.assertNotNull("Singleton Value for 'property2' should have been injected", injectee.property2 );
@@ -223,7 +223,7 @@ package org.swiftsuspenders
 		{
 			var injectee:ClassInjectee = new ClassInjectee();
 			var injectee2:ClassInjectee = new ClassInjectee();
-			injector.mapSingletonOf(Clazz, Clazz);
+			injector.map(Clazz).toSingleton(Clazz);
 			injector.injectInto(injectee);
 			Assert.assertNotNull("Instance of Class should have been injected", injectee.property );
 			injector.injectInto(injectee2);
@@ -235,7 +235,7 @@ package org.swiftsuspenders
 		{
 			var injectee:InterfaceInjectee = new InterfaceInjectee();
 			var injectee2:InterfaceInjectee = new InterfaceInjectee();
-			injector.mapSingletonOf(Interface, Clazz);
+			injector.map(Interface).toSingleton(Clazz);
 			injector.injectInto(injectee);
 			Assert.assertNotNull("Instance of Class should have been injected", injectee.property );
 			injector.injectInto(injectee2);
@@ -246,8 +246,8 @@ package org.swiftsuspenders
 		public function bindDifferentlyNamedSingletonsBySameInterface():void
 		{
 			var injectee:TwoNamedInterfaceFieldsInjectee = new TwoNamedInterfaceFieldsInjectee();
-			injector.mapSingletonOf(Interface, Clazz, 'Name1');
-			injector.mapSingletonOf(Interface, Clazz2, 'Name2');
+			injector.mapNamed(Interface, 'Name1').toSingleton(Clazz);
+			injector.mapNamed(Interface, 'Name2').toSingleton(Clazz2);
 			injector.injectInto(injectee);
 			Assert.assertTrue('Property "property1" should be of type "Clazz"', injectee.property1 is Clazz);
 			Assert.assertTrue('Property "property2" should be of type "Clazz2"', injectee.property2 is Clazz2);
@@ -416,7 +416,8 @@ package org.swiftsuspenders
 		[Test]
 		public function performMappedRuleInjection():void
 		{
-			var rule : InjectionRule = injector.mapSingletonOf(Interface, Clazz);
+			var rule : InjectionRule = injector.map(Interface);
+			rule.toSingleton(Clazz);
 			injector.map(Interface2).toRule(rule);
 			var injectee:MultipleSingletonsOfSameClassInjectee = injector.instantiate(MultipleSingletonsOfSameClassInjectee);
 			Assert.assertEquals("Instance field 'property1' should be identical to Instance field 'property2'", injectee.property1, injectee.property2);
@@ -425,7 +426,8 @@ package org.swiftsuspenders
 		[Test]
 		public function performMappedNamedRuleInjection():void
 		{
-			var rule : InjectionRule = injector.mapSingletonOf(Interface, Clazz);
+			var rule : InjectionRule = injector.map(Interface);
+			rule.toSingleton(Clazz);
 			injector.map(Interface2).toRule(rule);
 			injector.mapNamed(Interface, 'name1').toRule(rule);
 			injector.mapNamed(Interface2, 'name2').toRule(rule);
@@ -440,7 +442,7 @@ package org.swiftsuspenders
 		{
 			var valueInjectee : InterfaceInjectee = new InterfaceInjectee();
 			injector.map(InterfaceInjectee).toValue(valueInjectee);
-			injector.mapSingletonOf(Interface, RecursiveInterfaceInjectee);
+			injector.map(Interface).toSingleton(RecursiveInterfaceInjectee);
 			
 			injector.injectInto(valueInjectee);
 //			Assert.assertEquals("Instance field 'property1' should be identical to Instance field 'property2'", injectee.property1, injectee.property2);
@@ -549,10 +551,10 @@ package org.swiftsuspenders
 		[Test]
 		public function injectorRemovesSingletonInstanceOnRuleRemoval() : void
 		{
-			injector.mapSingletonOf(Clazz, Clazz);
+			injector.map(Clazz).toSingleton(Clazz);
 			var injectee1 : ClassInjectee = injector.instantiate(ClassInjectee);
 			injector.unmap(Clazz);
-			injector.mapSingletonOf(Clazz, Clazz);
+			injector.map(Clazz).toSingleton(Clazz);
 			var injectee2 : ClassInjectee = injector.instantiate(ClassInjectee);
 			Assert.assertFalse('injectee1.property is not the same instance as injectee2.property',
 				injectee1.property == injectee2.property);
