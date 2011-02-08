@@ -37,7 +37,7 @@ package  org.swiftsuspenders.injectionpoints
 		{
 			var injectee:TwoParametersMethodInjectee = new TwoParametersMethodInjectee();
 			var node:XML = XML(InjectionNodes.METHOD_SET_DEPENDENCIES_INJECTION_NODE_TWO_PARAMETER.metadata);
-			injector.mapSingleton(Clazz);
+			injector.mapSingletonOf(Clazz, Clazz);
 			injector.mapSingletonOf(Interface, Clazz);
 			var injectionPoint:MethodInjectionPoint = new MethodInjectionPoint(node);
 
@@ -51,7 +51,7 @@ package  org.swiftsuspenders.injectionpoints
 		{
 			var injectee:OneRequiredOneOptionalPropertyMethodInjectee = new OneRequiredOneOptionalPropertyMethodInjectee();
 			var node:XML = XML(InjectionNodes.METHOD_SET_DEPENDENCIES_INJECTION_NODE_ONE_REQUIRED_ONE_OPTIONAL_PARAMETER.metadata);
-			injector.mapSingleton(Clazz);
+			injector.mapSingletonOf(Clazz, Clazz);
 			var injectionPoint:MethodInjectionPoint = new MethodInjectionPoint(node);
 
 			injectionPoint.applyInjection(injectee, injector);

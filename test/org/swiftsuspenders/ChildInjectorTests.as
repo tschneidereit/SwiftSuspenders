@@ -171,7 +171,7 @@ package org.swiftsuspenders
             var childInjector:Injector;
             var grandChildInjector:Injector;
             var injectee:ClassInjectee = new ClassInjectee();
-            injector.mapSingleton(Clazz);
+            injector.mapSingletonOf(Clazz, Clazz);
             childInjector = injector.createChildInjector();
             grandChildInjector = childInjector.createChildInjector();
             

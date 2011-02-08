@@ -223,7 +223,7 @@ package org.swiftsuspenders
 		{
 			var injectee:ClassInjectee = new ClassInjectee();
 			var injectee2:ClassInjectee = new ClassInjectee();
-			injector.mapSingleton(Clazz);
+			injector.mapSingletonOf(Clazz, Clazz);
 			injector.injectInto(injectee);
 			Assert.assertNotNull("Instance of Class should have been injected", injectee.property );
 			injector.injectInto(injectee2);
@@ -549,10 +549,10 @@ package org.swiftsuspenders
 		[Test]
 		public function injectorRemovesSingletonInstanceOnRuleRemoval() : void
 		{
-			injector.mapSingleton(Clazz);
+			injector.mapSingletonOf(Clazz, Clazz);
 			var injectee1 : ClassInjectee = injector.instantiate(ClassInjectee);
 			injector.unmap(Clazz);
-			injector.mapSingleton(Clazz);
+			injector.mapSingletonOf(Clazz, Clazz);
 			var injectee2 : ClassInjectee = injector.instantiate(ClassInjectee);
 			Assert.assertFalse('injectee1.property is not the same instance as injectee2.property',
 				injectee1.property == injectee2.property);
