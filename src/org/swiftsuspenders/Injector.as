@@ -61,19 +61,16 @@ package org.swiftsuspenders
 		{
 			return getMapping(type) || createRule(type);
 		}
+
+		public function mapNamed(type : Class, name : String) : InjectionRule
+		{
+			return getMapping(type, name) || createRule(type, name);
+		}
 		
 		public function mapValue(whenAskedFor : Class, useValue : Object, named : String = "") : *
 		{
 			var config : InjectionRule = getMapping(whenAskedFor, named) || createRule(whenAskedFor);
 			config.setProvider(new ValueProvider(useValue));
-			return config;
-		}
-		
-		public function mapClass(
-				whenAskedFor : Class, instantiateClass : Class, named : String = "") : *
-		{
-			var config : InjectionRule = getMapping(whenAskedFor, named) || createRule(whenAskedFor);
-			config.setProvider(new ClassProvider(instantiateClass));
 			return config;
 		}
 		

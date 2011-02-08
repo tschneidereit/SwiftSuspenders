@@ -9,6 +9,7 @@ package org.swiftsuspenders
 {
 	import flash.utils.getQualifiedClassName;
 
+	import org.swiftsuspenders.dependencyproviders.ClassProvider;
 	import org.swiftsuspenders.dependencyproviders.DependencyProvider;
 
 	public class InjectionRule
@@ -28,8 +29,14 @@ package org.swiftsuspenders
 		 *******************************************************************************************/
 		public function InjectionRule(requestClass : Class, requestName : String)
 		{
-			this._requestClass = requestClass;
-			this._requestName = requestName;
+			_requestClass = requestClass;
+			_requestName = requestName;
+		}
+
+		public function toType(type : Class) : DependencyProvider
+		{
+			setProvider(new ClassProvider(type));
+			return _provider;
 		}
 
 		public function apply(injector : Injector) : Object

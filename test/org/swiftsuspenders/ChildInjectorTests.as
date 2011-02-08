@@ -50,18 +50,20 @@ package org.swiftsuspenders
 		[Test]
 		public function injectorUsesChildInjectorForSpecifiedRule() : void
 		{
-			injector.mapClass(RobotFoot, RobotFoot);
+			injector.map(RobotFoot).toType(RobotFoot);
 
-			var leftFootRule : InjectionRule = injector.mapClass(RobotLeg, RobotLeg, 'leftLeg');
+			var leftFootRule : InjectionRule = injector.mapNamed(RobotLeg, 'leftLeg');
+			leftFootRule.toType(RobotLeg);
 			var leftChildInjector : Injector = injector.createChildInjector();
-			leftChildInjector.mapClass(RobotAnkle, RobotAnkle);
-			leftChildInjector.mapClass(RobotFoot, LeftRobotFoot);
+			leftChildInjector.map(RobotAnkle).toType(RobotAnkle);
+			leftChildInjector.map(RobotFoot).toType(LeftRobotFoot);
 
 			leftFootRule.setInjector(leftChildInjector);
-			var rightFootRule : InjectionRule = injector.mapClass(RobotLeg, RobotLeg, 'rightLeg');
+			var rightFootRule : InjectionRule = injector.mapNamed(RobotLeg, 'rightLeg');
+			rightFootRule.toType(RobotLeg);
 			var rightChildInjector : Injector = injector.createChildInjector();
-			rightChildInjector.mapClass(RobotAnkle, RobotAnkle);
-			rightChildInjector.mapClass(RobotFoot, RightRobotFoot);
+			rightChildInjector.map(RobotAnkle).toType(RobotAnkle);
+			rightChildInjector.map(RobotFoot).toType(RightRobotFoot);
 			rightFootRule.setInjector(rightChildInjector);
 			
 			var robotBody : RobotBody = injector.instantiate(RobotBody);
@@ -75,19 +77,21 @@ package org.swiftsuspenders
 		[Test]
 		public function childInjectorUsesParentInjectorForMissingRules() : void
 		{
-			injector.mapClass(RobotFoot, RobotFoot);
-			injector.mapClass(RobotToes, RobotToes);
+			injector.map(RobotFoot).toType(RobotFoot);
+			injector.map(RobotToes).toType(RobotToes);
 
-			var leftFootRule : InjectionRule = injector.mapClass(RobotLeg, RobotLeg, 'leftLeg');
+			var leftFootRule : InjectionRule = injector.mapNamed(RobotLeg, 'leftLeg');
+			leftFootRule.toType(RobotLeg);
 			var leftChildInjector : Injector = injector.createChildInjector();
-			leftChildInjector.mapClass(RobotAnkle, RobotAnkle);
-			leftChildInjector.mapClass(RobotFoot, LeftRobotFoot);
+			leftChildInjector.map(RobotAnkle).toType(RobotAnkle);
+			leftChildInjector.map(RobotFoot).toType(LeftRobotFoot);
 			leftFootRule.setInjector(leftChildInjector);
 
-			var rightFootRule : InjectionRule = injector.mapClass(RobotLeg, RobotLeg, 'rightLeg');
+			var rightFootRule : InjectionRule = injector.mapNamed(RobotLeg, 'rightLeg');
+			rightFootRule.toType(RobotLeg);
 			var rightChildInjector : Injector = injector.createChildInjector();
-			rightChildInjector.mapClass(RobotAnkle, RobotAnkle);
-			rightChildInjector.mapClass(RobotFoot, RightRobotFoot);
+			rightChildInjector.map(RobotAnkle).toType(RobotAnkle);
+			rightChildInjector.map(RobotFoot).toType(RightRobotFoot);
 			rightFootRule.setInjector(rightChildInjector);
 
 			var robotBody : RobotBody = injector.instantiate(RobotBody);
@@ -101,18 +105,20 @@ package org.swiftsuspenders
 		[Test]
 		public function childInjectorDoesntReturnToParentAfterUsingParentInjectorForMissingRules() : void
 		{
-			injector.mapClass(RobotAnkle, RobotAnkle);
-			injector.mapClass(RobotFoot, RobotFoot);
-			injector.mapClass(RobotToes, RobotToes);
+			injector.map(RobotAnkle).toType(RobotAnkle);
+			injector.map(RobotFoot).toType(RobotFoot);
+			injector.map(RobotToes).toType(RobotToes);
 
-			var leftFootRule : InjectionRule = injector.mapClass(RobotLeg, RobotLeg, 'leftLeg');
+			var leftFootRule : InjectionRule = injector.mapNamed(RobotLeg, 'leftLeg');
+			leftFootRule.toType(RobotLeg);
 			var leftChildInjector : Injector = injector.createChildInjector();
-			leftChildInjector.mapClass(RobotFoot, LeftRobotFoot);
+			leftChildInjector.map(RobotFoot).toType(LeftRobotFoot);
 			leftFootRule.setInjector(leftChildInjector);
 
-			var rightFootRule : InjectionRule = injector.mapClass(RobotLeg, RobotLeg, 'rightLeg');
+			var rightFootRule : InjectionRule = injector.mapNamed(RobotLeg, 'rightLeg');
+			rightFootRule.toType(RobotLeg);
 			var rightChildInjector : Injector = injector.createChildInjector();
-			rightChildInjector.mapClass(RobotFoot, RightRobotFoot);
+			rightChildInjector.map(RobotFoot).toType(RightRobotFoot);
 			rightFootRule.setInjector(rightChildInjector);
 
 			var robotBody : RobotBody = injector.instantiate(RobotBody);
@@ -179,7 +185,7 @@ package org.swiftsuspenders
 		public function injectorCanCreateChildInjectorDuringInjection():void
 		{
 			injector.mapRule(Injector, new InjectorCopyRule());
-			injector.mapClass(InjectorInjectee, InjectorInjectee);
+			injector.map(InjectorInjectee).toType(InjectorInjectee);
 			var injectee : InjectorInjectee = injector.getInstance(InjectorInjectee);
 			Assert.assertNotNull('Injection has been applied to injectorInjectee', injectee.injector);
 			Assert.assertTrue('injectorInjectee.injector is child of main injector',

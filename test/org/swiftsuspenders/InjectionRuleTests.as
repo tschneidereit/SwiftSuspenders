@@ -16,7 +16,7 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.support.types.Clazz;
 	import org.swiftsuspenders.support.types.ClazzExtension;
 
-	public class InjectionConfigTests
+	public class InjectionRuleTests
 	{
 		private var injector:Injector;
 		
