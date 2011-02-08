@@ -416,7 +416,7 @@ package org.swiftsuspenders
 		[Test]
 		public function performMappedRuleInjection():void
 		{
-			var rule : InjectionConfig = injector.mapSingletonOf(Interface, Clazz);
+			var rule : InjectionRule = injector.mapSingletonOf(Interface, Clazz);
 			injector.mapRule(Interface2, rule);
 			var injectee:MultipleSingletonsOfSameClassInjectee = injector.instantiate(MultipleSingletonsOfSameClassInjectee);
 			Assert.assertEquals("Instance field 'property1' should be identical to Instance field 'property2'", injectee.property1, injectee.property2);
@@ -425,7 +425,7 @@ package org.swiftsuspenders
 		[Test]
 		public function performMappedNamedRuleInjection():void
 		{
-			var rule : InjectionConfig = injector.mapSingletonOf(Interface, Clazz);
+			var rule : InjectionRule = injector.mapSingletonOf(Interface, Clazz);
 			injector.mapRule(Interface2, rule);
 			injector.mapRule(Interface, rule, 'name1');
 			injector.mapRule(Interface2, rule, 'name2');

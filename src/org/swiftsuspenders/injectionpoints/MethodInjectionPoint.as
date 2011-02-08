@@ -7,9 +7,10 @@
 
 package org.swiftsuspenders.injectionpoints
 {
+	import flash.system.ApplicationDomain;
 	import flash.utils.getQualifiedClassName;
 
-	import org.swiftsuspenders.InjectionConfig;
+	import org.swiftsuspenders.InjectionRule;
 	import org.swiftsuspenders.Injector;
 	import org.swiftsuspenders.InjectorError;
 
@@ -97,15 +98,16 @@ package org.swiftsuspenders.injectionpoints
 		
 		protected function gatherParameterValues(target : Object, injector : Injector) : Array
 		{
+			var appDomain : ApplicationDomain = injector.getApplicationDomain();
 			var parameters : Array = [];
 			var length : int = _parameterInjectionConfigs.length;
 			for (var i : int = 0; i < length; i++)
 			{
 				var parameterConfig : ParameterInjectionConfig = _parameterInjectionConfigs[i];
-				var config : InjectionConfig = injector.getMapping(Class(
-						injector.getApplicationDomain().getDefinition(parameterConfig.typeName)),
+				var rule : InjectionRule = injector.getMapping(
+						Class(appDomain.getDefinition(parameterConfig.typeName)),
 						parameterConfig.injectionName);
-				var injection : Object = config.getResponse(injector);
+				var injection : Object = rule.apply(injector);
 				if (injection == null)
 				{
 					if (i >= _requiredParameters)
@@ -118,7 +120,7 @@ package org.swiftsuspenders.injectionpoints
 					}
 					throw(new InjectorError(
 						'Injector is missing a rule to handle injection into target ' + target + 
-						'. Target dependency: ' + getQualifiedClassName(config.request) + 
+						'. Target dependency: ' + parameterConfig.typeName +
 						', method: ' + _methodName + ', parameter: ' + (i + 1)
 					));
 				}

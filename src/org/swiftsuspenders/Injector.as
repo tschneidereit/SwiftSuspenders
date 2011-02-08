@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2010 the original author or authors
+ * Copyright (c) 2009-2011 the original author or authors
  * 
  * Permission is hereby granted to use, modify, and distribute this file 
  * in accordance with the terms of the license agreement accompanying it.
@@ -20,10 +20,10 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.injectionpoints.NoParamsConstructorInjectionPoint;
 	import org.swiftsuspenders.injectionpoints.PostConstructInjectionPoint;
 	import org.swiftsuspenders.injectionpoints.PropertyInjectionPoint;
-	import org.swiftsuspenders.injectionresults.InjectClassResult;
-	import org.swiftsuspenders.injectionresults.InjectOtherRuleResult;
-	import org.swiftsuspenders.injectionresults.InjectSingletonResult;
-	import org.swiftsuspenders.injectionresults.InjectValueResult;
+	import org.swiftsuspenders.dependencyproviders.ClassProvider;
+	import org.swiftsuspenders.dependencyproviders.OtherRuleProvider;
+	import org.swiftsuspenders.dependencyproviders.SingletonProvider;
+	import org.swiftsuspenders.dependencyproviders.ValueProvider;
 
 	public class Injector
 	{
@@ -56,19 +56,24 @@ package org.swiftsuspenders
 			_attendedToInjectees = new Dictionary(true);
 			_xmlMetadata = xmlConfig;
 		}
+
+		public function map(type : Class) : InjectionRule
+		{
+			return getMapping(type) || createRule(type);
+		}
 		
 		public function mapValue(whenAskedFor : Class, useValue : Object, named : String = "") : *
 		{
-			var config : InjectionConfig = getMapping(whenAskedFor, named);
-			config.setResult(new InjectValueResult(useValue));
+			var config : InjectionRule = getMapping(whenAskedFor, named) || createRule(whenAskedFor);
+			config.setProvider(new ValueProvider(useValue));
 			return config;
 		}
 		
 		public function mapClass(
 				whenAskedFor : Class, instantiateClass : Class, named : String = "") : *
 		{
-			var config : InjectionConfig = getMapping(whenAskedFor, named);
-			config.setResult(new InjectClassResult(instantiateClass));
+			var config : InjectionRule = getMapping(whenAskedFor, named) || createRule(whenAskedFor);
+			config.setProvider(new ClassProvider(instantiateClass));
 			return config;
 		}
 		
@@ -80,28 +85,21 @@ package org.swiftsuspenders
 		public function mapSingletonOf(
 			whenAskedFor : Class, useSingletonOf : Class, named : String = "") : *
 		{
-			var config : InjectionConfig = getMapping(whenAskedFor, named);
-			config.setResult(new InjectSingletonResult(useSingletonOf));
+			var config : InjectionRule = getMapping(whenAskedFor, named) || createRule(whenAskedFor);
+			config.setProvider(new SingletonProvider(useSingletonOf));
 			return config;
 		}
 		
 		public function mapRule(whenAskedFor : Class, useRule : *, named : String = "") : *
 		{
-			var config : InjectionConfig = getMapping(whenAskedFor, named);
-			config.setResult(new InjectOtherRuleResult(useRule));
+			var config : InjectionRule = getMapping(whenAskedFor, named) || createRule(whenAskedFor);
+			config.setProvider(new OtherRuleProvider(useRule));
 			return useRule;
 		}
 		
-		public function getMapping(whenAskedFor : Class, named : String = "") : InjectionConfig
+		public function getMapping(requestType : Class, named : String = "") : InjectionRule
 		{
-			var requestName : String = getQualifiedClassName(whenAskedFor);
-			var config : InjectionConfig = _mappings[requestName + '#' + named];
-			if (!config)
-			{
-				config = _mappings[requestName + '#' + named] =
-					new InjectionConfig(whenAskedFor, named);
-			}
-			return config;
+			return _mappings[getQualifiedClassName(requestType) + named] || createRule(requestType, named);
 		}
 		
 		public function injectInto(target : Object) : void
@@ -142,36 +140,36 @@ package org.swiftsuspenders
 		
 		public function unmap(clazz : Class, named : String = "") : void
 		{
-			var mapping : InjectionConfig = getConfigurationForRequest(clazz, named);
+			var mapping : InjectionRule = getConfigurationForRequest(clazz, named);
 			if (!mapping)
 			{
 				throw new InjectorError('Error while removing an injector mapping: ' +
 					'No mapping defined for class ' + getQualifiedClassName(clazz) +
 					', named "' + named + '"');
 			}
-			mapping.setResult(null);
+			mapping.setProvider(null);
 		}
 
 		public function hasMapping(clazz : Class, named : String = '') : Boolean
 		{
-			var mapping : InjectionConfig = getConfigurationForRequest(clazz, named);
+			var mapping : InjectionRule = getConfigurationForRequest(clazz, named);
 			if (!mapping)
 			{
 				return false;
 			}
-			return mapping.hasResponse(this);
+			return mapping.hasProvider(this);
 		}
 
 		public function getInstance(clazz : Class, named : String = '') : *
 		{
-			var mapping : InjectionConfig = getConfigurationForRequest(clazz, named);
-			if (!mapping || !mapping.hasResponse(this))
+			var mapping : InjectionRule = getConfigurationForRequest(clazz, named);
+			if (!mapping || !mapping.hasProvider(this))
 			{
 				throw new InjectorError('Error while getting mapping response: ' +
 					'No mapping defined for class ' + getQualifiedClassName(clazz) +
 					', named "' + named + '"');
 			}
-			return mapping.getResponse(this);
+			return mapping.apply(this);
 		}
 		
 		public function createChildInjector(applicationDomain:ApplicationDomain=null) : Injector
@@ -222,14 +220,14 @@ package org.swiftsuspenders
 		*								internal methods										   *
 		*******************************************************************************************/
 		internal function getAncestorMapping(
-				whenAskedFor : Class, named : String = null) : InjectionConfig
+				whenAskedFor : Class, named : String = null) : InjectionRule
 		{
 			var parent : Injector = _parentInjector;
 			while (parent)
 			{
-				var parentConfig : InjectionConfig =
+				var parentConfig : InjectionRule =
 					parent.getConfigurationForRequest(whenAskedFor, named, false);
-				if (parentConfig && parentConfig.hasOwnResponse())
+				if (parentConfig && parentConfig.hasOwnProvider())
 				{
 					return parentConfig;
 				}
@@ -247,6 +245,13 @@ package org.swiftsuspenders
 		/*******************************************************************************************
 		*								private methods											   *
 		*******************************************************************************************/
+		private function createRule(requestType : Class, name : String = '') : InjectionRule
+		{
+			//TODO: check if it's ok to use the Class itself as the key here
+			return (_mappings[getQualifiedClassName(requestType) + name] =
+					new InjectionRule(requestType, ''));
+		}
+
 		private function getInjectionPoints(clazz : Class) : InjecteeDescription
 		{
 			var description : XML = describeType(clazz);
@@ -311,10 +316,10 @@ package org.swiftsuspenders
 		}
 
 		private function getConfigurationForRequest(
-			clazz : Class, named : String, traverseAncestors : Boolean = true) : InjectionConfig
+			clazz : Class, named : String, traverseAncestors : Boolean = true) : InjectionRule
 		{
 			var requestName : String = getQualifiedClassName(clazz);
-			var config:InjectionConfig = _mappings[requestName + '#' + named];
+			var config:InjectionRule = _mappings[requestName + named];
 			if(!config && traverseAncestors &&
 				_parentInjector && _parentInjector.hasMapping(clazz, named))
 			{

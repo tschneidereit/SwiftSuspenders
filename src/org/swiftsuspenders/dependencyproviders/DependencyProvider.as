@@ -9,23 +9,8 @@ package org.swiftsuspenders.dependencyproviders
 {
 	import org.swiftsuspenders.Injector;
 
-	public class DependencyProvider
+	public interface DependencyProvider
 	{
-		/*******************************************************************************************
-		 *								public methods											   *
-		 *******************************************************************************************/
-		public function DependencyProvider()
-		{
-		}
-		
-		public function getResponse(injector : Injector) : Object
-		{
-			return null;
-		}
-
-		public function equals(otherResult : InjectionResult) : Boolean
-		{
-			return false;
-		}
+		function apply(injector : Injector) : Object;
 	}
 }
