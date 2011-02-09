@@ -12,6 +12,8 @@ package org.swiftsuspenders
 	import flash.utils.getDefinitionByName;
 	import flash.utils.getQualifiedClassName;
 
+	import org.swiftsuspenders.utils.getConstructor;
+
 	/**
 	 * @author tschneidereit
 	 */

@@ -9,6 +9,8 @@ package org.swiftsuspenders
 {
 	import flexunit.framework.Assert;
 
+	import org.swiftsuspenders.utils.getConstructor;
+
 	public class GetConstructorTests
 	{
 		[Test]

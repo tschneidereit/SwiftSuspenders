@@ -8,7 +8,6 @@
 package org.swiftsuspenders.injectionpoints
 {
 	import flash.system.ApplicationDomain;
-	import flash.utils.getQualifiedClassName;
 
 	import org.swiftsuspenders.InjectionRule;
 	import org.swiftsuspenders.Injector;
@@ -22,7 +21,7 @@ package org.swiftsuspenders.injectionpoints
 		protected var _parameterInjectionConfigs : Array;
 		protected var _requiredParameters : int = 0;
 
-		private  var _injectionIsOptional : Boolean;
+		private var _injectionIsOptional : Boolean;
 		private var _methodName : String;
 
 		
