@@ -141,7 +141,7 @@ package org.swiftsuspenders
 			var injectee : ClassInjectee = injector.instantiate(ClassInjectee);
 			childInjector.injectInto(injectee);
 			Assert.assertEquals(
-				'injectee.property isn\' overwritten by second injection through child injector',
+				'injectee.property isn\'t overwritten by second injection through child injector',
 				injectee.property, class1);
 		}
         
