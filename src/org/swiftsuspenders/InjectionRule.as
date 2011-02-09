@@ -75,18 +75,7 @@ package org.swiftsuspenders
 			return null;
 		}
 
-		public function hasProvider(injector : Injector) : Boolean
-		{
-			if (_provider)
-			{
-				return true;
-			}
-			var parentRule : InjectionRule =
-				(_injector || injector).getAncestorMapping(_requestClass, _requestName);
-			return parentRule != null && parentRule.hasProvider(_injector || injector);
-		}
-
-		public function hasOwnProvider() : Boolean
+		public function hasProvider() : Boolean
 		{
 			return _provider != null;
 		}

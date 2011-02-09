@@ -107,7 +107,7 @@ package org.swiftsuspenders.injectionpoints
 				var rule : InjectionRule = injector.getMapping(
 						Class(appDomain.getDefinition(parameterConfig.typeName)),
 						parameterConfig.injectionName);
-				var injection : Object = rule.apply(injector);
+				var injection : Object = rule && rule.apply(injector);
 				if (injection == null)
 				{
 					if (i >= _requiredParameters)
