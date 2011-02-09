@@ -1,17 +1,17 @@
 /*
- * Copyright (c) 2010 the original author or authors
+ * Copyright (c) 2010-2011 the original author or authors
  *
  * Permission is hereby granted to use, modify, and distribute this file
  * in accordance with the terms of the license agreement accompanying it.
  */
 
-package org.swiftsuspenders
+package org.swiftsuspenders.utils
 {
 	import flash.utils.Proxy;
 	import flash.utils.getDefinitionByName;
 	import flash.utils.getQualifiedClassName;
 	
-	internal function getConstructor(value : Object) : Class
+	public function getConstructor(value : Object) : Class
 	{
 		/*
 		   There are several types for which the 'constructor' property doesn't work:
