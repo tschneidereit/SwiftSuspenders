@@ -9,15 +9,11 @@ package org.swiftsuspenders
 {
 	public class NamedInjectionRule extends InjectionRule
 	{
-		/*******************************************************************************************
-		 *								private properties										   *
-		 *******************************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		private var _requestName : String;
 
 
-		/*******************************************************************************************
-		 *								public methods											   *
-		 *******************************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function NamedInjectionRule(requestClass : Class, requestName : String)
 		{
 			super(requestClass);
@@ -26,7 +22,8 @@ package org.swiftsuspenders
 
 		override protected function getParentRule(injector : Injector) : InjectionRule
 		{
-			return (_injector || injector).getNamedAncestorMapping(_requestClass, _requestName);
+			return (_injector || injector).usingName(_requestName).
+					getAncestorMapping(_requestClass);
 		}
 
 		override protected function describeInjection() : String
