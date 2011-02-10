@@ -29,12 +29,15 @@ package org.swiftsuspenders
 		private var _classDescriptor : ClassDescriptor;
 		private var _mappings : Dictionary;
 		private var _attendedToInjectees : Dictionary;
+		private var _namedInjectionsManager : NamedInjectionsManager;
 
 
 		//----------------------               Public Methods               ----------------------//
 		public function Injector(xmlConfig : XML = null)
 		{
 			_mappings = new Dictionary();
+			_attendedToInjectees = new Dictionary(true);
+			_namedInjectionsManager = new NamedInjectionsManager(this);
 			if (xmlConfig != null)
 			{
 				_classDescriptor = new XMLClassDescriptor(new Dictionary(true), xmlConfig);
@@ -43,7 +46,6 @@ package org.swiftsuspenders
 			{
 				_classDescriptor = new ClassDescriptor(INJECTION_POINTS_CACHE);
 			}
-			_attendedToInjectees = new Dictionary(true);
 		}
 
 		public function map(type : Class) : InjectionRule
@@ -51,30 +53,14 @@ package org.swiftsuspenders
 			return _mappings[type] || createRule(type);
 		}
 
-		public function mapNamed(type : Class, name : String) : InjectionRule
-		{
-			return _mappings[getQualifiedClassName(type) + name] || createNamedRule(type, name);
-		}
-
 		public function getMapping(requestType : Class) : InjectionRule
 		{
 			return _mappings[requestType] || getAncestorMapping(requestType);
 		}
 
-		public function getNamedMapping(requestType : Class, named : String = "") : InjectionRule
-		{
-			return _mappings[getQualifiedClassName(requestType) + named] ||
-					getNamedAncestorMapping(requestType, named);
-		}
-
 		public function hasMapping(type : Class) : Boolean
 		{
 			var rule : InjectionRule = getMapping(type);
-			return rule && rule.hasProvider();
-		}
-		public function hasNamedMapping(type : Class, named : String) : Boolean
-		{
-			var rule : InjectionRule = getNamedMapping(type, named);
 			return rule && rule.hasProvider();
 		}
 
@@ -87,18 +73,6 @@ package org.swiftsuspenders
 						'No mapping defined for class ' + getQualifiedClassName(type));
 			}
 			rule.setProvider(null);
-		}
-
-		public function unmapNamed(type : Class, named : String) : void
-		{
-			var mapping : InjectionRule = _mappings[getQualifiedClassName(type) + named];
-			if (!mapping)
-			{
-				throw new InjectorError('Error while removing an injector mapping: ' +
-						'No mapping defined for class ' + getQualifiedClassName(type) +
-						', named "' + named + '"');
-			}
-			mapping.setProvider(null);
 		}
 
 		public function injectInto(target : Object) : void
@@ -128,17 +102,6 @@ package org.swiftsuspenders
 			{
 				throw new InjectorError('Error while getting mapping response: ' +
 						'No mapping defined for class ' + getQualifiedClassName(type));
-			}
-			return mapping.apply(this);
-		}
-		public function getInstanceNamed(type : Class, named : String) : *
-		{
-			var mapping : InjectionRule = getNamedMapping(type, named);
-			if (!mapping || !mapping.hasProvider())
-			{
-				throw new InjectorError('Error while getting mapping response: ' +
-						'No mapping defined for class ' + getQualifiedClassName(type) +
-						', named "' + named + '"');
 			}
 			return mapping.apply(this);
 		}
@@ -188,6 +151,12 @@ package org.swiftsuspenders
 			return _applicationDomain ? _applicationDomain : ApplicationDomain.currentDomain;
 		}
 
+		public function usingName(name : String) : NamedInjectionsManager
+		{
+			_namedInjectionsManager.setRequestName(name);
+			return _namedInjectionsManager;
+		}
+
 		public static function purgeInjectionPointsCache() : void
 		{
 			INJECTION_POINTS_CACHE = new Dictionary(true);
@@ -199,11 +168,6 @@ package org.swiftsuspenders
 		{
 			return _parentInjector ? _parentInjector.getMapping(whenAskedFor) : null;
 		}
-		internal function getNamedAncestorMapping(
-				whenAskedFor : Class, named : String = null) : InjectionRule
-		{
-			return _parentInjector ? _parentInjector.getNamedMapping(whenAskedFor, named) : null;
-		}
 
 		public function getRuleForInjectionPointConfig(
 				config : InjectionPointConfig) : InjectionRule
@@ -211,7 +175,7 @@ package org.swiftsuspenders
 			var type : Class = Class(applicationDomain.getDefinition(config.typeName));
 			if (config.injectionName)
 			{
-				return getNamedMapping(type, config.injectionName);
+				return usingName(config.injectionName).getMapping(type);
 			}
 			return getMapping(type);
 		}
@@ -221,12 +185,6 @@ package org.swiftsuspenders
 		private function createRule(requestType : Class) : InjectionRule
 		{
 			return (_mappings[requestType] = new InjectionRule(requestType));
-		}
-
-		private function createNamedRule(requestType : Class, name : String = '') : InjectionRule
-		{
-			return (_mappings[getQualifiedClassName(requestType) + name] =
-					new NamedInjectionRule(requestType, ''));
 		}
 	}
 }

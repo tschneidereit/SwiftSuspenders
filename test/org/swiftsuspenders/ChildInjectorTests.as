@@ -52,14 +52,14 @@ package org.swiftsuspenders
 		{
 			injector.map(RobotFoot).toType(RobotFoot);
 
-			var leftFootRule : InjectionRule = injector.mapNamed(RobotLeg, 'leftLeg');
+			var leftFootRule : InjectionRule = injector.usingName('leftLeg').map(RobotLeg);
 			leftFootRule.toType(RobotLeg);
 			var leftChildInjector : Injector = injector.createChildInjector();
 			leftChildInjector.map(RobotAnkle).toType(RobotAnkle);
 			leftChildInjector.map(RobotFoot).toType(LeftRobotFoot);
 
 			leftFootRule.setInjector(leftChildInjector);
-			var rightFootRule : InjectionRule = injector.mapNamed(RobotLeg, 'rightLeg');
+			var rightFootRule : InjectionRule = injector.usingName('rightLeg').map(RobotLeg);
 			rightFootRule.toType(RobotLeg);
 			var rightChildInjector : Injector = injector.createChildInjector();
 			rightChildInjector.map(RobotAnkle).toType(RobotAnkle);
@@ -80,14 +80,14 @@ package org.swiftsuspenders
 			injector.map(RobotFoot).toType(RobotFoot);
 			injector.map(RobotToes).toType(RobotToes);
 
-			var leftFootRule : InjectionRule = injector.mapNamed(RobotLeg, 'leftLeg');
+			var leftFootRule : InjectionRule = injector.usingName('leftLeg').map(RobotLeg);
 			leftFootRule.toType(RobotLeg);
 			var leftChildInjector : Injector = injector.createChildInjector();
 			leftChildInjector.map(RobotAnkle).toType(RobotAnkle);
 			leftChildInjector.map(RobotFoot).toType(LeftRobotFoot);
 			leftFootRule.setInjector(leftChildInjector);
 
-			var rightFootRule : InjectionRule = injector.mapNamed(RobotLeg, 'rightLeg');
+			var rightFootRule : InjectionRule = injector.usingName('rightLeg').map(RobotLeg);
 			rightFootRule.toType(RobotLeg);
 			var rightChildInjector : Injector = injector.createChildInjector();
 			rightChildInjector.map(RobotAnkle).toType(RobotAnkle);
@@ -109,13 +109,13 @@ package org.swiftsuspenders
 			injector.map(RobotFoot).toType(RobotFoot);
 			injector.map(RobotToes).toType(RobotToes);
 
-			var leftFootRule : InjectionRule = injector.mapNamed(RobotLeg, 'leftLeg');
+			var leftFootRule : InjectionRule = injector.usingName('leftLeg').map(RobotLeg);
 			leftFootRule.toType(RobotLeg);
 			var leftChildInjector : Injector = injector.createChildInjector();
 			leftChildInjector.map(RobotFoot).toType(LeftRobotFoot);
 			leftFootRule.setInjector(leftChildInjector);
 
-			var rightFootRule : InjectionRule = injector.mapNamed(RobotLeg, 'rightLeg');
+			var rightFootRule : InjectionRule = injector.usingName('rightLeg').map(RobotLeg);
 			rightFootRule.toType(RobotLeg);
 			var rightChildInjector : Injector = injector.createChildInjector();
 			rightChildInjector.map(RobotFoot).toType(RightRobotFoot);
