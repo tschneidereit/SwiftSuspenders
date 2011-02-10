@@ -20,20 +20,18 @@ package org.swiftsuspenders
 		/*******************************************************************************************
 		 *								private properties										   *
 		 *******************************************************************************************/
-		private var _requestClass : Class;
-		private var _requestName : String;
+		protected var _requestClass : Class;
+		protected var _injector : Injector;
 
 		private var _provider : DependencyProvider;
-		private var _injector : Injector;
 
 
 		/*******************************************************************************************
 		 *								public methods											   *
 		 *******************************************************************************************/
-		public function InjectionRule(requestClass : Class, requestName : String)
+		public function InjectionRule(requestClass : Class)
 		{
 			_requestClass = requestClass;
-			_requestName = requestName;
 		}
 
 		public function toType(type : Class) : DependencyProvider
@@ -66,8 +64,7 @@ package org.swiftsuspenders
 			{
 				return _provider.apply(_injector || injector);
 			}
-			var parentRule : InjectionRule =
-				(_injector || injector).getAncestorMapping(_requestClass, _requestName);
+			var parentRule : InjectionRule = getParentRule(injector);
 			if (parentRule)
 			{
 				return parentRule.apply(injector);
@@ -84,13 +81,22 @@ package org.swiftsuspenders
 		{
 			if (_provider != null && provider != null)
 			{
-				trace('Warning: Injector already has a rule for type "' +
-						getQualifiedClassName(_requestClass) + '", named "' + _requestName + '".\n ' +
+				trace('Warning: Injector already has a rule for ' + describeInjection() + '.\n ' +
 						'If you have overwritten this mapping intentionally you can use ' +
 						'"injector.unmap()" prior to your replacement mapping in order to ' +
 						'avoid seeing this message.');
 			}
 			_provider = provider;
+		}
+
+		protected function getParentRule(injector : Injector) : InjectionRule
+		{
+			return (_injector || injector).getAncestorMapping(_requestClass);
+		}
+
+		protected function describeInjection() : String
+		{
+			return 'type "' + getQualifiedClassName(_requestClass) + '"';
 		}
 
 		/**
@@ -99,7 +105,7 @@ package org.swiftsuspenders
 		 *
 		 * An Injector is always provided when calling apply, but if one is also set using
 		 * setInjector, it takes precedence. This is used to implement forks in a dependency graph,
-		 * allowing to use a different injector from a certain point in the constructed object
+		 * allowing the use of a different Injector from a certain point in the constructed object
 		 * graph on.
 		 *
 		 * @param injector - The Injector to use in the rule. Set to null to reset.

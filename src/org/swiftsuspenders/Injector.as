@@ -12,6 +12,7 @@ package org.swiftsuspenders
 	import flash.utils.getQualifiedClassName;
 
 	import org.swiftsuspenders.injectionpoints.InjectionPoint;
+	import org.swiftsuspenders.injectionpoints.InjectionPointConfig;
 	import org.swiftsuspenders.utils.ClassDescription;
 	import org.swiftsuspenders.utils.ClassDescriptor;
 	import org.swiftsuspenders.utils.XMLClassDescriptor;
@@ -47,18 +48,23 @@ package org.swiftsuspenders
 
 		public function map(type : Class) : InjectionRule
 		{
-			return _mappings[getQualifiedClassName(type) + ''] || createRule(type);
+			return _mappings[type] || createRule(type);
 		}
 
 		public function mapNamed(type : Class, name : String) : InjectionRule
 		{
-			return _mappings[getQualifiedClassName(type) + name] || createRule(type, name);
+			return _mappings[getQualifiedClassName(type) + name] || createNamedRule(type, name);
 		}
-		
-		public function getMapping(requestType : Class, named : String = "") : InjectionRule
+
+		public function getMapping(requestType : Class) : InjectionRule
+		{
+			return _mappings[requestType] || getAncestorMapping(requestType);
+		}
+
+		public function getNamedMapping(requestType : Class, named : String = "") : InjectionRule
 		{
 			return _mappings[getQualifiedClassName(requestType) + named] ||
-					getAncestorMapping(requestType, named);
+					getNamedAncestorMapping(requestType, named);
 		}
 		
 		public function injectInto(target : Object) : void
@@ -69,9 +75,8 @@ package org.swiftsuspenders
 			}
 			_attendedToInjectees[target] = true;
 
-			var targetClass : Class = getConstructor(target);
 			var injecteeDescription : ClassDescription =
-					_classDescriptor.getDescription(targetClass);
+					_classDescriptor.getDescription(getConstructor(target));
 
 			var injectionPoints : Array = injecteeDescription.injectionPoints;
 			var length : int = injectionPoints.length;
@@ -90,33 +95,61 @@ package org.swiftsuspenders
 			injectInto(instance);
 			return instance;
 		}
-		
-		public function unmap(type : Class, named : String = "") : void
+
+		public function unmap(type : Class) : void
+		{
+			var rule : InjectionRule = _mappings[type];
+			if (!rule)
+			{
+				throw new InjectorError('Error while removing an injector mapping: ' +
+						'No mapping defined for class ' + getQualifiedClassName(type));
+			}
+			rule.setProvider(null);
+		}
+
+		public function unmapNamed(type : Class, named : String) : void
 		{
 			var mapping : InjectionRule = _mappings[getQualifiedClassName(type) + named];
 			if (!mapping)
 			{
 				throw new InjectorError('Error while removing an injector mapping: ' +
-					'No mapping defined for class ' + getQualifiedClassName(type) +
-					', named "' + named + '"');
+						'No mapping defined for class ' + getQualifiedClassName(type) +
+						', named "' + named + '"');
 			}
 			mapping.setProvider(null);
 		}
 
-		public function hasMapping(clazz : Class, named : String = '') : Boolean
+		public function hasMapping(type : Class) : Boolean
 		{
-			var mapping : InjectionRule = getMapping(clazz, named);
-			return mapping && mapping.hasProvider();
+			var rule : InjectionRule = getMapping(type);
+			return rule && rule.hasProvider();
 		}
 
-		public function getInstance(clazz : Class, named : String = '') : *
+		public function hasNamedMapping(type : Class, named : String) : Boolean
 		{
-			var mapping : InjectionRule = getMapping(clazz, named);
+			var rule : InjectionRule = getNamedMapping(type, named);
+			return rule && rule.hasProvider();
+		}
+
+		public function getInstance(type : Class) : *
+		{
+			var mapping : InjectionRule = getMapping(type);
 			if (!mapping || !mapping.hasProvider())
 			{
 				throw new InjectorError('Error while getting mapping response: ' +
-					'No mapping defined for class ' + getQualifiedClassName(clazz) +
-					', named "' + named + '"');
+						'No mapping defined for class ' + getQualifiedClassName(type));
+			}
+			return mapping.apply(this);
+		}
+
+		public function getInstanceNamed(type : Class, named : String) : *
+		{
+			var mapping : InjectionRule = getNamedMapping(type, named);
+			if (!mapping || !mapping.hasProvider())
+			{
+				throw new InjectorError('Error while getting mapping response: ' +
+						'No mapping defined for class ' + getQualifiedClassName(type) +
+						', named "' + named + '"');
 			}
 			return mapping.apply(this);
 		}
@@ -166,19 +199,38 @@ package org.swiftsuspenders
 
 
 		//----------------------             Internal Methods               ----------------------//
-		internal function getAncestorMapping(
+		internal function getAncestorMapping(whenAskedFor : Class) : InjectionRule
+		{
+			return _parentInjector ? _parentInjector.getMapping(whenAskedFor) : null;
+		}
+		internal function getNamedAncestorMapping(
 				whenAskedFor : Class, named : String = null) : InjectionRule
 		{
-			return _parentInjector ? _parentInjector.getMapping(whenAskedFor, named) : null;
+			return _parentInjector ? _parentInjector.getNamedMapping(whenAskedFor, named) : null;
+		}
+
+		public function getRuleForInjectionPointConfig(
+				config : InjectionPointConfig) : InjectionRule
+		{
+			var type : Class = Class(getApplicationDomain().getDefinition(config.typeName));
+			if (config.injectionName)
+			{
+				return getNamedMapping(type, config.injectionName);
+			}
+			return getMapping(type);
 		}
 
 
 		//----------------------         Private / Protected Methods        ----------------------//
-		private function createRule(requestType : Class, name : String = '') : InjectionRule
+		private function createRule(requestType : Class) : InjectionRule
 		{
-			//TODO: check if it's ok to use the Class itself as the key here
+			return (_mappings[requestType] = new InjectionRule(requestType));
+		}
+
+		private function createNamedRule(requestType : Class, name : String = '') : InjectionRule
+		{
 			return (_mappings[getQualifiedClassName(requestType) + name] =
-					new InjectionRule(requestType, ''));
+					new NamedInjectionRule(requestType, ''));
 		}
 	}
 }

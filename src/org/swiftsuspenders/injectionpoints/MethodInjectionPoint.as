@@ -86,7 +86,7 @@ package org.swiftsuspenders.injectionpoints
 					}
 				}
 				_parameterInjectionConfigs.push(
-						new ParameterInjectionConfig(parameterTypeName, injectionName));
+						new InjectionPointConfig(parameterTypeName, injectionName, false));
 				if (parameter.@optional == 'false')
 				{
 					_requiredParameters++;
@@ -102,10 +102,8 @@ package org.swiftsuspenders.injectionpoints
 			var length : int = _parameterInjectionConfigs.length;
 			for (var i : int = 0; i < length; i++)
 			{
-				var parameterConfig : ParameterInjectionConfig = _parameterInjectionConfigs[i];
-				var rule : InjectionRule = injector.getMapping(
-						Class(appDomain.getDefinition(parameterConfig.typeName)),
-						parameterConfig.injectionName);
+				var parameterConfig : InjectionPointConfig = _parameterInjectionConfigs[i];
+				var rule : InjectionRule = injector.getRuleForInjectionPointConfig(parameterConfig);
 				var injection : Object = rule && rule.apply(injector);
 				if (injection == null)
 				{
@@ -128,17 +126,5 @@ package org.swiftsuspenders.injectionpoints
 			}
 			return parameters;
 		}
-	}
-}
-
-final class ParameterInjectionConfig
-{
-	public var typeName : String;
-	public var injectionName : String;
-
-	public final function ParameterInjectionConfig(typeName : String, injectionName : String)
-	{
-		this.typeName = typeName;
-		this.injectionName = injectionName;
 	}
 }

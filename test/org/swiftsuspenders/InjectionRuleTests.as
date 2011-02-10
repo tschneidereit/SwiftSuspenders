@@ -36,7 +36,7 @@ package org.swiftsuspenders
 		[Test]
 		public function configIsInstantiated():void
 		{
-			var config : InjectionRule = new InjectionRule(Clazz, "");
+			var config : InjectionRule = new InjectionRule(Clazz);
 			
 			Assert.assertTrue(config is InjectionRule);
 		}
@@ -45,7 +45,7 @@ package org.swiftsuspenders
 		public function injectionTypeValueReturnsRespone():void
 		{
 			var response:Clazz = new Clazz();
-			var config : InjectionRule = new InjectionRule(Clazz, "");
+			var config : InjectionRule = new InjectionRule(Clazz);
 			config.setProvider(new ValueProvider(response));
 			var returnedResponse:Object = config.apply(injector);
 			
@@ -55,7 +55,7 @@ package org.swiftsuspenders
 		[Test]
 		public function injectionTypeClassReturnsRespone():void
 		{
-			var config : InjectionRule = new InjectionRule(Clazz, "");
+			var config : InjectionRule = new InjectionRule(Clazz);
 			config.setProvider(new ClassProvider(Clazz));
 			var returnedResponse:Object = config.apply(injector);
 			
@@ -65,7 +65,7 @@ package org.swiftsuspenders
 		[Test]
 		public function injectionTypeSingletonReturnsResponse():void
 		{
-			var config : InjectionRule = new InjectionRule(Clazz, "");
+			var config : InjectionRule = new InjectionRule(Clazz);
 			config.setProvider(new SingletonProvider(Clazz));
 			var returnedResponse:Object = config.apply(injector);
 			
@@ -75,7 +75,7 @@ package org.swiftsuspenders
 		[Test]
 		public function sameSingletonIsReturnedOnSecondResponse():void
 		{
-			var config : InjectionRule = new InjectionRule(Clazz, "");
+			var config : InjectionRule = new InjectionRule(Clazz);
 			config.setProvider(new SingletonProvider(Clazz));
 			var returnedResponse:Object = config.apply(injector);
 			var secondResponse:Object = config.apply(injector);
@@ -86,7 +86,7 @@ package org.swiftsuspenders
 		[Test]
 		public function sameNamedSingletonIsReturnedOnSecondResponse():void
 		{
-			var config : InjectionRule = new InjectionRule(Clazz, "named");
+			var config : InjectionRule = new NamedInjectionRule(Clazz, "named");
 			config.setProvider(new SingletonProvider(Clazz));
 			var returnedResponse:Object = config.apply(injector);
 			var secondResponse:Object = config.apply(injector);
@@ -97,7 +97,7 @@ package org.swiftsuspenders
 		[Test]
 		public function callingSetResultBetweenUsagesChangesResponse():void
 		{
-			var config : InjectionRule = new InjectionRule(Clazz, '');
+			var config : InjectionRule = new InjectionRule(Clazz);
 			config.setProvider(new SingletonProvider(Clazz));
 			var returnedResponse:Object = config.apply(injector);
 			config.setProvider(null);
@@ -111,8 +111,8 @@ package org.swiftsuspenders
 		[Test]
 		public function injectionTypeOtherRuleReturnsOtherRulesResponse():void
 		{
-			var config : InjectionRule = new InjectionRule(Clazz, "");
-			var otherConfig : InjectionRule = new InjectionRule(ClazzExtension, "");
+			var config : InjectionRule = new InjectionRule(Clazz);
+			var otherConfig : InjectionRule = new InjectionRule(ClazzExtension);
 			otherConfig.setProvider(new ClassProvider(ClazzExtension));
 			config.setProvider(new OtherRuleProvider(otherConfig));
 			var returnedResponse:Object = config.apply(injector);
