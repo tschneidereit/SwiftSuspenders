@@ -503,7 +503,7 @@ package org.swiftsuspenders
 		[Test]
 		public function hasMappingFailsForUnmappedNamedClass():void
 		{
-			Assert.assertFalse(injector.hasMapping(Clazz, 'namedClass'));
+			Assert.assertFalse(injector.hasNamedMapping(Clazz, 'namedClass'));
 		}
 
 		[Test]
@@ -517,7 +517,7 @@ package org.swiftsuspenders
 		public function hasMappingSucceedsForMappedNamedClass():void
 		{
 			injector.mapNamed(Clazz, 'namedClass').toType(Clazz);
-			Assert.assertTrue(injector.hasMapping(Clazz, 'namedClass'));
+			Assert.assertTrue(injector.hasNamedMapping(Clazz, 'namedClass'));
 		}
 
 		[Test(expects="org.swiftsuspenders.InjectorError")]
@@ -529,7 +529,7 @@ package org.swiftsuspenders
 		[Test(expects="org.swiftsuspenders.InjectorError")]
 		public function getMappingResponseFailsForUnmappedNamedClass():void
 		{
-			Assert.assertNull(injector.getInstance(Clazz, 'namedClass'));
+			Assert.assertNull(injector.getInstanceNamed(Clazz, 'namedClass'));
 		}
 
 		[Test]
@@ -541,11 +541,11 @@ package org.swiftsuspenders
 		}
 
 		[Test]
-		public function getMappingResponseSucceedsForMappedNamedClass():void
+		public function getNamedMappingResponseSucceedsForMappedNamedClass():void
 		{
 			var clazz : Clazz = new Clazz();
 			injector.mapNamed(Clazz, 'namedClass').toValue(clazz);
-			Assert.assertObjectEquals(injector.getInstance(Clazz, 'namedClass'), clazz);
+			Assert.assertObjectEquals(injector.getInstanceNamed(Clazz, 'namedClass'), clazz);
 		}
 
 		[Test]

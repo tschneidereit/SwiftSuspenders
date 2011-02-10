@@ -14,7 +14,7 @@ package org.swiftsuspenders.support.injectees.childinjectors
 	{
 		public function InjectorCopyRule()
 		{
-			super(Injector, "");
+			super(Injector);
 		}
 
 		override public function apply(injector:Injector):Object

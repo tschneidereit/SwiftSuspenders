@@ -17,9 +17,7 @@ package org.swiftsuspenders.injectionpoints
 		*								private properties										   *
 		*******************************************************************************************/
 		private var _propertyName : String;
-		private var _propertyType : String;
-		private var _injectionName : String;
-		private var _injectionIsOptional : Boolean;
+		private var _injectionConfig : InjectionPointConfig;
 
 		
 		/*******************************************************************************************
@@ -32,19 +30,19 @@ package org.swiftsuspenders.injectionpoints
 		
 		override public function applyInjection(target : Object, injector : Injector) : Object
 		{
-			var rule : InjectionRule = injector.getMapping(Class(
-					injector.getApplicationDomain().getDefinition(_propertyType)), _injectionName);
+			var rule : InjectionRule = injector.getRuleForInjectionPointConfig(_injectionConfig);
 			var injection : Object = rule && rule.apply(injector);
 			if (injection == null)
 			{
-				if (_injectionIsOptional)
+				if (_injectionConfig.optional)
 				{
 					return target;
 				}
 				throw(new InjectorError(
 						'Injector is missing a rule to handle injection into property "' +
 						_propertyName + '" of object "' + target +
-						'". Target dependency: "' + _propertyType + '", named "' + _injectionName +
+						'". Target dependency: "' + _injectionConfig.typeName +
+								'", named "' + _injectionConfig.injectionName +
 						'"'));
 			}
 			target[_propertyName] = injection;
@@ -57,11 +55,12 @@ package org.swiftsuspenders.injectionpoints
 		*******************************************************************************************/
 		override protected function initializeInjection(node : XML) : void
 		{
-			_propertyType = node.parent().@type.toString();
+			_injectionConfig = new InjectionPointConfig(
+					node.parent().@type.toString(),
+					node.arg.(@key == 'name').attribute('value').toString(),
+					node.arg.(@key == 'optional' &&
+							(@value == 'true' || @value == '1')).length() != 0);
 			_propertyName = node.parent().@name.toString();
-			_injectionName = node.arg.(@key == 'name').attribute('value').toString();
-			_injectionIsOptional = node.arg.(@key == 'optional' &&
-					(@value == 'true' || @value == '1')).length() != 0;
 		}
 	}
 }
