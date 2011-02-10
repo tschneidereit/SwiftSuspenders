@@ -66,34 +66,16 @@ package org.swiftsuspenders
 			return _mappings[getQualifiedClassName(requestType) + named] ||
 					getNamedAncestorMapping(requestType, named);
 		}
-		
-		public function injectInto(target : Object) : void
+
+		public function hasMapping(type : Class) : Boolean
 		{
-			if (_attendedToInjectees[target])
-			{
-				return;
-			}
-			_attendedToInjectees[target] = true;
-
-			var injecteeDescription : ClassDescription =
-					_classDescriptor.getDescription(getConstructor(target));
-
-			var injectionPoints : Array = injecteeDescription.injectionPoints;
-			var length : int = injectionPoints.length;
-			for (var i : int = 0; i < length; i++)
-			{
-				var injectionPoint : InjectionPoint = injectionPoints[i];
-				injectionPoint.applyInjection(target, this);
-			}
+			var rule : InjectionRule = getMapping(type);
+			return rule && rule.hasProvider();
 		}
-		
-		public function instantiate(type : Class) : *
+		public function hasNamedMapping(type : Class, named : String) : Boolean
 		{
-			var typeDescription : ClassDescription = _classDescriptor.getDescription(type);
-			var injectionPoint : InjectionPoint = typeDescription.ctor;
-			var instance : * = injectionPoint.applyInjection(type, this);
-			injectInto(instance);
-			return instance;
+			var rule : InjectionRule = getNamedMapping(type, named);
+			return rule && rule.hasProvider();
 		}
 
 		public function unmap(type : Class) : void
@@ -119,16 +101,24 @@ package org.swiftsuspenders
 			mapping.setProvider(null);
 		}
 
-		public function hasMapping(type : Class) : Boolean
+		public function injectInto(target : Object) : void
 		{
-			var rule : InjectionRule = getMapping(type);
-			return rule && rule.hasProvider();
-		}
+			if (_attendedToInjectees[target])
+			{
+				return;
+			}
+			_attendedToInjectees[target] = true;
 
-		public function hasNamedMapping(type : Class, named : String) : Boolean
-		{
-			var rule : InjectionRule = getNamedMapping(type, named);
-			return rule && rule.hasProvider();
+			var injecteeDescription : ClassDescription =
+					_classDescriptor.getDescription(getConstructor(target));
+
+			var injectionPoints : Array = injecteeDescription.injectionPoints;
+			var length : int = injectionPoints.length;
+			for (var i : int = 0; i < length; i++)
+			{
+				var injectionPoint : InjectionPoint = injectionPoints[i];
+				injectionPoint.applyInjection(target, this);
+			}
 		}
 
 		public function getInstance(type : Class) : *
@@ -141,7 +131,6 @@ package org.swiftsuspenders
 			}
 			return mapping.apply(this);
 		}
-
 		public function getInstanceNamed(type : Class, named : String) : *
 		{
 			var mapping : InjectionRule = getNamedMapping(type, named);
@@ -153,26 +142,25 @@ package org.swiftsuspenders
 			}
 			return mapping.apply(this);
 		}
+
+		public function instantiate(type : Class) : *
+		{
+			var typeDescription : ClassDescription = _classDescriptor.getDescription(type);
+			var injectionPoint : InjectionPoint = typeDescription.ctor;
+			var instance : * = injectionPoint.applyInjection(type, this);
+			injectInto(instance);
+			return instance;
+		}
 		
-		public function createChildInjector(applicationDomain:ApplicationDomain=null) : Injector
+		public function createChildInjector(applicationDomain : ApplicationDomain = null) : Injector
 		{
 			var injector : Injector = new Injector();
-            injector.setApplicationDomain(applicationDomain);
-			injector.setParentInjector(this);
+            injector.applicationDomain = applicationDomain;
+			injector.parentInjector = this;
 			return injector;
 		}
-        
-        public function setApplicationDomain(applicationDomain:ApplicationDomain):void
-        {
-            _applicationDomain = applicationDomain;
-        }
-        
-        public function getApplicationDomain():ApplicationDomain
-        {
-            return _applicationDomain ? _applicationDomain : ApplicationDomain.currentDomain;
-        }
 
-		public function setParentInjector(parentInjector : Injector) : void
+		public function set parentInjector(parentInjector : Injector) : void
 		{
 			//restore own map of worked injectees if parent injector is removed
 			if (_parentInjector && !parentInjector)
@@ -186,10 +174,18 @@ package org.swiftsuspenders
 				_attendedToInjectees = parentInjector._attendedToInjectees;
 			}
 		}
-		
-		public function getParentInjector() : Injector
+		public function get parentInjector() : Injector
 		{
 			return _parentInjector;
+		}
+
+		public function set applicationDomain(applicationDomain : ApplicationDomain) : void
+		{
+			_applicationDomain = applicationDomain;
+		}
+		public function get applicationDomain() : ApplicationDomain
+		{
+			return _applicationDomain ? _applicationDomain : ApplicationDomain.currentDomain;
 		}
 
 		public static function purgeInjectionPointsCache() : void
@@ -212,7 +208,7 @@ package org.swiftsuspenders
 		public function getRuleForInjectionPointConfig(
 				config : InjectionPointConfig) : InjectionRule
 		{
-			var type : Class = Class(getApplicationDomain().getDefinition(config.typeName));
+			var type : Class = Class(applicationDomain.getDefinition(config.typeName));
 			if (config.injectionName)
 			{
 				return getNamedMapping(type, config.injectionName);

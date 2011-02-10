@@ -7,8 +7,6 @@
 
 package org.swiftsuspenders.injectionpoints
 {
-	import flash.system.ApplicationDomain;
-
 	import org.swiftsuspenders.InjectionRule;
 	import org.swiftsuspenders.Injector;
 	import org.swiftsuspenders.InjectorError;
@@ -97,7 +95,6 @@ package org.swiftsuspenders.injectionpoints
 		
 		protected function gatherParameterValues(target : Object, injector : Injector) : Array
 		{
-			var appDomain : ApplicationDomain = injector.getApplicationDomain();
 			var parameters : Array = [];
 			var length : int = _parameterInjectionConfigs.length;
 			for (var i : int = 0; i < length; i++)

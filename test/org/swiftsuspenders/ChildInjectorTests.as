@@ -189,9 +189,9 @@ package org.swiftsuspenders
 			var injectee : InjectorInjectee = injector.getInstance(InjectorInjectee);
 			Assert.assertNotNull('Injection has been applied to injectorInjectee', injectee.injector);
 			Assert.assertTrue('injectorInjectee.injector is child of main injector',
-					injectee.injector.getParentInjector() == injector);
+					injectee.injector.parentInjector == injector);
 			Assert.assertTrue('injectorInjectee.nestedInjectee is grandchild of main injector',
-					injectee.nestedInjectee.nestedInjectee.injector.getParentInjector().getParentInjector().getParentInjector() == injector);
+					injectee.nestedInjectee.nestedInjectee.injector.parentInjector.parentInjector.parentInjector == injector);
 		}
 	}
 }
