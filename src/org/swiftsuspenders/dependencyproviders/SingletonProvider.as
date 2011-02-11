@@ -37,7 +37,7 @@ package org.swiftsuspenders.dependencyproviders
 		 *******************************************************************************************/
 		private function createResponse(injector : Injector) : Object
 		{
-			return injector.instantiate(_responseType);
+			return injector.instantiateUnmapped(_responseType);
 		}
 	}
 }
