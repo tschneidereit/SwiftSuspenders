@@ -66,7 +66,7 @@ package org.swiftsuspenders
 			rightChildInjector.map(RobotFoot).toType(RightRobotFoot);
 			rightFootRule.setInjector(rightChildInjector);
 			
-			var robotBody : RobotBody = injector.instantiate(RobotBody);
+			var robotBody : RobotBody = injector.getInstance(RobotBody);
 			
 			Assert.assertTrue('Right RobotLeg should have a RightRobotFoot', 
 				robotBody.rightLeg.ankle.foot is RightRobotFoot);
@@ -94,7 +94,7 @@ package org.swiftsuspenders
 			rightChildInjector.map(RobotFoot).toType(RightRobotFoot);
 			rightFootRule.setInjector(rightChildInjector);
 
-			var robotBody : RobotBody = injector.instantiate(RobotBody);
+			var robotBody : RobotBody = injector.getInstance(RobotBody);
 
 			Assert.assertTrue('Right RobotFoot should have toes',
 				robotBody.rightLeg.ankle.foot.toes is RobotToes);
@@ -121,7 +121,7 @@ package org.swiftsuspenders
 			rightChildInjector.map(RobotFoot).toType(RightRobotFoot);
 			rightFootRule.setInjector(rightChildInjector);
 
-			var robotBody : RobotBody = injector.instantiate(RobotBody);
+			var robotBody : RobotBody = injector.getInstance(RobotBody);
 
 			Assert.assertTrue('Right RobotFoot should have RightRobotFoot',
 				robotBody.rightLeg.ankle.foot is RightRobotFoot);
@@ -138,7 +138,7 @@ package org.swiftsuspenders
 			injector.map(Clazz).toValue(class1);
 			childInjector.map(Clazz).toValue(class2);
 
-			var injectee : ClassInjectee = injector.instantiate(ClassInjectee);
+			var injectee : ClassInjectee = injector.getInstance(ClassInjectee);
 			childInjector.injectInto(injectee);
 			Assert.assertEquals(
 				'injectee.property isn\'t overwritten by second injection through child injector',

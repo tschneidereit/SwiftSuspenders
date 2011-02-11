@@ -27,7 +27,7 @@ package org.swiftsuspenders.dependencyproviders
 		
 		public function apply(injector : Injector) : Object
 		{
-			return injector.instantiate(_responseType);
+			return injector.instantiateUnmapped(_responseType);
 		}
 
 		override public function equals(otherResult : InjectionResult) : Boolean

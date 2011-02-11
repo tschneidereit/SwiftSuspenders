@@ -342,7 +342,7 @@ package org.swiftsuspenders
 		public function performConstructorInjectionWithOneParameter():void
 		{
 			injector.map(Clazz).toType(Clazz);
-			var injectee:OneParameterConstructorInjectee = injector.instantiate(OneParameterConstructorInjectee);
+			var injectee:OneParameterConstructorInjectee = injector.getInstance(OneParameterConstructorInjectee);
 			Assert.assertNotNull("Instance of Class should have been injected for Clazz parameter", injectee.getDependency() );
 		}
 		
@@ -351,7 +351,7 @@ package org.swiftsuspenders
 		{
 			injector.map(Clazz).toType(Clazz);
 			injector.map(String).toValue('stringDependency');
-			var injectee:TwoParametersConstructorInjectee = injector.instantiate(TwoParametersConstructorInjectee);
+			var injectee:TwoParametersConstructorInjectee = injector.getInstance(TwoParametersConstructorInjectee);
 			Assert.assertNotNull("Instance of Class should have been injected for named Clazz parameter", injectee.getDependency());
 			Assert.assertEquals("The String 'stringDependency' should have been injected for String parameter", injectee.getDependency2(), 'stringDependency');
 		}
@@ -360,7 +360,7 @@ package org.swiftsuspenders
 		public function performConstructorInjectionWithOneNamedParameter():void
 		{
 			injector.usingName('namedDependency').map(Clazz).toType(Clazz);
-			var injectee:OneNamedParameterConstructorInjectee = injector.instantiate(OneNamedParameterConstructorInjectee);
+			var injectee:OneNamedParameterConstructorInjectee = injector.getInstance(OneNamedParameterConstructorInjectee);
 			Assert.assertNotNull("Instance of Class should have been injected for named Clazz parameter", injectee.getDependency() );
 		}
 		
@@ -377,7 +377,7 @@ package org.swiftsuspenders
 				</types>;
 			injector = new Injector(diConfig);
 			injector.usingName('namedDependency').map(Clazz).toType(Clazz);
-			var injectee:OneNamedParameterConstructorInjectee = injector.instantiate(OneNamedParameterConstructorInjectee);
+			var injectee:OneNamedParameterConstructorInjectee = injector.getInstance(OneNamedParameterConstructorInjectee);
 			Assert.assertNotNull("Instance of Class should have been injected for named Clazz parameter", injectee.getDependency() );
 		}
 		
@@ -386,7 +386,7 @@ package org.swiftsuspenders
 		{
 			injector.usingName('namedDependency').map(Clazz).toType(Clazz);
 			injector.usingName('namedDependency2').map(String).toValue('stringDependency');
-			var injectee:TwoNamedParametersConstructorInjectee = injector.instantiate(TwoNamedParametersConstructorInjectee);
+			var injectee:TwoNamedParametersConstructorInjectee = injector.getInstance(TwoNamedParametersConstructorInjectee);
 			Assert.assertNotNull("Instance of Class should have been injected for named Clazz parameter", injectee.getDependency());
 			Assert.assertEquals("The String 'stringDependency' should have been injected for named String parameter", injectee.getDependency2(), 'stringDependency');
 		}
@@ -397,7 +397,7 @@ package org.swiftsuspenders
 			injector.usingName('namedDep').map(Clazz).toType(Clazz);
 			injector.map(Clazz).toType(Clazz);
 			injector.usingName('namedDep2').map(Interface).toType(Clazz);
-			var injectee:MixedParametersConstructorInjectee = injector.instantiate(MixedParametersConstructorInjectee);
+			var injectee:MixedParametersConstructorInjectee = injector.getInstance(MixedParametersConstructorInjectee);
 			Assert.assertNotNull("Instance of Class should have been injected for named Clazz parameter", injectee.getDependency() );
 			Assert.assertNotNull("Instance of Class should have been injected for unnamed Clazz parameter", injectee.getDependency2() );
 			Assert.assertNotNull("Instance of Class should have been injected for Interface", injectee.getDependency3() );
@@ -408,7 +408,7 @@ package org.swiftsuspenders
 		{
 			var ac : ArrayCollection = new ArrayCollection();
 			injector.usingName("namedCollection").map(ArrayCollection).toValue(ac);
-			var injectee:NamedArrayCollectionInjectee = injector.instantiate(NamedArrayCollectionInjectee);
+			var injectee:NamedArrayCollectionInjectee = injector.getInstance(NamedArrayCollectionInjectee);
 			Assert.assertNotNull("Instance 'ac' should have been injected for named ArrayCollection parameter", injectee.ac );
 			Assert.assertEquals("Instance field 'ac' should be identical to local variable 'ac'", ac, injectee.ac);
 		}
@@ -419,7 +419,7 @@ package org.swiftsuspenders
 			var rule : InjectionRule = injector.map(Interface);
 			rule.toSingleton(Clazz);
 			injector.map(Interface2).toRule(rule);
-			var injectee:MultipleSingletonsOfSameClassInjectee = injector.instantiate(MultipleSingletonsOfSameClassInjectee);
+			var injectee:MultipleSingletonsOfSameClassInjectee = injector.getInstance(MultipleSingletonsOfSameClassInjectee);
 			Assert.assertEquals("Instance field 'property1' should be identical to Instance field 'property2'", injectee.property1, injectee.property2);
 		}
 		
@@ -431,7 +431,7 @@ package org.swiftsuspenders
 			injector.map(Interface2).toRule(rule);
 			injector.usingName('name1').map(Interface).toRule(rule);
 			injector.usingName('name2').map(Interface2).toRule(rule);
-			var injectee:MultipleNamedSingletonsOfSameClassInjectee = injector.instantiate(MultipleNamedSingletonsOfSameClassInjectee);
+			var injectee:MultipleNamedSingletonsOfSameClassInjectee = injector.getInstance(MultipleNamedSingletonsOfSameClassInjectee);
 			Assert.assertEquals("Instance field 'property1' should be identical to Instance field 'property2'", injectee.property1, injectee.property2);
 			Assert.assertEquals("Instance field 'property1' should be identical to Instance field 'namedProperty1'", injectee.property1, injectee.namedProperty1);
 			Assert.assertEquals("Instance field 'property1' should be identical to Instance field 'namedProperty2'", injectee.property1, injectee.namedProperty2);
@@ -521,12 +521,6 @@ package org.swiftsuspenders
 		}
 
 		[Test(expects="org.swiftsuspenders.InjectorError")]
-		public function getMappingResponseFailsForUnmappedUnnamedClass():void
-		{
-			Assert.assertNull(injector.getInstance(Clazz));
-		}
-
-		[Test(expects="org.swiftsuspenders.InjectorError")]
 		public function getMappingResponseFailsForUnmappedNamedClass():void
 		{
 			Assert.assertNull(injector.usingName('namedClass').getInstance(Clazz));
@@ -552,10 +546,10 @@ package org.swiftsuspenders
 		public function injectorRemovesSingletonInstanceOnRuleRemoval() : void
 		{
 			injector.map(Clazz).toSingleton(Clazz);
-			var injectee1 : ClassInjectee = injector.instantiate(ClassInjectee);
+			var injectee1 : ClassInjectee = injector.getInstance(ClassInjectee);
 			injector.unmap(Clazz);
 			injector.map(Clazz).toSingleton(Clazz);
-			var injectee2 : ClassInjectee = injector.instantiate(ClassInjectee);
+			var injectee2 : ClassInjectee = injector.getInstance(ClassInjectee);
 			Assert.assertFalse('injectee1.property is not the same instance as injectee2.property',
 				injectee1.property == injectee2.property);
 		}
@@ -563,13 +557,13 @@ package org.swiftsuspenders
 		[Test(expects="org.swiftsuspenders.InjectorError")]
 		public function instantiateThrowsMeaningfulErrorOnInterfaceInstantiation() : void
 		{
-			injector.instantiate(Interface);
+			injector.getInstance(Interface);
 		}
 
 		[Test]
 		public function injectorDoesntThrowWhenAttemptingUnmappedOptionalPropertyInjection() : void
 		{
-			var injectee : OptionalClassInjectee = injector.instantiate(OptionalClassInjectee);
+			var injectee : OptionalClassInjectee = injector.getInstance(OptionalClassInjectee);
 			Assert.assertNull("injectee mustn\'t contain Clazz instance", injectee.property);
 		}
 
@@ -577,7 +571,7 @@ package org.swiftsuspenders
 		public function injectorDoesntThrowWhenAttemptingUnmappedOptionalMethodInjection() : void
 		{
 			var injectee : OptionalOneRequiredParameterMethodInjectee =
-					injector.instantiate(OptionalOneRequiredParameterMethodInjectee);
+					injector.getInstance(OptionalOneRequiredParameterMethodInjectee);
 			Assert.assertNull("injectee mustn\'t contain Clazz instance", injectee.getDependency());
 		}
 	}

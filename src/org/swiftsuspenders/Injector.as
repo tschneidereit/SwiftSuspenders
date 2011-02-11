@@ -100,19 +100,9 @@ package org.swiftsuspenders
 			var mapping : InjectionRule = getMapping(type);
 			if (!mapping || !mapping.hasProvider())
 			{
-				throw new InjectorError('Error while getting mapping response: ' +
-						'No mapping defined for class ' + getQualifiedClassName(type));
+				return instantiateUnmapped(type);
 			}
 			return mapping.apply(this);
-		}
-
-		public function instantiate(type : Class) : *
-		{
-			var typeDescription : ClassDescription = _classDescriptor.getDescription(type);
-			var injectionPoint : InjectionPoint = typeDescription.ctor;
-			var instance : * = injectionPoint.applyInjection(type, this);
-			injectInto(instance);
-			return instance;
 		}
 		
 		public function createChildInjector(applicationDomain : ApplicationDomain = null) : Injector
@@ -185,6 +175,15 @@ package org.swiftsuspenders
 		private function createRule(requestType : Class) : InjectionRule
 		{
 			return (_mappings[requestType] = new InjectionRule(requestType));
+		}
+
+		public function instantiateUnmapped(type : Class) : *
+		{
+			var typeDescription : ClassDescription = _classDescriptor.getDescription(type);
+			var injectionPoint : InjectionPoint = typeDescription.ctor;
+			var instance : * = injectionPoint.applyInjection(type, this);
+			injectInto(instance);
+			return instance;
 		}
 	}
 }

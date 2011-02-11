@@ -17,7 +17,7 @@ package org.swiftsuspenders.support.injectees.childinjectors
 		[PostConstruct]
 		public function createAnotherChildInjector() : void
 		{
-			nestedInjectee = injector.instantiate(NestedNestedInjectorInjectee);
+			nestedInjectee = injector.getInstance(NestedNestedInjectorInjectee);
 		}
 	}
 }
