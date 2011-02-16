@@ -1,26 +1,23 @@
 /*
- * Copyright (c) 2009-2011 the original author or authors
- *
- * Permission is hereby granted to use, modify, and distribute this file
- * in accordance with the terms of the license agreement accompanying it.
- */
+* Copyright (c) 2009-2011 the original author or authors
+* 
+* Permission is hereby granted to use, modify, and distribute this file 
+* in accordance with the terms of the license agreement accompanying it.
+*/
 
 package org.swiftsuspenders.dependencyproviders
 {
 	import org.swiftsuspenders.Injector;
+	import org.swiftsuspenders.utils.SsInternal;
 
 	public class SingletonProvider implements DependencyProvider
 	{
-		/*******************************************************************************************
-		 *								private properties										   *
-		 *******************************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		private var _responseType : Class;
 		private var _response : Object;
-		
-		
-		/*******************************************************************************************
-		 *								public methods											   *
-		 *******************************************************************************************/
+
+
+		//----------------------               Public Methods               ----------------------//
 		public function SingletonProvider(responseType : Class)
 		{
 			_responseType = responseType;
@@ -31,27 +28,11 @@ package org.swiftsuspenders.dependencyproviders
 			return _response ||= createResponse(injector);
 		}
 
-		override public function equals(otherResult : InjectionResult) : Boolean
-		{
-			if (otherResult == this)
-			{
-				return true;
-			}
-			if (!(otherResult is InjectSingletonResult))
-			{
-				return false;
-			}
-			var castedResult : InjectSingletonResult =  InjectSingletonResult(otherResult);
-			return castedResult.m_response == m_response
-					&& castedResult.m_responseType == m_responseType;
-		}
 
-		/*******************************************************************************************
-		 *								private methods											   *
-		 *******************************************************************************************/
+		//----------------------         Private / Protected Methods        ----------------------//
 		private function createResponse(injector : Injector) : Object
 		{
-			return injector.instantiateUnmapped(_responseType);
+			return injector.SsInternal::instantiateUnmapped(_responseType);
 		}
 	}
 }

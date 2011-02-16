@@ -15,6 +15,7 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.injectionpoints.InjectionPointConfig;
 	import org.swiftsuspenders.utils.ClassDescription;
 	import org.swiftsuspenders.utils.ClassDescriptor;
+	import org.swiftsuspenders.utils.SsInternal;
 	import org.swiftsuspenders.utils.XMLClassDescriptor;
 	import org.swiftsuspenders.utils.getConstructor;
 
@@ -55,7 +56,7 @@ package org.swiftsuspenders
 
 		public function getMapping(requestType : Class) : InjectionRule
 		{
-			return _mappings[requestType] || getAncestorMapping(requestType);
+			return _mappings[requestType] || SsInternal::getAncestorMapping(requestType);
 		}
 
 		public function hasMapping(type : Class) : Boolean
@@ -100,7 +101,7 @@ package org.swiftsuspenders
 			var mapping : InjectionRule = getMapping(type);
 			if (!mapping || !mapping.hasProvider())
 			{
-				return instantiateUnmapped(type);
+				return SsInternal::instantiateUnmapped(type);
 			}
 			return mapping.apply(this);
 		}
@@ -154,12 +155,12 @@ package org.swiftsuspenders
 
 
 		//----------------------             Internal Methods               ----------------------//
-		internal function getAncestorMapping(whenAskedFor : Class) : InjectionRule
+		SsInternal function getAncestorMapping(whenAskedFor : Class) : InjectionRule
 		{
 			return _parentInjector ? _parentInjector.getMapping(whenAskedFor) : null;
 		}
 
-		public function getRuleForInjectionPointConfig(
+		SsInternal function getRuleForInjectionPointConfig(
 				config : InjectionPointConfig) : InjectionRule
 		{
 			var type : Class = Class(applicationDomain.getDefinition(config.typeName));
@@ -170,20 +171,20 @@ package org.swiftsuspenders
 			return getMapping(type);
 		}
 
-
-		//----------------------         Private / Protected Methods        ----------------------//
-		private function createRule(requestType : Class) : InjectionRule
-		{
-			return (_mappings[requestType] = new InjectionRule(requestType));
-		}
-
-		public function instantiateUnmapped(type : Class) : *
+		SsInternal function instantiateUnmapped(type : Class) : *
 		{
 			var typeDescription : ClassDescription = _classDescriptor.getDescription(type);
 			var injectionPoint : InjectionPoint = typeDescription.ctor;
 			var instance : * = injectionPoint.applyInjection(type, this);
 			injectInto(instance);
 			return instance;
+		}
+
+
+		//----------------------         Private / Protected Methods        ----------------------//
+		private function createRule(requestType : Class) : InjectionRule
+		{
+			return (_mappings[requestType] = new InjectionRule(requestType));
 		}
 	}
 }
