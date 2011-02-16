@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009 the original author or authors
+ * Copyright (c) 2009-2011 the original author or authors
  * 
  * Permission is hereby granted to use, modify, and distribute this file 
  * in accordance with the terms of the license agreement accompanying it.
@@ -13,9 +13,7 @@ package org.swiftsuspenders.injectionpoints
 
 	public class ConstructorInjectionPoint extends MethodInjectionPoint
 	{
-		/*******************************************************************************************
-		*								public methods											   *
-		*******************************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function ConstructorInjectionPoint(node : XML, clazz : Class)
 		{
 			/*
@@ -52,19 +50,15 @@ package org.swiftsuspenders.injectionpoints
 			return null;
 		}
 
-		/*******************************************************************************************
-		*								protected methods										   *
-		*******************************************************************************************/
+
+		//----------------------         Private / Protected Methods        ----------------------//
 		override protected function initializeInjection(node : XML) : void
 		{
 			var nameArgs : XMLList = node.parent().metadata.(@name == 'Inject').arg.(@key == 'name');
 			
 			gatherParameters(node, nameArgs);
 		}
-		
-		/*******************************************************************************************
-		*								private methods											   *
-		*******************************************************************************************/
+
 		private function createDummyInstance(constructorNode : XML, clazz : Class) : void
 		{
 			try

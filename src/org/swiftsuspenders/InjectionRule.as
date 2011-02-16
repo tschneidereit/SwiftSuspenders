@@ -18,18 +18,14 @@ package org.swiftsuspenders
 
 	public class InjectionRule
 	{
-		/*******************************************************************************************
-		 *								private properties										   *
-		 *******************************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		protected var _requestClass : Class;
 		protected var _injector : Injector;
 
 		private var _provider : DependencyProvider;
 
 
-		/*******************************************************************************************
-		 *								public methods											   *
-		 *******************************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function InjectionRule(requestClass : Class)
 		{
 			_requestClass = requestClass;
@@ -82,22 +78,13 @@ package org.swiftsuspenders
 		{
 			if (_provider != null && provider != null)
 			{
+				//TODO: consider making this throw
 				trace('Warning: Injector already has a rule for ' + describeInjection() + '.\n ' +
 						'If you have overwritten this mapping intentionally you can use ' +
 						'"injector.unmap()" prior to your replacement mapping in order to ' +
 						'avoid seeing this message.');
 			}
 			_provider = provider;
-		}
-
-		protected function getParentRule(injector : Injector) : InjectionRule
-		{
-			return (_injector || injector).SsInternal::getAncestorMapping(_requestClass);
-		}
-
-		protected function describeInjection() : String
-		{
-			return 'type "' + getQualifiedClassName(_requestClass) + '"';
 		}
 
 		/**
@@ -114,6 +101,18 @@ package org.swiftsuspenders
 		public function setInjector(injector : Injector) : void
 		{
 			_injector = injector;
+		}
+
+
+		//----------------------         Private / Protected Methods        ----------------------//
+		protected function getParentRule(injector : Injector) : InjectionRule
+		{
+			return (_injector || injector).SsInternal::getAncestorMapping(_requestClass);
+		}
+
+		protected function describeInjection() : String
+		{
+			return 'type "' + getQualifiedClassName(_requestClass) + '"';
 		}
 	}
 }

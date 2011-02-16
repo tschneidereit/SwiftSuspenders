@@ -11,15 +11,11 @@ package org.swiftsuspenders.dependencyproviders
 	
 	public class ValueProvider implements DependencyProvider
 	{
-		/*******************************************************************************************
-		 *								private properties										   *
-		 *******************************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		private var _value : Object;
-		
-		
-		/*******************************************************************************************
-		 *								public methods											   *
-		 *******************************************************************************************/
+
+
+		//----------------------               Public Methods               ----------------------//
 		public function ValueProvider(value : Object)
 		{
 			_value = value;

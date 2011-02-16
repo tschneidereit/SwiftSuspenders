@@ -14,19 +14,15 @@ package org.swiftsuspenders.injectionpoints
 
 	public class MethodInjectionPoint extends InjectionPoint
 	{
-		/*******************************************************************************************
-		*								private properties										   *
-		*******************************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		protected var _parameterInjectionConfigs : Array;
 		protected var _requiredParameters : int = 0;
 
 		private var _injectionIsOptional : Boolean;
 		private var _methodName : String;
 
-		
-		/*******************************************************************************************
-		*								public methods											   *
-		*******************************************************************************************/
+
+		//----------------------               Public Methods               ----------------------//
 		public function MethodInjectionPoint(node : XML)
 		{
 			super(node);
@@ -45,9 +41,7 @@ package org.swiftsuspenders.injectionpoints
 		}
 
 
-		/*******************************************************************************************
-		*								protected methods										   *
-		*******************************************************************************************/
+		//----------------------         Private / Protected Methods        ----------------------//
 		override protected function initializeInjection(node : XML) : void
 		{
 			var nameArgs : XMLList = node.arg.(@key == 'name');

@@ -21,9 +21,6 @@ package org.swiftsuspenders.utils
 
 	public class ClassDescriptor
 	{
-		//----------------------              Public Properties             ----------------------//
-
-
 		//----------------------       Private / Protected Properties       ----------------------//
 		private var _descriptionsCache : Dictionary;
 
@@ -96,6 +93,7 @@ package org.swiftsuspenders.utils
 			return description;
 		}
 
+		
 		//----------------------         Private / Protected Methods        ----------------------//
 		protected function getDescriptionXML(type : Class) : XML
 		{
