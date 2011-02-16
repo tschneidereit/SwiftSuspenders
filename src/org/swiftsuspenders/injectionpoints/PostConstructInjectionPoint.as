@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2009 the original author or authors
+* Copyright (c) 2009-2011 the original author or authors
 * 
 * Permission is hereby granted to use, modify, and distribute this file 
 * in accordance with the terms of the license agreement accompanying it.
@@ -11,16 +11,12 @@ package org.swiftsuspenders.injectionpoints
 	
 	public class PostConstructInjectionPoint extends InjectionPoint
 	{
-		/*******************************************************************************************
-		 *								private properties										   *
-		 *******************************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		protected var methodName : String;
 		protected var orderValue:int;
-		
-		
-		/*******************************************************************************************
-		 *								public methods											   *
-		 *******************************************************************************************/
+
+
+		//----------------------               Public Methods               ----------------------//
 		public function PostConstructInjectionPoint(node:XML)
 		{
 			super(node);
@@ -36,11 +32,9 @@ package org.swiftsuspenders.injectionpoints
 			target[methodName]();
 			return target;
 		}
-		
-		
-		/*******************************************************************************************
-		 *								protected methods										   *
-		 *******************************************************************************************/
+
+
+		//----------------------         Private / Protected Methods        ----------------------//
 		override protected function initializeInjection(node : XML) : void
 		{
 			var orderArg : XMLList = node.arg.(@key == 'order');

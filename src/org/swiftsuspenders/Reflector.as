@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009 the original author or authors
+ * Copyright (c) 2009-2011 the original author or authors
  *
  * Permission is hereby granted to use, modify, and distribute this file
  * in accordance with the terms of the license agreement accompanying it.
@@ -14,18 +14,8 @@ package org.swiftsuspenders
 
 	import org.swiftsuspenders.utils.getConstructor;
 
-	/**
-	 * @author tschneidereit
-	 */
 	public class Reflector
 	{
-		/*******************************************************************************************
-		*								public methods											   *
-		*******************************************************************************************/
-		public function Reflector()
-		{
-		}
-
 		public function classExtendsOrImplements(classOrClassName : Object,
 			superclass : Class, application : ApplicationDomain = null) : Boolean
 		{

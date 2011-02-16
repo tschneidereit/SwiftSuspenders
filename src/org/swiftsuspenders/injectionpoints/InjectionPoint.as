@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2009 the original author or authors
- * 
+ * Copyright (c) 2009-2011 the original author or authors
+ *
  * Permission is hereby granted to use, modify, and distribute this file 
  * in accordance with the terms of the license agreement accompanying it.
  */
@@ -11,9 +11,7 @@ package org.swiftsuspenders.injectionpoints
 
 	public class InjectionPoint
 	{
-		/*******************************************************************************************
-		*								public methods											   *
-		*******************************************************************************************/
+		//----------------------               Public Methods               ----------------------//
 		public function InjectionPoint(node : XML)
 		{
 			initializeInjection(node);
@@ -25,9 +23,7 @@ package org.swiftsuspenders.injectionpoints
 		}
 
 
-		/*******************************************************************************************
-		*								protected methods										   *
-		*******************************************************************************************/
+		//----------------------         Private / Protected Methods        ----------------------//
 		protected function initializeInjection(node : XML) : void
 		{
 		}

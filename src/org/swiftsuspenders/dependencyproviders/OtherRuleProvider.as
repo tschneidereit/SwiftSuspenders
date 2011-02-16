@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 the original author or authors
+ * Copyright (c) 2010-2011 the original author or authors
  *
  * Permission is hereby granted to use, modify, and distribute this file
  * in accordance with the terms of the license agreement accompanying it.
@@ -12,15 +12,11 @@ package org.swiftsuspenders.dependencyproviders
 
 	public class OtherRuleProvider implements DependencyProvider
 	{
-		/*******************************************************************************************
-		 *								private properties										   *
-		 *******************************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		private var _rule : InjectionRule;
-		
-		
-		/*******************************************************************************************
-		 *								public methods											   *
-		 *******************************************************************************************/
+
+
+		//----------------------               Public Methods               ----------------------//
 		public function OtherRuleProvider(rule : InjectionRule)
 		{
 			_rule = rule;

@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2009 the original author or authors
+* Copyright (c) 2009-2011 the original author or authors
 * 
 * Permission is hereby granted to use, modify, and distribute this file 
 * in accordance with the terms of the license agreement accompanying it.
@@ -11,15 +11,11 @@ package org.swiftsuspenders.dependencyproviders
 	
 	public class ValueProvider implements DependencyProvider
 	{
-		/*******************************************************************************************
-		 *								private properties										   *
-		 *******************************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		private var _value : Object;
-		
-		
-		/*******************************************************************************************
-		 *								public methods											   *
-		 *******************************************************************************************/
+
+
+		//----------------------               Public Methods               ----------------------//
 		public function ValueProvider(value : Object)
 		{
 			_value = value;
