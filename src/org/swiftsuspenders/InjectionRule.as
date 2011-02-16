@@ -14,6 +14,7 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.dependencyproviders.OtherRuleProvider;
 	import org.swiftsuspenders.dependencyproviders.SingletonProvider;
 	import org.swiftsuspenders.dependencyproviders.ValueProvider;
+	import org.swiftsuspenders.utils.SsInternal;
 
 	public class InjectionRule
 	{
@@ -91,7 +92,7 @@ package org.swiftsuspenders
 
 		protected function getParentRule(injector : Injector) : InjectionRule
 		{
-			return (_injector || injector).getAncestorMapping(_requestClass);
+			return (_injector || injector).SsInternal::getAncestorMapping(_requestClass);
 		}
 
 		protected function describeInjection() : String

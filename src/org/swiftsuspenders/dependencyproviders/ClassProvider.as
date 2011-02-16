@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2009 the original author or authors
+* Copyright (c) 2009-2011 the original author or authors
 * 
 * Permission is hereby granted to use, modify, and distribute this file 
 * in accordance with the terms of the license agreement accompanying it.
@@ -8,18 +8,15 @@
 package org.swiftsuspenders.dependencyproviders
 {
 	import org.swiftsuspenders.Injector;
+	import org.swiftsuspenders.utils.SsInternal;
 
 	public class ClassProvider implements DependencyProvider
 	{
-		/*******************************************************************************************
-		 *								private properties										   *
-		 *******************************************************************************************/
+		//----------------------       Private / Protected Properties       ----------------------//
 		private var _responseType : Class;
-		
-		
-		/*******************************************************************************************
-		 *								public methods											   *
-		 *******************************************************************************************/
+
+
+		//----------------------               Public Methods               ----------------------//
 		public function ClassProvider(responseType : Class)
 		{
 			_responseType = responseType;
@@ -27,7 +24,7 @@ package org.swiftsuspenders.dependencyproviders
 		
 		public function apply(injector : Injector) : Object
 		{
-			return injector.instantiateUnmapped(_responseType);
+			return injector.SsInternal::instantiateUnmapped(_responseType);
 		}
 	}
 }
