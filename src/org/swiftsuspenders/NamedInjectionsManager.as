@@ -10,6 +10,10 @@ package org.swiftsuspenders
 	import flash.utils.Dictionary;
 	import flash.utils.getQualifiedClassName;
 
+	import org.swiftsuspenders.utils.SsInternal;
+
+	use namespace SsInternal;
+
 	public class NamedInjectionsManager
 	{
 		//----------------------       Private / Protected Properties       ----------------------//
@@ -26,48 +30,86 @@ package org.swiftsuspenders
 			_mappings = new Dictionary();
 		}
 
+		/**
+		 * @copy org.swiftsuspenders.Injector#map()
+		 */
 		public function map(type : Class) : InjectionRule
 		{
 			return _mappings[getQualifiedClassName(type) + _requestName] || createRule(type);
 		}
 
-		public function getMapping(requestType : Class) : InjectionRule
+		/**
+		 * @copy org.swiftsuspenders.Injector#unmap()
+		 */
+		public function unmap(dependency : Class) : void
 		{
-			return _mappings[getQualifiedClassName(requestType) + _requestName] ||
-					getAncestorMapping(requestType);
-		}
-		
-		public function hasMapping(type : Class) : Boolean
-		{
-			var rule : InjectionRule = getMapping(type);
-			return rule && rule.hasProvider();
-		}
-
-		public function unmap(type : Class) : void
-		{
-			var mapping : InjectionRule = _mappings[getQualifiedClassName(type) + _requestName];
+			var mapping : InjectionRule =
+					_mappings[getQualifiedClassName(dependency) + _requestName];
 			if (!mapping)
 			{
 				throw new InjectorError('Error while removing an injector mapping: ' +
-						'No mapping defined for class ' + getQualifiedClassName(type) +
+						'No mapping defined for class ' + getQualifiedClassName(dependency) +
 						', _requestName "' + _requestName + '"');
 			}
 			mapping.setProvider(null);
 		}
 
+		/**
+		 * @copy org.swiftsuspenders.Injector#satisfies()
+		 */
+		public function satisfies(dependency : Class) : Boolean
+		{
+			var rule : InjectionRule = getMapping(dependency);
+			return rule && rule.hasProvider();
+		}
+
+		/**
+		 * @copy org.swiftsuspenders.Injector#satisfiesDirectly()
+		 */
+		public function satisfiesDirectly(dependency : Class) : Boolean
+		{
+			var rule : InjectionRule = _mappings[dependency];
+			return rule && rule.hasProvider();
+		}
+
+		/**
+		 * @copy org.swiftsuspenders.Injector#getRule()
+		 */
+		public function getRule(dependency : Class) : InjectionRule
+		{
+			var rule : InjectionRule = _mappings[dependency];
+			if (!rule)
+			{
+				throw new InjectorError('Error while retrieving an injector mapping: ' +
+						'No rule defined for dependency ' + getQualifiedClassName(dependency) +
+						', named "' + _requestName + '"');
+			}
+			return rule;
+		}
+
+		/**
+		 * @copy org.swiftsuspenders.Injector#getInstance()
+		 */
 		public function getInstance(type : Class) : *
 		{
 			var mapping : InjectionRule = getMapping(type);
 			if (!mapping || !mapping.hasProvider())
 			{
 				throw new InjectorError('Error while getting mapping response: ' +
-						'No mapping defined for class ' + getQualifiedClassName(type) +
-						', _requestName "' + _requestName + '"');
+						'No mapping defined for dependency ' + getQualifiedClassName(type) +
+						', named "' + _requestName + '"');
 			}
 			return mapping.apply(_injector);
 		}
 
-		internal function getAncestorMapping(whenAskedFor : Class) : InjectionRule
+		//----------------------             Internal Methods               ----------------------//
+		SsInternal function getMapping(requestType : Class) : InjectionRule
+		{
+			return _mappings[getQualifiedClassName(requestType) + _requestName] ||
+					getAncestorMapping(requestType);
+		}
+
+		SsInternal function getAncestorMapping(whenAskedFor : Class) : InjectionRule
 		{
 			return _injector.parentInjector ? _injector.parentInjector.usingName(_requestName).
 					getMapping(whenAskedFor) : null;

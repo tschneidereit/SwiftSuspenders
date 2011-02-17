@@ -153,7 +153,7 @@ package org.swiftsuspenders
             injector.map(Clazz).toValue(class1);  
             
             Assert.assertTrue('Child injector should return true for hasMapping that exists on parent injector',
-                childInjector.hasMapping(Clazz));
+                childInjector.satisfies(Clazz));
         }
         
         [Test]
@@ -162,7 +162,7 @@ package org.swiftsuspenders
             var childInjector : Injector = injector.createChildInjector();
             
             Assert.assertFalse('Child injector should not return true for hasMapping that does not exists on parent injector',
-                childInjector.hasMapping(Clazz));
+                childInjector.satisfies(Clazz));
         }  
         
         [Test]
