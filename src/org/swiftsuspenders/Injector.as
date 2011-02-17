@@ -19,6 +19,8 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.utils.XMLClassDescriptor;
 	import org.swiftsuspenders.utils.getConstructor;
 
+	use namespace SsInternal;
+
 	public class Injector
 	{
 		//----------------------       Private / Protected Properties       ----------------------//
@@ -49,31 +51,73 @@ package org.swiftsuspenders
 			}
 		}
 
-		public function map(type : Class) : InjectionRule
+		public function map(dependency : Class) : InjectionRule
 		{
-			return _mappings[type] || createRule(type);
+			return _mappings[dependency] || createRule(dependency);
 		}
 
-		public function getMapping(requestType : Class) : InjectionRule
+		public function unmap(dependency : Class) : void
 		{
-			return _mappings[requestType] || SsInternal::getAncestorMapping(requestType);
-		}
-
-		public function hasMapping(type : Class) : Boolean
-		{
-			var rule : InjectionRule = getMapping(type);
-			return rule && rule.hasProvider();
-		}
-
-		public function unmap(type : Class) : void
-		{
-			var rule : InjectionRule = _mappings[type];
+			var rule : InjectionRule = _mappings[dependency];
 			if (!rule)
 			{
 				throw new InjectorError('Error while removing an injector mapping: ' +
-						'No mapping defined for class ' + getQualifiedClassName(type));
+						'No rule defined for dependency ' + getQualifiedClassName(dependency));
 			}
 			rule.setProvider(null);
+		}
+
+		/**
+		 * Indicates whether the injector can supply a response for the specified dependency either
+		 * by using a rule mapped directly on itself or by querying one of its ancestor injectors.
+		 *
+		 * @param dependency The dependency under query
+		 * @return <code>true</code> if the dependency can be satisfied, <code>false</code> if not
+		 */
+		public function satisfies(dependency : Class) : Boolean
+		{
+			var rule : InjectionRule = getMapping(dependency);
+			return rule && rule.hasProvider();
+		}
+
+		/**
+		 * Indicates whether the injector can directly supply a response for the specified
+		 * dependency
+		 *
+		 * In contrast to <code>satisfies</code>, <code>satisfiesDirectly</code> only informs
+		 * about rules mapped directly on itself, without querying its ancestor injectors.
+		 *
+		 * @param dependency The dependency under query
+		 * @return <code>true</code> if the dependency can be satisfied, <code>false</code> if not
+		 */
+		public function satisfiesDirectly(dependency : Class) : Boolean
+		{
+			var rule : InjectionRule = _mappings[dependency];
+			return rule && rule.hasProvider();
+		}
+
+		/**
+		 * Returns the rule mapped to the specified dependency class
+		 *
+		 * Note that getRule will only return rules mapped in exactly this injector, not ones
+		 * mapped in an ancestor injector. To get rules from ancestor injectors, query them using
+		 * <code>parentInjector</code>.
+		 * This restriction is in place to prevent accidential changing of rules in ancestor
+		 * injectors where only the child's response is meant to be altered.
+		 * 
+		 * @param dependency The dependency to return the mapped rule for
+		 * @return The rule mapped to the specified dependency class
+		 * @throws InjectorError when no rule was found for the specified dependency
+		 */
+		public function getRule(dependency : Class) : InjectionRule
+		{
+			var rule : InjectionRule = _mappings[dependency];
+			if (!rule)
+			{
+				throw new InjectorError('Error while retrieving an injector mapping: ' +
+						'No rule defined for dependency ' + getQualifiedClassName(dependency));
+			}
+			return rule;
 		}
 
 		public function injectInto(target : Object) : void
@@ -101,7 +145,7 @@ package org.swiftsuspenders
 			var mapping : InjectionRule = getMapping(type);
 			if (!mapping || !mapping.hasProvider())
 			{
-				return SsInternal::instantiateUnmapped(type);
+				return instantiateUnmapped(type);
 			}
 			return mapping.apply(this);
 		}
@@ -155,6 +199,11 @@ package org.swiftsuspenders
 
 
 		//----------------------             Internal Methods               ----------------------//
+		SsInternal function getMapping(requestType : Class) : InjectionRule
+		{
+			return _mappings[requestType] || getAncestorMapping(requestType);
+		}
+
 		SsInternal function getAncestorMapping(whenAskedFor : Class) : InjectionRule
 		{
 			return _parentInjector ? _parentInjector.getMapping(whenAskedFor) : null;

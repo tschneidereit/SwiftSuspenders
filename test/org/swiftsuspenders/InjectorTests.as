@@ -497,27 +497,27 @@ package org.swiftsuspenders
 		[Test]
 		public function hasMappingFailsForUnmappedUnnamedClass():void
 		{
-			Assert.assertFalse(injector.hasMapping(Clazz));
+			Assert.assertFalse(injector.satisfies(Clazz));
 		}
 
 		[Test]
 		public function hasMappingFailsForUnmappedNamedClass():void
 		{
-			Assert.assertFalse(injector.usingName('namedClass').hasMapping(Clazz));
+			Assert.assertFalse(injector.usingName('namedClass').satisfies(Clazz));
 		}
 
 		[Test]
 		public function hasMappingSucceedsForMappedUnnamedClass():void
 		{
 			injector.map(Clazz).toType(Clazz);
-			Assert.assertTrue(injector.hasMapping(Clazz));
+			Assert.assertTrue(injector.satisfies(Clazz));
 		}
 
 		[Test]
 		public function hasMappingSucceedsForMappedNamedClass():void
 		{
 			injector.usingName('namedClass').map(Clazz).toType(Clazz);
-			Assert.assertTrue(injector.usingName('namedClass').hasMapping(Clazz));
+			Assert.assertTrue(injector.usingName('namedClass').satisfies(Clazz));
 		}
 
 		[Test(expects="org.swiftsuspenders.InjectorError")]

@@ -7,6 +7,8 @@
 
 package org.swiftsuspenders
 {
+	import org.swiftsuspenders.utils.SsInternal;
+
 	public class NamedInjectionRule extends InjectionRule
 	{
 		//----------------------       Private / Protected Properties       ----------------------//
@@ -23,7 +25,7 @@ package org.swiftsuspenders
 		override protected function getParentRule(injector : Injector) : InjectionRule
 		{
 			return (_injector || injector).usingName(_requestName).
-					getAncestorMapping(_requestClass);
+					SsInternal::getAncestorMapping(_requestClass);
 		}
 
 		override protected function describeInjection() : String
