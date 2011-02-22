@@ -128,22 +128,6 @@ package org.swiftsuspenders
 			Assert.assertTrue('Left RobotFoot should have LeftRobotFoot',
 				robotBody.leftLeg.ankle.foot is LeftRobotFoot);
 		}
-
-		[Test]
-		public function childInjectorUsesParentsMapOfWorkedInjectees() : void
-		{
-			var childInjector : Injector = injector.createChildInjector();
-			var class1 : Clazz = new Clazz();
-			var class2 : Clazz = new Clazz();
-			injector.map(Clazz).toValue(class1);
-			childInjector.map(Clazz).toValue(class2);
-
-			var injectee : ClassInjectee = injector.getInstance(ClassInjectee);
-			childInjector.injectInto(injectee);
-			Assert.assertEquals(
-				'injectee.property isn\'t overwritten by second injection through child injector',
-				injectee.property, class1);
-		}
         
         [Test]
         public function childInjectorHasMappingWhenExistsOnParentInjector():void
