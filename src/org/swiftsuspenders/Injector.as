@@ -31,7 +31,6 @@ package org.swiftsuspenders
         private var _applicationDomain:ApplicationDomain;
 		private var _classDescriptor : ClassDescriptor;
 		private var _mappings : Dictionary;
-		private var _attendedToInjectees : Dictionary;
 		private var _namedInjectionsManager : NamedInjectionsManager;
 
 
@@ -39,7 +38,6 @@ package org.swiftsuspenders
 		public function Injector(xmlConfig : XML = null)
 		{
 			_mappings = new Dictionary();
-			_attendedToInjectees = new Dictionary(true);
 			_namedInjectionsManager = new NamedInjectionsManager(this);
 			if (xmlConfig != null)
 			{
@@ -122,12 +120,6 @@ package org.swiftsuspenders
 
 		public function injectInto(target : Object) : void
 		{
-			if (_attendedToInjectees[target])
-			{
-				return;
-			}
-			_attendedToInjectees[target] = true;
-
 			var injecteeDescription : ClassDescription =
 					_classDescriptor.getDescription(getConstructor(target));
 
@@ -160,17 +152,7 @@ package org.swiftsuspenders
 
 		public function set parentInjector(parentInjector : Injector) : void
 		{
-			//restore own map of worked injectees if parent injector is removed
-			if (_parentInjector && !parentInjector)
-			{
-				_attendedToInjectees = new Dictionary(true);
-			}
 			_parentInjector = parentInjector;
-			//use parent's map of worked injectees
-			if (parentInjector)
-			{
-				_attendedToInjectees = parentInjector._attendedToInjectees;
-			}
 		}
 		public function get parentInjector() : Injector
 		{
