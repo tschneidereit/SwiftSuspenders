@@ -215,7 +215,7 @@ package org.swiftsuspenders
 		//----------------------         Private / Protected Methods        ----------------------//
 		private function createRule(requestType : Class) : InjectionRule
 		{
-			return (_mappings[requestType] = new InjectionRule(requestType));
+			return (_mappings[requestType] = new InjectionRule(this, requestType));
 		}
 	}
 }

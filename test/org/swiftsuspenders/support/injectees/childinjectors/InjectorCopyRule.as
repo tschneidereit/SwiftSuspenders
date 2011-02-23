@@ -12,9 +12,9 @@ package org.swiftsuspenders.support.injectees.childinjectors
 
 	public class InjectorCopyRule extends InjectionRule
 	{
-		public function InjectorCopyRule()
+		public function InjectorCopyRule(creatingInjector : Injector)
 		{
-			super(Injector);
+			super(creatingInjector, Injector);
 		}
 
 		override public function apply(injector:Injector):Object

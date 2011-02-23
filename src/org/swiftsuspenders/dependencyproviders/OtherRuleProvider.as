@@ -21,10 +21,16 @@ package org.swiftsuspenders.dependencyproviders
 		{
 			_rule = rule;
 		}
-		
-		public function apply(injector : Injector) : Object
+
+		/**
+		 * @inheritDoc
+		 *
+		 * @return The result of invoking <code>apply</code> on the <code>InjectionRule</code>
+		 * provided to this provider's constructor
+		 */
+		public function apply(creatingInjector : Injector, usingInjector : Injector) : Object
 		{
-			return _rule.apply(injector);
+			return _rule.apply(usingInjector);
 		}
 	}
 }

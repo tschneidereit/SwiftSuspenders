@@ -16,9 +16,10 @@ package org.swiftsuspenders
 
 
 		//----------------------               Public Methods               ----------------------//
-		public function NamedInjectionRule(requestClass : Class, requestName : String)
+		public function NamedInjectionRule(
+				creatingInjector : Injector, requestClass : Class, requestName : String)
 		{
-			super(requestClass);
+			super(creatingInjector, requestClass);
 			_requestName = requestName;
 		}
 

@@ -21,10 +21,16 @@ package org.swiftsuspenders.dependencyproviders
 		{
 			_responseType = responseType;
 		}
-		
-		public function apply(injector : Injector) : Object
+
+		/**
+		 * @inheritDoc
+		 *
+		 * @return A new instance of the class given to the ClassProvider's constructor,
+		 * constructed using the <code>usingInjector</code>
+		 */
+		public function apply(creatingInjector : Injector, usingInjector : Injector) : Object
 		{
-			return injector.SsInternal::instantiateUnmapped(_responseType);
+			return usingInjector.SsInternal::instantiateUnmapped(_responseType);
 		}
 	}
 }
