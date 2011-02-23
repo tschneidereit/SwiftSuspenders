@@ -9,7 +9,6 @@ package org.swiftsuspenders
 {
 	import flash.utils.getQualifiedClassName;
 
-	import org.swiftsuspenders.Injector;
 	import org.swiftsuspenders.dependencyproviders.ClassProvider;
 	import org.swiftsuspenders.dependencyproviders.DependencyProvider;
 	import org.swiftsuspenders.dependencyproviders.OtherRuleProvider;
@@ -26,12 +25,27 @@ package org.swiftsuspenders
 		private var _creatingInjector : Injector;
 		private var _provider : DependencyProvider;
 
+		/**
+		 * Used to enable the omission of <code>InjectionRule#toType(Type)</code> for type mappings
+		 */
+		private var _createClassProviderOnNextUse : Boolean = true;
+
 
 		//----------------------               Public Methods               ----------------------//
 		public function InjectionRule(creatingInjector : Injector, requestClass : Class)
 		{
 			_creatingInjector = creatingInjector;
 			_requestClass = requestClass;
+		}
+
+		/**
+		 * Syntactic sugar method wholly equivalent to using
+		 * <code>injector.map(Type).toSingleton(Type);<code>. Removes the need to repeat the type.
+		 * @return The <code>DependencyProvider</code> that will be used to satisfy the dependency
+		 */
+		public function asSingleton() : DependencyProvider
+		{
+			return toSingleton(_requestClass);
 		}
 
 		public function toType(type : Class) : DependencyProvider
@@ -64,6 +78,11 @@ package org.swiftsuspenders
 			{
 				return _provider.apply(_creatingInjector, _injector || injector);
 			}
+			if (_createClassProviderOnNextUse)
+			{
+				toType(_requestClass);
+				return apply(injector);
+			}
 			var parentRule : InjectionRule = getParentRule(injector);
 			if (parentRule)
 			{
@@ -79,6 +98,7 @@ package org.swiftsuspenders
 
 		public function setProvider(provider : DependencyProvider) : void
 		{
+			_createClassProviderOnNextUse = false;
 			if (_provider != null && provider != null)
 			{
 				//TODO: consider making this throw
