@@ -20,8 +20,13 @@ package org.swiftsuspenders.dependencyproviders
 		{
 			_value = value;
 		}
-		
-		public function apply(injector : Injector) : Object
+
+		/**
+		 * @inheritDoc
+		 *
+		 * @return The value provided to this provider's constructor
+		 */
+		public function apply(creatingInjector : Injector, usingInjector : Injector) : Object
 		{
 			return _value;
 		}

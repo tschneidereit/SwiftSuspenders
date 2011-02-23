@@ -22,10 +22,17 @@ package org.swiftsuspenders.dependencyproviders
 		{
 			_responseType = responseType;
 		}
-		
-		public function apply(injector : Injector) : Object
+
+		/**
+		 * @inheritDoc
+		 *
+		 * @return The same instance of the class given to the ClassProvider's constructor on each
+		 * invocation. The returned instance is created using the <code>creatingInjector</code> the
+		 * first time it is requested.
+		 */
+		public function apply(creatingInjector : Injector, usingInjector : Injector) : Object
 		{
-			return _response ||= createResponse(injector);
+			return _response ||= createResponse(creatingInjector);
 		}
 
 

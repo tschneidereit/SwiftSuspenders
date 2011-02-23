@@ -1,14 +1,15 @@
 /*
-* Copyright (c) 2009-2011 the original author or authors
-*
-* Permission is hereby granted to use, modify, and distribute this file
-* in accordance with the terms of the license agreement accompanying it.
-*/
+ * Copyright (c) 2011 the original author or authors
+ *
+ * Permission is hereby granted to use, modify, and distribute this file
+ * in accordance with the terms of the license agreement accompanying it.
+ */
 
 package org.swiftsuspenders
 {
 	import flash.utils.getQualifiedClassName;
 
+	import org.swiftsuspenders.Injector;
 	import org.swiftsuspenders.dependencyproviders.ClassProvider;
 	import org.swiftsuspenders.dependencyproviders.DependencyProvider;
 	import org.swiftsuspenders.dependencyproviders.OtherRuleProvider;
@@ -22,12 +23,14 @@ package org.swiftsuspenders
 		protected var _requestClass : Class;
 		protected var _injector : Injector;
 
+		private var _creatingInjector : Injector;
 		private var _provider : DependencyProvider;
 
 
 		//----------------------               Public Methods               ----------------------//
-		public function InjectionRule(requestClass : Class)
+		public function InjectionRule(creatingInjector : Injector, requestClass : Class)
 		{
+			_creatingInjector = creatingInjector;
 			_requestClass = requestClass;
 		}
 
@@ -59,7 +62,7 @@ package org.swiftsuspenders
 		{
 			if (_provider)
 			{
-				return _provider.apply(_injector || injector);
+				return _provider.apply(_creatingInjector, _injector || injector);
 			}
 			var parentRule : InjectionRule = getParentRule(injector);
 			if (parentRule)

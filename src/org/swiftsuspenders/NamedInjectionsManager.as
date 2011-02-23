@@ -120,7 +120,7 @@ package org.swiftsuspenders
 		private function createRule(requestType : Class) : InjectionRule
 		{
 			return (_mappings[getQualifiedClassName(requestType) + _requestName] =
-					new NamedInjectionRule(requestType, ''));
+					new NamedInjectionRule(_injector, requestType, ''));
 		}
 
 		internal function setRequestName(name : String) : void

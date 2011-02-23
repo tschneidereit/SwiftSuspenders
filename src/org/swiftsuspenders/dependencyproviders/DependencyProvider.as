@@ -11,6 +11,15 @@ package org.swiftsuspenders.dependencyproviders
 
 	public interface DependencyProvider
 	{
-		function apply(injector : Injector) : Object;
+		/**
+		 * Provides a response that, if required, is created using the appropriate given injector
+		 *
+		 * @param creatingInjector The injector that was used to create the
+		 * <code>InjectionRule</code> this DependencyProvider is associated with
+		 * @param usingInjector The injector through which this DependencyProvider is currently
+		 * invoked
+		 * @return The result of the specific DependencyProvider's mechanism
+		 */
+		function apply(creatingInjector : Injector, usingInjector : Injector) : Object;
 	}
 }

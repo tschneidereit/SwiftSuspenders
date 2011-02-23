@@ -103,6 +103,22 @@ package org.swiftsuspenders
 		}
 
 		[Test]
+		public function parentMappedSingletonGetsInitializedByParentWhenInvokedThroughChildInjector() : void
+		{
+			var parentClazz : Clazz = new Clazz();
+			injector.map(Clazz).toValue(parentClazz);
+			injector.map(ClassInjectee).toSingleton(ClassInjectee);
+			var childInjector : Injector = injector.createChildInjector();
+			var childClazz : Clazz = new Clazz();
+			childInjector.map(Clazz).toValue(childClazz);
+
+			var classInjectee : ClassInjectee = childInjector.getInstance(ClassInjectee);
+
+			Assert.assertEquals('classInjectee.property is injected with value mapped in parent injector',
+					classInjectee.property, parentClazz);
+		}
+
+		[Test]
 		public function childInjectorDoesntReturnToParentAfterUsingParentInjectorForMissingRules() : void
 		{
 			injector.map(RobotAnkle).toType(RobotAnkle);
@@ -168,7 +184,7 @@ package org.swiftsuspenders
 		[Test]
 		public function injectorCanCreateChildInjectorDuringInjection():void
 		{
-			injector.map(Injector).toRule(new InjectorCopyRule());
+			injector.map(Injector).toRule(new InjectorCopyRule(injector));
 			injector.map(InjectorInjectee).toType(InjectorInjectee);
 			var injectee : InjectorInjectee = injector.getInstance(InjectorInjectee);
 			Assert.assertNotNull('Injection has been applied to injectorInjectee', injectee.injector);
