@@ -40,6 +40,15 @@ package org.swiftsuspenders
 			
 			Assert.assertTrue(config is InjectionRule);
 		}
+
+		[Test]
+		public function ruleWithoutProviderEverSetUsesClassProvider() : void
+		{
+			var config : InjectionRule = new InjectionRule(injector, Clazz);
+			var returnedResponse:Object = config.apply(injector);
+
+			Assert.assertTrue(returnedResponse is Clazz);
+		}
 		
 		[Test]
 		public function injectionTypeValueReturnsRespone():void
@@ -51,15 +60,26 @@ package org.swiftsuspenders
 			
 			Assert.assertStrictlyEquals(response, returnedResponse);
 		}
-		
+
 		[Test]
 		public function injectionTypeClassReturnsRespone():void
 		{
 			var config : InjectionRule = new InjectionRule(injector, Clazz);
 			config.setProvider(new ClassProvider(Clazz));
 			var returnedResponse:Object = config.apply(injector);
-			
+
 			Assert.assertTrue( returnedResponse is Clazz);
+		}
+
+		[Test]
+		public function injectionTypeClassReturnsDifferentInstancesOnEachRespone():void
+		{
+			var config : InjectionRule = new InjectionRule(injector, Clazz);
+			config.setProvider(new ClassProvider(Clazz));
+			var firstResponse:Object = config.apply(injector);
+			var secondResponse:Object = config.apply(injector);
+
+			Assert.assertFalse(firstResponse == secondResponse);
 		}
 		
 		[Test]
@@ -71,7 +91,7 @@ package org.swiftsuspenders
 			
 			Assert.assertTrue( returnedResponse is Clazz);
 		}
-		
+
 		[Test]
 		public function sameSingletonIsReturnedOnSecondResponse():void
 		{
@@ -79,7 +99,18 @@ package org.swiftsuspenders
 			config.setProvider(new SingletonProvider(Clazz));
 			var returnedResponse:Object = config.apply(injector);
 			var secondResponse:Object = config.apply(injector);
-			
+
+			Assert.assertStrictlyEquals( returnedResponse, secondResponse );
+		}
+
+		[Test]
+		public function injectionRuleAsSingletonMethodCreatesSingletonProvider():void
+		{
+			var config : InjectionRule = new InjectionRule(injector, Clazz);
+			config.asSingleton();
+			var returnedResponse:Object = config.apply(injector);
+			var secondResponse:Object = config.apply(injector);
+
 			Assert.assertStrictlyEquals( returnedResponse, secondResponse );
 		}
 
@@ -95,7 +126,7 @@ package org.swiftsuspenders
 		}
 
 		[Test]
-		public function callingSetResultBetweenUsagesChangesResponse():void
+		public function callingSetProviderBetweenUsagesChangesResponse():void
 		{
 			var config : InjectionRule = new InjectionRule(injector, Clazz);
 			config.setProvider(new SingletonProvider(Clazz));
