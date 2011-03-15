@@ -103,6 +103,11 @@ package org.swiftsuspenders
 			}
 			return config;
 		}
+
+		public function getMapped (className:String, named:String = ""):InjectionConfig
+		{
+			return m_mappings[className + '#' + named];
+		}
 		
 		public function injectInto(target : Object) : void
 		{

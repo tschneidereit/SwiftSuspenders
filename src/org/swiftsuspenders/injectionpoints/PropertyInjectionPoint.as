@@ -31,8 +31,8 @@ package org.swiftsuspenders.injectionpoints
 		
 		override public function applyInjection(target : Object, injector : Injector) : Object
 		{
-			var injectionConfig : InjectionConfig = injector.getMapping(Class(
-					injector.getApplicationDomain().getDefinition(_propertyType)), _injectionName);
+			var injectionConfig : InjectionConfig = injector.getMapped(_propertyType, _injectionName)
+												|| injector.getMapping(Class(injector.getApplicationDomain().getDefinition(_propertyType)), _injectionName);
 			var injection : Object = injectionConfig.getResponse(injector);
 			if (injection == null)
 			{
