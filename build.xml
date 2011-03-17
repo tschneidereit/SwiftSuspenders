@@ -65,6 +65,7 @@
 
 <!-- Get ivy jar for ant if not installed already -->
   <target name="download_ivy" depends="-check-use-file" unless="file.exists">
+      <echo>[IVY download] Downloading ivy jar into your ant's lib folder</echo>
       <mkdir dir="tmp" />
       <get src="${ivy.download.url}" dest="tmp" usetimestamp="true"/>
       <unzip src="tmp/${ivy.download.file}" dest="tmp">
@@ -75,12 +76,20 @@
       </unzip>
       <copy file="tmp/ivy-${ivy.download.version}.jar" todir="${ANT_HOME}/lib" />
       <delete dir="tmp" />
+      <echo>[IVY download] Done</echo>
   </target>
 
 <!-- Get dependencies from repo if libraries does not exists or version are wrong -->
   <target name="get_dependencies" depends="download_ivy,clean">
     <echo>[dependencies] Retrieving dependencies</echo>
     <ivy:configure />
+    <copy file="${template.loc}/ivy.tmpl" tofile="ivy.xml" overwrite="true">
+      <filterchain>
+        <replacetokens>
+          <token key="ssversion" value="${swift.suspenders.version}"/>
+        </replacetokens>
+      </filterchain>
+    </copy>
 	<ivy:resolve file="ivy.xml"/>
 	<ivy:retrieve type="swc" pattern="${lib.bin.loc}/[artifact]-[revision].[ext]"/>
 	<ivy:retrieve type="src" pattern="${lib.src.loc}/[artifact]-[revision].[ext]"/>

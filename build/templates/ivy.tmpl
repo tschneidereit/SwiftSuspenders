@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<ivy-module version="2.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd">
+	<info
+        organisation="org.swiftsuspenders"
+	    module="swiftsuspenders"
+	    revision="@ssversion@">
+
+        <license
+            name="SwiftSuspenders Custom License"
+            url="https://github.com/tschneidereit/SwiftSuspenders/blob/master/LICENSE" />
+
+        <repository
+            name="as-artifacts"
+            url="http://as-artifacts.org"
+            pattern="http://as-artifacts.org/as3-repo-release-local/[organization]/[module]/[revision]/[artifact]-[revision].[ext]"
+            ivys="true"
+            artifacts="true"/>
+
+        <description homepage="http://www.robotlegs.org">
+            SwiftSuspenders is a basic metadata driven IOC (Inversion Of Control) solution for AS3. In its basic approach, it is similar to the SmartyPants IOC framework by Josh McDonald, but it differs from SmartyPants in two respects: It is inferior in capabilities and it is quite somewhat faster.
+        </description>
+    </info>
+
+	<!--
+	<dependencies>
+		<dependency org="organisation" name="module-name" rev="latest" >
+			<artifact name="artifactname" type="swc" ext="swc" />
+			<artifact name="artifactname" type="src" ext="src.zip" />
+		</dependency>
+	</dependencies>
+	-->
+
+	<publications>
+		<artifact type="swc" ext="swc" />
+        <artifact type="src" ext="src.zip" />
+	</publications>
+</ivy-module>
