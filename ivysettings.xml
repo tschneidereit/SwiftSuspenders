@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ivysettings>
+    <settings defaultResolver="main" />
+    <!--Authentication required for publishing (deployment). 'Artifactory Realm' is the realm used by Artifactory so
+    don't change it.
+    Uncomment the next line if you need to publish, setting your username and password for as-artifacts.org.-->
+    <!-- <credentials host="as-artifacts.org" realm="Artifactory Realm" username="username" passwd="password" /> -->
+    <resolvers>
+        <chain name="main">
+            <ibiblio name="as-artifacts" m2compatible="true" root="http://as-artifacts.org/as3-repo-release-local" />
+        </chain>
+    </resolvers>
+</ivysettings>

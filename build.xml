@@ -1,18 +1,31 @@
 <?xml version="1.0"?>
-<project name="SwiftSuspenders" basedir="." default="test">
+<project xmlns:ivy="antlib:org.apache.ivy.ant" name="SwiftSuspenders" basedir="." default="test">
+
+  <!-- if downloading iv specify the mirror from where to download. you can find the mirrors list here:
+       http://ant.apache.org/ivy/download.cgi -->
+  <property name="ivy.download.mirror" value="http://apache.deathculture.net" />
+  <property name="ivy.download.version" value="2.2.0" />
+  <property name="ivy.download.file" value="apache-ivy-${ivy.download.version}-bin.zip" />
+  <property name="ivy.download.url"     value="${ivy.download.mirror}/ant/ivy/${ivy.download.version}/${ivy.download.file}" />
+
+  <!-- get the ivy settings file -->
+  <property name="ivy.settings.file" value="ivysettings.xml" />
 
   <!-- set up a prefix for all environment variables -->
   <property environment="env."/>
+  <!-- load user properties to override defaults -->
+  <property file="user.properties"/>
 
-  <!-- System environment must contain FLEX_HOME variable that points to Flex SDK -->
+  <!-- System environment or user properties must contain FLEX_HOME and ANT_HOME variable that points to Flex SDK -->
   <property name="FLEX_HOME" location="${env.FLEX_HOME}"/>
-  
+  <property name="ANT_HOME" location="${env.ANT_HOME}"/>
+
   <!-- identify properties file -->
   <property file="build.properties"/>
   
   <!-- Set up Flex and FlexUnit ant tasks -->
-  <taskdef resource="flexTasks.tasks" classpath="${lib.loc}/flexTasks.jar"/>
-  <taskdef resource="flexUnitTasks.tasks" classpath="${lib.loc}/flexUnitTasks.jar"/>
+  <taskdef resource="flexTasks.tasks" classpath="${lib.bin.loc}/flexTasks.jar"/>
+  <taskdef resource="flexUnitTasks.tasks" classpath="${lib.bin.loc}/flexUnitTasks.jar"/>
 
   <target name="usage">
       <echo message=""/>
@@ -44,9 +57,38 @@
     </delete>
     <echo>[clean] Build and Report directories removed</echo>
   </target>
-  
+
+<!-- check if the file exists in your ant lib -->
+    <target name="-check-use-file">
+        <available property="file.exists" file="${ANT_HOME}/lib/ivy-${ivy.download.version}.jar"/>
+    </target>
+
+<!-- Get ivy jar for ant if not installed already -->
+  <target name="download_ivy" depends="-check-use-file" unless="file.exists">
+      <mkdir dir="tmp" />
+      <get src="${ivy.download.url}" dest="tmp" usetimestamp="true"/>
+      <unzip src="tmp/${ivy.download.file}" dest="tmp">
+          <patternset>
+                  <include name="apache-ivy-${ivy.download.version}/ivy-${ivy.download.version}.jar"/>
+          </patternset>
+          <mapper type="flatten"/>
+      </unzip>
+      <copy file="tmp/ivy-${ivy.download.version}.jar" todir="${ANT_HOME}/lib" />
+      <delete dir="tmp" />
+  </target>
+
+<!-- Get dependencies from repo if libraries does not exists or version are wrong -->
+  <target name="get_dependencies" depends="download_ivy,clean">
+    <echo>[dependencies] Retrieving dependencies</echo>
+    <ivy:configure />
+	<ivy:resolve file="ivy.xml"/>
+	<ivy:retrieve type="swc" pattern="${lib.bin.loc}/[artifact]-[revision].[ext]"/>
+	<ivy:retrieve type="src" pattern="${lib.src.loc}/[artifact]-[revision].[ext]"/>
+    <echo>[dependencies] Dependencies retrieved</echo>
+  </target>
+
   <!-- Create directories needed for the build process -->
-  <target name="init" depends="clean">
+  <target name="init" depends="get_dependencies">
     <echo>[init] Creating Bin and Report directories</echo>
     <mkdir dir="${bin.loc}"/>
     <mkdir dir="${report.loc}"/>
@@ -65,7 +107,7 @@
       <arg value="-include-sources=${main.src.loc}/org" />
 	
       <!-- Include classes from SWCs in this folder, but only the ones we use. -->
-      <arg value="-library-path+=${lib.loc}" />
+      <arg value="-library-path+=${lib.bin.loc}" />
 	
 	  <!-- Keep the magic alive. -->
       <arg value="-keep-as3-metadata+=Inject" />
@@ -98,7 +140,7 @@
 	  <arg value="-keep-as3-metadata+=PostConstruct" />
 		
       <!-- Include classes from SWCs in this folder, but only the ones we use. -->
-      <arg value="-library-path+=${lib.loc}" />
+      <arg value="-library-path+=${lib.bin.loc}" />
 	
 	  <!-- So true. -->
       <arg value="-incremental=true" />
@@ -126,7 +168,7 @@
     </tstamp>
 
     <java jar="${FLEX_HOME}/lib/asdoc.jar" dir="${FLEX_HOME}/frameworks" fork="true" failonerror="true">
-      <arg line="-external-library-path ${lib.loc}"/>
+      <arg line="-external-library-path ${lib.bin.loc}"/>
       <arg line="-doc-sources ${main.src.loc}"/>
       <arg line="-source-path ${main.src.loc}"/>
       <arg line="-output ${doc.loc}"/>
@@ -138,7 +180,7 @@
   </target>
   
   <!-- Package the Build -->
-  <target name="package" depends="test">
+  <target name="package" depends="asdoc">
     <tstamp>
       <format property="touch.time" pattern="MM/dd/yyyy hh:mm aa" unit="hour"/>
     </tstamp>
@@ -179,6 +221,22 @@
     <delete dir="${dist.loc}/bin"/>
     <delete dir="${dist.loc}/src"/>
     <echo>[package] Release packaged successfully</echo>
+  </target>
+
+<!-- Publish to the repo -->
+  <target name="publish" depends="package">
+	<!-- zip the source files -->
+	  <delete file="${bin.loc}/${project.name.versioned}.src.zip" failonerror="false"/>
+  	  <zip destfile="${bin.loc}/${project.name.versioned}.src.zip">
+	    <zipfileset dir="${main.src.loc}/org" prefix="org"/>
+	  </zip>
+	<!-- publish the swc and the src.zip -->
+      <ivy:configure override="true"/>
+      <ivy:resolve file="ivy.xml" />
+	  <!-- if overwrite is true, if the library version already exists on the repo it will be overriden. -->
+      <ivy:publish resolver="as-artifacts" forcedeliver="true" overwrite="false">
+          <ivy:artifacts pattern="${bin.loc}/[artifact]-[revision].[ext]" />
+      </ivy:publish>
   </target>
 
 </project>
