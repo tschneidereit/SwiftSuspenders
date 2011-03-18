@@ -1,20 +1,11 @@
 <?xml version="1.0"?>
 <project xmlns:ivy="antlib:org.apache.ivy.ant" name="SwiftSuspenders" basedir="." default="test">
-
-  <!-- if downloading iv specify the mirror from where to download. you can find the mirrors list here:
-       http://ant.apache.org/ivy/download.cgi -->
-  <property name="ivy.download.mirror" value="http://apache.deathculture.net" />
-  <property name="ivy.download.version" value="2.2.0" />
-  <property name="ivy.download.file" value="apache-ivy-${ivy.download.version}-bin.zip" />
-  <property name="ivy.download.url"     value="${ivy.download.mirror}/ant/ivy/${ivy.download.version}/${ivy.download.file}" />
-
-  <!-- get the ivy settings file -->
-  <property name="ivy.settings.file" value="ivysettings.xml" />
-
   <!-- set up a prefix for all environment variables -->
   <property environment="env."/>
   <!-- load user properties to override defaults -->
   <property file="user.properties"/>
+  <!-- get the ivy settings file -->
+  <property name="ivy.settings.file" value="ivysettings.xml" />
 
   <!-- System environment or user properties must contain FLEX_HOME and ANT_HOME variable that points to Flex SDK -->
   <property name="FLEX_HOME" location="${env.FLEX_HOME}"/>
@@ -91,8 +82,8 @@
       </filterchain>
     </copy>
 	<ivy:resolve file="ivy.xml"/>
-	<ivy:retrieve type="swc" pattern="${lib.bin.loc}/[artifact]-[revision].[ext]"/>
-	<ivy:retrieve type="src" pattern="${lib.src.loc}/[artifact]-[revision].[ext]"/>
+	<ivy:retrieve type="swc" pattern="${lib.bin.loc}/[artifact]-[revision].[ext]" sync="true" />
+	<ivy:retrieve type="src" pattern="${lib.src.loc}/[artifact]-[revision].[ext]" sync="true" />
     <echo>[dependencies] Dependencies retrieved</echo>
   </target>
 
@@ -235,7 +226,6 @@
 <!-- Publish to the repo -->
   <target name="publish" depends="package">
 	<!-- zip the source files -->
-	  <delete file="${bin.loc}/${project.name.versioned}.src.zip" failonerror="false"/>
   	  <zip destfile="${bin.loc}/${project.name.versioned}.src.zip">
 	    <zipfileset dir="${main.src.loc}/org" prefix="org"/>
 	  </zip>
@@ -246,6 +236,7 @@
       <ivy:publish resolver="as-artifacts" forcedeliver="true" overwrite="false">
           <ivy:artifacts pattern="${bin.loc}/[artifact]-[revision].[ext]" />
       </ivy:publish>
+      <delete file="${bin.loc}/${project.name.versioned}.src.zip" failonerror="false"/>
   </target>
 
 </project>
