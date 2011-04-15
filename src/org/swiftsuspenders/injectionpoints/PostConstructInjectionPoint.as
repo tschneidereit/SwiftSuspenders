@@ -33,7 +33,7 @@ package org.swiftsuspenders.injectionpoints
 
 		override public function applyInjection(target : Object, injector : Injector) : Object
 		{
-			target[methodName]();
+			target[methodName].call(target)
 			return target;
 		}
 		

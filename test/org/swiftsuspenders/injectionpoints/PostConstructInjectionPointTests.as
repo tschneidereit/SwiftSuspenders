@@ -3,6 +3,7 @@ package  org.swiftsuspenders.injectionpoints
 	import org.flexunit.Assert;
 	import org.swiftsuspenders.Injector;
 	import org.swiftsuspenders.support.injectees.ClassInjectee;
+	import org.swiftsuspenders.support.injectees.PostConstructClosureInjectee;
 
 	public class PostConstructInjectionPointTests
 	{
@@ -19,6 +20,15 @@ package  org.swiftsuspenders.injectionpoints
 			
 			Assert.assertTrue(injectee.someProperty);
 		}
+
+		[Test]
+		public function invokePostConstructClosure():void
+		{
+			var injectee:PostConstructClosureInjectee = new PostConstructClosureInjectee();
+			var injector:Injector = new Injector();
+			injector.injectInto(injectee);
+			Assert.assertTrue(injectee.someProperty);
+		}	
 		
 		private function applyPostConstructToClassInjectee():ClassInjectee
 		{

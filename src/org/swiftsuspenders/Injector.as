@@ -293,7 +293,7 @@ package org.swiftsuspenders
 			
 			//get post construct methods
 			var postConstructMethodPoints : Array = [];
-			for each (node in description.factory.method.metadata.(@name == 'PostConstruct'))
+			for each (node in description..metadata.(@name == 'PostConstruct'))
 			{
 				injectionPoint = new PostConstructInjectionPoint(node, this);
 				postConstructMethodPoints.push(injectionPoint);
