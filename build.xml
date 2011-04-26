@@ -73,7 +73,7 @@
 <!-- Get dependencies from repo if libraries does not exists or version are wrong -->
   <target name="get_dependencies" depends="download_ivy,clean">
     <echo>[dependencies] Retrieving dependencies</echo>
-    <ivy:configure />
+    <ivy:configure file="${ivy.settings.file}" />
     <copy file="${template.loc}/ivy.tmpl" tofile="ivy.xml" overwrite="true">
       <filterchain>
         <replacetokens>
@@ -180,7 +180,7 @@
   </target>
   
   <!-- Package the Build -->
-  <target name="package" depends="asdoc">
+  <target name="package" depends="compile">
     <tstamp>
       <format property="touch.time" pattern="MM/dd/yyyy hh:mm aa" unit="hour"/>
     </tstamp>
@@ -230,7 +230,7 @@
 	    <zipfileset dir="${main.src.loc}/org" prefix="org"/>
 	  </zip>
 	<!-- publish the swc and the src.zip -->
-      <ivy:configure override="true"/>
+      <ivy:configure file="${ivy.settings.file}" override="true"/>
       <ivy:resolve file="ivy.xml" />
 	  <!-- if overwrite is true, if the library version already exists on the repo it will be overriden. -->
       <ivy:publish resolver="as-artifacts" forcedeliver="true" overwrite="false">

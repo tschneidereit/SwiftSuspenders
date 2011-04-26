@@ -3,11 +3,11 @@
     <settings defaultResolver="main" />
     <!--Authentication required for publishing (deployment). 'Artifactory Realm' is the realm used by Artifactory so
     don't change it.
-    Uncomment the next line if you need to publish, setting your username and password for as-artifacts.org.-->
-    <!-- <credentials host="as-artifacts.org" realm="Artifactory Realm" username="username" passwd="password" /> -->
+    Add to the next line your username and password (username="username" passwd="password") if you need to publish the artifact to as-artifacts.org.-->
+    <credentials host="as-artifacts.org" realm="Artifactory Realm" />
     <resolvers>
         <chain name="main">
-            <ibiblio name="as-artifacts" m2compatible="true" root="http://as-artifacts.org/as3-repo-release-local" />
+            <ibiblio name="as-artifacts" m2compatible="true" root="http://as-artifacts.org/swiftsuspenders" />
         </chain>
     </resolvers>
 </ivysettings>
