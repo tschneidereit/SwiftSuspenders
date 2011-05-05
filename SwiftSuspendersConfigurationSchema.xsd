@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://github.com/tschneidereit/SwiftSuspenders" elementFormDefault="qualified">
+	<xs:element name="types">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="type" minOccurs="0" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="field" minOccurs="0" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:attribute name="name" type="xs:string" use="required" />
+									<xs:attribute name="injectionname" type="xs:string" use="optional" />
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="postconstruct" minOccurs="0" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:attribute name="name" type="xs:string" use="required" />
+									<xs:attribute name="order" type="xs:integer" use="optional" />
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="method" minOccurs="0" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence minOccurs="0" maxOccurs="unbounded">
+										<xs:element name="arg">
+											<xs:complexType>
+												<xs:attribute name="injectionname" type="xs:string" use="required"/>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+									<xs:attribute name="name" type="xs:string" use="required" />
+									<xs:attribute name="injectionname" type="xs:string" use="optional" />
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="constructor" minOccurs="0" maxOccurs="1">
+								<xs:complexType>
+									<xs:sequence minOccurs="0" maxOccurs="unbounded">
+										<xs:element name="arg">
+											<xs:complexType>
+												<xs:attribute name="injectionname" type="xs:string" use="required"/>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+						<xs:attribute name="name" type="xs:string" use="required"/>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>
