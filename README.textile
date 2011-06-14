@@ -188,7 +188,7 @@ In addition to injection points, @PostConstruct@ method annotations can be speci
 The following example code contains all possible configuration options:
 
 <pre>
-<types>
+<types xmlns="http://github.com/tschneidereit/SwiftSuspenders">
 	<type name='com.example.injectees::FirstInjectee'>
 		<field name='unnamedInjectionPoint'/>
 		<field name='namedInjectionPoint' injectionname='namedInjection'/>
@@ -200,13 +200,13 @@ The following example code contains all possible configuration options:
 		<method name='namedInjectionMethodWithOneArgument' injectionname='namedInjection'/>
 		<method name='namedInjectionMethodWithMultipleArguments'>
 			<arg injectionname='namedInjection'/>
-			<arg injectionname='namedInjection2' injectionname='namedInjection'/>
+			<arg injectionname='namedInjection2'/>
 		</method>
 	</type>
 	<type name='com.example.injectees::ThirdInjectee'>
 		<constructor>
 			<arg injectionname='namedInjection'/>
-			<arg injectionname='namedInjection2' injectionname='namedInjection'/>
+			<arg injectionname='namedInjection2'/>
 		</constructor>
 	</type>
 </types>
