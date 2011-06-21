@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2009 the original author or authors
+* Copyright (c) 2009-2011 the original author or authors
 * 
 * Permission is hereby granted to use, modify, and distribute this file 
 * in accordance with the terms of the license agreement accompanying it.
@@ -28,6 +28,20 @@ package org.swiftsuspenders.injectionresults
 		override public function getResponse(injector : Injector) : Object
 		{
 			return injector.instantiate(m_responseType);
+		}
+
+		override public function equals(otherResult : InjectionResult) : Boolean
+		{
+			if (otherResult == this)
+			{
+				return true;
+			}
+			if (!(otherResult is InjectClassResult))
+			{
+				return false;
+			}
+			var castedResult : InjectClassResult =  InjectClassResult(otherResult);
+			return castedResult.m_responseType == m_responseType;
 		}
 	}
 }

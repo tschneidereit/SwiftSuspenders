@@ -69,7 +69,7 @@ package org.swiftsuspenders
 
 		public function setResult(result : InjectionResult) : void
 		{
-			if (m_result != null && result != null)
+			if (m_result != null && result != null && !m_result.equals(result))
 			{
 				trace('Warning: Injector already has a rule for type "' +
 						getQualifiedClassName(request) + '", named "' + injectionName + '".\n ' +

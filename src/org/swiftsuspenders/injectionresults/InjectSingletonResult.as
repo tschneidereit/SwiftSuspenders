@@ -1,9 +1,9 @@
 /*
-* Copyright (c) 2009 the original author or authors
-* 
-* Permission is hereby granted to use, modify, and distribute this file 
-* in accordance with the terms of the license agreement accompanying it.
-*/
+ * Copyright (c) 2009-2011 the original author or authors
+ *
+ * Permission is hereby granted to use, modify, and distribute this file
+ * in accordance with the terms of the license agreement accompanying it.
+ */
 
 package org.swiftsuspenders.injectionresults
 {
@@ -30,8 +30,22 @@ package org.swiftsuspenders.injectionresults
 		{
 			return m_response ||= createResponse(injector);
 		}
-		
-		
+
+		override public function equals(otherResult : InjectionResult) : Boolean
+		{
+			if (otherResult == this)
+			{
+				return true;
+			}
+			if (!(otherResult is InjectSingletonResult))
+			{
+				return false;
+			}
+			var castedResult : InjectSingletonResult =  InjectSingletonResult(otherResult);
+			return castedResult.m_response == m_response
+					&& castedResult.m_responseType == m_responseType;
+		}
+
 		/*******************************************************************************************
 		 *								private methods											   *
 		 *******************************************************************************************/
