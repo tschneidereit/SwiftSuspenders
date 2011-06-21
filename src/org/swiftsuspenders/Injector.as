@@ -51,7 +51,7 @@ package org.swiftsuspenders
 
 		public function map(dependency : Class) : InjectionRule
 		{
-			return _mappings[dependency] || createRule(dependency);
+			return _mappings[dependency] ||= createRule(dependency);
 		}
 
 		public function unmap(dependency : Class) : void
@@ -215,7 +215,7 @@ package org.swiftsuspenders
 		//----------------------         Private / Protected Methods        ----------------------//
 		private function createRule(requestType : Class) : InjectionRule
 		{
-			return (_mappings[requestType] = new InjectionRule(this, requestType));
+			return new InjectionRule(this, requestType);
 		}
 	}
 }
