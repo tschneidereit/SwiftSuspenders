@@ -55,10 +55,12 @@ package org.swiftsuspenders.injectionpoints
 		
 		protected function gatherParameters(methodNode : XML, nameArgs : XMLList) : void
 		{
-			_parameterInjectionConfigs = [];
-			var i : int = 0;
-			for each (var parameter : XML in methodNode.parameter)
+			const parameterNodes : XMLList = methodNode.parameter;
+			const length : uint = parameterNodes.length();
+			_parameterInjectionConfigs = new Array(length);
+			for (var i : int = 0; i < length; i++)
 			{
+				var parameter : XML = parameterNodes[i];
 				var injectionName : String = '';
 				if (nameArgs[i])
 				{
@@ -78,20 +80,19 @@ package org.swiftsuspenders.injectionpoints
 						parameterTypeName = null;
 					}
 				}
-				_parameterInjectionConfigs.push(
-						new InjectionPointConfig(parameterTypeName, injectionName, false));
+				_parameterInjectionConfigs[i] =
+						new InjectionPointConfig(parameterTypeName, injectionName, false);
 				if (parameter.@optional == 'false')
 				{
 					_requiredParameters++;
 				}
-				i++;
 			}
 		}
 		
 		protected function gatherParameterValues(target : Object, injector : Injector) : Array
 		{
-			var parameters : Array = [];
 			var length : int = _parameterInjectionConfigs.length;
+			var parameters : Array = new Array(length);
 			for (var i : int = 0; i < length; i++)
 			{
 				var parameterConfig : InjectionPointConfig = _parameterInjectionConfigs[i];
