@@ -39,18 +39,19 @@ package org.swiftsuspenders.utils
 			{
 				return description;
 			}
-			var descriptionXML : XML = getDescriptionXML(type);
-			if (descriptionXML.@name != 'Object' && descriptionXML.factory.extendsClass.length() == 0)
+			const descriptionXML : XML = getDescriptionXML(type);
+			const factory : XML = descriptionXML.factory[0];
+			if (descriptionXML.@name != 'Object' && factory.extendsClass.length() == 0)
 			{
 				throw new InjectorError('Interfaces can\'t be used as instantiatable classes.');
 			}
 
-			var injectionPoints : Array = [];
+			const injectionPoints : Array = [];
 			var node : XML;
 
 			//get constructor injections
 			var ctorInjectionPoint : InjectionPoint;
-			node = descriptionXML.factory.constructor[0];
+			node = factory.constructor[0];
 			if (node)
 			{
 				ctorInjectionPoint = new ConstructorInjectionPoint(node, type);
@@ -60,8 +61,8 @@ package org.swiftsuspenders.utils
 				ctorInjectionPoint = new NoParamsConstructorInjectionPoint();
 			}
 			var injectionPoint : InjectionPoint;
-			//get injection points for variables
-			for each (node in descriptionXML.factory.*.
+			//get injection points for variables and setters
+			for each (node in factory.*.
 					(name() == 'variable' || name() == 'accessor').metadata.(@name == 'Inject'))
 			{
 				injectionPoint = new PropertyInjectionPoint(node);
@@ -69,7 +70,7 @@ package org.swiftsuspenders.utils
 			}
 
 			//get injection points for methods
-			for each (node in descriptionXML.factory.method.metadata.(@name == 'Inject'))
+			for each (node in factory.method.metadata.(@name == 'Inject'))
 			{
 				injectionPoint = new MethodInjectionPoint(node);
 				injectionPoints.push(injectionPoint);
@@ -77,7 +78,7 @@ package org.swiftsuspenders.utils
 
 			//get post construct methods
 			var postConstructMethodPoints : Array = [];
-			for each (node in descriptionXML.factory.method.metadata.(@name == 'PostConstruct'))
+			for each (node in factory.method.metadata.(@name == 'PostConstruct'))
 			{
 				injectionPoint = new PostConstructInjectionPoint(node);
 				postConstructMethodPoints.push(injectionPoint);
