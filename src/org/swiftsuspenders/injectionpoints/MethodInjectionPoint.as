@@ -25,7 +25,7 @@ package org.swiftsuspenders.injectionpoints
 		//----------------------               Public Methods               ----------------------//
 		public function MethodInjectionPoint(node : XML)
 		{
-			super(node);
+			initializeInjection(node);
 		}
 		
 		override public function applyInjection(target : Object, injector : Injector) : Object
@@ -42,7 +42,7 @@ package org.swiftsuspenders.injectionpoints
 
 
 		//----------------------         Private / Protected Methods        ----------------------//
-		override protected function initializeInjection(node : XML) : void
+		protected function initializeInjection(node : XML) : void
 		{
 			var nameArgs : XMLList = node.arg.(@key == 'name');
 			var methodNode : XML = node.parent();

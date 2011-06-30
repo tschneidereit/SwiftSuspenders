@@ -13,7 +13,6 @@ package org.swiftsuspenders.injectionpoints
 	{
 		public function NoParamsConstructorInjectionPoint()
 		{
-			super(null);
 		}
 		
 		override public function applyInjection(target : Object, injector : Injector) : Object
