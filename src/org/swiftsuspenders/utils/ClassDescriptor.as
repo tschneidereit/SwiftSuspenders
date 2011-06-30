@@ -49,13 +49,26 @@ package org.swiftsuspenders.utils
 
 			const injectionPoints : Array = [];
 			var node : XML;
+			var nameArgs : XMLList;
+			var parameters : Array;
 
 			//get constructor injections
 			var ctorInjectionPoint : InjectionPoint;
 			node = factory.constructor[0];
 			if (node)
 			{
-				ctorInjectionPoint = new ConstructorInjectionPoint(node, type);
+				nameArgs = node.parent().metadata.arg.(@key == 'name');
+				/*
+				 In many cases, the flash player doesn't give us type information for constructors until
+				 the class has been instantiated at least once. Therefore, we do just that if we don't get
+				 type information for at least one parameter.
+				 */
+				if (node.parameter.(@type == '*').length() == node.parameter.@type.length())
+				{
+					createDummyInstance(node, type);
+				}
+				parameters = gatherMethodParameters(node.parameter, nameArgs);
+				ctorInjectionPoint = new ConstructorInjectionPoint(parameters);
 			}
 			else
 			{
@@ -67,11 +80,10 @@ package org.swiftsuspenders.utils
 					(name() == 'variable' || name() == 'accessor').metadata.(@name == 'Inject'))
 			{
 				var config : InjectionPointConfig  = new InjectionPointConfig(
-						node.parent().@type.toString(),
-						node.arg.(@key == 'name').attribute('value').toString(),
-						node.arg.(@key == 'optional' &&
-								(@value == 'true' || @value == '1')).length() != 0);
-				var propertyName : String = node.parent().@name.toString();
+						node.parent().@type,
+						node.arg.(@key == 'name').attribute('value'),
+						getOptionalFlagFromXMLNode(node));
+				var propertyName : String = node.parent().@name;
 				injectionPoint = new PropertyInjectionPoint(config, propertyName);
 				injectionPoints.push(injectionPoint);
 			}
@@ -79,7 +91,10 @@ package org.swiftsuspenders.utils
 			//get injection points for methods
 			for each (node in factory.method.metadata.(@name == 'Inject'))
 			{
-				injectionPoint = new MethodInjectionPoint(node);
+				nameArgs = node.arg.(@key == 'name');
+				parameters = gatherMethodParameters(node.parent().parameter, nameArgs);
+				injectionPoint = new MethodInjectionPoint(
+						node.parent().@name, parameters, getOptionalFlagFromXMLNode(node));
 				injectionPoints.push(injectionPoint);
 			}
 
@@ -107,6 +122,75 @@ package org.swiftsuspenders.utils
 		protected function getDescriptionXML(type : Class) : XML
 		{
 			return describeType(type);
+		}
+
+		private function getOptionalFlagFromXMLNode(node : XML) : Boolean
+		{
+			return node.arg.(@key == 'optional' &&
+					(@value == 'true' || @value == '1')).length() != 0;
+		}
+
+		protected function gatherMethodParameters(
+				parameterNodes : XMLList, nameArgs : XMLList) : Array
+		{
+			const length : uint = parameterNodes.length();
+			const parameters : Array = new Array(length);
+			for (var i : int = 0; i < length; i++)
+			{
+				var parameter : XML = parameterNodes[i];
+				var injectionName : String = '';
+				if (nameArgs[i])
+				{
+					injectionName = nameArgs[i].@value;
+				}
+				var parameterTypeName : String = parameter.@type;
+				if (parameterTypeName == '*')
+				{
+					if (parameter.@optional == 'false' || parameter.@optional == '0')
+					{
+						//TODO: Find a way to trace name of affected class here
+						throw new InjectorError('Error in method definition of injectee. ' +
+								'Required parameters can\'t have type "*".');
+					}
+					else
+					{
+						parameterTypeName = null;
+					}
+				}
+				parameters[i] = new InjectionPointConfig(
+						parameterTypeName, injectionName, getOptionalFlagFromXMLNode(parameter));
+			}
+			return parameters;
+		}
+		
+		private function createDummyInstance(constructorNode : XML, clazz : Class) : void
+		{
+			try
+			{
+				switch (constructorNode.children().length())
+				{
+					case 0 : (new clazz()); break;
+					case 1 : (new clazz(null)); break;
+					case 2 : (new clazz(null, null)); break;
+					case 3 : (new clazz(null, null, null)); break;
+					case 4 : (new clazz(null, null, null, null)); break;
+					case 5 : (new clazz(null, null, null, null, null)); break;
+					case 6 : (new clazz(null, null, null, null, null, null)); break;
+					case 7 : (new clazz(null, null, null, null, null, null, null)); break;
+					case 8 : (new clazz(null, null, null, null, null, null, null, null)); break;
+					case 9 : (new clazz(null, null, null, null, null, null, null, null, null)); break;
+					case 10 : (new clazz(null, null, null, null, null, null, null, null, null, null)); break;
+				}
+			}
+			catch (error : Error)
+			{
+				trace('Exception caught while trying to create dummy instance for constructor ' +
+						'injection. It\'s almost certainly ok to ignore this exception, but you ' +
+						'might want to restructure your constructor to prevent errors from ' +
+						'happening. See the SwiftSuspenders documentation for more details. ' +
+						'The caught exception was:\n' + error);
+			}
+			constructorNode.setChildren(describeType(clazz).factory.constructor[0].children());
 		}
 	}
 }
