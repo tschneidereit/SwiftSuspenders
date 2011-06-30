@@ -87,7 +87,8 @@ package org.swiftsuspenders.utils
 			var postConstructMethodPoints : Array = [];
 			for each (node in factory.method.metadata.(@name == 'PostConstruct'))
 			{
-				injectionPoint = new PostConstructInjectionPoint(node);
+				injectionPoint = new PostConstructInjectionPoint(
+						node.parent().@name, int(node.arg.(@key == 'order').@value));
 				postConstructMethodPoints.push(injectionPoint);
 			}
 			if (postConstructMethodPoints.length > 0)
