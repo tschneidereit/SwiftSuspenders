@@ -13,13 +13,13 @@ package org.swiftsuspenders.injectionpoints
 	{
 		//----------------------       Private / Protected Properties       ----------------------//
 		protected var methodName : String;
-		protected var orderValue:int;
+		protected var orderValue : int;
 
 
 		//----------------------               Public Methods               ----------------------//
-		public function PostConstructInjectionPoint(node:XML)
+		public function PostConstructInjectionPoint(node : XML)
 		{
-			super(node);
+			initializeInjection(node);
 		}
 		
 		public function get order():int
@@ -35,7 +35,7 @@ package org.swiftsuspenders.injectionpoints
 
 
 		//----------------------         Private / Protected Methods        ----------------------//
-		override protected function initializeInjection(node : XML) : void
+		protected function initializeInjection(node : XML) : void
 		{
 			var orderArg : XMLList = node.arg.(@key == 'order');
 			var methodNode : XML = node.parent();

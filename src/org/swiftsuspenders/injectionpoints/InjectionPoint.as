@@ -12,20 +12,13 @@ package org.swiftsuspenders.injectionpoints
 	public class InjectionPoint
 	{
 		//----------------------               Public Methods               ----------------------//
-		public function InjectionPoint(node : XML)
+		public function InjectionPoint()
 		{
-			initializeInjection(node);
 		}
 		
 		public function applyInjection(target : Object, injector : Injector) : Object
 		{
 			return target;
-		}
-
-
-		//----------------------         Private / Protected Methods        ----------------------//
-		protected function initializeInjection(node : XML) : void
-		{
 		}
 	}
 }

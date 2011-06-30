@@ -35,8 +35,10 @@ package org.swiftsuspenders.injectionpoints
 		{
 			injector.map(Clazz).toSingleton(Clazz);
 			var injectee:ClassInjectee = new ClassInjectee();
-			var node:XML = XML(InjectionNodes.PROPERTY_INJECTION_NODE.metadata);
-			var injectionPoint:PropertyInjectionPoint = new PropertyInjectionPoint(node);
+			var config : InjectionPointConfig = new InjectionPointConfig(
+					'org.swiftsuspenders.support.types::Clazz', '', false);
+			var injectionPoint:PropertyInjectionPoint =
+					new PropertyInjectionPoint(config, 'property');
 			
 			injectionPoint.applyInjection(injectee, injector);
 			
@@ -47,8 +49,10 @@ package org.swiftsuspenders.injectionpoints
 		public function injectionAttemptWithUnmappedOptionalPropertyDoesntThrow():void
 		{
 			var injectee:ClassInjectee = new ClassInjectee();
-			var node:XML = XML(InjectionNodes.OPTIONAL_PROPERTY_INJECTION_NODE.metadata);
-			var injectionPoint:PropertyInjectionPoint = new PropertyInjectionPoint(node);
+			var config : InjectionPointConfig = new InjectionPointConfig(
+					'org.swiftsuspenders.support.types::Clazz', '', true);
+			var injectionPoint:PropertyInjectionPoint =
+					new PropertyInjectionPoint(config, 'property');
 
 			injectionPoint.applyInjection(injectee, injector);
 

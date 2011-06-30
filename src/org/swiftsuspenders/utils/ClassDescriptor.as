@@ -14,6 +14,7 @@ package org.swiftsuspenders.utils
 	import org.swiftsuspenders.InjectorError;
 	import org.swiftsuspenders.injectionpoints.ConstructorInjectionPoint;
 	import org.swiftsuspenders.injectionpoints.InjectionPoint;
+	import org.swiftsuspenders.injectionpoints.InjectionPointConfig;
 	import org.swiftsuspenders.injectionpoints.MethodInjectionPoint;
 	import org.swiftsuspenders.injectionpoints.NoParamsConstructorInjectionPoint;
 	import org.swiftsuspenders.injectionpoints.PostConstructInjectionPoint;
@@ -65,7 +66,13 @@ package org.swiftsuspenders.utils
 			for each (node in factory.*.
 					(name() == 'variable' || name() == 'accessor').metadata.(@name == 'Inject'))
 			{
-				injectionPoint = new PropertyInjectionPoint(node);
+				var config : InjectionPointConfig  = new InjectionPointConfig(
+						node.parent().@type.toString(),
+						node.arg.(@key == 'name').attribute('value').toString(),
+						node.arg.(@key == 'optional' &&
+								(@value == 'true' || @value == '1')).length() != 0);
+				var propertyName : String = node.parent().@name.toString();
+				injectionPoint = new PropertyInjectionPoint(config, propertyName);
 				injectionPoints.push(injectionPoint);
 			}
 

@@ -9,28 +9,6 @@ package org.swiftsuspenders.support.nodes
 {
 	public class InjectionNodes
 	{
-		public static const PROPERTY_INJECTION_NODE:XML =
-			<variable name="property" type="org.swiftsuspenders.support.types::Clazz">
-				<metadata name="Inject"/>
-			</variable>;
-
-		public static const OPTIONAL_PROPERTY_INJECTION_NODE:XML =
-				<variable name="property" type="org.swiftsuspenders.support.types::Clazz">
-					<metadata name="Inject">
-						<arg key="optional" value='true'/>
-					</metadata>
-				</variable>;
-
-		public static const NAMED_INJECTION_NODE:XML =
-			<metadata name="Inject">
-				<arg key="name" value="namedCollection"/>
-			</metadata>;
-
-		public static const CONSTRUCTOR_INJECTION_NODE_SINGLE_ARGUMENT:XML =
-			<constructor>
-				<parameter index="1" type="org.swiftsuspenders.support.types::Clazz" optional="false"/>
-			</constructor>;
-
 		public static const CONSTRUCTOR_INJECTION_NODE_TWO_ARGUMENT:XML =
 			<factory type="org.swiftsuspenders.support.injectees::TwoParametersConstructorInjectee">
 				<constructor>

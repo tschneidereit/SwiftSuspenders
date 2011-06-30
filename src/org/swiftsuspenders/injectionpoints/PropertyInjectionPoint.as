@@ -20,9 +20,10 @@ package org.swiftsuspenders.injectionpoints
 
 
 		//----------------------               Public Methods               ----------------------//
-		public function PropertyInjectionPoint(node : XML)
+		public function PropertyInjectionPoint(config : InjectionPointConfig, propertyName : String)
 		{
-			super(node);
+			_propertyName = propertyName;
+			_injectionConfig = config;
 		}
 		
 		override public function applyInjection(target : Object, injector : Injector) : Object
@@ -45,18 +46,6 @@ package org.swiftsuspenders.injectionpoints
 			}
 			target[_propertyName] = injection;
 			return target;
-		}
-
-
-		//----------------------         Private / Protected Methods        ----------------------//
-		override protected function initializeInjection(node : XML) : void
-		{
-			_injectionConfig = new InjectionPointConfig(
-					node.parent().@type.toString(),
-					node.arg.(@key == 'name').attribute('value').toString(),
-					node.arg.(@key == 'optional' &&
-							(@value == 'true' || @value == '1')).length() != 0);
-			_propertyName = node.parent().@name.toString();
 		}
 	}
 }
