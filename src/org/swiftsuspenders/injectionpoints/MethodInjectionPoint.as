@@ -18,20 +18,32 @@ package org.swiftsuspenders.injectionpoints
 		protected var _parameterInjectionConfigs : Array;
 		protected var _requiredParameters : int = 0;
 
-		private var _injectionIsOptional : Boolean;
+		private var _isOptional : Boolean;
 		private var _methodName : String;
 
 
 		//----------------------               Public Methods               ----------------------//
-		public function MethodInjectionPoint(node : XML)
+		public function MethodInjectionPoint(
+				methodName : String, parameters : Array, isOptional : Boolean)
 		{
-			initializeInjection(node);
+			_methodName = methodName;
+			_isOptional = isOptional;
+			_parameterInjectionConfigs = parameters;
+			for (var i : int = parameters.length; i--;)
+			{
+				var parameter : InjectionPointConfig = parameters[i];
+				if (!parameter.optional)
+				{
+					break;
+				}
+			}
+			_requiredParameters = i;
 		}
 		
 		override public function applyInjection(target : Object, injector : Injector) : Object
 		{
 			var parameters : Array = gatherParameterValues(target, injector);
-			if (!parameters && _injectionIsOptional)
+			if (!parameters && _isOptional)
 			{
 				return target;
 			}
@@ -42,53 +54,6 @@ package org.swiftsuspenders.injectionpoints
 
 
 		//----------------------         Private / Protected Methods        ----------------------//
-		protected function initializeInjection(node : XML) : void
-		{
-			var nameArgs : XMLList = node.arg.(@key == 'name');
-			var methodNode : XML = node.parent();
-			_methodName = methodNode.@name;
-			_injectionIsOptional = node.arg.(@key == 'optional' &&
-					(@value == 'true' || @value == '1')).length() != 0;
-			
-			gatherParameters(methodNode, nameArgs);
-		}
-		
-		protected function gatherParameters(methodNode : XML, nameArgs : XMLList) : void
-		{
-			const parameterNodes : XMLList = methodNode.parameter;
-			const length : uint = parameterNodes.length();
-			_parameterInjectionConfigs = new Array(length);
-			for (var i : int = 0; i < length; i++)
-			{
-				var parameter : XML = parameterNodes[i];
-				var injectionName : String = '';
-				if (nameArgs[i])
-				{
-					injectionName = nameArgs[i].@value;
-				}
-				var parameterTypeName : String = parameter.@type;
-				if (parameterTypeName == '*')
-				{
-					if (parameter.@optional == 'false' || parameter.@optional == '0')
-					{
-						//TODO: Find a way to trace name of affected class here
-						throw new InjectorError('Error in method definition of injectee. ' +
-							'Required parameters can\'t have type "*".');
-					}
-					else
-					{
-						parameterTypeName = null;
-					}
-				}
-				_parameterInjectionConfigs[i] =
-						new InjectionPointConfig(parameterTypeName, injectionName, false);
-				if (parameter.@optional == 'false')
-				{
-					_requiredParameters++;
-				}
-			}
-		}
-		
 		protected function gatherParameterValues(target : Object, injector : Injector) : Array
 		{
 			var length : int = _parameterInjectionConfigs.length;
@@ -105,7 +70,7 @@ package org.swiftsuspenders.injectionpoints
 					{
 						break;
 					}
-					if (_injectionIsOptional)
+					if (_isOptional)
 					{
 						return null;
 					}

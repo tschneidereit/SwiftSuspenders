@@ -10,7 +10,6 @@ package org.swiftsuspenders.injectionpoints
 	import org.flexunit.Assert;
 	import org.swiftsuspenders.Injector;
 	import org.swiftsuspenders.support.injectees.ClassInjectee;
-	import org.swiftsuspenders.support.nodes.InjectionNodes;
 	import org.swiftsuspenders.support.types.Clazz;
 
 	public class PropertyInjectionPointTests

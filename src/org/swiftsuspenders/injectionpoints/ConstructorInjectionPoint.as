@@ -14,18 +14,9 @@ package org.swiftsuspenders.injectionpoints
 	public class ConstructorInjectionPoint extends MethodInjectionPoint
 	{
 		//----------------------               Public Methods               ----------------------//
-		public function ConstructorInjectionPoint(node : XML, clazz : Class)
+		public function ConstructorInjectionPoint(parameters : Array)
 		{
-			/*
-			  In many cases, the flash player doesn't give us type information for constructors until 
-			  the class has been instantiated at least once. Therefore, we do just that if we don't get 
-			  type information for at least one parameter.
-			 */ 
-			if (node.parameter.(@type == '*').length() == node.parameter.@type.length())
-			{
-				createDummyInstance(node, clazz);
-			}
-			super(node);
+			super('ctor', parameters, false);
 		}
 		
 		override public function applyInjection(target : Object, injector : Injector) : Object
@@ -48,45 +39,6 @@ package org.swiftsuspenders.injectionpoints
 				case 10 : return (new ctor(p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8], p[9]));
 			}
 			return null;
-		}
-
-
-		//----------------------         Private / Protected Methods        ----------------------//
-		override protected function initializeInjection(node : XML) : void
-		{
-			var nameArgs : XMLList = node.parent().metadata.(@name == 'Inject').arg.(@key == 'name');
-			
-			gatherParameters(node, nameArgs);
-		}
-
-		private function createDummyInstance(constructorNode : XML, clazz : Class) : void
-		{
-			try
-			{
-				switch (constructorNode.children().length())
-				{
-					case 0 : (new clazz()); break;
-					case 1 : (new clazz(null)); break;
-					case 2 : (new clazz(null, null)); break;
-					case 3 : (new clazz(null, null, null)); break;
-					case 4 : (new clazz(null, null, null, null)); break;
-					case 5 : (new clazz(null, null, null, null, null)); break;
-					case 6 : (new clazz(null, null, null, null, null, null)); break;
-					case 7 : (new clazz(null, null, null, null, null, null, null)); break;
-					case 8 : (new clazz(null, null, null, null, null, null, null, null)); break;
-					case 9 : (new clazz(null, null, null, null, null, null, null, null, null)); break;
-					case 10 : (new clazz(null, null, null, null, null, null, null, null, null, null)); break;
-				}
-			}
-			catch (error : Error)
-			{
-				trace('Exception caught while trying to create dummy instance for constructor ' +
-						'injection. It\'s almost certainly ok to ignore this exception, but you ' +
-						'might want to restructure your constructor to prevent errors from ' +
-						'happening. See the SwiftSuspenders documentation for more details. ' +
-						'The caught exception was:\n' + error);
-			}
-			constructorNode.setChildren(describeType(clazz).factory.constructor[0].children());
 		}
 	}
 }
