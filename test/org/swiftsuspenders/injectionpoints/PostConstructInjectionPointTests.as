@@ -10,6 +10,7 @@ package  org.swiftsuspenders.injectionpoints
 	import org.flexunit.Assert;
 	import org.swiftsuspenders.Injector;
 	import org.swiftsuspenders.support.injectees.ClassInjectee;
+	import org.swiftsuspenders.support.types.Clazz;
 
 	public class PostConstructInjectionPointTests
 	{
@@ -22,23 +23,12 @@ package  org.swiftsuspenders.injectionpoints
 		[Test]
 		public function invokeXMLConfiguredPostConstructMethod():void
 		{
-			var injectee:ClassInjectee = applyPostConstructToClassInjectee();
-			
-			Assert.assertTrue(injectee.someProperty);
-		}
-		
-		private function applyPostConstructToClassInjectee():ClassInjectee
-		{
 			var injectee:ClassInjectee = new ClassInjectee();
-			var injector:Injector = new Injector(
-				<types>
-					<type name='org.swiftsuspenders.support.injectees::ClassInjectee'>
-						<postconstruct name='doSomeStuff' order='1'/>
-					</type>
-				</types>);
+			var injector:Injector = new Injector();
+			injector.map(Clazz);
 			injector.injectInto(injectee);
 			
-			return injectee;
+			Assert.assertTrue(injectee.someProperty);
 		}
 	}
 }

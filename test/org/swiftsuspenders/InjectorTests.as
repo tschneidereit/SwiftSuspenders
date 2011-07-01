@@ -367,15 +367,7 @@ package org.swiftsuspenders
 		[Test]
 		public function performXMLConfiguredConstructorInjectionWithOneNamedParameter():void
 		{
-			var diConfig:XML =
-				<types>
-					<type name='org.swiftsuspenders.support.injectees::OneNamedParameterConstructorInjectee'>
-						<constructor>
-							<arg injectionname="namedDependency" />
-						</constructor>
-					</type>
-				</types>;
-			injector = new Injector(diConfig);
+			injector = new Injector();
 			injector.usingName('namedDependency').map(Clazz).toType(Clazz);
 			var injectee:OneNamedParameterConstructorInjectee = injector.getInstance(OneNamedParameterConstructorInjectee);
 			Assert.assertNotNull("Instance of Class should have been injected for named Clazz parameter", injectee.getDependency() );

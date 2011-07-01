@@ -16,7 +16,6 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.utils.ClassDescription;
 	import org.swiftsuspenders.utils.ClassDescriptor;
 	import org.swiftsuspenders.utils.SsInternal;
-	import org.swiftsuspenders.utils.XMLClassDescriptor;
 	import org.swiftsuspenders.utils.getConstructor;
 
 	use namespace SsInternal;
@@ -26,7 +25,6 @@ package org.swiftsuspenders
 		//----------------------       Private / Protected Properties       ----------------------//
 		private static var INJECTION_POINTS_CACHE : Dictionary = new Dictionary(true);
 
-
 		private var _parentInjector : Injector;
         private var _applicationDomain:ApplicationDomain;
 		private var _classDescriptor : ClassDescriptor;
@@ -35,20 +33,12 @@ package org.swiftsuspenders
 
 
 		//----------------------               Public Methods               ----------------------//
-		public function Injector(xmlConfig : XML = null)
+		public function Injector()
 		{
 			_mappings = new Dictionary();
 			_namedInjectionsManager = new NamedInjectionsManager(this);
-			if (xmlConfig != null)
-			{
-				_classDescriptor = new XMLClassDescriptor(
-						new Dictionary(true), new DescribeTypeReflector(), xmlConfig);
-			}
-			else
-			{
-				_classDescriptor = new ClassDescriptor(
-						INJECTION_POINTS_CACHE, new DescribeTypeReflector());
-			}
+			_classDescriptor = new ClassDescriptor(
+					INJECTION_POINTS_CACHE, new DescribeTypeReflector());
 		}
 
 		public function map(dependency : Class) : InjectionRule
