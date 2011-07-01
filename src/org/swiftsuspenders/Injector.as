@@ -41,11 +41,13 @@ package org.swiftsuspenders
 			_namedInjectionsManager = new NamedInjectionsManager(this);
 			if (xmlConfig != null)
 			{
-				_classDescriptor = new XMLClassDescriptor(new Dictionary(true), xmlConfig);
+				_classDescriptor = new XMLClassDescriptor(
+						new Dictionary(true), new DescribeTypeReflector(), xmlConfig);
 			}
 			else
 			{
-				_classDescriptor = new ClassDescriptor(INJECTION_POINTS_CACHE);
+				_classDescriptor = new ClassDescriptor(
+						INJECTION_POINTS_CACHE, new DescribeTypeReflector());
 			}
 		}
 
