@@ -9,9 +9,9 @@ package org.swiftsuspenders.utils
 {
 	import flash.utils.Dictionary;
 	import flash.utils.getDefinitionByName;
-
 	import flash.utils.getQualifiedSuperclassName;
 
+	import org.swiftsuspenders.DescribeTypeReflector;
 	import org.swiftsuspenders.InjectorError;
 
 	public class XMLClassDescriptor extends ClassDescriptor
@@ -21,9 +21,10 @@ package org.swiftsuspenders.utils
 
 
 		//----------------------               Public Methods               ----------------------//
-		public function XMLClassDescriptor(descriptionsCache : Dictionary, xmlConfig : XML)
+		public function XMLClassDescriptor(
+				descriptionsCache : Dictionary, reflector : DescribeTypeReflector, xmlConfig : XML)
 		{
-			super(descriptionsCache);
+			super(descriptionsCache, reflector);
 			_xmlMetadata = xmlConfig;
 		}
 

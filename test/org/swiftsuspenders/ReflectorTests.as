@@ -19,12 +19,12 @@ package org.swiftsuspenders
 		private static const CLASS_IN_ROOT_PACKAGE:Class = Date;
 		private static const CLASS_NAME_IN_ROOT_PACKAGE:String = "Date";
 		
-		private var reflector:Reflector;
+		private var reflector:DescribeTypeReflector;
 		
 		[Before]
 		public function setup():void
 		{
-			reflector = new Reflector();
+			reflector = new DescribeTypeReflector();
 		}
 		
 		[After]
