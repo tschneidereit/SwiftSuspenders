@@ -206,6 +206,10 @@ package org.swiftsuspenders
 		{
 			var typeDescription : ClassDescription = _classDescriptor.getDescription(type);
 			var injectionPoint : InjectionPoint = typeDescription.ctor;
+			if (!injectionPoint)
+			{
+				throw new InjectorError("Can't instantiate interface " + getQualifiedClassName(type));
+			}
 			var instance : * = injectionPoint.applyInjection(type, this);
 			injectInto(instance);
 			return instance;

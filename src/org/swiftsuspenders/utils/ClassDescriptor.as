@@ -8,7 +8,6 @@
 package org.swiftsuspenders.utils
 {
 	import flash.utils.Dictionary;
-
 	import flash.utils.describeType;
 
 	import org.swiftsuspenders.InjectorError;
@@ -42,10 +41,6 @@ package org.swiftsuspenders.utils
 			}
 			const descriptionXML : XML = getDescriptionXML(type);
 			const factory : XML = descriptionXML.factory[0];
-			if (descriptionXML.@name != 'Object' && factory.extendsClass.length() == 0)
-			{
-				throw new InjectorError('Interfaces can\'t be used as instantiatable classes.');
-			}
 
 			const injectionPoints : Array = [];
 			var node : XML;
@@ -70,7 +65,7 @@ package org.swiftsuspenders.utils
 				parameters = gatherMethodParameters(node.parameter, nameArgs);
 				ctorInjectionPoint = new ConstructorInjectionPoint(parameters);
 			}
-			else
+			else if (descriptionXML.@name == 'Object' || factory.extendsClass.length() > 0)
 			{
 				ctorInjectionPoint = new NoParamsConstructorInjectionPoint();
 			}
