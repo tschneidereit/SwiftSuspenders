@@ -13,17 +13,15 @@ package org.swiftsuspenders
 	import flash.utils.getQualifiedClassName;
 
 	import org.swiftsuspenders.injectionpoints.ConstructorInjectionPoint;
-
 	import org.swiftsuspenders.injectionpoints.InjectionPoint;
 	import org.swiftsuspenders.injectionpoints.InjectionPointConfig;
 	import org.swiftsuspenders.injectionpoints.MethodInjectionPoint;
 	import org.swiftsuspenders.injectionpoints.NoParamsConstructorInjectionPoint;
 	import org.swiftsuspenders.injectionpoints.PostConstructInjectionPoint;
 	import org.swiftsuspenders.injectionpoints.PropertyInjectionPoint;
-
 	import org.swiftsuspenders.utils.getConstructor;
 
-	public class DescribeTypeReflector
+	public class DescribeTypeReflector implements Reflector
 	{
 		//----------------------       Private / Protected Properties       ----------------------//
 		private var _currentType : Class;
@@ -137,13 +135,13 @@ package org.swiftsuspenders
 		}
 
 		//----------------------         Private / Protected Methods        ----------------------//
-		private function getOptionalFlagFromXMLNode(node : XML) : Boolean
+		public function getOptionalFlagFromXMLNode(node : XML) : Boolean
 		{
 			return node.arg.(@key == 'optional' &&
 					(@value == 'true' || @value == '1')).length() != 0;
 		}
 
-		private function gatherMethodParameters(
+		public function gatherMethodParameters(
 				parameterNodes : XMLList, nameArgs : XMLList) : Array
 		{
 			const length : uint = parameterNodes.length();
@@ -176,23 +174,45 @@ package org.swiftsuspenders
 			return parameters;
 		}
 
-		private function createDummyInstance(constructorNode : XML, clazz : Class) : void
+		public function createDummyInstance(constructorNode : XML, clazz : Class) : void
 		{
 			try
 			{
 				switch (constructorNode.children().length())
 				{
-					case 0 : (new clazz()); break;
-					case 1 : (new clazz(null)); break;
-					case 2 : (new clazz(null, null)); break;
-					case 3 : (new clazz(null, null, null)); break;
-					case 4 : (new clazz(null, null, null, null)); break;
-					case 5 : (new clazz(null, null, null, null, null)); break;
-					case 6 : (new clazz(null, null, null, null, null, null)); break;
-					case 7 : (new clazz(null, null, null, null, null, null, null)); break;
-					case 8 : (new clazz(null, null, null, null, null, null, null, null)); break;
-					case 9 : (new clazz(null, null, null, null, null, null, null, null, null)); break;
-					case 10 : (new clazz(null, null, null, null, null, null, null, null, null, null)); break;
+					case 0 :
+						(new clazz());
+						break;
+					case 1 :
+						(new clazz(null));
+						break;
+					case 2 :
+						(new clazz(null, null));
+						break;
+					case 3 :
+						(new clazz(null, null, null));
+						break;
+					case 4 :
+						(new clazz(null, null, null, null));
+						break;
+					case 5 :
+						(new clazz(null, null, null, null, null));
+						break;
+					case 6 :
+						(new clazz(null, null, null, null, null, null));
+						break;
+					case 7 :
+						(new clazz(null, null, null, null, null, null, null));
+						break;
+					case 8 :
+						(new clazz(null, null, null, null, null, null, null, null));
+						break;
+					case 9 :
+						(new clazz(null, null, null, null, null, null, null, null, null));
+						break;
+					case 10 :
+						(new clazz(null, null, null, null, null, null, null, null, null, null));
+						break;
 				}
 			}
 			catch (error : Error)
@@ -212,7 +232,7 @@ package org.swiftsuspenders
 			for each (var node : XML in _currentFactoryXML.*.
 					(name() == 'variable' || name() == 'accessor').metadata.(@name == 'Inject'))
 			{
-				var config : InjectionPointConfig  = new InjectionPointConfig(
+				var config : InjectionPointConfig = new InjectionPointConfig(
 						node.parent().@type,
 						node.arg.(@key == 'name').attribute('value'),
 						getOptionalFlagFromXMLNode(node));

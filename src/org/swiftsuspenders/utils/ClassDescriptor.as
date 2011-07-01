@@ -10,19 +10,18 @@ package org.swiftsuspenders.utils
 	import flash.utils.Dictionary;
 	import flash.utils.describeType;
 
-	import org.swiftsuspenders.DescribeTypeReflector;
+	import org.swiftsuspenders.Reflector;
 	import org.swiftsuspenders.injectionpoints.InjectionPoint;
 
 	public class ClassDescriptor
 	{
 		//----------------------       Private / Protected Properties       ----------------------//
 		private var _descriptionsCache : Dictionary;
-		private var _reflector : DescribeTypeReflector;
+		private var _reflector : Reflector;
 
 
 		//----------------------               Public Methods               ----------------------//
-		public function ClassDescriptor(
-				descriptionsCache : Dictionary, reflector : DescribeTypeReflector)
+		public function ClassDescriptor(descriptionsCache : Dictionary, reflector : Reflector)
 		{
 			_descriptionsCache = descriptionsCache;
 			_reflector = reflector;
