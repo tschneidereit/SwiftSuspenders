@@ -37,8 +37,7 @@ package org.swiftsuspenders
 		{
 			_mappings = new Dictionary();
 			_namedInjectionsManager = new NamedInjectionsManager(this);
-			_classDescriptor = new ClassDescriptor(
-					INJECTION_POINTS_CACHE, new DescribeTypeReflector());
+			_classDescriptor = new ClassDescriptor(INJECTION_POINTS_CACHE);
 		}
 
 		public function map(dependency : Class) : InjectionRule
@@ -166,13 +165,13 @@ package org.swiftsuspenders
 			return _namedInjectionsManager;
 		}
 
-		public static function purgeInjectionPointsCache() : void
+
+		//----------------------             Internal Methods               ----------------------//
+		SsInternal static function purgeInjectionPointsCache() : void
 		{
 			INJECTION_POINTS_CACHE = new Dictionary(true);
 		}
 
-
-		//----------------------             Internal Methods               ----------------------//
 		SsInternal function getMapping(requestType : Class) : InjectionRule
 		{
 			return _mappings[requestType] || getAncestorMapping(requestType);

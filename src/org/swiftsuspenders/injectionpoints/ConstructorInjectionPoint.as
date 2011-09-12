@@ -7,8 +7,6 @@
 
 package org.swiftsuspenders.injectionpoints
 {
-	import flash.utils.describeType;
-
 	import org.swiftsuspenders.Injector;
 
 	public class ConstructorInjectionPoint extends MethodInjectionPoint

@@ -11,6 +11,9 @@ package org.swiftsuspenders.injectionpoints
 	import org.swiftsuspenders.Injector;
 	import org.swiftsuspenders.support.injectees.ClassInjectee;
 	import org.swiftsuspenders.support.types.Clazz;
+	import org.swiftsuspenders.utils.SsInternal;
+
+	use namespace SsInternal;
 
 	public class PropertyInjectionPointTests
 	{
@@ -25,7 +28,7 @@ package org.swiftsuspenders.injectionpoints
 		[After]
 		public function teardown():void
 		{
-			Injector.purgeInjectionPointsCache();
+			Injector.SsInternal::purgeInjectionPointsCache();
 			injector = null;
 		}
 

@@ -38,6 +38,9 @@ package org.swiftsuspenders
 	import org.flexunit.async.Async;
 	import org.swiftsuspenders.support.injectees.ClassInjectee;
 	import org.swiftsuspenders.support.types.Clazz;
+	import org.swiftsuspenders.utils.SsInternal;
+
+	use namespace SsInternal;
 
 	/**
 	 * Note: All tests in this class require an up-to-date version of the file
@@ -61,7 +64,7 @@ package org.swiftsuspenders
 		[After]
 		public function runAfterEachTest():void
 		{
-			Injector.purgeInjectionPointsCache();
+			Injector.SsInternal::purgeInjectionPointsCache();
 			injector = null;
 			_weaklyKeyedDomainHolder = null;
 			_supportSWFLoadingCallback = null;

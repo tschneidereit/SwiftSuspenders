@@ -1,44 +1,38 @@
+/*
+ * Copyright (c) 2009 - 2011 the original author or authors
+ *
+ * Permission is hereby granted to use, modify, and distribute this file
+ * in accordance with the terms of the license agreement accompanying it.
+ */
+
 package org.swiftsuspenders.support.injectees
 {
 	public class OrderedPostConstructInjectee
 	{
-		public var loadedAsOrdered:Boolean;
-		
-		private var one:Boolean;
-		private var two:Boolean;
-		private var three:Boolean;
-		private var four:Boolean;
-		
-		public function OrderedPostConstructInjectee()
-		{
-		}
+		public const loadOrder : Array = [];
 		
 		[PostConstruct(order=2)]
 		public function methodTwo():void
 		{
-			two = true;
-			loadedAsOrdered = one && two && !three && !four;
+			loadOrder.push(2);
 		}
 		
-		[PostConstruct(order=4)]
+		[PostConstruct]
 		public function methodFour():void
 		{
-			four = true;
-			loadedAsOrdered = one && two && three && four;
+			loadOrder.push(4);
 		}
 		
 		[PostConstruct(order=3)]
 		public function methodThree():void
 		{
-			three = true;
-			loadedAsOrdered = one && two && three && !four;
+			loadOrder.push(3);
 		}
 		
 		[PostConstruct(order=1)]
 		public function methodOne():void
 		{
-			one = true;
-			loadedAsOrdered = one && !two && !three && !four;
+			loadOrder.push(1);
 		}
 	}
 }
