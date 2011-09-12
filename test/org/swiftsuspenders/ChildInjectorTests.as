@@ -20,6 +20,9 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.support.injectees.childinjectors.RobotLeg;
 	import org.swiftsuspenders.support.injectees.childinjectors.RobotToes;
 	import org.swiftsuspenders.support.types.Clazz;
+	import org.swiftsuspenders.utils.SsInternal;
+
+	use namespace SsInternal;
 
 	public class ChildInjectorTests
 	{
@@ -34,7 +37,7 @@ package org.swiftsuspenders
 		[After]
 		public function teardown():void
 		{
-			Injector.purgeInjectionPointsCache();
+			Injector.SsInternal::purgeInjectionPointsCache();
 			injector = null;
 		}
 		

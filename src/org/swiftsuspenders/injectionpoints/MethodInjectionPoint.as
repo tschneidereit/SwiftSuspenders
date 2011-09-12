@@ -34,10 +34,10 @@ package org.swiftsuspenders.injectionpoints
 				var parameter : InjectionPointConfig = parameters[i];
 				if (!parameter.optional)
 				{
-					break;
+					_requiredParameters = i + 1;
+					return;
 				}
 			}
-			_requiredParameters = i;
 		}
 		
 		override public function applyInjection(target : Object, injector : Injector) : Object

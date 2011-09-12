@@ -7,9 +7,12 @@
 
 package org.swiftsuspenders.utils
 {
-	import flash.utils.Dictionary;
-	import flash.utils.describeType;
+	import avmplus.DescribeTypeJSON;
 
+	import flash.utils.Dictionary;
+
+	import org.swiftsuspenders.DescribeTypeJSONReflector;
+	import org.swiftsuspenders.DescribeTypeReflector;
 	import org.swiftsuspenders.Reflector;
 	import org.swiftsuspenders.injectionpoints.InjectionPoint;
 
@@ -21,10 +24,12 @@ package org.swiftsuspenders.utils
 
 
 		//----------------------               Public Methods               ----------------------//
-		public function ClassDescriptor(descriptionsCache : Dictionary, reflector : Reflector)
+		public function ClassDescriptor(descriptionsCache : Dictionary)
 		{
 			_descriptionsCache = descriptionsCache;
-			_reflector = reflector;
+			_reflector = DescribeTypeJSON.available
+					? new DescribeTypeJSONReflector()
+					: new DescribeTypeReflector();
 		}
 
 		public function getDescription(type : Class) : ClassDescription
@@ -35,11 +40,6 @@ package org.swiftsuspenders.utils
 
 		
 		//----------------------         Private / Protected Methods        ----------------------//
-		protected function getDescriptionXML(type : Class) : XML
-		{
-			return describeType(type);
-		}
-		
 		private function createDescription(type : Class) : ClassDescription
 		{
 			_reflector.startReflection(type);

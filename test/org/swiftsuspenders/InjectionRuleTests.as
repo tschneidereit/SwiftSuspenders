@@ -15,6 +15,9 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.dependencyproviders.ValueProvider;
 	import org.swiftsuspenders.support.types.Clazz;
 	import org.swiftsuspenders.support.types.ClazzExtension;
+	import org.swiftsuspenders.utils.SsInternal;
+
+	use namespace SsInternal;
 
 	public class InjectionRuleTests
 	{
@@ -29,7 +32,7 @@ package org.swiftsuspenders
 		[After]
 		public function teardown():void
 		{
-			Injector.purgeInjectionPointsCache();
+			Injector.SsInternal::purgeInjectionPointsCache();
 			injector = null;
 		}
 		

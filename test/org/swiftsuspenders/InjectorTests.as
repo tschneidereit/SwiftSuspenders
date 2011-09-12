@@ -25,7 +25,10 @@ package org.swiftsuspenders
 	import flexunit.framework.Assert;
 	
 	import mx.collections.ArrayCollection;
-	
+
+	import org.hamcrest.assertThat;
+	import org.hamcrest.collection.array;
+
 	import org.swiftsuspenders.support.injectees.ClassInjectee;
 	import org.swiftsuspenders.support.injectees.ComplexClassInjectee;
 	import org.swiftsuspenders.support.injectees.InterfaceInjectee;
@@ -57,7 +60,10 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.support.types.ComplexClazz;
 	import org.swiftsuspenders.support.types.Interface;
 	import org.swiftsuspenders.support.types.Interface2;
-	
+	import org.swiftsuspenders.utils.SsInternal;
+
+	use namespace SsInternal;
+
 	public class InjectorTests
 	{
 		protected var injector:Injector;
@@ -71,7 +77,7 @@ package org.swiftsuspenders
 		[After]
 		public function teardown():void
 		{
-			Injector.purgeInjectionPointsCache();
+			Injector.SsInternal::purgeInjectionPointsCache();
 			injector = null;
 		}
 		
@@ -314,7 +320,7 @@ package org.swiftsuspenders
 			injector.usingName('namedDep2').map(Interface).toType(Clazz);
 			injector.injectInto(injectee);
 			Assert.assertNotNull("Instance of Class should have been injected for named Clazz parameter", injectee.getDependency() );
-			Assert.assertNotNull("Instance of Class should have been injected for  for named Interface parameter", injectee.getDependency2() );
+			Assert.assertNotNull("Instance of Class should have been injected for named Interface parameter", injectee.getDependency2() );
 			injector.injectInto(injectee2);
 			Assert.assertFalse("Injected values should be different", injectee.getDependency() == injectee2.getDependency() );
 			Assert.assertFalse("Injected values for Interface should be different", injectee.getDependency2() == injectee2.getDependency2() );
@@ -483,7 +489,7 @@ package org.swiftsuspenders
 			var injectee:OrderedPostConstructInjectee = new OrderedPostConstructInjectee();
 			injector.injectInto(injectee);
 
-			Assert.assertTrue(injectee.loadedAsOrdered);
+			assertThat(injectee.loadOrder, array(1,2,3,4));
 		}
 
 		[Test]
