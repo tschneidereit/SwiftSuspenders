@@ -97,18 +97,4 @@
 			<type>pom</type>
 		</dependency>
 	</dependencies>
-
-	<!--
-		<repositories> <repository> <id>sonotype</id>
-		<url>http://repository.sonatype.org/content/groups/flexgroup</url>
-		<snapshots> <enabled>false</enabled> </snapshots> </repository>
-		</repositories>
-	-->
-
-	<distributionManagement>
-		<repository>
-			<id>oss-repository</id>
-			<url>scpexe://repository.mycompany.com/repository</url>
-		</repository>
-	</distributionManagement>
 </project>
