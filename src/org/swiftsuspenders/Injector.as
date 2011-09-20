@@ -38,6 +38,7 @@ package org.swiftsuspenders
 			_mappings = new Dictionary();
 			_namedInjectionsManager = new NamedInjectionsManager(this);
 			_classDescriptor = new ClassDescriptor(INJECTION_POINTS_CACHE);
+			_applicationDomain = ApplicationDomain.currentDomain;
 		}
 
 		public function map(dependency : Class) : InjectionRule
@@ -152,11 +153,11 @@ package org.swiftsuspenders
 
 		public function set applicationDomain(applicationDomain : ApplicationDomain) : void
 		{
-			_applicationDomain = applicationDomain;
+			_applicationDomain = applicationDomain || ApplicationDomain.currentDomain;
 		}
 		public function get applicationDomain() : ApplicationDomain
 		{
-			return _applicationDomain ? _applicationDomain : ApplicationDomain.currentDomain;
+			return _applicationDomain;
 		}
 
 		public function usingName(name : String) : NamedInjectionsManager
