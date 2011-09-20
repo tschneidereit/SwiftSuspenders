@@ -116,22 +116,17 @@ package org.swiftsuspenders
 					_classDescriptor.getDescription(getConstructor(target));
 
 			var injectionPoints : Array = injecteeDescription.injectionPoints;
-			var length : int = injectionPoints.length;
-			for (var i : int = 0; i < length; i++)
-			{
-				var injectionPoint : InjectionPoint = injectionPoints[i];
-				injectionPoint.applyInjection(target, this);
-			}
+			applyInjectionPoints(target, injectionPoints);
 		}
 
 		public function getInstance(type : Class) : *
 		{
 			var mapping : InjectionRule = getMapping(type);
-			if (!mapping || !mapping.hasProvider())
+			if (mapping && mapping.hasProvider())
 			{
-				return instantiateUnmapped(type);
+				return mapping.apply(this);
 			}
-			return mapping.apply(this);
+			return instantiateUnmapped(type);
 		}
 		
 		public function createChildInjector(applicationDomain : ApplicationDomain = null) : Injector
@@ -178,20 +173,38 @@ package org.swiftsuspenders
 			return _mappings[requestType] || getAncestorMapping(requestType);
 		}
 
-		SsInternal function getAncestorMapping(whenAskedFor : Class) : InjectionRule
+		SsInternal function getMappingByName(requestTypeName : String) : InjectionRule
 		{
-			return _parentInjector ? _parentInjector.getMapping(whenAskedFor) : null;
+			return _mappings[requestTypeName] || getAncestorMappingByName(requestTypeName);
+		}
+
+		SsInternal function getAncestorMapping(requestType : Class) : InjectionRule
+		{
+			if (_parentInjector)
+			{
+				return _parentInjector.getMapping(requestType);
+			}
+			return null;
+		}
+
+		SsInternal function getAncestorMappingByName(requestTypeName : String) : InjectionRule
+		{
+			if (_parentInjector)
+			{
+				return _parentInjector.getMappingByName(requestTypeName);
+			}
+			return null;
 		}
 
 		SsInternal function getRuleForInjectionPointConfig(
 				config : InjectionPointConfig) : InjectionRule
 		{
-			var type : Class = Class(applicationDomain.getDefinition(config.typeName));
 			if (config.injectionName)
 			{
+				var type : Class = Class(applicationDomain.getDefinition(config.typeName));
 				return usingName(config.injectionName).getMapping(type);
 			}
-			return getMapping(type);
+			return getMappingByName(config.typeName);
 		}
 
 		SsInternal function instantiateUnmapped(type : Class) : *
@@ -203,7 +216,7 @@ package org.swiftsuspenders
 				throw new InjectorError("Can't instantiate interface " + getQualifiedClassName(type));
 			}
 			var instance : * = injectionPoint.applyInjection(type, this);
-			injectInto(instance);
+			applyInjectionPoints(instance, typeDescription.injectionPoints);
 			return instance;
 		}
 
@@ -211,7 +224,19 @@ package org.swiftsuspenders
 		//----------------------         Private / Protected Methods        ----------------------//
 		private function createRule(requestType : Class) : InjectionRule
 		{
-			return new InjectionRule(this, requestType);
+			const rule : InjectionRule = new InjectionRule(this, requestType);
+			_mappings[getQualifiedClassName(requestType)] = rule;
+			return rule;
+		}
+
+		private function applyInjectionPoints(target : Object, injectionPoints : Array) : void
+		{
+			var length : int = injectionPoints.length;
+			for (var i : int = 0; i < length; i++)
+			{
+				var injectionPoint : InjectionPoint = injectionPoints[i];
+				injectionPoint.applyInjection(target, this);
+			}
 		}
 	}
 }
