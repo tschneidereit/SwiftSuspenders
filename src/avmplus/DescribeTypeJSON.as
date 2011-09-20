@@ -10,7 +10,7 @@ package avmplus
 	public class DescribeTypeJSON
 	{
 		//----------------------              Public Properties             ----------------------//
-		public static const available : Boolean = describeTypeJSON != null;
+		public static var available : Boolean = describeTypeJSON != null;
 		
 		public static const INSTANCE_FLAGS:uint = INCLUDE_BASES | INCLUDE_INTERFACES
 			| INCLUDE_VARIABLES | INCLUDE_ACCESSORS | INCLUDE_METHODS | INCLUDE_METADATA
