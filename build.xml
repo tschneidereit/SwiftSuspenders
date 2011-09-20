@@ -1,4 +1,11 @@
 <?xml version="1.0"?>
+<!--
+  ~ Copyright (c) 2011 the original author or authors
+  ~
+  ~ Permission is hereby granted to use, modify, and distribute this file
+  ~ in accordance with the terms of the license agreement accompanying it.
+  -->
+
 <project name="SwiftSuspenders" basedir="." default="test">
 
   <!-- set up a prefix for all environment variables -->
@@ -62,10 +69,12 @@
       <arg value="-output=${bin.loc}/${project.name.versioned}.swc" />
 	
       <!-- We want all the org package classes in the SWC being built. -->
-      <arg value="-include-sources=${main.src.loc}/org" />
+      <arg value="-include-sources=${main.src.loc}" />
 	
       <!-- Include classes from SWCs in this folder, but only the ones we use. -->
       <arg value="-library-path+=${lib.loc}" />
+
+		<arg value="-target-player=10.1"/>
 	
 	  <!-- Keep the magic alive. -->
       <arg value="-keep-as3-metadata+=Inject" />
@@ -99,6 +108,8 @@
 		
       <!-- Include classes from SWCs in this folder, but only the ones we use. -->
       <arg value="-library-path+=${lib.loc}" />
+
+	  <arg value="-target-player=10.1"/>
 	
 	  <!-- So true. -->
       <arg value="-incremental=true" />
