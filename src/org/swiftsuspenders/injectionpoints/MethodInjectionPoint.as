@@ -42,12 +42,12 @@ package org.swiftsuspenders.injectionpoints
 			}
 		}
 		
-		override public function applyInjection(target : Object, injector : Injector) : Object
+		override public function applyInjection(target : Object, injector : Injector) : void
 		{
 			var p : Array = gatherParameterValues(target, injector);
 			if (!p && _isOptional)
 			{
-				return target;
+				return;
 			}
 			switch (p.length)
 			{
@@ -59,7 +59,6 @@ package org.swiftsuspenders.injectionpoints
 			}
 
 			p.length = 0;
-			return target;
 		}
 
 

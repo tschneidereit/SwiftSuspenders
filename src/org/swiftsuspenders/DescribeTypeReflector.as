@@ -77,7 +77,7 @@ package org.swiftsuspenders
 			_currentFactoryXML = null;
 		}
 
-		public function getCtorInjectionPoint() : InjectionPoint
+		public function getCtorInjectionPoint() : ConstructorInjectionPoint
 		{
 			const node : XML = _currentFactoryXML.constructor[0];
 			if (!node)

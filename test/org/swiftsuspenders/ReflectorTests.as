@@ -9,6 +9,7 @@ package org.swiftsuspenders
 {
 	import org.flexunit.Assert;
 	import org.swiftsuspenders.injectionpoints.ConstructorInjectionPoint;
+	import org.swiftsuspenders.injectionpoints.ConstructorInjectionPoint;
 	import org.swiftsuspenders.injectionpoints.InjectionPoint;
 	import org.swiftsuspenders.injectionpoints.NoParamsConstructorInjectionPoint;
 	import org.swiftsuspenders.injectionpoints.PostConstructInjectionPoint;
@@ -186,13 +187,13 @@ package org.swiftsuspenders
 		public function reflectorReturnsCorrectCtorInjectionPointForNamedParamsCtor() : void
 		{
 			reflector.startReflection(OneNamedParameterConstructorInjectee);
-			var injectionPoint : InjectionPoint = reflector.getCtorInjectionPoint();
+			var injectionPoint : ConstructorInjectionPoint = reflector.getCtorInjectionPoint();
 			Assert.assertTrue('reflector-returned injectionPoint is ctor injectionPoint',
 					injectionPoint is ConstructorInjectionPoint);
 			injector.usingName('namedDependency').map(Clazz).toType(Clazz);
 			var injectee:OneNamedParameterConstructorInjectee =
 					OneNamedParameterConstructorInjectee(injectionPoint
-							.applyInjection(OneNamedParameterConstructorInjectee, injector));
+							.createInstance(OneNamedParameterConstructorInjectee, injector));
 			Assert.assertNotNull(
 					"Instance of Clazz should have been injected for named Clazz parameter",
 					injectee.getDependency());
