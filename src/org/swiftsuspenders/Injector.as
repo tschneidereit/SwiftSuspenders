@@ -11,6 +11,8 @@ package org.swiftsuspenders
 	import flash.utils.Dictionary;
 	import flash.utils.getQualifiedClassName;
 
+	import org.swiftsuspenders.injectionpoints.ConstructorInjectionPoint;
+
 	import org.swiftsuspenders.injectionpoints.InjectionPoint;
 	import org.swiftsuspenders.injectionpoints.InjectionPointConfig;
 	import org.swiftsuspenders.utils.ClassDescriptor;
@@ -207,12 +209,14 @@ package org.swiftsuspenders
 
 		SsInternal function instantiateUnmapped(type : Class) : *
 		{
-			var ctorInjectionPoint : InjectionPoint = _classDescriptor.getDescription(type);
+			var ctorInjectionPoint : ConstructorInjectionPoint =
+					_classDescriptor.getDescription(type);
 			if (!ctorInjectionPoint)
 			{
-				throw new InjectorError("Can't instantiate interface " + getQualifiedClassName(type));
+				throw new InjectorError(
+						"Can't instantiate interface " + getQualifiedClassName(type));
 			}
-			var instance : * = ctorInjectionPoint.applyInjection(type, this);
+			var instance : * = ctorInjectionPoint.createInstance(type, this);
 			applyInjectionPoints(instance, ctorInjectionPoint.next);
 			return instance;
 		}

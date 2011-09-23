@@ -9,15 +9,16 @@ package org.swiftsuspenders.injectionpoints
 {
 	import org.swiftsuspenders.Injector;
 
-	public class NoParamsConstructorInjectionPoint extends InjectionPoint
+	public class NoParamsConstructorInjectionPoint extends ConstructorInjectionPoint
 	{
 		public function NoParamsConstructorInjectionPoint()
 		{
+			super([]);
 		}
-		
-		override public function applyInjection(target : Object, injector : Injector) : Object
+
+		override public function createInstance(type : Class, injector : Injector) : *
 		{
-			return new (target as Class)();
+			return new type();
 		}
 	}
 }

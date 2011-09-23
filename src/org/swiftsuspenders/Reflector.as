@@ -2,6 +2,7 @@ package org.swiftsuspenders
 {
 	import flash.system.ApplicationDomain;
 
+	import org.swiftsuspenders.injectionpoints.ConstructorInjectionPoint;
 	import org.swiftsuspenders.injectionpoints.InjectionPoint;
 
 	public interface Reflector
@@ -14,7 +15,7 @@ package org.swiftsuspenders
 		function startReflection(type : Class) : void;
 		function endReflection() : void;
 
-		function getCtorInjectionPoint() : InjectionPoint;
+		function getCtorInjectionPoint() : ConstructorInjectionPoint;
 		function addFieldInjectionPointsToList(
 				lastInjectionPoint : InjectionPoint) : InjectionPoint;
 		function addMethodInjectionPointsToList(

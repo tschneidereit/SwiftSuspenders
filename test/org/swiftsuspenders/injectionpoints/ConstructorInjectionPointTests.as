@@ -48,7 +48,7 @@ package  org.swiftsuspenders.injectionpoints
 			var injectionPoint:ConstructorInjectionPoint =
 					new ConstructorInjectionPoint(parameters);
 
-			var injectee:TwoParametersConstructorInjectee = injectionPoint.applyInjection(
+			var injectee:TwoParametersConstructorInjectee = injectionPoint.createInstance(
 					TwoParametersConstructorInjectee, injector) as TwoParametersConstructorInjectee;
 			
 			Assert.assertTrue("dependency 1 should be Clazz instance", injectee.getDependency() is Clazz);		
@@ -67,7 +67,7 @@ package  org.swiftsuspenders.injectionpoints
 			var injectionPoint:ConstructorInjectionPoint =
 					new ConstructorInjectionPoint(parameters);
 
-			var injectee:TwoOptionalParametersConstructorInjectee = injectionPoint.applyInjection(
+			var injectee:TwoOptionalParametersConstructorInjectee = injectionPoint.createInstance(
 					TwoOptionalParametersConstructorInjectee, injector) as TwoOptionalParametersConstructorInjectee;
 			
 			
@@ -87,7 +87,7 @@ package  org.swiftsuspenders.injectionpoints
 			var injectionPoint:ConstructorInjectionPoint =
 					new ConstructorInjectionPoint(parameters);
 			
-			var injectee:TwoOptionalParametersConstructorInjectee = injectionPoint.applyInjection(
+			var injectee:TwoOptionalParametersConstructorInjectee = injectionPoint.createInstance(
 					TwoOptionalParametersConstructorInjectee, injector) as TwoOptionalParametersConstructorInjectee;
 			
 			

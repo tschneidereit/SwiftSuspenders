@@ -14,6 +14,8 @@ package org.swiftsuspenders
 	import flash.utils.getQualifiedClassName;
 
 	import org.swiftsuspenders.injectionpoints.ConstructorInjectionPoint;
+
+	import org.swiftsuspenders.injectionpoints.ConstructorInjectionPoint;
 	import org.swiftsuspenders.injectionpoints.InjectionPoint;
 	import org.swiftsuspenders.injectionpoints.InjectionPointConfig;
 	import org.swiftsuspenders.injectionpoints.MethodInjectionPoint;
@@ -88,7 +90,7 @@ package org.swiftsuspenders
 					|| (_traits.interfaces as Array).indexOf(superClassName) > -1;
 		}
 
-		public function getCtorInjectionPoint() : InjectionPoint
+		public function getCtorInjectionPoint() : ConstructorInjectionPoint
 		{
 			const parameters : Array = _traits.constructor;
 			if (!parameters)
