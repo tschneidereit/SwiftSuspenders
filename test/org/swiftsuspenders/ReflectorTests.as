@@ -11,6 +11,7 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.injectionpoints.ConstructorInjectionPoint;
 	import org.swiftsuspenders.injectionpoints.InjectionPoint;
 	import org.swiftsuspenders.injectionpoints.NoParamsConstructorInjectionPoint;
+	import org.swiftsuspenders.injectionpoints.PostConstructInjectionPoint;
 	import org.swiftsuspenders.support.injectees.InterfaceInjectee;
 	import org.swiftsuspenders.support.injectees.NamedInterfaceInjectee;
 	import org.swiftsuspenders.support.injectees.OneNamedParameterConstructorInjectee;
@@ -201,21 +202,23 @@ package org.swiftsuspenders
 		public function reflectorCorrectlyCreatesInjectionPointForUnnamedPropertyInjection() : void
 		{
 			reflector.startReflection(InterfaceInjectee);
-			const injectionPoints : Array = [];
-			reflector.addFieldInjectionPointsToList(injectionPoints);
-			Assert.assertEquals('One injection point has been added', 1, injectionPoints.length);
+			const ctorInjectionPoint : InjectionPoint = reflector.getCtorInjectionPoint();
+			const fieldInjectionPoint : InjectionPoint =
+					reflector.addFieldInjectionPointsToList(ctorInjectionPoint);
+			Assert.assertEquals('One injection point has been added',
+					ctorInjectionPoint.next, fieldInjectionPoint);
 		}
 
 		[Test]
 		public function reflectorCorrectlyCreatesInjectionPointForNamedPropertyInjection() : void
 		{
 			reflector.startReflection(NamedInterfaceInjectee);
-			const injectionPoints : Array = [];
-			reflector.addFieldInjectionPointsToList(injectionPoints);
-			Assert.assertEquals('One injection point has been added', 1, injectionPoints.length);
+			const ctorInjectionPoint : InjectionPoint = reflector.getCtorInjectionPoint();
+			const fieldInjectionPoint : InjectionPoint =
+					reflector.addFieldInjectionPointsToList(ctorInjectionPoint);
 			injector.usingName('Name').map(Interface).toType(Clazz);
 			var injectee : NamedInterfaceInjectee = new NamedInterfaceInjectee();
-			InjectionPoint(injectionPoints[0]).applyInjection(injectee, injector);
+			fieldInjectionPoint.applyInjection(injectee, injector);
 			Assert.assertNotNull(
 					"Instance of Clazz should have been injected for Interface property",
 					injectee.property);
@@ -225,11 +228,11 @@ package org.swiftsuspenders
 		public function reflectorCorrectlyCreatesInjectionPointForOptionalPropertyInjection() : void
 		{
 			reflector.startReflection(OptionalClassInjectee);
-			const injectionPoints : Array = [];
-			reflector.addFieldInjectionPointsToList(injectionPoints);
-			Assert.assertEquals('One injection point has been added', 1, injectionPoints.length);
+			const ctorInjectionPoint : InjectionPoint = reflector.getCtorInjectionPoint();
+			const fieldInjectionPoint : InjectionPoint =
+					reflector.addFieldInjectionPointsToList(ctorInjectionPoint);
 			var injectee : OptionalClassInjectee = new OptionalClassInjectee();
-			InjectionPoint(injectionPoints[0]).applyInjection(injectee, injector);
+			fieldInjectionPoint.applyInjection(injectee, injector);
 			Assert.assertNull("Instance of Clazz should not have been injected for Clazz property",
 					injectee.property);
 		}
@@ -238,12 +241,12 @@ package org.swiftsuspenders
 		public function reflectorCorrectlyCreatesInjectionPointForOneParamMethodInjection() : void
 		{
 			reflector.startReflection(OneParameterMethodInjectee);
-			const injectionPoints : Array = [];
-			reflector.addMethodInjectionPointsToList(injectionPoints);
-			Assert.assertEquals('One injection point has been added', 1, injectionPoints.length);
+			const ctorInjectionPoint : InjectionPoint = reflector.getCtorInjectionPoint();
+			const methodInjectionPoint : InjectionPoint =
+					reflector.addMethodInjectionPointsToList(ctorInjectionPoint);
 			var injectee : OneParameterMethodInjectee = new OneParameterMethodInjectee();
 			injector.map(Clazz);
-			InjectionPoint(injectionPoints[0]).applyInjection(injectee, injector);
+			methodInjectionPoint.applyInjection(injectee, injector);
 			Assert.assertNotNull("Instance of Clazz should have been injected for Clazz dependency",
 					injectee.getDependency());
 		}
@@ -252,12 +255,12 @@ package org.swiftsuspenders
 		public function reflectorCorrectlyCreatesInjectionPointForOneNamedParamMethodInjection() : void
 		{
 			reflector.startReflection(OneNamedParameterMethodInjectee);
-			const injectionPoints : Array = [];
-			reflector.addMethodInjectionPointsToList(injectionPoints);
-			Assert.assertEquals('One injection point has been added', 1, injectionPoints.length);
+			const ctorInjectionPoint : InjectionPoint = reflector.getCtorInjectionPoint();
+			const methodInjectionPoint : InjectionPoint =
+					reflector.addMethodInjectionPointsToList(ctorInjectionPoint);
 			var injectee : OneNamedParameterMethodInjectee = new OneNamedParameterMethodInjectee();
 			injector.usingName('namedDep').map(Clazz);
-			InjectionPoint(injectionPoints[0]).applyInjection(injectee, injector);
+			methodInjectionPoint.applyInjection(injectee, injector);
 			Assert.assertNotNull("Instance of Clazz should have been injected for Clazz dependency",
 					injectee.getDependency());
 		}
@@ -266,13 +269,13 @@ package org.swiftsuspenders
 		public function reflectorCorrectlyCreatesInjectionPointForTwoNamedParamsMethodInjection() : void
 		{
 			reflector.startReflection(TwoNamedParametersMethodInjectee);
-			const injectionPoints : Array = [];
-			reflector.addMethodInjectionPointsToList(injectionPoints);
-			Assert.assertEquals('One injection point has been added', 1, injectionPoints.length);
+			const ctorInjectionPoint : InjectionPoint = reflector.getCtorInjectionPoint();
+			const methodInjectionPoint : InjectionPoint =
+					reflector.addMethodInjectionPointsToList(ctorInjectionPoint);
 			var injectee : TwoNamedParametersMethodInjectee = new TwoNamedParametersMethodInjectee();
 			injector.usingName('namedDep').map(Clazz);
 			injector.usingName('namedDep2').map(Interface).toType(Clazz);
-			InjectionPoint(injectionPoints[0]).applyInjection(injectee, injector);
+			methodInjectionPoint.applyInjection(injectee, injector);
 			Assert.assertNotNull("Instance of Clazz should have been injected for Clazz dependency",
 					injectee.getDependency());
 			Assert.assertNotNull("Instance of Clazz should have been injected for Interface dependency",
@@ -283,12 +286,12 @@ package org.swiftsuspenders
 		public function reflectorCorrectlyCreatesInjectionPointForOneRequiredOneOptionalParamsMethodInjection() : void
 		{
 			reflector.startReflection(OneRequiredOneOptionalPropertyMethodInjectee);
-			const injectionPoints : Array = [];
-			reflector.addMethodInjectionPointsToList(injectionPoints);
-			Assert.assertEquals('One injection point has been added', 1, injectionPoints.length);
+			const ctorInjectionPoint : InjectionPoint = reflector.getCtorInjectionPoint();
+			const methodInjectionPoint : InjectionPoint =
+					reflector.addMethodInjectionPointsToList(ctorInjectionPoint);
 			var injectee : OneRequiredOneOptionalPropertyMethodInjectee = new OneRequiredOneOptionalPropertyMethodInjectee();
 			injector.map(Clazz);
-			InjectionPoint(injectionPoints[0]).applyInjection(injectee, injector);
+			methodInjectionPoint.applyInjection(injectee, injector);
 			Assert.assertNotNull("Instance of Clazz should have been injected for Clazz dependency",
 					injectee.getDependency());
 			Assert.assertNull("Instance of Clazz should not have been injected for Interface dependency",
@@ -299,11 +302,11 @@ package org.swiftsuspenders
 		public function reflectorCorrectlyCreatesInjectionPointForOptionalOneRequiredParamMethodInjection() : void
 		{
 			reflector.startReflection(OptionalOneRequiredParameterMethodInjectee);
-			const injectionPoints : Array = [];
-			reflector.addMethodInjectionPointsToList(injectionPoints);
-			Assert.assertEquals('One injection point has been added', 1, injectionPoints.length);
+			const ctorInjectionPoint : InjectionPoint = reflector.getCtorInjectionPoint();
+			const methodInjectionPoint : InjectionPoint =
+					reflector.addMethodInjectionPointsToList(ctorInjectionPoint);
 			var injectee : OptionalOneRequiredParameterMethodInjectee = new OptionalOneRequiredParameterMethodInjectee();
-			InjectionPoint(injectionPoints[0]).applyInjection(injectee, injector);
+			methodInjectionPoint.applyInjection(injectee, injector);
 			Assert.assertNull("Instance of Clazz should not have been injected for Clazz dependency",
 					injectee.getDependency());
 		}
@@ -312,22 +315,27 @@ package org.swiftsuspenders
 		public function reflectorCreatesInjectionPointsForPostConstructMethods() : void
 		{
 			reflector.startReflection(OrderedPostConstructInjectee);
-			const injectionPoints : Array = [];
-			reflector.addPostConstructMethodPointsToList(injectionPoints);
-			Assert.assertEquals('Four injection points has been added', 4, injectionPoints.length);
+			const ctorInjectionPoint : InjectionPoint = reflector.getCtorInjectionPoint();
+			reflector.addPostConstructMethodPointsToList(ctorInjectionPoint);
+			Assert.assertTrue('Four injection points has been added', ctorInjectionPoint.next
+					&& ctorInjectionPoint.next.next && ctorInjectionPoint.next.next.next
+					&& ctorInjectionPoint.next.next.next.next);
 		}
 
 		[Test]
 		public function reflectorCorrectlySortsInjectionPointsForPostConstructMethods() : void
 		{
 			reflector.startReflection(OrderedPostConstructInjectee);
-			const injectionPoints : Array = [];
-			reflector.addPostConstructMethodPointsToList(injectionPoints);
-			Assert.assertEquals('First injection point has order "1"', 1, injectionPoints[0].order);
-			Assert.assertEquals('Second injection point has order "2"', 2, injectionPoints[1].order);
-			Assert.assertEquals('Third injection point has order "3"', 3, injectionPoints[2].order);
-			Assert.assertEquals('Fourth injection point has no order "int.MAX_VALUE"',
-					int.MAX_VALUE, injectionPoints[3].order);
+			const ctorInjectionPoint : InjectionPoint = reflector.getCtorInjectionPoint();
+			reflector.addPostConstructMethodPointsToList(ctorInjectionPoint);
+			Assert.assertEquals('First injection point has order "1"', 1,
+					PostConstructInjectionPoint(ctorInjectionPoint.next).order);
+			Assert.assertEquals('Second injection point has order "2"', 2,
+					PostConstructInjectionPoint(ctorInjectionPoint.next.next).order);
+			Assert.assertEquals('Third injection point has order "3"', 3,
+					PostConstructInjectionPoint(ctorInjectionPoint.next.next.next).order);
+			Assert.assertEquals('Fourth injection point has no order "int.MAX_VALUE"', int.MAX_VALUE,
+					PostConstructInjectionPoint(ctorInjectionPoint.next.next.next.next).order);
 		}
 	}
 }

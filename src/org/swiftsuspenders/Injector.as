@@ -13,7 +13,6 @@ package org.swiftsuspenders
 
 	import org.swiftsuspenders.injectionpoints.InjectionPoint;
 	import org.swiftsuspenders.injectionpoints.InjectionPointConfig;
-	import org.swiftsuspenders.utils.ClassDescription;
 	import org.swiftsuspenders.utils.ClassDescriptor;
 	import org.swiftsuspenders.utils.SsInternal;
 	import org.swiftsuspenders.utils.getConstructor;
@@ -95,28 +94,27 @@ package org.swiftsuspenders
 		 * This restriction is in place to prevent accidential changing of rules in ancestor
 		 * injectors where only the child's response is meant to be altered.
 		 * 
-		 * @param dependency The dependency to return the mapped rule for
+		 * @param type The dependency to return the mapped rule for
 		 * @return The rule mapped to the specified dependency class
 		 * @throws InjectorError when no rule was found for the specified dependency
 		 */
-		public function getRule(dependency : Class) : InjectionRule
+		public function getRule(type : Class) : InjectionRule
 		{
-			var rule : InjectionRule = _mappings[dependency];
+			var rule : InjectionRule = _mappings[type];
 			if (!rule)
 			{
 				throw new InjectorError('Error while retrieving an injector mapping: ' +
-						'No rule defined for dependency ' + getQualifiedClassName(dependency));
+						'No rule defined for dependency ' + getQualifiedClassName(type));
 			}
 			return rule;
 		}
 
 		public function injectInto(target : Object) : void
 		{
-			var injecteeDescription : ClassDescription =
+			var ctorInjectionPoint : InjectionPoint =
 					_classDescriptor.getDescription(getConstructor(target));
 
-			var injectionPoints : Array = injecteeDescription.injectionPoints;
-			applyInjectionPoints(target, injectionPoints);
+			applyInjectionPoints(target, ctorInjectionPoint.next);
 		}
 
 		public function getInstance(type : Class) : *
@@ -209,14 +207,13 @@ package org.swiftsuspenders
 
 		SsInternal function instantiateUnmapped(type : Class) : *
 		{
-			var typeDescription : ClassDescription = _classDescriptor.getDescription(type);
-			var injectionPoint : InjectionPoint = typeDescription.ctor;
-			if (!injectionPoint)
+			var ctorInjectionPoint : InjectionPoint = _classDescriptor.getDescription(type);
+			if (!ctorInjectionPoint)
 			{
 				throw new InjectorError("Can't instantiate interface " + getQualifiedClassName(type));
 			}
-			var instance : * = injectionPoint.applyInjection(type, this);
-			applyInjectionPoints(instance, typeDescription.injectionPoints);
+			var instance : * = ctorInjectionPoint.applyInjection(type, this);
+			applyInjectionPoints(instance, ctorInjectionPoint.next);
 			return instance;
 		}
 
@@ -229,13 +226,13 @@ package org.swiftsuspenders
 			return rule;
 		}
 
-		private function applyInjectionPoints(target : Object, injectionPoints : Array) : void
+		private function applyInjectionPoints(
+				target : Object, injectionPoint : InjectionPoint) : void
 		{
-			var length : int = injectionPoints.length;
-			for (var i : int = 0; i < length; i++)
+			while (injectionPoint)
 			{
-				var injectionPoint : InjectionPoint = injectionPoints[i];
 				injectionPoint.applyInjection(target, this);
+				injectionPoint = injectionPoint.next;
 			}
 		}
 	}

@@ -11,6 +11,10 @@ package org.swiftsuspenders.injectionpoints
 
 	public class InjectionPoint
 	{
+		//----------------------              Public Properties             ----------------------//
+		public var next : InjectionPoint;
+
+		
 		//----------------------               Public Methods               ----------------------//
 		public function InjectionPoint()
 		{

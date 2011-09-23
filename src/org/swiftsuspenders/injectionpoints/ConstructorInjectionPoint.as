@@ -21,22 +21,23 @@ package org.swiftsuspenders.injectionpoints
 		{
 			var ctor : Class = Class(target);
 			var p : Array = gatherParameterValues(target, injector);
+			var result : Object;
 			//the only way to implement ctor injections, really!
 			switch (p.length)
 			{
-				case 0 : return (new ctor());
-				case 1 : return (new ctor(p[0]));
-				case 2 : return (new ctor(p[0], p[1]));
-				case 3 : return (new ctor(p[0], p[1], p[2]));
-				case 4 : return (new ctor(p[0], p[1], p[2], p[3]));
-				case 5 : return (new ctor(p[0], p[1], p[2], p[3], p[4]));
-				case 6 : return (new ctor(p[0], p[1], p[2], p[3], p[4], p[5]));
-				case 7 : return (new ctor(p[0], p[1], p[2], p[3], p[4], p[5], p[6]));
-				case 8 : return (new ctor(p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7]));
-				case 9 : return (new ctor(p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8]));
-				case 10 : return (new ctor(p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8], p[9]));
+				case 1 : result = new ctor(p[0]); break;
+				case 2 : result = new ctor(p[0], p[1]); break;
+				case 3 : result = new ctor(p[0], p[1], p[2]); break;
+				case 4 : result = new ctor(p[0], p[1], p[2], p[3]); break;
+				case 5 : result = new ctor(p[0], p[1], p[2], p[3], p[4]); break;
+				case 6 : result = new ctor(p[0], p[1], p[2], p[3], p[4], p[5]); break;
+				case 7 : result = new ctor(p[0], p[1], p[2], p[3], p[4], p[5], p[6]); break;
+				case 8 : result = new ctor(p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7]); break;
+				case 9 : result = new ctor(p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8]); break;
+				case 10 : result = new ctor(p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8], p[9]); break;
 			}
-			return null;
+			p.length = 0;
+			return result;
 		}
 	}
 }

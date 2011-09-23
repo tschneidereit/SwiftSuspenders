@@ -15,6 +15,8 @@ package org.swiftsuspenders.injectionpoints
 	public class MethodInjectionPoint extends InjectionPoint
 	{
 		//----------------------       Private / Protected Properties       ----------------------//
+		private static const _parameterValues : Array = [];
+		
 		protected var _parameterInjectionConfigs : Array;
 		protected var _requiredParameters : int = 0;
 
@@ -42,13 +44,21 @@ package org.swiftsuspenders.injectionpoints
 		
 		override public function applyInjection(target : Object, injector : Injector) : Object
 		{
-			var parameters : Array = gatherParameterValues(target, injector);
-			if (!parameters && _isOptional)
+			var p : Array = gatherParameterValues(target, injector);
+			if (!p && _isOptional)
 			{
 				return target;
 			}
-			var method : Function = target[_methodName];
-			method.apply(target, parameters);
+			switch (p.length)
+			{
+				case 0 : (target[_methodName] as Function)(); break;
+				case 1 : (target[_methodName] as Function)(p[0]); break;
+				case 2 : (target[_methodName] as Function)(p[0], p[1]); break;
+				case 3 : (target[_methodName] as Function)(p[0], p[1], p[2]); break;
+				default: (target[_methodName] as Function).apply(target, p);
+			}
+
+			p.length = 0;
 			return target;
 		}
 
@@ -57,7 +67,8 @@ package org.swiftsuspenders.injectionpoints
 		protected function gatherParameterValues(target : Object, injector : Injector) : Array
 		{
 			var length : int = _parameterInjectionConfigs.length;
-			var parameters : Array = new Array(length);
+			var parameters : Array = _parameterValues;
+			parameters.length = length;
 			for (var i : int = 0; i < length; i++)
 			{
 				var parameterConfig : InjectionPointConfig = _parameterInjectionConfigs[i];

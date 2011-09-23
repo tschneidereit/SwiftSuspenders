@@ -15,8 +15,11 @@ package org.swiftsuspenders
 		function endReflection() : void;
 
 		function getCtorInjectionPoint() : InjectionPoint;
-		function addFieldInjectionPointsToList(injectionPoints : Array) : void;
-		function addMethodInjectionPointsToList(injectionPoints : Array) : void;
-		function addPostConstructMethodPointsToList(injectionPoints : Array) : void;
+		function addFieldInjectionPointsToList(
+				lastInjectionPoint : InjectionPoint) : InjectionPoint;
+		function addMethodInjectionPointsToList(
+				lastInjectionPoint : InjectionPoint) : InjectionPoint;
+		function addPostConstructMethodPointsToList(
+				lastInjectionPoint : InjectionPoint) : InjectionPoint;
 	}
 }

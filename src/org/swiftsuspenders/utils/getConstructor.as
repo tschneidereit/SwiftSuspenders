@@ -25,8 +25,7 @@ package org.swiftsuspenders.utils
 		 */
 		if (value is Proxy || value is Number || value is XML || value is XMLList)
 		{
-			var fqcn : String = getQualifiedClassName(value);
-			return Class(getDefinitionByName(fqcn));
+			return Class(getDefinitionByName(getQualifiedClassName(value)));
 		}
 		return value.constructor;
 	}

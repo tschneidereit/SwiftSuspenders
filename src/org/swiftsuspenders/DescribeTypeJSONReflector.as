@@ -105,13 +105,15 @@ package org.swiftsuspenders
 					gatherMethodParameters(parameters, parameterNames));
 		}
 
-		public function addFieldInjectionPointsToList(injectionPoints : Array) : void
+		public function addFieldInjectionPointsToList(
+				lastInjectionPoint : InjectionPoint) : InjectionPoint
 		{
-			gatherFieldInjectionPoints(_traits.accessors, injectionPoints);
-			gatherFieldInjectionPoints(_traits.variables, injectionPoints);
+			lastInjectionPoint = gatherFieldInjectionPoints(_traits.accessors, lastInjectionPoint);
+			return gatherFieldInjectionPoints(_traits.variables, lastInjectionPoint);
 		}
 
-		public function addMethodInjectionPointsToList(injectionPoints : Array) : void
+		public function addMethodInjectionPointsToList(
+				lastInjectionPoint : InjectionPoint) : InjectionPoint
 		{
 			for each (var method : Object in _traits.methods)
 			{
@@ -123,11 +125,16 @@ package org.swiftsuspenders
 				var optional : Boolean = extractOptionalFlag(injectParameters);
 				var parameterNames : Array = extractMappingName(injectParameters);
 				var parameters : Array = gatherMethodParameters(method.parameters, parameterNames);
-				injectionPoints.push(new MethodInjectionPoint(method.name, parameters, optional));
+				var injectionPoint : MethodInjectionPoint =
+						new MethodInjectionPoint(method.name, parameters, optional);
+				lastInjectionPoint.next = injectionPoint;
+				lastInjectionPoint = injectionPoint;
 			}
+			return lastInjectionPoint;
 		}
 
-		public function addPostConstructMethodPointsToList(injectionPoints : Array) : void
+		public function addPostConstructMethodPointsToList(
+				lastInjectionPoint : InjectionPoint) : InjectionPoint
 		{
 			const postConstructMethodPoints : Array = [];
 			for each (var method : Object in _traits.methods)
@@ -144,13 +151,19 @@ package org.swiftsuspenders
 			if (postConstructMethodPoints.length > 0)
 			{
 				postConstructMethodPoints.sortOn('order', Array.NUMERIC);
-				injectionPoints.push.apply(injectionPoints, postConstructMethodPoints);
+				for each (var injectionPoint : InjectionPoint in postConstructMethodPoints)
+				{
+					lastInjectionPoint.next = injectionPoint;
+					lastInjectionPoint = injectionPoint;
+				}
 			}
+			return lastInjectionPoint;
 		}
 
 		
 		//----------------------         Private / Protected Methods        ----------------------//
-		private function gatherFieldInjectionPoints(fields : Object, injectionPoints : Array) : void
+		private function gatherFieldInjectionPoints(
+				fields : Object, lastInjectionPoint : InjectionPoint) : InjectionPoint
 		{
 			for each (var field : Object in fields)
 			{
@@ -163,8 +176,12 @@ package org.swiftsuspenders
 				var optional : Boolean = extractOptionalFlag(injectParameters);
 				var config : InjectionPointConfig =
 						new InjectionPointConfig(field.type, mappingName, optional);
-				injectionPoints.push(new PropertyInjectionPoint(config, field.name));
+				var injectionPoint : PropertyInjectionPoint =
+						new PropertyInjectionPoint(config, field.name);
+				lastInjectionPoint.next = injectionPoint;
+				lastInjectionPoint = injectionPoint;
 			}
+			return lastInjectionPoint;
 		}
 
 		private function gatherMethodParameters(parameters : Array, parameterNames : Array) : Array
