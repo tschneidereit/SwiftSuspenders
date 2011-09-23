@@ -103,7 +103,8 @@ package org.swiftsuspenders
 			return new ConstructorInjectionPoint(parameters);
 		}
 
-		public function addFieldInjectionPointsToList(injectionPoints : Array) : void
+		public function addFieldInjectionPointsToList(
+				lastInjectionPoint : InjectionPoint) : InjectionPoint
 		{
 			for each (var node : XML in _currentFactoryXML.*.
 					(name() == 'variable' || name() == 'accessor').metadata.(@name == 'Inject'))
@@ -113,23 +114,32 @@ package org.swiftsuspenders
 						node.arg.(@key == 'name').attribute('value'),
 						getOptionalFlagFromXMLNode(node));
 				var propertyName : String = node.parent().@name;
-				injectionPoints.push(new PropertyInjectionPoint(config, propertyName));
+				var injectionPoint : PropertyInjectionPoint =
+						new PropertyInjectionPoint(config, propertyName);
+				lastInjectionPoint.next = injectionPoint;
+				lastInjectionPoint = injectionPoint;
 			}
+			return lastInjectionPoint;
 		}
 
-		public function addMethodInjectionPointsToList(injectionPoints : Array) : void
+		public function addMethodInjectionPointsToList(
+				lastInjectionPoint : InjectionPoint) : InjectionPoint
 		{
 			for each (var node : XML in _currentFactoryXML.method.metadata.(@name == 'Inject'))
 			{
 				const nameArgs : XMLList = node.arg.(@key == 'name');
 				const parameters : Array =
 						gatherMethodParameters(node.parent().parameter, nameArgs);
-				injectionPoints.push(new MethodInjectionPoint(
-						node.parent().@name, parameters, getOptionalFlagFromXMLNode(node)));
+				var injectionPoint : MethodInjectionPoint = new MethodInjectionPoint(
+						node.parent().@name, parameters, getOptionalFlagFromXMLNode(node));
+				lastInjectionPoint.next = injectionPoint;
+				lastInjectionPoint = injectionPoint;
 			}
+			return lastInjectionPoint;
 		}
 
-		public function addPostConstructMethodPointsToList(injectionPoints : Array) : void
+		public function addPostConstructMethodPointsToList(
+				lastInjectionPoint : InjectionPoint) : InjectionPoint
 		{
 			const postConstructMethodPoints : Array = [];
 			for each (var node : XML in
@@ -141,9 +151,14 @@ package org.swiftsuspenders
 			}
 			if (postConstructMethodPoints.length > 0)
 			{
-				postConstructMethodPoints.sortOn("order", Array.NUMERIC);
-				injectionPoints.push.apply(injectionPoints, postConstructMethodPoints);
+				postConstructMethodPoints.sortOn('order', Array.NUMERIC);
+				for each (var injectionPoint : InjectionPoint in postConstructMethodPoints)
+				{
+					lastInjectionPoint.next = injectionPoint;
+					lastInjectionPoint = injectionPoint;
+				}
 			}
+			return lastInjectionPoint;
 		}
 
 		//----------------------         Private / Protected Methods        ----------------------//

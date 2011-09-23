@@ -32,7 +32,7 @@ package org.swiftsuspenders.utils
 					: new DescribeTypeReflector();
 		}
 
-		public function getDescription(type : Class) : ClassDescription
+		public function getDescription(type : Class) : InjectionPoint
 		{
 			//get injection points or cache them if this target's class wasn't encountered before
 			return _descriptionsCache[type] ||= createDescription(type);
@@ -40,17 +40,17 @@ package org.swiftsuspenders.utils
 
 		
 		//----------------------         Private / Protected Methods        ----------------------//
-		private function createDescription(type : Class) : ClassDescription
+		private function createDescription(type : Class) : InjectionPoint
 		{
 			_reflector.startReflection(type);
 			const ctorInjectionPoint : InjectionPoint = _reflector.getCtorInjectionPoint();
-			const injectionPoints : Array = [];
-			_reflector.addFieldInjectionPointsToList(injectionPoints);
-			_reflector.addMethodInjectionPointsToList(injectionPoints);
-			_reflector.addPostConstructMethodPointsToList(injectionPoints);
+			var lastInjectionPoint : InjectionPoint = ctorInjectionPoint;
+			lastInjectionPoint = _reflector.addFieldInjectionPointsToList(lastInjectionPoint);
+			lastInjectionPoint = _reflector.addMethodInjectionPointsToList(lastInjectionPoint);
+			lastInjectionPoint = _reflector.addPostConstructMethodPointsToList(lastInjectionPoint);
 			_reflector.endReflection();
 
-			return new ClassDescription(type, ctorInjectionPoint, injectionPoints);
+			return ctorInjectionPoint;
 		}
 	}
 }
