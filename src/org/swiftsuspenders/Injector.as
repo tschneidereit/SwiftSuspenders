@@ -216,7 +216,7 @@ package org.swiftsuspenders
 				throw new InjectorError(
 						"Can't instantiate interface " + getQualifiedClassName(type));
 			}
-			var instance : * = ctorInjectionPoint.createInstance(type, this);
+			var instance : Object = ctorInjectionPoint.createInstance(type, this);
 			applyInjectionPoints(instance, ctorInjectionPoint.next);
 			return instance;
 		}
