@@ -16,7 +16,7 @@ package org.swiftsuspenders.injectionpoints
 			super([]);
 		}
 
-		override public function createInstance(type : Class, injector : Injector) : *
+		override public function createInstance(type : Class, injector : Injector) : Object
 		{
 			return new type();
 		}

@@ -17,7 +17,7 @@ package org.swiftsuspenders.injectionpoints
 			super('ctor', parameters, false);
 		}
 
-		public function createInstance(type : Class, injector : Injector) : *
+		public function createInstance(type : Class, injector : Injector) : Object
 		{
 			var p : Array = gatherParameterValues(type, injector);
 			var result : Object;
