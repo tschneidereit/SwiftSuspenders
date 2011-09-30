@@ -72,21 +72,21 @@ package org.swiftsuspenders
 			return _provider;
 		}
 
-		public function apply(injector : Injector) : Object
+		public function apply(targetType : Class, injector : Injector) : Object
 		{
 			if (_provider)
 			{
-				return _provider.apply(_creatingInjector, _injector || injector);
+				return _provider.apply(targetType, _creatingInjector, _injector || injector);
 			}
 			if (_createClassProviderOnNextUse)
 			{
 				toType(_requestClass);
-				return apply(injector);
+				return apply(targetType, injector);
 			}
 			var parentRule : InjectionRule = getParentRule(injector);
 			if (parentRule)
 			{
-				return parentRule.apply(injector);
+				return parentRule.apply(targetType, injector);
 			}
 			return null;
 		}

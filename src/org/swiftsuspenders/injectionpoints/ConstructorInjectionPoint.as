@@ -19,7 +19,7 @@ package org.swiftsuspenders.injectionpoints
 
 		public function createInstance(type : Class, injector : Injector) : Object
 		{
-			var p : Array = gatherParameterValues(type, injector);
+			var p : Array = gatherParameterValues(type, type, injector);
 			var result : Object;
 			//the only way to implement ctor injections, really!
 			switch (p.length)

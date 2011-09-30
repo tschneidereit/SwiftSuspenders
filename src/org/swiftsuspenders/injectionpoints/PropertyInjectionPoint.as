@@ -26,11 +26,12 @@ package org.swiftsuspenders.injectionpoints
 			_injectionConfig = config;
 		}
 		
-		override public function applyInjection(target : Object, injector : Injector) : void
+		override public function applyInjection(
+				target : Object, targetType : Class, injector : Injector) : void
 		{
 			var rule : InjectionRule =
 					injector.SsInternal::getRuleForInjectionPointConfig(_injectionConfig);
-			var injection : Object = rule && rule.apply(injector);
+			var injection : Object = rule && rule.apply(targetType, injector);
 			if (injection == null)
 			{
 				if (_injectionConfig.optional)
@@ -39,10 +40,10 @@ package org.swiftsuspenders.injectionpoints
 				}
 				throw(new InjectorError(
 						'Injector is missing a rule to handle injection into property "' +
-						_propertyName + '" of object "' + target +
+						_propertyName +
+						'" of object "' + target + '" with type "' + targetType +
 						'". Target dependency: "' + _injectionConfig.typeName +
-								'", named "' + _injectionConfig.injectionName +
-						'"'));
+						'", named "' + _injectionConfig.injectionName + '"'));
 			}
 			target[_propertyName] = injection;
 		}

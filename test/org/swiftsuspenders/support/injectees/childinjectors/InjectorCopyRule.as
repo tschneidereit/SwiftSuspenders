@@ -17,7 +17,7 @@ package org.swiftsuspenders.support.injectees.childinjectors
 			super(creatingInjector, Injector);
 		}
 
-		override public function apply(injector:Injector):Object
+		override public function apply(targetType : Class, injector : Injector):Object
 		{
 			return injector.createChildInjector();
 		}

@@ -42,7 +42,7 @@ package org.swiftsuspenders.injectionpoints
 			var injectionPoint:PropertyInjectionPoint =
 					new PropertyInjectionPoint(config, 'property');
 			
-			injectionPoint.applyInjection(injectee, injector);
+			injectionPoint.applyInjection(injectee, ClassInjectee, injector);
 			
 			Assert.assertTrue("injectee should contain Clazz instance", injectee.property is Clazz);
 		}
@@ -56,7 +56,7 @@ package org.swiftsuspenders.injectionpoints
 			var injectionPoint:PropertyInjectionPoint =
 					new PropertyInjectionPoint(config, 'property');
 
-			injectionPoint.applyInjection(injectee, injector);
+			injectionPoint.applyInjection(injectee, ClassInjectee, injector);
 
 			Assert.assertNull("injectee mustn\'t contain Clazz instance", injectee.property);
 		}

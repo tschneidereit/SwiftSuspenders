@@ -12,7 +12,6 @@ package org.swiftsuspenders
 	import flash.utils.getQualifiedClassName;
 
 	import org.swiftsuspenders.injectionpoints.ConstructorInjectionPoint;
-
 	import org.swiftsuspenders.injectionpoints.InjectionPoint;
 	import org.swiftsuspenders.injectionpoints.InjectionPointConfig;
 	import org.swiftsuspenders.utils.ClassDescriptor;
@@ -113,10 +112,10 @@ package org.swiftsuspenders
 
 		public function injectInto(target : Object) : void
 		{
-			var ctorInjectionPoint : InjectionPoint =
-					_classDescriptor.getDescription(getConstructor(target));
+			const type : Class = getConstructor(target);
+			var ctorInjectionPoint : InjectionPoint = _classDescriptor.getDescription(type);
 
-			applyInjectionPoints(target, ctorInjectionPoint.next);
+			applyInjectionPoints(target, type, ctorInjectionPoint.next);
 		}
 
 		public function getInstance(type : Class) : *
@@ -124,7 +123,7 @@ package org.swiftsuspenders
 			var mapping : InjectionRule = getMapping(type);
 			if (mapping && mapping.hasProvider())
 			{
-				return mapping.apply(this);
+				return mapping.apply(type, this);
 			}
 			return instantiateUnmapped(type);
 		}
@@ -217,7 +216,7 @@ package org.swiftsuspenders
 						"Can't instantiate interface " + getQualifiedClassName(type));
 			}
 			var instance : Object = ctorInjectionPoint.createInstance(type, this);
-			applyInjectionPoints(instance, ctorInjectionPoint.next);
+			applyInjectionPoints(instance, type, ctorInjectionPoint.next);
 			return instance;
 		}
 
@@ -230,12 +229,12 @@ package org.swiftsuspenders
 			return rule;
 		}
 
-		private function applyInjectionPoints(
-				target : Object, injectionPoint : InjectionPoint) : void
+		private function applyInjectionPoints(target : Object, targetType : Class,
+				injectionPoint : InjectionPoint) : void
 		{
 			while (injectionPoint)
 			{
-				injectionPoint.applyInjection(target, this);
+				injectionPoint.applyInjection(target, targetType, this);
 				injectionPoint = injectionPoint.next;
 			}
 		}

@@ -30,7 +30,8 @@ package org.swiftsuspenders.dependencyproviders
 		 * invocation. The returned instance is created using the <code>creatingInjector</code> the
 		 * first time it is requested.
 		 */
-		public function apply(creatingInjector : Injector, usingInjector : Injector) : Object
+		public function apply(
+				targetType : Class, creatingInjector : Injector, usingInjector : Injector) : Object
 		{
 			return _response ||= createResponse(creatingInjector);
 		}
