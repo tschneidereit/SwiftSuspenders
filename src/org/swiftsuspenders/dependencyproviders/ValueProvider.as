@@ -26,8 +26,7 @@ package org.swiftsuspenders.dependencyproviders
 		 *
 		 * @return The value provided to this provider's constructor
 		 */
-		public function apply(
-				targetType : Class, creatingInjector : Injector, usingInjector : Injector) : Object
+		public function apply(targetType : Class, activeInjector : Injector) : Object
 		{
 			return _value;
 		}

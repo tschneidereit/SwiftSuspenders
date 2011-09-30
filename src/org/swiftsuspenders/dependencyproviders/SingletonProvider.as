@@ -14,26 +14,33 @@ package org.swiftsuspenders.dependencyproviders
 	{
 		//----------------------       Private / Protected Properties       ----------------------//
 		private var _responseType : Class;
+		private var _creatingInjector : Injector;
 		private var _response : Object;
 
 
 		//----------------------               Public Methods               ----------------------//
-		public function SingletonProvider(responseType : Class)
+		/**
+		 *
+		 * @param responseType The class the provider returns the same, lazily created, instance
+		 * of for each request
+		 * @param creatingInjector The injector that was used to create the
+		 * <code>InjectionRule</code> this DependencyProvider is associated with
+		 */
+		public function SingletonProvider(responseType : Class, creatingInjector : Injector)
 		{
 			_responseType = responseType;
+			_creatingInjector = creatingInjector;
 		}
 
 		/**
 		 * @inheritDoc
 		 *
-		 * @return The same instance of the class given to the ClassProvider's constructor on each
-		 * invocation. The returned instance is created using the <code>creatingInjector</code> the
-		 * first time it is requested.
+		 * @return The same, lazily created, instance of the class given to the SingletonProvider's
+		 * constructor on each invocation
 		 */
-		public function apply(
-				targetType : Class, creatingInjector : Injector, usingInjector : Injector) : Object
+		public function apply(targetType : Class, activeInjector : Injector) : Object
 		{
-			return _response ||= createResponse(creatingInjector);
+			return _response ||= createResponse(_creatingInjector);
 		}
 
 

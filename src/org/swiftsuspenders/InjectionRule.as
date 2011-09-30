@@ -56,7 +56,7 @@ package org.swiftsuspenders
 
 		public function toSingleton(type : Class) : DependencyProvider
 		{
-			setProvider(new SingletonProvider(type));
+			setProvider(new SingletonProvider(type, _creatingInjector));
 			return _provider;
 		}
 
@@ -76,7 +76,7 @@ package org.swiftsuspenders
 		{
 			if (_provider)
 			{
-				return _provider.apply(targetType, _creatingInjector, _injector || injector);
+				return _provider.apply(targetType, _injector || injector);
 			}
 			if (_createClassProviderOnNextUse)
 			{
