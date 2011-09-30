@@ -167,30 +167,11 @@ package org.swiftsuspenders
 			INJECTION_POINTS_CACHE = new Dictionary(true);
 		}
 
-		SsInternal function getMapping(requestType : Class) : InjectionRule
-		{
-			return _mappings[requestType] || getAncestorMapping(requestType);
-		}
-
-		SsInternal function getMappingByName(requestTypeName : String) : InjectionRule
-		{
-			return _mappings[requestTypeName] || getAncestorMappingByName(requestTypeName);
-		}
-
 		SsInternal function getAncestorMapping(requestType : Class) : InjectionRule
 		{
 			if (_parentInjector)
 			{
 				return _parentInjector.getMapping(requestType);
-			}
-			return null;
-		}
-
-		SsInternal function getAncestorMappingByName(requestTypeName : String) : InjectionRule
-		{
-			if (_parentInjector)
-			{
-				return _parentInjector.getMappingByName(requestTypeName);
 			}
 			return null;
 		}
@@ -206,7 +187,7 @@ package org.swiftsuspenders
 			return getMappingByName(config.typeName);
 		}
 
-		SsInternal function instantiateUnmapped(type : Class) : *
+		SsInternal function instantiateUnmapped(type : Class) : Object
 		{
 			var ctorInjectionPoint : ConstructorInjectionPoint =
 					_classDescriptor.getDescription(type);
@@ -227,6 +208,25 @@ package org.swiftsuspenders
 			const rule : InjectionRule = new InjectionRule(this, requestType);
 			_mappings[getQualifiedClassName(requestType)] = rule;
 			return rule;
+		}
+
+		private function getMapping(requestType : Class) : InjectionRule
+		{
+			return _mappings[requestType] || getAncestorMapping(requestType);
+		}
+
+		private function getMappingByName(requestTypeName : String) : InjectionRule
+		{
+			return _mappings[requestTypeName] || getAncestorMappingByName(requestTypeName);
+		}
+
+		private function getAncestorMappingByName(requestTypeName : String) : InjectionRule
+		{
+			if (_parentInjector)
+			{
+				return _parentInjector.getMappingByName(requestTypeName);
+			}
+			return null;
 		}
 
 		private function applyInjectionPoints(target : Object, targetType : Class,
