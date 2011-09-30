@@ -10,6 +10,8 @@ package org.swiftsuspenders
 	import flash.utils.Dictionary;
 	import flash.utils.getQualifiedClassName;
 
+	import org.hamcrest.text.re;
+
 	import org.swiftsuspenders.utils.SsInternal;
 
 	use namespace SsInternal;
@@ -103,16 +105,20 @@ package org.swiftsuspenders
 		}
 
 		//----------------------             Internal Methods               ----------------------//
-		SsInternal function getMapping(requestType : Class) : InjectionRule
+		SsInternal function getMappingByName(requestTypeName : String) : InjectionRule
 		{
-			return _mappings[getQualifiedClassName(requestType) + _requestName] ||
-					getAncestorMapping(requestType);
+			return _mappings[requestTypeName + _requestName]
+					|| getAncestorMappingByName(requestTypeName);
 		}
 
-		SsInternal function getAncestorMapping(whenAskedFor : Class) : InjectionRule
+		SsInternal function getAncestorMapping(requestType : Class) : InjectionRule
 		{
-			return _injector.parentInjector ? _injector.parentInjector.usingName(_requestName).
-					getMapping(whenAskedFor) : null;
+			return getAncestorMappingByName(getQualifiedClassName(requestType));
+		}
+
+		SsInternal function setRequestName(name : String) : void
+		{
+			_requestName = name;
 		}
 
 
@@ -122,10 +128,15 @@ package org.swiftsuspenders
 			return (_mappings[getQualifiedClassName(requestType) + _requestName] =
 					new NamedInjectionRule(_injector, requestType, ''));
 		}
-
-		internal function setRequestName(name : String) : void
+		private function getMapping(requestType : Class) : InjectionRule
 		{
-			_requestName = name;
+			return getMappingByName(getQualifiedClassName(requestType));
+		}
+
+		private function getAncestorMappingByName(requestTypeName : String) : InjectionRule
+		{
+			return _injector.parentInjector ? _injector.parentInjector.usingName(_requestName)
+					.getMappingByName(requestTypeName) : null;
 		}
 	}
 }

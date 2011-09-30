@@ -181,8 +181,8 @@ package org.swiftsuspenders
 		{
 			if (config.injectionName)
 			{
-				var type : Class = Class(applicationDomain.getDefinition(config.typeName));
-				return usingName(config.injectionName).getMapping(type);
+				_namedInjectionsManager.setRequestName(config.injectionName);
+				return _namedInjectionsManager.getMappingByName(config.typeName);
 			}
 			return getMappingByName(config.typeName);
 		}
