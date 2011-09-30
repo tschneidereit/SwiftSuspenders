@@ -7,6 +7,8 @@
 
 package org.swiftsuspenders.injectionpoints
 {
+	import avmplus.getQualifiedClassName;
+
 	import org.swiftsuspenders.InjectionRule;
 	import org.swiftsuspenders.Injector;
 	import org.swiftsuspenders.InjectorError;
@@ -42,9 +44,10 @@ package org.swiftsuspenders.injectionpoints
 			}
 		}
 		
-		override public function applyInjection(target : Object, injector : Injector) : void
+		override public function applyInjection(
+				target : Object, targetType : Class, injector : Injector) : void
 		{
-			var p : Array = gatherParameterValues(target, injector);
+			var p : Array = gatherParameterValues(target, targetType, injector);
 			if (!p && _isOptional)
 			{
 				return;
@@ -63,7 +66,8 @@ package org.swiftsuspenders.injectionpoints
 
 
 		//----------------------         Private / Protected Methods        ----------------------//
-		protected function gatherParameterValues(target : Object, injector : Injector) : Array
+		protected function gatherParameterValues(
+				target : Object, targetType : Class, injector : Injector) : Array
 		{
 			var length : int = _parameterInjectionConfigs.length;
 			var parameters : Array = _parameterValues;
@@ -73,7 +77,7 @@ package org.swiftsuspenders.injectionpoints
 				var parameterConfig : InjectionPointConfig = _parameterInjectionConfigs[i];
 				var rule : InjectionRule =
 						injector.SsInternal::getRuleForInjectionPointConfig(parameterConfig);
-				var injection : Object = rule && rule.apply(injector);
+				var injection : Object = rule && rule.apply(targetType, injector);
 				if (injection == null)
 				{
 					if (i >= _requiredParameters)
@@ -85,8 +89,9 @@ package org.swiftsuspenders.injectionpoints
 						return null;
 					}
 					throw(new InjectorError(
-						'Injector is missing a rule to handle injection into target ' + target + 
-						'. Target dependency: ' + parameterConfig.typeName +
+						'Injector is missing a rule to handle injection into target "' + target +
+						'" of type "' + getQualifiedClassName(targetType) + '". \
+						Target dependency: ' + parameterConfig.typeName +
 						', method: ' + _methodName + ', parameter: ' + (i + 1)
 					));
 				}

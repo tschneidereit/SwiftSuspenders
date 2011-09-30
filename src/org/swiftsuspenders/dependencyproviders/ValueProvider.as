@@ -8,7 +8,7 @@
 package org.swiftsuspenders.dependencyproviders
 {
 	import org.swiftsuspenders.Injector;
-	
+
 	public class ValueProvider implements DependencyProvider
 	{
 		//----------------------       Private / Protected Properties       ----------------------//
@@ -26,7 +26,8 @@ package org.swiftsuspenders.dependencyproviders
 		 *
 		 * @return The value provided to this provider's constructor
 		 */
-		public function apply(creatingInjector : Injector, usingInjector : Injector) : Object
+		public function apply(
+				targetType : Class, creatingInjector : Injector, usingInjector : Injector) : Object
 		{
 			return _value;
 		}

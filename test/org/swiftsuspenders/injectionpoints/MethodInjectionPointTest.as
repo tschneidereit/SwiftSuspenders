@@ -47,7 +47,7 @@ package  org.swiftsuspenders.injectionpoints
 			var injectionPoint:MethodInjectionPoint =
 					new MethodInjectionPoint("setDependencies", parameters, false);
 
-			injectionPoint.applyInjection(injectee, injector);
+			injectionPoint.applyInjection(injectee, TwoParametersMethodInjectee, injector);
 
 			Assert.assertTrue("dependency 1 should be Clazz instance", injectee.getDependency() is Clazz);		
 			Assert.assertTrue("dependency 2 should be Interface", injectee.getDependency2() is Interface);	
@@ -64,7 +64,7 @@ package  org.swiftsuspenders.injectionpoints
 			var injectionPoint:MethodInjectionPoint =
 					new MethodInjectionPoint("setDependencies", parameters, false);
 
-			injectionPoint.applyInjection(injectee, injector);
+			injectionPoint.applyInjection(injectee, OneRequiredOneOptionalPropertyMethodInjectee, injector);
 			
 			Assert.assertTrue("dependency 1 should be Clazz instance", injectee.getDependency() is Clazz);		
 			Assert.assertTrue("dependency 2 should be null", injectee.getDependency2() == null);	
@@ -81,7 +81,7 @@ package  org.swiftsuspenders.injectionpoints
 			var injectionPoint:MethodInjectionPoint =
 					new MethodInjectionPoint("setDependency", parameters, true);
 
-			injectionPoint.applyInjection(injectee, injector);
+			injectionPoint.applyInjection(injectee, OptionalOneRequiredParameterMethodInjectee, injector);
 
 			Assert.assertNull("dependency must be null", injectee.getDependency());
 		}

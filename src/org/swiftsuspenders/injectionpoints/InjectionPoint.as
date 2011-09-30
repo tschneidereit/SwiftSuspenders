@@ -20,7 +20,8 @@ package org.swiftsuspenders.injectionpoints
 		{
 		}
 		
-		public function applyInjection(target : Object, injector : Injector) : void
+		public function applyInjection(
+				target : Object, targetType : Class, injector : Injector) : void
 		{
 		}
 	}

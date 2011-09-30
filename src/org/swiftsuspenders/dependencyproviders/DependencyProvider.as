@@ -14,12 +14,14 @@ package org.swiftsuspenders.dependencyproviders
 		/**
 		 * Provides a response that, if required, is created using the appropriate given injector
 		 *
+		 * @param targetType The type of the object the dependency is to be injected into
 		 * @param creatingInjector The injector that was used to create the
 		 * <code>InjectionRule</code> this DependencyProvider is associated with
 		 * @param usingInjector The injector through which this DependencyProvider is currently
 		 * invoked
 		 * @return The result of the specific DependencyProvider's mechanism
 		 */
-		function apply(creatingInjector : Injector, usingInjector : Injector) : Object;
+		function apply(
+				targetType : Class, creatingInjector : Injector, usingInjector : Injector) : Object;
 	}
 }

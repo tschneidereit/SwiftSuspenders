@@ -219,7 +219,7 @@ package org.swiftsuspenders
 					reflector.addFieldInjectionPointsToList(ctorInjectionPoint);
 			injector.usingName('Name').map(Interface).toType(Clazz);
 			var injectee : NamedInterfaceInjectee = new NamedInterfaceInjectee();
-			fieldInjectionPoint.applyInjection(injectee, injector);
+			fieldInjectionPoint.applyInjection(injectee, NamedInterfaceInjectee, injector);
 			Assert.assertNotNull(
 					"Instance of Clazz should have been injected for Interface property",
 					injectee.property);
@@ -233,7 +233,7 @@ package org.swiftsuspenders
 			const fieldInjectionPoint : InjectionPoint =
 					reflector.addFieldInjectionPointsToList(ctorInjectionPoint);
 			var injectee : OptionalClassInjectee = new OptionalClassInjectee();
-			fieldInjectionPoint.applyInjection(injectee, injector);
+			fieldInjectionPoint.applyInjection(injectee, OptionalClassInjectee, injector);
 			Assert.assertNull("Instance of Clazz should not have been injected for Clazz property",
 					injectee.property);
 		}
@@ -247,7 +247,7 @@ package org.swiftsuspenders
 					reflector.addMethodInjectionPointsToList(ctorInjectionPoint);
 			var injectee : OneParameterMethodInjectee = new OneParameterMethodInjectee();
 			injector.map(Clazz);
-			methodInjectionPoint.applyInjection(injectee, injector);
+			methodInjectionPoint.applyInjection(injectee, OneParameterMethodInjectee, injector);
 			Assert.assertNotNull("Instance of Clazz should have been injected for Clazz dependency",
 					injectee.getDependency());
 		}
@@ -261,7 +261,7 @@ package org.swiftsuspenders
 					reflector.addMethodInjectionPointsToList(ctorInjectionPoint);
 			var injectee : OneNamedParameterMethodInjectee = new OneNamedParameterMethodInjectee();
 			injector.usingName('namedDep').map(Clazz);
-			methodInjectionPoint.applyInjection(injectee, injector);
+			methodInjectionPoint.applyInjection(injectee, OneNamedParameterMethodInjectee, injector);
 			Assert.assertNotNull("Instance of Clazz should have been injected for Clazz dependency",
 					injectee.getDependency());
 		}
@@ -276,7 +276,7 @@ package org.swiftsuspenders
 			var injectee : TwoNamedParametersMethodInjectee = new TwoNamedParametersMethodInjectee();
 			injector.usingName('namedDep').map(Clazz);
 			injector.usingName('namedDep2').map(Interface).toType(Clazz);
-			methodInjectionPoint.applyInjection(injectee, injector);
+			methodInjectionPoint.applyInjection(injectee, TwoNamedParametersMethodInjectee, injector);
 			Assert.assertNotNull("Instance of Clazz should have been injected for Clazz dependency",
 					injectee.getDependency());
 			Assert.assertNotNull("Instance of Clazz should have been injected for Interface dependency",
@@ -292,7 +292,7 @@ package org.swiftsuspenders
 					reflector.addMethodInjectionPointsToList(ctorInjectionPoint);
 			var injectee : OneRequiredOneOptionalPropertyMethodInjectee = new OneRequiredOneOptionalPropertyMethodInjectee();
 			injector.map(Clazz);
-			methodInjectionPoint.applyInjection(injectee, injector);
+			methodInjectionPoint.applyInjection(injectee, OneRequiredOneOptionalPropertyMethodInjectee, injector);
 			Assert.assertNotNull("Instance of Clazz should have been injected for Clazz dependency",
 					injectee.getDependency());
 			Assert.assertNull("Instance of Clazz should not have been injected for Interface dependency",
@@ -307,7 +307,7 @@ package org.swiftsuspenders
 			const methodInjectionPoint : InjectionPoint =
 					reflector.addMethodInjectionPointsToList(ctorInjectionPoint);
 			var injectee : OptionalOneRequiredParameterMethodInjectee = new OptionalOneRequiredParameterMethodInjectee();
-			methodInjectionPoint.applyInjection(injectee, injector);
+			methodInjectionPoint.applyInjection(injectee, OptionalOneRequiredParameterMethodInjectee, injector);
 			Assert.assertNull("Instance of Clazz should not have been injected for Clazz dependency",
 					injectee.getDependency());
 		}

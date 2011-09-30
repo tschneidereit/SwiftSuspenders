@@ -9,6 +9,7 @@ package org.swiftsuspenders.suites
 {
 	import org.swiftsuspenders.ApplicationDomainTests;
 	import org.swiftsuspenders.ChildInjectorTests;
+	import org.swiftsuspenders.DependencyProviderTests;
 	import org.swiftsuspenders.DescribeTypeJSONReflectorTests;
 	import org.swiftsuspenders.DescribeTypeReflectorTests;
 	import org.swiftsuspenders.GetConstructorTests;
@@ -33,6 +34,7 @@ package org.swiftsuspenders.suites
 		public var noParamConstructorInjectionPoint:NoParamsConstructorInjectionPointTests;
 		public var constructorInjectionPointTests:ConstructorInjectionPointTests;
 		public var injectionConfigTests:InjectionRuleTests;
+		public var dependencyProviderTests:DependencyProviderTests;
 		public var childInjectorTests : ChildInjectorTests;
 		public var getConstructorTests : GetConstructorTests;
 		public var applicationDomainTests : ApplicationDomainTests;

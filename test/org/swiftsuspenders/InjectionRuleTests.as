@@ -48,62 +48,9 @@ package org.swiftsuspenders
 		public function ruleWithoutProviderEverSetUsesClassProvider() : void
 		{
 			var config : InjectionRule = new InjectionRule(injector, Clazz);
-			var returnedResponse:Object = config.apply(injector);
+			var returnedResponse:Object = config.apply(null, injector);
 
 			Assert.assertTrue(returnedResponse is Clazz);
-		}
-		
-		[Test]
-		public function injectionTypeValueReturnsRespone():void
-		{
-			var response:Clazz = new Clazz();
-			var config : InjectionRule = new InjectionRule(injector, Clazz);
-			config.setProvider(new ValueProvider(response));
-			var returnedResponse:Object = config.apply(injector);
-			
-			Assert.assertStrictlyEquals(response, returnedResponse);
-		}
-
-		[Test]
-		public function injectionTypeClassReturnsRespone():void
-		{
-			var config : InjectionRule = new InjectionRule(injector, Clazz);
-			config.setProvider(new ClassProvider(Clazz));
-			var returnedResponse:Object = config.apply(injector);
-
-			Assert.assertTrue( returnedResponse is Clazz);
-		}
-
-		[Test]
-		public function injectionTypeClassReturnsDifferentInstancesOnEachRespone():void
-		{
-			var config : InjectionRule = new InjectionRule(injector, Clazz);
-			config.setProvider(new ClassProvider(Clazz));
-			var firstResponse:Object = config.apply(injector);
-			var secondResponse:Object = config.apply(injector);
-
-			Assert.assertFalse(firstResponse == secondResponse);
-		}
-		
-		[Test]
-		public function injectionTypeSingletonReturnsResponse():void
-		{
-			var config : InjectionRule = new InjectionRule(injector, Clazz);
-			config.setProvider(new SingletonProvider(Clazz));
-			var returnedResponse:Object = config.apply(injector);
-			
-			Assert.assertTrue( returnedResponse is Clazz);
-		}
-
-		[Test]
-		public function sameSingletonIsReturnedOnSecondResponse():void
-		{
-			var config : InjectionRule = new InjectionRule(injector, Clazz);
-			config.setProvider(new SingletonProvider(Clazz));
-			var returnedResponse:Object = config.apply(injector);
-			var secondResponse:Object = config.apply(injector);
-
-			Assert.assertStrictlyEquals( returnedResponse, secondResponse );
 		}
 
 		[Test]
@@ -111,8 +58,8 @@ package org.swiftsuspenders
 		{
 			var config : InjectionRule = new InjectionRule(injector, Clazz);
 			config.asSingleton();
-			var returnedResponse:Object = config.apply(injector);
-			var secondResponse:Object = config.apply(injector);
+			var returnedResponse:Object = config.apply(null, injector);
+			var secondResponse:Object = config.apply(null, injector);
 
 			Assert.assertStrictlyEquals( returnedResponse, secondResponse );
 		}
@@ -122,8 +69,8 @@ package org.swiftsuspenders
 		{
 			var config : InjectionRule = new NamedInjectionRule(injector, Clazz, "named");
 			config.setProvider(new SingletonProvider(Clazz));
-			var returnedResponse:Object = config.apply(injector);
-			var secondResponse:Object = config.apply(injector);
+			var returnedResponse:Object = config.apply(null, injector);
+			var secondResponse:Object = config.apply(null, injector);
 
 			Assert.assertStrictlyEquals( returnedResponse, secondResponse );
 		}
@@ -133,26 +80,13 @@ package org.swiftsuspenders
 		{
 			var config : InjectionRule = new InjectionRule(injector, Clazz);
 			config.setProvider(new SingletonProvider(Clazz));
-			var returnedResponse:Object = config.apply(injector);
+			var returnedResponse:Object = config.apply(null, injector);
 			config.setProvider(null);
 			config.setProvider(new ClassProvider(Clazz));
-			var secondResponse:Object = config.apply(injector);
+			var secondResponse:Object = config.apply(null, injector);
 
 			Assert.assertFalse('First result doesn\'t equal second result',
 					returnedResponse == secondResponse );
-		}
-
-		[Test]
-		public function injectionTypeOtherRuleReturnsOtherRulesResponse():void
-		{
-			var config : InjectionRule = new InjectionRule(injector, Clazz);
-			var otherConfig : InjectionRule = new InjectionRule(injector, ClazzExtension);
-			otherConfig.setProvider(new ClassProvider(ClazzExtension));
-			config.setProvider(new OtherRuleProvider(otherConfig));
-			var returnedResponse:Object = config.apply(injector);
-
-			Assert.assertTrue( returnedResponse is Clazz);
-			Assert.assertTrue( returnedResponse is ClazzExtension);
 		}
 	}
 }

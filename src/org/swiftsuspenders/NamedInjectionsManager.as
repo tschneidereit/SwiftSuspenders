@@ -99,7 +99,7 @@ package org.swiftsuspenders
 						'No mapping defined for dependency ' + getQualifiedClassName(type) +
 						', named "' + _requestName + '"');
 			}
-			return mapping.apply(_injector);
+			return mapping.apply(type, _injector);
 		}
 
 		//----------------------             Internal Methods               ----------------------//
