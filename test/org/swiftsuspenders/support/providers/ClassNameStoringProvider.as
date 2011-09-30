@@ -17,8 +17,7 @@ package org.swiftsuspenders.support.providers
 		{
 		}
 
-		public function apply(
-				targetType : Class, creatingInjector : Injector, usingInjector : Injector) : Object
+		public function apply(targetType : Class, activeInjector : Injector) : Object
 		{
 			lastTargetClassName = getQualifiedClassName(targetType);
 			return new Clazz();

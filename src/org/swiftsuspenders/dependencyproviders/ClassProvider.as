@@ -29,9 +29,9 @@ package org.swiftsuspenders.dependencyproviders
 		 * constructed using the <code>usingInjector</code>
 		 */
 		public function apply(
-				targetType : Class, creatingInjector : Injector, usingInjector : Injector) : Object
+				targetType : Class, activeInjector : Injector) : Object
 		{
-			return usingInjector.SsInternal::instantiateUnmapped(_responseType);
+			return activeInjector.SsInternal::instantiateUnmapped(_responseType);
 		}
 	}
 }

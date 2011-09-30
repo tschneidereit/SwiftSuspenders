@@ -68,7 +68,7 @@ package org.swiftsuspenders
 		public function sameNamedSingletonIsReturnedOnSecondResponse():void
 		{
 			var config : InjectionRule = new NamedInjectionRule(injector, Clazz, "named");
-			config.setProvider(new SingletonProvider(Clazz));
+			config.setProvider(new SingletonProvider(Clazz, injector));
 			var returnedResponse:Object = config.apply(null, injector);
 			var secondResponse:Object = config.apply(null, injector);
 
@@ -79,7 +79,7 @@ package org.swiftsuspenders
 		public function callingSetProviderBetweenUsagesChangesResponse():void
 		{
 			var config : InjectionRule = new InjectionRule(injector, Clazz);
-			config.setProvider(new SingletonProvider(Clazz));
+			config.setProvider(new SingletonProvider(Clazz, injector));
 			var returnedResponse:Object = config.apply(null, injector);
 			config.setProvider(null);
 			config.setProvider(new ClassProvider(Clazz));

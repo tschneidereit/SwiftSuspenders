@@ -45,7 +45,7 @@ package org.swiftsuspenders
 		{
 			var response:Clazz = new Clazz();
 			const provider : ValueProvider = new ValueProvider(response);
-			var returnedResponse:Object = provider.apply(null, injector, injector);
+			var returnedResponse:Object = provider.apply(null, injector);
 			
 			Assert.assertStrictlyEquals(response, returnedResponse);
 		}
@@ -54,7 +54,7 @@ package org.swiftsuspenders
 		public function classProviderReturnsClassInstance():void
 		{
 			const classProvider : ClassProvider = new ClassProvider(Clazz);
-			var returnedResponse:Object = classProvider.apply(null, injector, injector);
+			var returnedResponse:Object = classProvider.apply(null, injector);
 
 			Assert.assertTrue( returnedResponse is Clazz);
 		}
@@ -63,8 +63,8 @@ package org.swiftsuspenders
 		public function classProviderReturnsDifferentInstancesOnEachApply():void
 		{
 			const classProvider : ClassProvider = new ClassProvider(Clazz);
-			var firstResponse:Object = classProvider.apply(null, injector, injector);
-			var secondResponse:Object = classProvider.apply(null, injector, injector);
+			var firstResponse:Object = classProvider.apply(null, injector);
+			var secondResponse:Object = classProvider.apply(null, injector);
 
 			Assert.assertFalse(firstResponse == secondResponse);
 		}
@@ -72,8 +72,8 @@ package org.swiftsuspenders
 		[Test]
 		public function singletonProviderReturnsInstance():void
 		{
-			const singletonProvider : SingletonProvider = new SingletonProvider(Clazz);
-			var returnedResponse:Object = singletonProvider.apply(null, injector, injector);
+			const singletonProvider : SingletonProvider = new SingletonProvider(Clazz, injector);
+			var returnedResponse:Object = singletonProvider.apply(null, injector);
 			
 			Assert.assertTrue(returnedResponse is Clazz);
 		}
@@ -81,9 +81,9 @@ package org.swiftsuspenders
 		[Test]
 		public function sameSingletonIsReturnedOnSecondResponse():void
 		{
-			const singletonProvider : SingletonProvider = new SingletonProvider(Clazz);
-			var returnedResponse:Object = singletonProvider.apply(null, injector, injector);
-			var secondResponse:Object = singletonProvider.apply(null, injector, injector);
+			const singletonProvider : SingletonProvider = new SingletonProvider(Clazz, injector);
+			var returnedResponse:Object = singletonProvider.apply(null, injector);
+			var secondResponse:Object = singletonProvider.apply(null, injector);
 
 			Assert.assertStrictlyEquals(returnedResponse, secondResponse);
 		}
@@ -94,7 +94,7 @@ package org.swiftsuspenders
 			var otherConfig : InjectionRule = new InjectionRule(injector, ClazzExtension);
 			otherConfig.setProvider(new ClassProvider(ClazzExtension));
 			const otherRuleProvider : OtherRuleProvider = new OtherRuleProvider(otherConfig);
-			var returnedResponse:Object = otherRuleProvider.apply(null, injector, injector);
+			var returnedResponse:Object = otherRuleProvider.apply(null, injector);
 
 			Assert.assertTrue( returnedResponse is Clazz);
 			Assert.assertTrue( returnedResponse is ClazzExtension);

@@ -28,10 +28,9 @@ package org.swiftsuspenders.dependencyproviders
 		 * @return The result of invoking <code>apply</code> on the <code>InjectionRule</code>
 		 * provided to this provider's constructor
 		 */
-		public function apply(
-				targetType : Class, creatingInjector : Injector, usingInjector : Injector) : Object
+		public function apply(targetType : Class, activeInjector : Injector) : Object
 		{
-			return _rule.apply(targetType, usingInjector);
+			return _rule.apply(targetType, activeInjector);
 		}
 	}
 }
