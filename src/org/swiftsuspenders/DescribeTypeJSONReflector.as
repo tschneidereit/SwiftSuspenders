@@ -14,8 +14,6 @@ package org.swiftsuspenders
 	import flash.utils.getQualifiedClassName;
 
 	import org.swiftsuspenders.injectionpoints.ConstructorInjectionPoint;
-
-	import org.swiftsuspenders.injectionpoints.ConstructorInjectionPoint;
 	import org.swiftsuspenders.injectionpoints.InjectionPoint;
 	import org.swiftsuspenders.injectionpoints.InjectionPointConfig;
 	import org.swiftsuspenders.injectionpoints.MethodInjectionPoint;
@@ -101,8 +99,9 @@ package org.swiftsuspenders
 				}
 				return null;
 			}
-			var injectParameters : Array = extractInjectParameters(_traits.metadata);
-			var parameterNames : Array = extractMappingName(injectParameters);
+			var injectParameters : Array =
+					_traits.metadata && extractInjectParameters(_traits.metadata);
+			var parameterNames : Array = extractMappingName(injectParameters || []);
 			return new ConstructorInjectionPoint(
 					gatherMethodParameters(parameters, parameterNames));
 		}
@@ -117,9 +116,17 @@ package org.swiftsuspenders
 		public function addMethodInjectionPointsToList(
 				lastInjectionPoint : InjectionPoint) : InjectionPoint
 		{
-			for each (var method : Object in _traits.methods)
+			const methods : Array = _traits.methods;
+			if (!methods)
 			{
-				var injectParameters : Array = extractInjectParameters(method.metadata);
+				return lastInjectionPoint;
+			}
+			const length : uint = methods.length;
+			for (var i : int = 0; i < length; i++)
+			{
+				var method : Object = methods[i];
+				var injectParameters : Array =
+						method.metadata && extractInjectParameters(method.metadata);
 				if (!injectParameters)
 				{
 					continue;
@@ -139,10 +146,17 @@ package org.swiftsuspenders
 				lastInjectionPoint : InjectionPoint) : InjectionPoint
 		{
 			const postConstructMethodPoints : Array = [];
-			for each (var method : Object in _traits.methods)
+			const methods : Array = _traits.methods;
+			if (!methods)
 			{
+				return lastInjectionPoint;
+			}
+			var length : uint = methods.length;
+			for (var i : int = 0; i < length; i++)
+			{
+				var method : Object = methods[i];
 				var postConstructParameters : Array =
-						extractPostConstructParameters(method.metadata);
+						method.metadata && extractPostConstructParameters(method.metadata);
 				if (!postConstructParameters)
 				{
 					continue;
@@ -153,8 +167,10 @@ package org.swiftsuspenders
 			if (postConstructMethodPoints.length > 0)
 			{
 				postConstructMethodPoints.sortOn('order', Array.NUMERIC);
-				for each (var injectionPoint : InjectionPoint in postConstructMethodPoints)
+				length = postConstructMethodPoints.length;
+				for (i = 0; i < length; i++)
 				{
+					var injectionPoint : InjectionPoint = postConstructMethodPoints[i];
 					lastInjectionPoint.next = injectionPoint;
 					lastInjectionPoint = injectionPoint;
 				}
@@ -165,11 +181,18 @@ package org.swiftsuspenders
 		
 		//----------------------         Private / Protected Methods        ----------------------//
 		private function gatherFieldInjectionPoints(
-				fields : Object, lastInjectionPoint : InjectionPoint) : InjectionPoint
+				fields : Array, lastInjectionPoint : InjectionPoint) : InjectionPoint
 		{
-			for each (var field : Object in fields)
+			if (!fields)
 			{
-				var injectParameters : Array = extractInjectParameters(field.metadata);
+				return lastInjectionPoint;
+			}
+			const length : uint = fields.length;
+			for (var i : int = 0; i < length; i++)
+			{
+				var field : Object = fields[i];
+				var injectParameters : Array =
+						field.metadata && extractInjectParameters(field.metadata);
 				if (!injectParameters)
 				{
 					continue;
@@ -214,8 +237,10 @@ package org.swiftsuspenders
 
 		private function extractInjectParameters(metadata : Array) : Array
 		{
-			for each (var entry : Object in metadata)
+			var length : uint = metadata.length;
+			for (var i : int = 0; i < length; i++)
 			{
+				var entry : Object = metadata[i];
 				if (entry.name == 'Inject')
 				{
 					return entry.value;
@@ -226,8 +251,10 @@ package org.swiftsuspenders
 
 		private function extractPostConstructParameters(metadata : Array) : Array
 		{
-			for each (var entry : Object in metadata)
+			var length : uint = metadata.length;
+			for (var i : int = 0; i < length; i++)
 			{
+				var entry : Object = metadata[i];
 				if (entry.name == 'PostConstruct')
 				{
 					return entry.value;
@@ -238,8 +265,10 @@ package org.swiftsuspenders
 
 		private function extractOrder(postConstructParameters : Array) : int
 		{
-			for each (var parameter : Object in postConstructParameters)
+			var length : uint = postConstructParameters.length;
+			for (var i : int = 0; i < length; i++)
 			{
+				var parameter : Object = postConstructParameters[i];
 				if (parameter.key == 'order')
 				{
 					const result : Number = parseInt(parameter.value, 10);
@@ -252,8 +281,10 @@ package org.swiftsuspenders
 		private function extractMappingName(injectParameters : Array) : Array
 		{
 			var names : Array = [];
-			for each (var parameter : Object in injectParameters)
+			var length : uint = injectParameters.length;
+			for (var i : int = 0; i < length; i++)
 			{
+				var parameter : Object = injectParameters[i];
 				if (parameter.key == 'name')
 				{
 					names.push(parameter.value);
@@ -264,8 +295,10 @@ package org.swiftsuspenders
 
 		private function extractOptionalFlag(injectParameters : Array) : Boolean
 		{
-			for each (var parameter : Object in injectParameters)
+			var length : uint = injectParameters.length;
+			for (var i : int = 0; i < length; i++)
 			{
+				var parameter : Object = injectParameters[i];
 				if (parameter.key == 'optional')
 				{
 					return parameter.value == 'true' || parameter.value == '1';
