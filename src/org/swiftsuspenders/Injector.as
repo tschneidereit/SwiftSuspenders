@@ -13,7 +13,6 @@ package org.swiftsuspenders
 
 	import org.swiftsuspenders.injectionpoints.ConstructorInjectionPoint;
 	import org.swiftsuspenders.injectionpoints.InjectionPoint;
-	import org.swiftsuspenders.injectionpoints.InjectionPointConfig;
 	import org.swiftsuspenders.utils.ClassDescriptor;
 	import org.swiftsuspenders.utils.SsInternal;
 	import org.swiftsuspenders.utils.getConstructor;
@@ -29,6 +28,10 @@ package org.swiftsuspenders
         private var _applicationDomain:ApplicationDomain;
 		private var _classDescriptor : ClassDescriptor;
 		private var _mappings : Dictionary;
+
+
+		//----------------------            Internal Properties             ----------------------//
+		SsInternal const providerMappings : Dictionary = new Dictionary();
 
 
 		//----------------------               Public Methods               ----------------------//
@@ -196,7 +199,8 @@ package org.swiftsuspenders
 		//----------------------         Private / Protected Methods        ----------------------//
 		private function createRule(type : Class, mappingId : String) : InjectionRule
 		{
-			return new InjectionRule(this, type, mappingId);
+			return new InjectionRule(
+					this, type, mappingId, _classDescriptor.getInjectionPointConfigById(mappingId));
 		}
 
 		private function applyInjectionPoints(

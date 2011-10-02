@@ -7,38 +7,38 @@
 
 package org.swiftsuspenders
 {
-	import flash.utils.getQualifiedClassName;
-
 	import org.swiftsuspenders.dependencyproviders.ClassProvider;
 	import org.swiftsuspenders.dependencyproviders.DependencyProvider;
+	import org.swiftsuspenders.dependencyproviders.InjectorUsingProvider;
 	import org.swiftsuspenders.dependencyproviders.OtherRuleProvider;
 	import org.swiftsuspenders.dependencyproviders.SingletonProvider;
 	import org.swiftsuspenders.dependencyproviders.ValueProvider;
+	import org.swiftsuspenders.injectionpoints.InjectionPointConfig;
 	import org.swiftsuspenders.utils.SsInternal;
 
 	public class InjectionRule
 	{
 		//----------------------       Private / Protected Properties       ----------------------//
-		protected var _requestClass : Class;
-		protected var _mappingId : String;
-		protected var _injector : Injector;
+		private var _requestClass : Class;
+		private var _mappingId : String;
+		private var _injector : Injector;
 
 		private var _creatingInjector : Injector;
-		private var _provider : DependencyProvider;
-
-		/**
-		 * Used to enable the omission of <code>InjectionRule#toType(Type)</code> for type mappings
-		 */
-		private var _createClassProviderOnNextUse : Boolean = true;
+		private var _config : InjectionPointConfig;
+		private var _defaultProviderSet : Boolean;
 
 
 		//----------------------               Public Methods               ----------------------//
 		public function InjectionRule(
-				creatingInjector : Injector, type : Class, mappingId : String)
+				creatingInjector : Injector, type : Class, mappingId : String,
+				config : InjectionPointConfig)
 		{
 			_creatingInjector = creatingInjector;
 			_requestClass = type;
 			_mappingId = mappingId;
+			_config = config;
+			_defaultProviderSet = true;
+			mapProvider(new ClassProvider(type));
 		}
 
 		/**
@@ -46,63 +46,44 @@ package org.swiftsuspenders
 		 * <code>injector.map(Type).toSingleton(Type);<code>. Removes the need to repeat the type.
 		 * @return The <code>DependencyProvider</code> that will be used to satisfy the dependency
 		 */
-		public function asSingleton() : DependencyProvider
+		public function asSingleton() : void
 		{
-			return toSingleton(_requestClass);
+			toSingleton(_requestClass);
 		}
 
-		public function toType(type : Class) : DependencyProvider
+		public function toType(type : Class) : void
 		{
 			setProvider(new ClassProvider(type));
-			return _provider;
 		}
 
-		public function toSingleton(type : Class) : DependencyProvider
+		public function toSingleton(type : Class) : void
 		{
 			setProvider(new SingletonProvider(type, _creatingInjector));
-			return _provider;
 		}
 
-		public function toValue(value : Object) : DependencyProvider
+		public function toValue(value : Object) : void
 		{
 			setProvider(new ValueProvider(value));
-			return _provider;
 		}
 
-		public function toRule(rule : InjectionRule) : DependencyProvider
+		public function toRule(rule : InjectionRule) : void
 		{
 			setProvider(new OtherRuleProvider(rule));
-			return _provider;
 		}
 
 		public function apply(targetType : Class, injector : Injector) : Object
 		{
-			if (_provider)
-			{
-				return _provider.apply(targetType, _injector || injector);
-			}
-			if (_createClassProviderOnNextUse)
-			{
-				toType(_requestClass);
-				return apply(targetType, injector);
-			}
-			var parentRule : InjectionRule = getParentRule(injector);
-			if (parentRule)
-			{
-				return parentRule.apply(targetType, injector);
-			}
-			return null;
+			return _config.apply(targetType, injector);
 		}
 
 		public function hasProvider() : Boolean
 		{
-			return _provider != null;
+			return _creatingInjector.SsInternal::providerMappings[_mappingId] != null;
 		}
 
 		public function setProvider(provider : DependencyProvider) : void
 		{
-			_createClassProviderOnNextUse = false;
-			if (_provider != null && provider != null)
+			if (hasProvider() && provider != null && !_defaultProviderSet)
 			{
 				//TODO: consider making this throw
 				trace('Warning: Injector already has a rule for ' + _mappingId + '.\n ' +
@@ -110,7 +91,12 @@ package org.swiftsuspenders
 						'"injector.unmap()" prior to your replacement mapping in order to ' +
 						'avoid seeing this message.');
 			}
-			_provider = provider;
+			_defaultProviderSet = false;
+			if (_injector)
+			{
+				provider = new InjectorUsingProvider(_injector, provider);
+			}
+			mapProvider(provider);
 		}
 
 		/**
@@ -126,14 +112,35 @@ package org.swiftsuspenders
 		 */
 		public function setInjector(injector : Injector) : void
 		{
+			var oldInjector : Injector = _injector;
 			_injector = injector;
+			const provider : DependencyProvider = getProvider();
+			if (oldInjector)
+			{
+				if (injector)
+				{
+					InjectorUsingProvider(provider).injector = injector;
+				}
+				else
+				{
+					mapProvider(InjectorUsingProvider(provider).provider);
+				}
+			}
+			else
+			{
+				mapProvider(new InjectorUsingProvider(injector, provider));
+			}
 		}
 
 
 		//----------------------         Private / Protected Methods        ----------------------//
-		protected function getParentRule(injector : Injector) : InjectionRule
+		private function getProvider() : DependencyProvider
 		{
-			return (_injector || injector).SsInternal::getAncestorMapping(_mappingId);
+			return _creatingInjector.SsInternal::providerMappings[_mappingId];
+		}
+		private function mapProvider(provider : DependencyProvider) : void
+		{
+			_creatingInjector.SsInternal::providerMappings[_mappingId] = provider;
 		}
 	}
 }

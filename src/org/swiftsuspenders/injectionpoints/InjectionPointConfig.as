@@ -7,19 +7,45 @@
 
 package org.swiftsuspenders.injectionpoints
 {
+	import org.swiftsuspenders.Injector;
+	import org.swiftsuspenders.dependencyproviders.DependencyProvider;
+	import org.swiftsuspenders.dependencyproviders.SoftDependencyProvider;
+	import org.swiftsuspenders.utils.SsInternal;
+
+	use namespace SsInternal;
+
 	public class InjectionPointConfig
 	{
 		//----------------------              Public Properties             ----------------------//
 		public var mappingId : String;
-		public var optional : Boolean;
 
 
 		//----------------------               Public Methods               ----------------------//
-		public function InjectionPointConfig(
-				typeName : String, injectionName : String, optional : Boolean)
+		public function InjectionPointConfig(mappingId : String)
 		{
-			this.mappingId = typeName + '|' + (injectionName || '');
-			this.optional = optional;
+			this.mappingId = mappingId;
+		}
+
+		public function apply(targetType : Class, injector : Injector) : Object
+		{
+			var softProvider : DependencyProvider;
+			var usingInjector : Injector = injector;
+			while (injector)
+			{
+				var provider : DependencyProvider =
+						injector.SsInternal::providerMappings[mappingId];
+				if (provider)
+				{
+					if (!provider is SoftDependencyProvider)
+					{
+						softProvider = provider;
+						continue;
+					}
+					return provider.apply(targetType, usingInjector);
+				}
+				injector = injector.parentInjector;
+			}
+			return softProvider && softProvider.apply(targetType, usingInjector);
 		}
 	}
 }

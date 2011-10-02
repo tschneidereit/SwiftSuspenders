@@ -15,6 +15,7 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.dependencyproviders.OtherRuleProvider;
 	import org.swiftsuspenders.dependencyproviders.SingletonProvider;
 	import org.swiftsuspenders.dependencyproviders.ValueProvider;
+	import org.swiftsuspenders.injectionpoints.InjectionPointConfig;
 	import org.swiftsuspenders.support.injectees.ClassInjectee;
 	import org.swiftsuspenders.support.providers.ClassNameStoringProvider;
 	import org.swiftsuspenders.support.types.Clazz;
@@ -91,7 +92,8 @@ package org.swiftsuspenders
 		[Test]
 		public function injectionTypeOtherRuleReturnsOtherRulesResponse():void
 		{
-			var otherConfig : InjectionRule = new InjectionRule(injector, ClazzExtension, '');
+			var otherConfig : InjectionRule = new InjectionRule(injector, ClazzExtension, '',
+					new InjectionPointConfig(''));
 			otherConfig.setProvider(new ClassProvider(ClazzExtension));
 			const otherRuleProvider : OtherRuleProvider = new OtherRuleProvider(otherConfig);
 			var returnedResponse:Object = otherRuleProvider.apply(null, injector);

@@ -42,11 +42,11 @@ package  org.swiftsuspenders.injectionpoints
 			injector.map(String).toValue(STRING_REFERENCE);
 			
 			var parameters : Array = [
-				new InjectionPointConfig("org.swiftsuspenders.support.types::Clazz", '', false),
-				new InjectionPointConfig("String", '', false)
+				new InjectionPointConfig("org.swiftsuspenders.support.types::Clazz|"),
+				new InjectionPointConfig("String|")
 			];
 			var injectionPoint:ConstructorInjectionPoint =
-					new ConstructorInjectionPoint(parameters);
+					new ConstructorInjectionPoint(parameters, 2);
 
 			var injectee:TwoParametersConstructorInjectee = injectionPoint.createInstance(
 					TwoParametersConstructorInjectee, injector) as TwoParametersConstructorInjectee;
@@ -61,11 +61,11 @@ package  org.swiftsuspenders.injectionpoints
 			injector.map(Clazz).toSingleton(Clazz);
 			
 			var parameters : Array = [
-				new InjectionPointConfig("org.swiftsuspenders.support.types::Clazz", '', true),
-				new InjectionPointConfig("String", '', true)
+				new InjectionPointConfig("org.swiftsuspenders.support.types::Clazz|"),
+				new InjectionPointConfig("String|")
 			];
 			var injectionPoint:ConstructorInjectionPoint =
-					new ConstructorInjectionPoint(parameters);
+					new ConstructorInjectionPoint(parameters, 0);
 
 			var injectee:TwoOptionalParametersConstructorInjectee = injectionPoint.createInstance(
 					TwoOptionalParametersConstructorInjectee, injector) as TwoOptionalParametersConstructorInjectee;
@@ -81,11 +81,11 @@ package  org.swiftsuspenders.injectionpoints
 			injector.map(String).toValue(STRING_REFERENCE);
 			
 			var parameters : Array = [
-				new InjectionPointConfig("org.swiftsuspenders.support.types::Clazz", '', true),
-				new InjectionPointConfig("String", '', true)
+				new InjectionPointConfig("org.swiftsuspenders.support.types::Clazz|"),
+				new InjectionPointConfig("String|")
 			];
 			var injectionPoint:ConstructorInjectionPoint =
-					new ConstructorInjectionPoint(parameters);
+					new ConstructorInjectionPoint(parameters, 0);
 			
 			var injectee:TwoOptionalParametersConstructorInjectee = injectionPoint.createInstance(
 					TwoOptionalParametersConstructorInjectee, injector) as TwoOptionalParametersConstructorInjectee;

@@ -7,34 +7,33 @@
 
 package org.swiftsuspenders.injectionpoints
 {
-	import org.swiftsuspenders.InjectionRule;
 	import org.swiftsuspenders.Injector;
 	import org.swiftsuspenders.InjectorError;
-	import org.swiftsuspenders.utils.SsInternal;
 
 	public class PropertyInjectionPoint extends InjectionPoint
 	{
 		//----------------------       Private / Protected Properties       ----------------------//
 		private var _propertyName : String;
 		private var _injectionConfig : InjectionPointConfig;
+		private var _optional : Boolean;
 
 
 		//----------------------               Public Methods               ----------------------//
-		public function PropertyInjectionPoint(config : InjectionPointConfig, propertyName : String)
+		public function PropertyInjectionPoint(
+				config : InjectionPointConfig, propertyName : String, optional : Boolean)
 		{
 			_propertyName = propertyName;
 			_injectionConfig = config;
+			_optional = optional;
 		}
 		
 		override public function applyInjection(
 				target : Object, targetType : Class, injector : Injector) : void
 		{
-			var rule : InjectionRule =
-					injector.SsInternal::getMapping(_injectionConfig.mappingId);
-			var injection : Object = rule && rule.apply(targetType, injector);
+			var injection : Object = _injectionConfig.apply(targetType, injector);
 			if (injection == null)
 			{
-				if (_injectionConfig.optional)
+				if (_optional)
 				{
 					return;
 				}

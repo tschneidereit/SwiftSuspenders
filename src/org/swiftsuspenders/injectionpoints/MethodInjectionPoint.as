@@ -9,10 +9,8 @@ package org.swiftsuspenders.injectionpoints
 {
 	import avmplus.getQualifiedClassName;
 
-	import org.swiftsuspenders.InjectionRule;
 	import org.swiftsuspenders.Injector;
 	import org.swiftsuspenders.InjectorError;
-	import org.swiftsuspenders.utils.SsInternal;
 
 	public class MethodInjectionPoint extends InjectionPoint
 	{
@@ -20,45 +18,36 @@ package org.swiftsuspenders.injectionpoints
 		private static const _parameterValues : Array = [];
 		
 		protected var _parameterInjectionConfigs : Array;
-		protected var _requiredParameters : int = 0;
+		protected var _requiredParameters : int;
 
 		private var _isOptional : Boolean;
 		private var _methodName : String;
 
 
 		//----------------------               Public Methods               ----------------------//
-		public function MethodInjectionPoint(
-				methodName : String, parameters : Array, isOptional : Boolean)
+		public function MethodInjectionPoint(methodName : String, parameters : Array,
+		                                     requiredParameters : uint, isOptional : Boolean)
 		{
 			_methodName = methodName;
-			_isOptional = isOptional;
 			_parameterInjectionConfigs = parameters;
-			for (var i : int = parameters.length; i--;)
-			{
-				var parameter : InjectionPointConfig = parameters[i];
-				if (!parameter.optional)
-				{
-					_requiredParameters = i + 1;
-					return;
-				}
-			}
+			_requiredParameters = requiredParameters;
+			_isOptional = isOptional;
 		}
 		
 		override public function applyInjection(
 				target : Object, targetType : Class, injector : Injector) : void
 		{
 			var p : Array = gatherParameterValues(target, targetType, injector);
-			if (!p && _isOptional)
+			if (p.length >= _requiredParameters)
 			{
-				return;
-			}
-			switch (p.length)
-			{
-				case 0 : (target[_methodName] as Function)(); break;
-				case 1 : (target[_methodName] as Function)(p[0]); break;
-				case 2 : (target[_methodName] as Function)(p[0], p[1]); break;
-				case 3 : (target[_methodName] as Function)(p[0], p[1], p[2]); break;
-				default: (target[_methodName] as Function).apply(target, p);
+				switch (p.length)
+				{
+					case 0 : (target[_methodName] as Function)(); break;
+					case 1 : (target[_methodName] as Function)(p[0]); break;
+					case 2 : (target[_methodName] as Function)(p[0], p[1]); break;
+					case 3 : (target[_methodName] as Function)(p[0], p[1], p[2]); break;
+					default: (target[_methodName] as Function).apply(target, p);
+				}
 			}
 
 			p.length = 0;
@@ -75,18 +64,12 @@ package org.swiftsuspenders.injectionpoints
 			for (var i : int = 0; i < length; i++)
 			{
 				var parameterConfig : InjectionPointConfig = _parameterInjectionConfigs[i];
-				var rule : InjectionRule =
-						injector.SsInternal::getMapping(parameterConfig.mappingId);
-				var injection : Object = rule && rule.apply(targetType, injector);
+				var injection : Object = parameterConfig.apply(targetType, injector);
 				if (injection == null)
 				{
-					if (i >= _requiredParameters)
+					if (i >= _requiredParameters || _isOptional)
 					{
 						break;
-					}
-					if (_isOptional)
-					{
-						return null;
 					}
 					throw(new InjectorError(
 						'Injector is missing a rule to handle injection into target "' + target +

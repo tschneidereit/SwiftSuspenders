@@ -41,11 +41,11 @@ package  org.swiftsuspenders.injectionpoints
 			injector.map(Clazz).toSingleton(Clazz);
 			injector.map(Interface).toSingleton(Clazz);
 			var parameters : Array = [
-				new InjectionPointConfig("org.swiftsuspenders.support.types::Clazz", '', false),
-				new InjectionPointConfig("org.swiftsuspenders.support.types::Interface", '', false)
+				new InjectionPointConfig("org.swiftsuspenders.support.types::Clazz|"),
+				new InjectionPointConfig("org.swiftsuspenders.support.types::Interface|")
 			];
 			var injectionPoint:MethodInjectionPoint =
-					new MethodInjectionPoint("setDependencies", parameters, false);
+					new MethodInjectionPoint("setDependencies", parameters, 2, false);
 
 			injectionPoint.applyInjection(injectee, TwoParametersMethodInjectee, injector);
 
@@ -58,11 +58,11 @@ package  org.swiftsuspenders.injectionpoints
 			var injectee:OneRequiredOneOptionalPropertyMethodInjectee = new OneRequiredOneOptionalPropertyMethodInjectee();
 			injector.map(Clazz).toSingleton(Clazz);
 			var parameters : Array = [
-				new InjectionPointConfig("org.swiftsuspenders.support.types::Clazz", '', false),
-				new InjectionPointConfig("org.swiftsuspenders.support.types::Interface", '', true)
+				new InjectionPointConfig("org.swiftsuspenders.support.types::Clazz|"),
+				new InjectionPointConfig("org.swiftsuspenders.support.types::Interface|")
 			];
 			var injectionPoint:MethodInjectionPoint =
-					new MethodInjectionPoint("setDependencies", parameters, false);
+					new MethodInjectionPoint("setDependencies", parameters, 1, false);
 
 			injectionPoint.applyInjection(injectee, OneRequiredOneOptionalPropertyMethodInjectee, injector);
 			
@@ -76,10 +76,10 @@ package  org.swiftsuspenders.injectionpoints
 			var injectee:OptionalOneRequiredParameterMethodInjectee =
 					new OptionalOneRequiredParameterMethodInjectee();
 			var parameters : Array = [
-				new InjectionPointConfig("org.swiftsuspenders.support.types::Clazz", '', false)
+				new InjectionPointConfig("org.swiftsuspenders.support.types::Clazz|")
 			];
 			var injectionPoint:MethodInjectionPoint =
-					new MethodInjectionPoint("setDependency", parameters, true);
+					new MethodInjectionPoint("setDependency", parameters, 1, true);
 
 			injectionPoint.applyInjection(injectee, OptionalOneRequiredParameterMethodInjectee, injector);
 

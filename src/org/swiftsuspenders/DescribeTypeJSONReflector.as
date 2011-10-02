@@ -20,6 +20,7 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.injectionpoints.NoParamsConstructorInjectionPoint;
 	import org.swiftsuspenders.injectionpoints.PostConstructInjectionPoint;
 	import org.swiftsuspenders.injectionpoints.PropertyInjectionPoint;
+	import org.swiftsuspenders.utils.InjectionPointsConfigMap;
 
 	public class DescribeTypeJSONReflector extends ReflectorBase implements Reflector
 	{
@@ -28,6 +29,7 @@ package org.swiftsuspenders
 		private var _descriptor : DescribeTypeJSON;
 		private var _description : Object;
 		private var _traits : Object;
+		private var _configMap : InjectionPointsConfigMap;
 
 		//----------------------               Public Methods               ----------------------//
 		public function DescribeTypeJSONReflector()
@@ -35,9 +37,10 @@ package org.swiftsuspenders
 			_descriptor = new DescribeTypeJSON();
 		}
 
-		public function startReflection(type : Class) : void
+		public function startReflection(type : Class, configMap : InjectionPointsConfigMap) : void
 		{
 			_currentType = type;
+			_configMap = configMap;
 			_description = _descriptor.getInstanceDescription(type);
 			_traits = _description.traits;
 		}
@@ -47,6 +50,7 @@ package org.swiftsuspenders
 			_currentType = null;
 			_description = null;
 			_traits = null;
+			_configMap = null;
 		}
 
 		public function classExtendsOrImplements(classOrClassName : Object, superclass : Class,
@@ -83,7 +87,7 @@ package org.swiftsuspenders
 			}
 			const superClassName : String = getQualifiedClassName(superclass);
 
-			startReflection(actualClass);
+			startReflection(actualClass, null);
 			return (_traits.bases as Array).indexOf(superClassName) > -1
 					|| (_traits.interfaces as Array).indexOf(superClassName) > -1;
 		}
@@ -102,8 +106,8 @@ package org.swiftsuspenders
 			var injectParameters : Array =
 					_traits.metadata && extractInjectParameters(_traits.metadata);
 			var parameterNames : Array = extractMappingName(injectParameters || []);
-			return new ConstructorInjectionPoint(
-					gatherMethodParameters(parameters, parameterNames));
+			const requiredParameters : uint = gatherMethodParameters(parameters, parameterNames);
+			return new ConstructorInjectionPoint(parameters, requiredParameters);
 		}
 
 		public function addFieldInjectionPointsToList(
@@ -133,9 +137,11 @@ package org.swiftsuspenders
 				}
 				var optional : Boolean = extractOptionalFlag(injectParameters);
 				var parameterNames : Array = extractMappingName(injectParameters);
-				var parameters : Array = gatherMethodParameters(method.parameters, parameterNames);
-				var injectionPoint : MethodInjectionPoint =
-						new MethodInjectionPoint(method.name, parameters, optional);
+				var parameters : Array = method.parameters;
+				const requiredParameters : uint =
+						gatherMethodParameters(parameters, parameterNames);
+				var injectionPoint : MethodInjectionPoint = new MethodInjectionPoint(
+						method.name, parameters, requiredParameters, optional);
 				lastInjectionPoint.next = injectionPoint;
 				lastInjectionPoint = injectionPoint;
 			}
@@ -200,17 +206,18 @@ package org.swiftsuspenders
 				var mappingName : String = extractMappingName(injectParameters)[0] || '';
 				var optional : Boolean = extractOptionalFlag(injectParameters);
 				var config : InjectionPointConfig =
-						new InjectionPointConfig(field.type, mappingName, optional);
+						_configMap.getInjectionPointConfig(field.type, mappingName);
 				var injectionPoint : PropertyInjectionPoint =
-						new PropertyInjectionPoint(config, field.name);
+						new PropertyInjectionPoint(config, field.name, optional);
 				lastInjectionPoint.next = injectionPoint;
 				lastInjectionPoint = injectionPoint;
 			}
 			return lastInjectionPoint;
 		}
 
-		private function gatherMethodParameters(parameters : Array, parameterNames : Array) : Array
+		private function gatherMethodParameters(parameters : Array, parameterNames : Array) : uint
 		{
+			var requiredLength : uint = 0;
 			const length : uint = parameters.length;
 			for (var i : int = 0; i < length; i++)
 			{
@@ -229,10 +236,14 @@ package org.swiftsuspenders
 						parameterTypeName = null;
 					}
 				}
-				parameters[i] = new InjectionPointConfig(
-						parameterTypeName, injectionName, parameter.optional);
+				if (!parameter.optional)
+				{
+					requiredLength++;
+				}
+				parameters[i] =
+						_configMap.getInjectionPointConfig(parameterTypeName, injectionName);
 			}
-			return parameters;
+			return requiredLength;
 		}
 
 		private function extractInjectParameters(metadata : Array) : Array
