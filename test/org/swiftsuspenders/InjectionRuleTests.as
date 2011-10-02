@@ -10,11 +10,8 @@ package org.swiftsuspenders
 	import flexunit.framework.Assert;
 
 	import org.swiftsuspenders.dependencyproviders.ClassProvider;
-	import org.swiftsuspenders.dependencyproviders.OtherRuleProvider;
 	import org.swiftsuspenders.dependencyproviders.SingletonProvider;
-	import org.swiftsuspenders.dependencyproviders.ValueProvider;
 	import org.swiftsuspenders.support.types.Clazz;
-	import org.swiftsuspenders.support.types.ClazzExtension;
 	import org.swiftsuspenders.utils.SsInternal;
 
 	use namespace SsInternal;
@@ -39,7 +36,7 @@ package org.swiftsuspenders
 		[Test]
 		public function configIsInstantiated():void
 		{
-			var config : InjectionRule = new InjectionRule(injector, Clazz);
+			var config : InjectionRule = new InjectionRule(injector, Clazz, '');
 			
 			Assert.assertTrue(config is InjectionRule);
 		}
@@ -47,7 +44,7 @@ package org.swiftsuspenders
 		[Test]
 		public function ruleWithoutProviderEverSetUsesClassProvider() : void
 		{
-			var config : InjectionRule = new InjectionRule(injector, Clazz);
+			var config : InjectionRule = new InjectionRule(injector, Clazz, '');
 			var returnedResponse:Object = config.apply(null, injector);
 
 			Assert.assertTrue(returnedResponse is Clazz);
@@ -56,7 +53,7 @@ package org.swiftsuspenders
 		[Test]
 		public function injectionRuleAsSingletonMethodCreatesSingletonProvider():void
 		{
-			var config : InjectionRule = new InjectionRule(injector, Clazz);
+			var config : InjectionRule = new InjectionRule(injector, Clazz, '');
 			config.asSingleton();
 			var returnedResponse:Object = config.apply(null, injector);
 			var secondResponse:Object = config.apply(null, injector);
@@ -67,7 +64,7 @@ package org.swiftsuspenders
 		[Test]
 		public function sameNamedSingletonIsReturnedOnSecondResponse():void
 		{
-			var config : InjectionRule = new NamedInjectionRule(injector, Clazz, "named");
+			var config : InjectionRule = new InjectionRule(injector, Clazz, "named");
 			config.setProvider(new SingletonProvider(Clazz, injector));
 			var returnedResponse:Object = config.apply(null, injector);
 			var secondResponse:Object = config.apply(null, injector);
@@ -78,7 +75,7 @@ package org.swiftsuspenders
 		[Test]
 		public function callingSetProviderBetweenUsagesChangesResponse():void
 		{
-			var config : InjectionRule = new InjectionRule(injector, Clazz);
+			var config : InjectionRule = new InjectionRule(injector, Clazz, '');
 			config.setProvider(new SingletonProvider(Clazz, injector));
 			var returnedResponse:Object = config.apply(null, injector);
 			config.setProvider(null);

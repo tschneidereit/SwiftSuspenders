@@ -30,7 +30,7 @@ package org.swiftsuspenders.injectionpoints
 				target : Object, targetType : Class, injector : Injector) : void
 		{
 			var rule : InjectionRule =
-					injector.SsInternal::getRuleForInjectionPointConfig(_injectionConfig);
+					injector.SsInternal::getMapping(_injectionConfig.mappingId);
 			var injection : Object = rule && rule.apply(targetType, injector);
 			if (injection == null)
 			{
@@ -42,8 +42,7 @@ package org.swiftsuspenders.injectionpoints
 						'Injector is missing a rule to handle injection into property "' +
 						_propertyName +
 						'" of object "' + target + '" with type "' + targetType +
-						'". Target dependency: "' + _injectionConfig.typeName +
-						'", named "' + _injectionConfig.injectionName + '"'));
+						'". Target dependency: "' + _injectionConfig.mappingId + '"'));
 			}
 			target[_propertyName] = injection;
 		}

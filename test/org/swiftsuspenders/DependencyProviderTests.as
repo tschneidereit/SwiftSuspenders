@@ -91,7 +91,7 @@ package org.swiftsuspenders
 		[Test]
 		public function injectionTypeOtherRuleReturnsOtherRulesResponse():void
 		{
-			var otherConfig : InjectionRule = new InjectionRule(injector, ClazzExtension);
+			var otherConfig : InjectionRule = new InjectionRule(injector, ClazzExtension, '');
 			otherConfig.setProvider(new ClassProvider(ClazzExtension));
 			const otherRuleProvider : OtherRuleProvider = new OtherRuleProvider(otherConfig);
 			var returnedResponse:Object = otherRuleProvider.apply(null, injector);

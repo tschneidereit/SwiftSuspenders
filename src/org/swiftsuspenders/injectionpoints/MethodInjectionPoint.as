@@ -76,7 +76,7 @@ package org.swiftsuspenders.injectionpoints
 			{
 				var parameterConfig : InjectionPointConfig = _parameterInjectionConfigs[i];
 				var rule : InjectionRule =
-						injector.SsInternal::getRuleForInjectionPointConfig(parameterConfig);
+						injector.SsInternal::getMapping(parameterConfig.mappingId);
 				var injection : Object = rule && rule.apply(targetType, injector);
 				if (injection == null)
 				{
@@ -91,7 +91,7 @@ package org.swiftsuspenders.injectionpoints
 					throw(new InjectorError(
 						'Injector is missing a rule to handle injection into target "' + target +
 						'" of type "' + getQualifiedClassName(targetType) + '". \
-						Target dependency: ' + parameterConfig.typeName +
+						Target dependency: ' + parameterConfig.mappingId +
 						', method: ' + _methodName + ', parameter: ' + (i + 1)
 					));
 				}

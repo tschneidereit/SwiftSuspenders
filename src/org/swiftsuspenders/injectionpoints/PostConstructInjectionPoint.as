@@ -31,6 +31,7 @@ package org.swiftsuspenders.injectionpoints
 		override public function applyInjection(
 				target : Object, targetType : Class, injector : Injector) : void
 		{
+			//TODO: Restore parameter-injection
 			target[_methodName]();
 		}
 	}
