@@ -19,12 +19,14 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.injectionpoints.NoParamsConstructorInjectionPoint;
 	import org.swiftsuspenders.injectionpoints.PostConstructInjectionPoint;
 	import org.swiftsuspenders.injectionpoints.PropertyInjectionPoint;
+	import org.swiftsuspenders.utils.InjectionPointsConfigMap;
 
 	public class DescribeTypeReflector extends ReflectorBase implements Reflector
 	{
 		//----------------------       Private / Protected Properties       ----------------------//
 		private var _currentType : Class;
 		private var _currentFactoryXML : XML;
+		private var _configMap : InjectionPointsConfigMap;
 
 		//----------------------               Public Methods               ----------------------//
 		public function classExtendsOrImplements(classOrClassName : Object,
@@ -65,15 +67,17 @@ package org.swiftsuspenders
             	attribute("type") == getQualifiedClassName(superclass)).length() > 0);
 		}
 
-		public function startReflection(type : Class) : void
+		public function startReflection(type : Class, configMap : InjectionPointsConfigMap) : void
 		{
 			_currentType = type;
+			_configMap = configMap;
 			_currentFactoryXML = describeType(type).factory[0];
 		}
 
 		public function endReflection() : void
 		{
 			_currentType = null;
+			_configMap = null;
 			_currentFactoryXML = null;
 		}
 
@@ -100,7 +104,9 @@ package org.swiftsuspenders
 				createDummyInstance(node, _currentType);
 			}
 			const parameters : Array = gatherMethodParameters(node.parameter, nameArgs);
-			return new ConstructorInjectionPoint(parameters);
+			const requiredParameters : uint = parameters.required;
+			delete parameters.required;
+			return new ConstructorInjectionPoint(parameters, requiredParameters);
 		}
 
 		public function addFieldInjectionPointsToList(
@@ -109,13 +115,12 @@ package org.swiftsuspenders
 			for each (var node : XML in _currentFactoryXML.*.
 					(name() == 'variable' || name() == 'accessor').metadata.(@name == 'Inject'))
 			{
-				var config : InjectionPointConfig = new InjectionPointConfig(
-						node.parent().@type,
-						node.arg.(@key == 'name').attribute('value'),
-						getOptionalFlagFromXMLNode(node));
+				var config : InjectionPointConfig =
+						_configMap.getInjectionPointConfig(node.parent().@type,
+						node.arg.(@key == 'name').attribute('value'));
 				var propertyName : String = node.parent().@name;
-				var injectionPoint : PropertyInjectionPoint =
-						new PropertyInjectionPoint(config, propertyName);
+				var injectionPoint : PropertyInjectionPoint = new PropertyInjectionPoint(
+						config, propertyName, getOptionalFlagFromXMLNode(node));
 				lastInjectionPoint.next = injectionPoint;
 				lastInjectionPoint = injectionPoint;
 			}
@@ -130,8 +135,11 @@ package org.swiftsuspenders
 				const nameArgs : XMLList = node.arg.(@key == 'name');
 				const parameters : Array =
 						gatherMethodParameters(node.parent().parameter, nameArgs);
-				var injectionPoint : MethodInjectionPoint = new MethodInjectionPoint(
-						node.parent().@name, parameters, getOptionalFlagFromXMLNode(node));
+				const requiredParameters : uint = parameters.required;
+				delete parameters.required;
+				var injectionPoint : MethodInjectionPoint =
+						new MethodInjectionPoint(node.parent().@name, parameters,
+								requiredParameters, getOptionalFlagFromXMLNode(node));
 				lastInjectionPoint.next = injectionPoint;
 				lastInjectionPoint = injectionPoint;
 			}
@@ -171,6 +179,7 @@ package org.swiftsuspenders
 		private function gatherMethodParameters(
 				parameterNodes : XMLList, nameArgs : XMLList) : Array
 		{
+			var requiredParameters : uint = 0;
 			const length : uint = parameterNodes.length();
 			const parameters : Array = new Array(length);
 			for (var i : int = 0; i < length; i++)
@@ -196,9 +205,14 @@ package org.swiftsuspenders
 						parameterTypeName = null;
 					}
 				}
-				parameters[i] = new InjectionPointConfig(
-						parameterTypeName, injectionName, optional);
+				if (!optional)
+				{
+					requiredParameters++;
+				}
+				parameters[i] = _configMap.getInjectionPointConfig(
+						parameterTypeName, injectionName);
 			}
+			parameters.required = requiredParameters;
 			return parameters;
 		}
 

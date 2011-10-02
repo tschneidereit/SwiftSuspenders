@@ -12,9 +12,9 @@ package org.swiftsuspenders.injectionpoints
 	public class ConstructorInjectionPoint extends MethodInjectionPoint
 	{
 		//----------------------               Public Methods               ----------------------//
-		public function ConstructorInjectionPoint(parameters : Array)
+		public function ConstructorInjectionPoint(parameters : Array, requiredParameters : uint)
 		{
-			super('ctor', parameters, false);
+			super('ctor', parameters, requiredParameters, false);
 		}
 
 		public function createInstance(type : Class, injector : Injector) : Object
