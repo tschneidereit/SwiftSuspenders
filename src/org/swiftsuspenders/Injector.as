@@ -11,6 +11,8 @@ package org.swiftsuspenders
 	import flash.utils.Dictionary;
 	import flash.utils.getQualifiedClassName;
 
+	import org.swiftsuspenders.dependencyproviders.DependencyProvider;
+
 	import org.swiftsuspenders.injectionpoints.ConstructorInjectionPoint;
 	import org.swiftsuspenders.injectionpoints.InjectionPoint;
 	import org.swiftsuspenders.utils.ClassDescriptor;
@@ -69,8 +71,7 @@ package org.swiftsuspenders
 		 */
 		public function satisfies(type : Class, name : String = '') : Boolean
 		{
-			const  rule : InjectionRule = getMapping(getQualifiedClassName(type) + '|' + name);
-			return rule && rule.hasProvider();
+			return getProvider(getQualifiedClassName(type) + '|' + name) != null;
 		}
 
 		/**
@@ -85,8 +86,7 @@ package org.swiftsuspenders
 		 */
 		public function satisfiesDirectly(type : Class, name : String = '') : Boolean
 		{
-			const rule : InjectionRule = _mappings[getQualifiedClassName(type) + '|' + name];
-			return rule && rule.hasProvider();
+			return providerMappings[getQualifiedClassName(type) + '|' + name] != null;
 		}
 
 		/**
@@ -125,10 +125,10 @@ package org.swiftsuspenders
 		public function getInstance(type : Class, name : String = '') : *
 		{
 			const mappingId : String = getQualifiedClassName(type) + '|' + name;
-			var mapping : InjectionRule = getMapping(mappingId);
-			if (mapping && mapping.hasProvider())
+			const provider : DependencyProvider = getProvider(mappingId);
+			if (provider)
 			{
-				return mapping.apply(type, this);
+				return provider.apply(type, this);
 			}
 			if (name)
 			{
@@ -171,16 +171,6 @@ package org.swiftsuspenders
 			INJECTION_POINTS_CACHE = new Dictionary(true);
 		}
 
-		SsInternal function getAncestorMapping(mappingId : String) : InjectionRule
-		{
-			return _parentInjector ? _parentInjector.getMapping(mappingId) : null;
-		}
-
-		SsInternal function getMapping(mappingId : String) : InjectionRule
-		{
-			return _mappings[mappingId] || getAncestorMapping(mappingId);
-		}
-
 		SsInternal function instantiateUnmapped(type : Class) : Object
 		{
 			var ctorInjectionPoint : ConstructorInjectionPoint =
@@ -211,6 +201,20 @@ package org.swiftsuspenders
 				injectionPoint.applyInjection(target, targetType, this);
 				injectionPoint = injectionPoint.next;
 			}
+		}
+
+		private function getProvider(mappingId : String) : DependencyProvider
+		{
+			var injector : Injector = this;
+			while (injector)
+			{
+				if (injector.providerMappings[mappingId])
+				{
+					return injector.providerMappings[mappingId];
+				}
+				injector = injector.parentInjector;
+			}
+			return null;
 		}
 	}
 }
