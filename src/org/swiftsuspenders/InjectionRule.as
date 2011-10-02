@@ -20,6 +20,7 @@ package org.swiftsuspenders
 	{
 		//----------------------       Private / Protected Properties       ----------------------//
 		protected var _requestClass : Class;
+		protected var _mappingId : String;
 		protected var _injector : Injector;
 
 		private var _creatingInjector : Injector;
@@ -32,10 +33,12 @@ package org.swiftsuspenders
 
 
 		//----------------------               Public Methods               ----------------------//
-		public function InjectionRule(creatingInjector : Injector, requestClass : Class)
+		public function InjectionRule(
+				creatingInjector : Injector, type : Class, mappingId : String)
 		{
 			_creatingInjector = creatingInjector;
-			_requestClass = requestClass;
+			_requestClass = type;
+			_mappingId = mappingId;
 		}
 
 		/**
@@ -102,7 +105,7 @@ package org.swiftsuspenders
 			if (_provider != null && provider != null)
 			{
 				//TODO: consider making this throw
-				trace('Warning: Injector already has a rule for ' + describeInjection() + '.\n ' +
+				trace('Warning: Injector already has a rule for ' + _mappingId + '.\n ' +
 						'If you have overwritten this mapping intentionally you can use ' +
 						'"injector.unmap()" prior to your replacement mapping in order to ' +
 						'avoid seeing this message.');
@@ -130,12 +133,7 @@ package org.swiftsuspenders
 		//----------------------         Private / Protected Methods        ----------------------//
 		protected function getParentRule(injector : Injector) : InjectionRule
 		{
-			return (_injector || injector).SsInternal::getAncestorMapping(_requestClass);
-		}
-
-		protected function describeInjection() : String
-		{
-			return 'type "' + getQualifiedClassName(_requestClass) + '"';
+			return (_injector || injector).SsInternal::getAncestorMapping(_mappingId);
 		}
 	}
 }

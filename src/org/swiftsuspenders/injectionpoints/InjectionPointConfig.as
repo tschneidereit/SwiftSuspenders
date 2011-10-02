@@ -10,8 +10,7 @@ package org.swiftsuspenders.injectionpoints
 	public class InjectionPointConfig
 	{
 		//----------------------              Public Properties             ----------------------//
-		public var typeName : String;
-		public var injectionName : String;
+		public var mappingId : String;
 		public var optional : Boolean;
 
 
@@ -19,8 +18,7 @@ package org.swiftsuspenders.injectionpoints
 		public function InjectionPointConfig(
 				typeName : String, injectionName : String, optional : Boolean)
 		{
-			this.typeName = typeName;
-			this.injectionName = injectionName;
+			this.mappingId = typeName + '|' + (injectionName || '');
 			this.optional = optional;
 		}
 	}

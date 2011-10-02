@@ -29,30 +29,30 @@ package org.swiftsuspenders
         private var _applicationDomain:ApplicationDomain;
 		private var _classDescriptor : ClassDescriptor;
 		private var _mappings : Dictionary;
-		private var _namedInjectionsManager : NamedInjectionsManager;
 
 
 		//----------------------               Public Methods               ----------------------//
 		public function Injector()
 		{
 			_mappings = new Dictionary();
-			_namedInjectionsManager = new NamedInjectionsManager(this);
 			_classDescriptor = new ClassDescriptor(INJECTION_POINTS_CACHE);
 			_applicationDomain = ApplicationDomain.currentDomain;
 		}
 
-		public function map(dependency : Class) : InjectionRule
+		public function map(type : Class, name : String = '') : InjectionRule
 		{
-			return _mappings[dependency] ||= createRule(dependency);
+			const mappingId : String = getQualifiedClassName(type) + '|' + name;
+			return _mappings[mappingId] ||= createRule(type, mappingId);
 		}
 
-		public function unmap(dependency : Class) : void
+		public function unmap(type : Class, name : String = '') : void
 		{
-			var rule : InjectionRule = _mappings[dependency];
+			const mappingId : String = getQualifiedClassName(type) + '|' + name;
+			var rule : InjectionRule = _mappings[mappingId];
 			if (!rule)
 			{
 				throw new InjectorError('Error while removing an injector mapping: ' +
-						'No rule defined for dependency ' + getQualifiedClassName(dependency));
+						'No rule defined for dependency ' + mappingId);
 			}
 			rule.setProvider(null);
 		}
@@ -61,12 +61,12 @@ package org.swiftsuspenders
 		 * Indicates whether the injector can supply a response for the specified dependency either
 		 * by using a rule mapped directly on itself or by querying one of its ancestor injectors.
 		 *
-		 * @param dependency The dependency under query
+		 * @param type The dependency under query
 		 * @return <code>true</code> if the dependency can be satisfied, <code>false</code> if not
 		 */
-		public function satisfies(dependency : Class) : Boolean
+		public function satisfies(type : Class, name : String = '') : Boolean
 		{
-			var rule : InjectionRule = getMapping(dependency);
+			const  rule : InjectionRule = getMapping(getQualifiedClassName(type) + '|' + name);
 			return rule && rule.hasProvider();
 		}
 
@@ -77,12 +77,12 @@ package org.swiftsuspenders
 		 * In contrast to <code>satisfies</code>, <code>satisfiesDirectly</code> only informs
 		 * about rules mapped directly on itself, without querying its ancestor injectors.
 		 *
-		 * @param dependency The dependency under query
+		 * @param type The dependency under query
 		 * @return <code>true</code> if the dependency can be satisfied, <code>false</code> if not
 		 */
-		public function satisfiesDirectly(dependency : Class) : Boolean
+		public function satisfiesDirectly(type : Class, name : String = '') : Boolean
 		{
-			var rule : InjectionRule = _mappings[dependency];
+			const rule : InjectionRule = _mappings[getQualifiedClassName(type) + '|' + name];
 			return rule && rule.hasProvider();
 		}
 
@@ -99,13 +99,14 @@ package org.swiftsuspenders
 		 * @return The rule mapped to the specified dependency class
 		 * @throws InjectorError when no rule was found for the specified dependency
 		 */
-		public function getRule(type : Class) : InjectionRule
+		public function getRule(type : Class, name : String = '') : InjectionRule
 		{
-			var rule : InjectionRule = _mappings[type];
+			const mappingId : String = getQualifiedClassName(type) + '|' + name;
+			var rule : InjectionRule = _mappings[mappingId];
 			if (!rule)
 			{
 				throw new InjectorError('Error while retrieving an injector mapping: ' +
-						'No rule defined for dependency ' + getQualifiedClassName(type));
+						'No rule defined for dependency ' + mappingId);
 			}
 			return rule;
 		}
@@ -118,12 +119,18 @@ package org.swiftsuspenders
 			applyInjectionPoints(target, type, ctorInjectionPoint.next);
 		}
 
-		public function getInstance(type : Class) : *
+		public function getInstance(type : Class, name : String = '') : *
 		{
-			var mapping : InjectionRule = getMapping(type);
+			const mappingId : String = getQualifiedClassName(type) + '|' + name;
+			var mapping : InjectionRule = getMapping(mappingId);
 			if (mapping && mapping.hasProvider())
 			{
 				return mapping.apply(type, this);
+			}
+			if (name)
+			{
+				throw new InjectorError('No mapping found for request ' + mappingId
+						+ '. getInstance only creates an unmapped instance if no name is given.');
 			}
 			return instantiateUnmapped(type);
 		}
@@ -154,12 +161,6 @@ package org.swiftsuspenders
 			return _applicationDomain;
 		}
 
-		public function usingName(name : String) : NamedInjectionsManager
-		{
-			_namedInjectionsManager.setRequestName(name);
-			return _namedInjectionsManager;
-		}
-
 
 		//----------------------             Internal Methods               ----------------------//
 		SsInternal static function purgeInjectionPointsCache() : void
@@ -167,24 +168,14 @@ package org.swiftsuspenders
 			INJECTION_POINTS_CACHE = new Dictionary(true);
 		}
 
-		SsInternal function getAncestorMapping(requestType : Class) : InjectionRule
+		SsInternal function getAncestorMapping(mappingId : String) : InjectionRule
 		{
-			if (_parentInjector)
-			{
-				return _parentInjector.getMapping(requestType);
-			}
-			return null;
+			return _parentInjector ? _parentInjector.getMapping(mappingId) : null;
 		}
 
-		SsInternal function getRuleForInjectionPointConfig(
-				config : InjectionPointConfig) : InjectionRule
+		SsInternal function getMapping(mappingId : String) : InjectionRule
 		{
-			if (config.injectionName)
-			{
-				_namedInjectionsManager.setRequestName(config.injectionName);
-				return _namedInjectionsManager.getMappingByName(config.typeName);
-			}
-			return getMappingByName(config.typeName);
+			return _mappings[mappingId] || getAncestorMapping(mappingId);
 		}
 
 		SsInternal function instantiateUnmapped(type : Class) : Object
@@ -203,34 +194,13 @@ package org.swiftsuspenders
 
 
 		//----------------------         Private / Protected Methods        ----------------------//
-		private function createRule(requestType : Class) : InjectionRule
+		private function createRule(type : Class, mappingId : String) : InjectionRule
 		{
-			const rule : InjectionRule = new InjectionRule(this, requestType);
-			_mappings[getQualifiedClassName(requestType)] = rule;
-			return rule;
+			return new InjectionRule(this, type, mappingId);
 		}
 
-		private function getMapping(requestType : Class) : InjectionRule
-		{
-			return _mappings[requestType] || getAncestorMapping(requestType);
-		}
-
-		private function getMappingByName(requestTypeName : String) : InjectionRule
-		{
-			return _mappings[requestTypeName] || getAncestorMappingByName(requestTypeName);
-		}
-
-		private function getAncestorMappingByName(requestTypeName : String) : InjectionRule
-		{
-			if (_parentInjector)
-			{
-				return _parentInjector.getMappingByName(requestTypeName);
-			}
-			return null;
-		}
-
-		private function applyInjectionPoints(target : Object, targetType : Class,
-				injectionPoint : InjectionPoint) : void
+		private function applyInjectionPoints(
+				target : Object, targetType : Class, injectionPoint : InjectionPoint) : void
 		{
 			while (injectionPoint)
 			{

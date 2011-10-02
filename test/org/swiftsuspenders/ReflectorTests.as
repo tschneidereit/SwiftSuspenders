@@ -190,7 +190,7 @@ package org.swiftsuspenders
 			var injectionPoint : ConstructorInjectionPoint = reflector.getCtorInjectionPoint();
 			Assert.assertTrue('reflector-returned injectionPoint is ctor injectionPoint',
 					injectionPoint is ConstructorInjectionPoint);
-			injector.usingName('namedDependency').map(Clazz).toType(Clazz);
+			injector.map(Clazz, 'namedDependency').toType(Clazz);
 			var injectee:OneNamedParameterConstructorInjectee =
 					OneNamedParameterConstructorInjectee(injectionPoint
 							.createInstance(OneNamedParameterConstructorInjectee, injector));
@@ -217,7 +217,7 @@ package org.swiftsuspenders
 			const ctorInjectionPoint : InjectionPoint = reflector.getCtorInjectionPoint();
 			const fieldInjectionPoint : InjectionPoint =
 					reflector.addFieldInjectionPointsToList(ctorInjectionPoint);
-			injector.usingName('Name').map(Interface).toType(Clazz);
+			injector.map(Interface, 'Name').toType(Clazz);
 			var injectee : NamedInterfaceInjectee = new NamedInterfaceInjectee();
 			fieldInjectionPoint.applyInjection(injectee, NamedInterfaceInjectee, injector);
 			Assert.assertNotNull(
@@ -260,7 +260,7 @@ package org.swiftsuspenders
 			const methodInjectionPoint : InjectionPoint =
 					reflector.addMethodInjectionPointsToList(ctorInjectionPoint);
 			var injectee : OneNamedParameterMethodInjectee = new OneNamedParameterMethodInjectee();
-			injector.usingName('namedDep').map(Clazz);
+			injector.map(Clazz, 'namedDep');
 			methodInjectionPoint.applyInjection(injectee, OneNamedParameterMethodInjectee, injector);
 			Assert.assertNotNull("Instance of Clazz should have been injected for Clazz dependency",
 					injectee.getDependency());
@@ -274,8 +274,8 @@ package org.swiftsuspenders
 			const methodInjectionPoint : InjectionPoint =
 					reflector.addMethodInjectionPointsToList(ctorInjectionPoint);
 			var injectee : TwoNamedParametersMethodInjectee = new TwoNamedParametersMethodInjectee();
-			injector.usingName('namedDep').map(Clazz);
-			injector.usingName('namedDep2').map(Interface).toType(Clazz);
+			injector.map(Clazz, 'namedDep');
+			injector.map(Interface, 'namedDep2').toType(Clazz);
 			methodInjectionPoint.applyInjection(injectee, TwoNamedParametersMethodInjectee, injector);
 			Assert.assertNotNull("Instance of Clazz should have been injected for Clazz dependency",
 					injectee.getDependency());
