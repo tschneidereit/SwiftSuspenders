@@ -8,7 +8,9 @@
 package org.swiftsuspenders
 {
 	import flexunit.framework.Assert;
-	
+
+	import org.swiftsuspenders.dependencyproviders.OtherRuleProvider;
+
 	import org.swiftsuspenders.support.injectees.ClassInjectee;
 	import org.swiftsuspenders.support.injectees.childinjectors.InjectorCopyRule;
 	import org.swiftsuspenders.support.injectees.childinjectors.InjectorInjectee;
@@ -181,7 +183,7 @@ package org.swiftsuspenders
 		[Test]
 		public function injectorCanCreateChildInjectorDuringInjection():void
 		{
-			injector.map(Injector).toRule(new InjectorCopyRule(injector));
+			injector.map(Injector).setProvider(new OtherRuleProvider(new InjectorCopyRule(injector)));
 			injector.map(InjectorInjectee).toType(InjectorInjectee);
 			var injectee : InjectorInjectee = injector.getInstance(InjectorInjectee);
 			Assert.assertNotNull('Injection has been applied to injectorInjectee', injectee.injector);
