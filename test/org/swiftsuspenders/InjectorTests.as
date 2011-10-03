@@ -572,5 +572,32 @@ package org.swiftsuspenders
 					injector.getInstance(OptionalOneRequiredParameterMethodInjectee);
 			Assert.assertNull("injectee mustn\'t contain Clazz instance", injectee.getDependency());
 		}
+
+		[Test]
+		public function softMappingIsUsedIfNoParentInjectorAvailable() : void
+		{
+			injector.map(Interface).toType(Clazz).soft();
+			Assert.assertNotNull(injector.getInstance(Interface));
+		}
+
+		[Test]
+		public function parentMappingIsUsedInsteadOfSoftChildMapping() : void
+		{
+			const childInjector : Injector = injector.createChildInjector();
+			injector.map(Interface).toType(Clazz);
+			childInjector.map(Interface).toType(Clazz2).soft();
+			Assert.assertEquals(Clazz, childInjector.getInstance(Interface)['constructor']);
+		}
+
+		[Test]
+		public function callingHardTurnsSoftMappingsIntoStrongOnes() : void
+		{
+			const childInjector : Injector = injector.createChildInjector();
+			injector.map(Interface).toType(Clazz);
+			childInjector.map(Interface).toType(Clazz2).soft();
+			Assert.assertEquals(Clazz, childInjector.getInstance(Interface)['constructor']);
+			childInjector.map(Interface).toType(Clazz2).strong();
+			Assert.assertEquals(Clazz2, childInjector.getInstance(Interface)['constructor']);
+		}
 	}
 }

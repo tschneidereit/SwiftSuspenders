@@ -12,21 +12,18 @@ package org.swiftsuspenders.dependencyproviders
 	public class SoftDependencyProvider implements DependencyProvider
 	{
 		//----------------------              Public Properties             ----------------------//
-
-
-		//----------------------       Private / Protected Properties       ----------------------//
-		private var _provider : DependencyProvider;
+		public var provider : DependencyProvider;
 
 
 		//----------------------               Public Methods               ----------------------//
 		public function SoftDependencyProvider(provider : DependencyProvider)
 		{
-			_provider = provider;
+			this.provider = provider;
 		}
 
 		public function apply(targetType : Class, activeInjector : Injector) : Object
 		{
-			return _provider.apply(targetType, activeInjector);
+			return provider.apply(targetType, activeInjector);
 		}
 	}
 }

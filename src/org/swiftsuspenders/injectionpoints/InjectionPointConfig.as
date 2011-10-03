@@ -36,9 +36,10 @@ package org.swiftsuspenders.injectionpoints
 						injector.SsInternal::providerMappings[mappingId];
 				if (provider)
 				{
-					if (!provider is SoftDependencyProvider)
+					if (provider is SoftDependencyProvider)
 					{
 						softProvider = provider;
+						injector = injector.parentInjector;
 						continue;
 					}
 					return provider.apply(targetType, usingInjector);

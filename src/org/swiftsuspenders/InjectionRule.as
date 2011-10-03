@@ -12,6 +12,7 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.dependencyproviders.InjectorUsingProvider;
 	import org.swiftsuspenders.dependencyproviders.OtherRuleProvider;
 	import org.swiftsuspenders.dependencyproviders.SingletonProvider;
+	import org.swiftsuspenders.dependencyproviders.SoftDependencyProvider;
 	import org.swiftsuspenders.dependencyproviders.ValueProvider;
 	import org.swiftsuspenders.injectionpoints.InjectionPointConfig;
 	import org.swiftsuspenders.utils.SsInternal;
@@ -19,22 +20,22 @@ package org.swiftsuspenders
 	public class InjectionRule
 	{
 		//----------------------       Private / Protected Properties       ----------------------//
-		private var _requestClass : Class;
+		private var _type : Class;
 		private var _mappingId : String;
-		private var _injector : Injector;
-
-		private var _creatingInjector : Injector;
 		private var _config : InjectionPointConfig;
+		private var _creatingInjector : Injector;
 		private var _defaultProviderSet : Boolean;
+
+		private var _overridingInjector : Injector;
+		private var _soft : Boolean;
 
 
 		//----------------------               Public Methods               ----------------------//
-		public function InjectionRule(
-				creatingInjector : Injector, type : Class, mappingId : String,
+		public function InjectionRule(creatingInjector : Injector, type : Class, mappingId : String,
 				config : InjectionPointConfig)
 		{
 			_creatingInjector = creatingInjector;
-			_requestClass = type;
+			_type = type;
 			_mappingId = mappingId;
 			_config = config;
 			_defaultProviderSet = true;
@@ -46,42 +47,37 @@ package org.swiftsuspenders
 		 * <code>injector.map(Type).toSingleton(Type);<code>. Removes the need to repeat the type.
 		 * @return The <code>DependencyProvider</code> that will be used to satisfy the dependency
 		 */
-		public function asSingleton() : void
+		public function asSingleton() : InjectionRule
 		{
-			toSingleton(_requestClass);
+			toSingleton(_type);
+			return this;
 		}
 
-		public function toType(type : Class) : void
+		public function toType(type : Class) : InjectionRule
 		{
 			setProvider(new ClassProvider(type));
+			return this;
 		}
 
-		public function toSingleton(type : Class) : void
+		public function toSingleton(type : Class) : InjectionRule
 		{
 			setProvider(new SingletonProvider(type, _creatingInjector));
+			return this;
 		}
 
-		public function toValue(value : Object) : void
+		public function toValue(value : Object) : InjectionRule
 		{
 			setProvider(new ValueProvider(value));
+			return this;
 		}
 
-		public function toRule(rule : InjectionRule) : void
+		public function toRule(rule : InjectionRule) : InjectionRule
 		{
 			setProvider(new OtherRuleProvider(rule));
+			return this;
 		}
 
-		public function apply(targetType : Class, injector : Injector) : Object
-		{
-			return _config.apply(targetType, injector);
-		}
-
-		public function hasProvider() : Boolean
-		{
-			return _creatingInjector.SsInternal::providerMappings[_mappingId] != null;
-		}
-
-		public function setProvider(provider : DependencyProvider) : void
+		public function setProvider(provider : DependencyProvider) : InjectionRule
 		{
 			if (hasProvider() && provider != null && !_defaultProviderSet)
 			{
@@ -92,11 +88,42 @@ package org.swiftsuspenders
 						'avoid seeing this message.');
 			}
 			_defaultProviderSet = false;
-			if (_injector)
-			{
-				provider = new InjectorUsingProvider(_injector, provider);
-			}
 			mapProvider(provider);
+			return this;
+		}
+
+		public function soft() : InjectionRule
+		{
+			if (_soft)
+			{
+				return this;
+			}
+			const provider : DependencyProvider = getProvider();
+			_soft = true;
+			mapProvider(provider);
+			return this;
+		}
+
+		public function strong() : InjectionRule
+		{
+			if (!_soft)
+			{
+				return this;
+			}
+			const provider : DependencyProvider = getProvider();
+			_soft = false;
+			mapProvider(provider);
+			return this;
+		}
+
+		public function hasProvider() : Boolean
+		{
+			return _creatingInjector.SsInternal::providerMappings[_mappingId] != null;
+		}
+
+		public function apply(targetType : Class, injector : Injector) : Object
+		{
+			return _config.apply(targetType, injector);
 		}
 
 		/**
@@ -112,34 +139,42 @@ package org.swiftsuspenders
 		 */
 		public function setInjector(injector : Injector) : void
 		{
-			var oldInjector : Injector = _injector;
-			_injector = injector;
+			if (injector == _overridingInjector)
+			{
+				return;
+			}
 			const provider : DependencyProvider = getProvider();
-			if (oldInjector)
-			{
-				if (injector)
-				{
-					InjectorUsingProvider(provider).injector = injector;
-				}
-				else
-				{
-					mapProvider(InjectorUsingProvider(provider).provider);
-				}
-			}
-			else
-			{
-				mapProvider(new InjectorUsingProvider(injector, provider));
-			}
+			_overridingInjector = injector;
+			mapProvider(provider);
 		}
 
 
 		//----------------------         Private / Protected Methods        ----------------------//
 		private function getProvider() : DependencyProvider
 		{
-			return _creatingInjector.SsInternal::providerMappings[_mappingId];
+			var provider : DependencyProvider =
+					_creatingInjector.SsInternal::providerMappings[_mappingId];
+			if (_overridingInjector)
+			{
+				provider = InjectorUsingProvider(provider).provider;
+			}
+			if (_soft)
+			{
+				provider = SoftDependencyProvider(provider).provider;
+			}
+			return provider;
 		}
+		
 		private function mapProvider(provider : DependencyProvider) : void
 		{
+			if (_soft)
+			{
+				provider = new SoftDependencyProvider(provider);
+			}
+			if (_overridingInjector)
+			{
+				provider = new InjectorUsingProvider(_overridingInjector, provider);
+			}
 			_creatingInjector.SsInternal::providerMappings[_mappingId] = provider;
 		}
 	}
