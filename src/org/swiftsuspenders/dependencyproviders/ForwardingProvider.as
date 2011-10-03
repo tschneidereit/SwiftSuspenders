@@ -9,22 +9,21 @@ package org.swiftsuspenders.dependencyproviders
 {
 	import org.swiftsuspenders.Injector;
 
-	public class InjectorUsingProvider extends ForwardingProvider
+	public class ForwardingProvider implements DependencyProvider
 	{
 		//----------------------              Public Properties             ----------------------//
-		public var injector : Injector;
+		public var provider : DependencyProvider;
 
 
 		//----------------------               Public Methods               ----------------------//
-		public function InjectorUsingProvider(injector : Injector, provider : DependencyProvider)
+		public function ForwardingProvider(provider : DependencyProvider)
 		{
-			super(provider);
-			this.injector = injector;
+			this.provider = provider;
 		}
 
-		override public function apply(targetType : Class, activeInjector : Injector) : Object
+		public function apply(targetType : Class, activeInjector : Injector) : Object
 		{
-			return provider.apply(targetType, injector);
+			return provider.apply(targetType, activeInjector);
 		}
 	}
 }
