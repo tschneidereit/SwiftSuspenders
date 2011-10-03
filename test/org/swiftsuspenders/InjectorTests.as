@@ -28,6 +28,7 @@ package org.swiftsuspenders
 
 	import org.hamcrest.assertThat;
 	import org.hamcrest.collection.array;
+	import org.swiftsuspenders.dependencyproviders.OtherRuleProvider;
 
 	import org.swiftsuspenders.support.injectees.ClassInjectee;
 	import org.swiftsuspenders.support.injectees.ComplexClassInjectee;
@@ -416,7 +417,7 @@ package org.swiftsuspenders
 		{
 			var rule : InjectionRule = injector.map(Interface);
 			rule.toSingleton(Clazz);
-			injector.map(Interface2).toRule(rule);
+			injector.map(Interface2).setProvider(new OtherRuleProvider(rule));
 			var injectee:MultipleSingletonsOfSameClassInjectee = injector.getInstance(MultipleSingletonsOfSameClassInjectee);
 			Assert.assertEquals("Instance field 'property1' should be identical to Instance field 'property2'", injectee.property1, injectee.property2);
 		}
@@ -426,9 +427,9 @@ package org.swiftsuspenders
 		{
 			var rule : InjectionRule = injector.map(Interface);
 			rule.toSingleton(Clazz);
-			injector.map(Interface2).toRule(rule);
-			injector.map(Interface, 'name1').toRule(rule);
-			injector.map(Interface2, 'name2').toRule(rule);
+			injector.map(Interface2).setProvider(new OtherRuleProvider(rule));
+			injector.map(Interface, 'name1').setProvider(new OtherRuleProvider(rule));
+			injector.map(Interface2, 'name2').setProvider(new OtherRuleProvider(rule));
 			var injectee:MultipleNamedSingletonsOfSameClassInjectee = injector.getInstance(MultipleNamedSingletonsOfSameClassInjectee);
 			Assert.assertEquals("Instance field 'property1' should be identical to Instance field 'property2'", injectee.property1, injectee.property2);
 			Assert.assertEquals("Instance field 'property1' should be identical to Instance field 'namedProperty1'", injectee.property1, injectee.namedProperty1);

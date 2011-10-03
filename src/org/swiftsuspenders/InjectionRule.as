@@ -71,12 +71,6 @@ package org.swiftsuspenders
 			return this;
 		}
 
-		public function toRule(rule : InjectionRule) : InjectionRule
-		{
-			setProvider(new OtherRuleProvider(rule));
-			return this;
-		}
-
 		public function setProvider(provider : DependencyProvider) : InjectionRule
 		{
 			if (hasProvider() && provider != null && !_defaultProviderSet)
