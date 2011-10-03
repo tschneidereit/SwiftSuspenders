@@ -9,10 +9,9 @@ package org.swiftsuspenders.injectionpoints
 {
 	import org.swiftsuspenders.Injector;
 	import org.swiftsuspenders.dependencyproviders.DependencyProvider;
+	import org.swiftsuspenders.dependencyproviders.LocalOnlyProvider;
 	import org.swiftsuspenders.dependencyproviders.SoftDependencyProvider;
 	import org.swiftsuspenders.utils.SsInternal;
-
-	use namespace SsInternal;
 
 	public class InjectionPointConfig
 	{
@@ -39,6 +38,11 @@ package org.swiftsuspenders.injectionpoints
 					if (provider is SoftDependencyProvider)
 					{
 						softProvider = provider;
+						injector = injector.parentInjector;
+						continue;
+					}
+					if (provider is LocalOnlyProvider && injector !== usingInjector)
+					{
 						injector = injector.parentInjector;
 						continue;
 					}

@@ -7,9 +7,9 @@
 
 package org.swiftsuspenders.dependencyproviders
 {
-	public class SoftDependencyProvider extends ForwardingProvider
+	public class LocalOnlyProvider extends ForwardingProvider
 	{
-		public function SoftDependencyProvider(provider : DependencyProvider)
+		public function LocalOnlyProvider(provider : DependencyProvider)
 		{
 			super(provider);
 		}

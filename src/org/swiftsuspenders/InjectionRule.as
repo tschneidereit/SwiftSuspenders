@@ -9,8 +9,9 @@ package org.swiftsuspenders
 {
 	import org.swiftsuspenders.dependencyproviders.ClassProvider;
 	import org.swiftsuspenders.dependencyproviders.DependencyProvider;
+	import org.swiftsuspenders.dependencyproviders.ForwardingProvider;
 	import org.swiftsuspenders.dependencyproviders.InjectorUsingProvider;
-	import org.swiftsuspenders.dependencyproviders.OtherRuleProvider;
+	import org.swiftsuspenders.dependencyproviders.LocalOnlyProvider;
 	import org.swiftsuspenders.dependencyproviders.SingletonProvider;
 	import org.swiftsuspenders.dependencyproviders.SoftDependencyProvider;
 	import org.swiftsuspenders.dependencyproviders.ValueProvider;
@@ -28,6 +29,7 @@ package org.swiftsuspenders
 
 		private var _overridingInjector : Injector;
 		private var _soft : Boolean;
+		private var _local : Boolean;
 
 
 		//----------------------               Public Methods               ----------------------//
@@ -88,24 +90,39 @@ package org.swiftsuspenders
 
 		public function soft() : InjectionRule
 		{
-			if (_soft)
+			if (!_soft)
 			{
-				return this;
+				const provider : DependencyProvider = getProvider();
+				_soft = true;
+				mapProvider(provider);
 			}
-			const provider : DependencyProvider = getProvider();
-			_soft = true;
-			mapProvider(provider);
 			return this;
 		}
 
 		public function strong() : InjectionRule
 		{
-			if (!_soft)
+			if (_soft)
+			{
+				const provider : DependencyProvider = getProvider();
+				_soft = false;
+				mapProvider(provider);
+			}
+			return this;
+		}
+
+		/**
+		 * Disables sharing the mapping with child injectors of the injector it is defined in
+		 * @return The mapping the method is invoked on, allowing for a fluent usage of the
+		 * different options
+		 */
+		public function local() : InjectionRule
+		{
+			if (_local)
 			{
 				return this;
 			}
 			const provider : DependencyProvider = getProvider();
-			_soft = false;
+			_local = true;
 			mapProvider(provider);
 			return this;
 		}
@@ -148,13 +165,9 @@ package org.swiftsuspenders
 		{
 			var provider : DependencyProvider =
 					_creatingInjector.SsInternal::providerMappings[_mappingId];
-			if (_overridingInjector)
+			while (provider is ForwardingProvider)
 			{
-				provider = InjectorUsingProvider(provider).provider;
-			}
-			if (_soft)
-			{
-				provider = SoftDependencyProvider(provider).provider;
+				provider = ForwardingProvider(provider).provider;
 			}
 			return provider;
 		}
@@ -164,6 +177,10 @@ package org.swiftsuspenders
 			if (_soft)
 			{
 				provider = new SoftDependencyProvider(provider);
+			}
+			if (_local)
+			{
+				provider = new LocalOnlyProvider(provider);
 			}
 			if (_overridingInjector)
 			{
