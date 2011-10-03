@@ -15,6 +15,7 @@ package org.swiftsuspenders
 
 	import org.swiftsuspenders.injectionpoints.ConstructorInjectionPoint;
 	import org.swiftsuspenders.injectionpoints.InjectionPoint;
+	import org.swiftsuspenders.injectionpoints.InjectionPointConfig;
 	import org.swiftsuspenders.utils.ClassDescriptor;
 	import org.swiftsuspenders.utils.SsInternal;
 	import org.swiftsuspenders.utils.getConstructor;
@@ -125,10 +126,12 @@ package org.swiftsuspenders
 		public function getInstance(type : Class, name : String = '') : *
 		{
 			const mappingId : String = getQualifiedClassName(type) + '|' + name;
-			const provider : DependencyProvider = getProvider(mappingId);
-			if (provider)
+			const config : InjectionPointConfig = 
+					_classDescriptor.getInjectionPointConfigById(mappingId);
+			var result : Object = config.apply(type, this);
+			if (result)
 			{
-				return provider.apply(type, this);
+				return result;
 			}
 			if (name)
 			{
