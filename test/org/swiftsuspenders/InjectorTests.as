@@ -615,5 +615,14 @@ package org.swiftsuspenders
 			injector.map(Interface).toType(Clazz).local();
 			childInjector.getInstance(Interface);
 		}
+
+		[Test]
+		public function callingSharedTurnsLocalMappingsIntoSharedOnes() : void
+		{
+			const childInjector : Injector = injector.createChildInjector();
+			injector.map(Interface).toType(Clazz).local();
+			injector.map(Interface).toType(Clazz).shared();
+			Assert.assertNotNull(childInjector.getInstance(Interface));
+		}
 	}
 }

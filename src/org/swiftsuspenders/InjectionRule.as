@@ -127,6 +127,23 @@ package org.swiftsuspenders
 			return this;
 		}
 
+		/**
+		 * Enables sharing the mapping with child injectors of the injector it is defined in
+		 * @return The mapping the method is invoked on, allowing for a fluent usage of the
+		 * different options
+		 */
+		public function shared() : InjectionRule
+		{
+			if (!_local)
+			{
+				return this;
+			}
+			const provider : DependencyProvider = getProvider();
+			_local = false;
+			mapProvider(provider);
+			return this;
+		}
+
 		public function hasProvider() : Boolean
 		{
 			return _creatingInjector.SsInternal::providerMappings[_mappingId] != null;
