@@ -41,10 +41,7 @@ package  org.swiftsuspenders.injectionpoints
 			injector.map(Clazz).toSingleton(Clazz);
 			injector.map(String).toValue(STRING_REFERENCE);
 			
-			var parameters : Array = [
-				new InjectionPointConfig("org.swiftsuspenders.support.types::Clazz|"),
-				new InjectionPointConfig("String|")
-			];
+			var parameters : Array = ["org.swiftsuspenders.support.types::Clazz|","String|"];
 			var injectionPoint:ConstructorInjectionPoint =
 					new ConstructorInjectionPoint(parameters, 2);
 
@@ -60,10 +57,7 @@ package  org.swiftsuspenders.injectionpoints
 		{
 			injector.map(Clazz).toSingleton(Clazz);
 			
-			var parameters : Array = [
-				new InjectionPointConfig("org.swiftsuspenders.support.types::Clazz|"),
-				new InjectionPointConfig("String|")
-			];
+			var parameters : Array = ["org.swiftsuspenders.support.types::Clazz|", "String|"];
 			var injectionPoint:ConstructorInjectionPoint =
 					new ConstructorInjectionPoint(parameters, 0);
 
@@ -80,10 +74,7 @@ package  org.swiftsuspenders.injectionpoints
 		{
 			injector.map(String).toValue(STRING_REFERENCE);
 			
-			var parameters : Array = [
-				new InjectionPointConfig("org.swiftsuspenders.support.types::Clazz|"),
-				new InjectionPointConfig("String|")
-			];
+			var parameters : Array = ["org.swiftsuspenders.support.types::Clazz|", "String|"];
 			var injectionPoint:ConstructorInjectionPoint =
 					new ConstructorInjectionPoint(parameters, 0);
 			

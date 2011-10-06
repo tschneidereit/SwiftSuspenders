@@ -15,24 +15,23 @@ package org.swiftsuspenders.injectionpoints
 	{
 		//----------------------       Private / Protected Properties       ----------------------//
 		private var _propertyName : String;
-		private var _injectionConfig : InjectionPointConfig;
+		private var _mappingId : String;
 		private var _optional : Boolean;
 
 
 		//----------------------               Public Methods               ----------------------//
 		public function PropertyInjectionPoint(
-				config : InjectionPointConfig, propertyName : String, optional : Boolean)
+				mappingId : String, propertyName : String, optional : Boolean)
 		{
 			_propertyName = propertyName;
-			_injectionConfig = config;
+			_mappingId = mappingId;
 			_optional = optional;
 		}
 		
 		override public function applyInjection(
 				target : Object, targetType : Class, injector : Injector) : void
 		{
-			var injection : Object = injector.SsInternal::applyMapping(
-					targetType, _injectionConfig.mappingId);
+			var injection : Object = injector.SsInternal::applyMapping(targetType, _mappingId);
 			if (injection == null)
 			{
 				if (_optional)
@@ -43,7 +42,7 @@ package org.swiftsuspenders.injectionpoints
 						'Injector is missing a rule to handle injection into property "' +
 						_propertyName +
 						'" of object "' + target + '" with type "' + targetType +
-						'". Target dependency: "' + _injectionConfig.mappingId + '"'));
+						'". Target dependency: "' + _mappingId + '"'));
 			}
 			target[_propertyName] = injection;
 		}

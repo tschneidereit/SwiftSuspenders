@@ -41,8 +41,8 @@ package  org.swiftsuspenders.injectionpoints
 			injector.map(Clazz).toSingleton(Clazz);
 			injector.map(Interface).toSingleton(Clazz);
 			var parameters : Array = [
-				new InjectionPointConfig("org.swiftsuspenders.support.types::Clazz|"),
-				new InjectionPointConfig("org.swiftsuspenders.support.types::Interface|")
+				"org.swiftsuspenders.support.types::Clazz|",
+				"org.swiftsuspenders.support.types::Interface|"
 			];
 			var injectionPoint:MethodInjectionPoint =
 					new MethodInjectionPoint("setDependencies", parameters, 2, false);
@@ -58,8 +58,8 @@ package  org.swiftsuspenders.injectionpoints
 			var injectee:OneRequiredOneOptionalPropertyMethodInjectee = new OneRequiredOneOptionalPropertyMethodInjectee();
 			injector.map(Clazz).toSingleton(Clazz);
 			var parameters : Array = [
-				new InjectionPointConfig("org.swiftsuspenders.support.types::Clazz|"),
-				new InjectionPointConfig("org.swiftsuspenders.support.types::Interface|")
+				"org.swiftsuspenders.support.types::Clazz|",
+				"org.swiftsuspenders.support.types::Interface|"
 			];
 			var injectionPoint:MethodInjectionPoint =
 					new MethodInjectionPoint("setDependencies", parameters, 1, false);
@@ -75,9 +75,7 @@ package  org.swiftsuspenders.injectionpoints
 		{
 			var injectee:OptionalOneRequiredParameterMethodInjectee =
 					new OptionalOneRequiredParameterMethodInjectee();
-			var parameters : Array = [
-				new InjectionPointConfig("org.swiftsuspenders.support.types::Clazz|")
-			];
+			var parameters : Array = ["org.swiftsuspenders.support.types::Clazz|"];
 			var injectionPoint:MethodInjectionPoint =
 					new MethodInjectionPoint("setDependency", parameters, 1, true);
 

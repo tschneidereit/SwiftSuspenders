@@ -18,7 +18,7 @@ package org.swiftsuspenders.injectionpoints
 		//----------------------       Private / Protected Properties       ----------------------//
 		private static const _parameterValues : Array = [];
 		
-		protected var _parameterInjectionConfigs : Array;
+		protected var _parameterMappingIDs : Array;
 		protected var _requiredParameters : int;
 
 		private var _isOptional : Boolean;
@@ -30,7 +30,7 @@ package org.swiftsuspenders.injectionpoints
 		                                     requiredParameters : uint, isOptional : Boolean)
 		{
 			_methodName = methodName;
-			_parameterInjectionConfigs = parameters;
+			_parameterMappingIDs = parameters;
 			_requiredParameters = requiredParameters;
 			_isOptional = isOptional;
 		}
@@ -59,14 +59,14 @@ package org.swiftsuspenders.injectionpoints
 		protected function gatherParameterValues(
 				target : Object, targetType : Class, injector : Injector) : Array
 		{
-			var length : int = _parameterInjectionConfigs.length;
+			var length : int = _parameterMappingIDs.length;
 			var parameters : Array = _parameterValues;
 			parameters.length = length;
 			for (var i : int = 0; i < length; i++)
 			{
-				var parameterConfig : InjectionPointConfig = _parameterInjectionConfigs[i];
+				var parameterMappingId : String = _parameterMappingIDs[i];
 				var injection : Object = injector.SsInternal::applyMapping(
-						targetType, parameterConfig.mappingId);
+						targetType, parameterMappingId);
 				if (injection == null)
 				{
 					if (i >= _requiredParameters || _isOptional)
@@ -76,7 +76,7 @@ package org.swiftsuspenders.injectionpoints
 					throw(new InjectorError(
 						'Injector is missing a rule to handle injection into target "' + target +
 						'" of type "' + getQualifiedClassName(targetType) + '". \
-						Target dependency: ' + parameterConfig.mappingId +
+						Target dependency: ' + parameterMappingId +
 						', method: ' + _methodName + ', parameter: ' + (i + 1)
 					));
 				}

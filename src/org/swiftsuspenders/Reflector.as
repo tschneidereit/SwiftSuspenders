@@ -4,7 +4,6 @@ package org.swiftsuspenders
 
 	import org.swiftsuspenders.injectionpoints.ConstructorInjectionPoint;
 	import org.swiftsuspenders.injectionpoints.InjectionPoint;
-	import org.swiftsuspenders.utils.InjectionPointsConfigMap;
 
 	public interface Reflector
 	{
@@ -13,7 +12,7 @@ package org.swiftsuspenders
 		function classExtendsOrImplements(classOrClassName : Object, superclass : Class,
 				application : ApplicationDomain = null) : Boolean;
 
-		function startReflection(type : Class, configMap : InjectionPointsConfigMap) : void;
+		function startReflection(type : Class) : void;
 		function endReflection() : void;
 
 		function getCtorInjectionPoint() : ConstructorInjectionPoint;

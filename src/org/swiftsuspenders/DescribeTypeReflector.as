@@ -14,19 +14,16 @@ package org.swiftsuspenders
 
 	import org.swiftsuspenders.injectionpoints.ConstructorInjectionPoint;
 	import org.swiftsuspenders.injectionpoints.InjectionPoint;
-	import org.swiftsuspenders.injectionpoints.InjectionPointConfig;
 	import org.swiftsuspenders.injectionpoints.MethodInjectionPoint;
 	import org.swiftsuspenders.injectionpoints.NoParamsConstructorInjectionPoint;
 	import org.swiftsuspenders.injectionpoints.PostConstructInjectionPoint;
 	import org.swiftsuspenders.injectionpoints.PropertyInjectionPoint;
-	import org.swiftsuspenders.utils.InjectionPointsConfigMap;
 
 	public class DescribeTypeReflector extends ReflectorBase implements Reflector
 	{
 		//----------------------       Private / Protected Properties       ----------------------//
 		private var _currentType : Class;
 		private var _currentFactoryXML : XML;
-		private var _configMap : InjectionPointsConfigMap;
 
 		//----------------------               Public Methods               ----------------------//
 		public function classExtendsOrImplements(classOrClassName : Object,
@@ -67,17 +64,15 @@ package org.swiftsuspenders
             	attribute("type") == getQualifiedClassName(superclass)).length() > 0);
 		}
 
-		public function startReflection(type : Class, configMap : InjectionPointsConfigMap) : void
+		public function startReflection(type : Class) : void
 		{
 			_currentType = type;
-			_configMap = configMap;
 			_currentFactoryXML = describeType(type).factory[0];
 		}
 
 		public function endReflection() : void
 		{
 			_currentType = null;
-			_configMap = null;
 			_currentFactoryXML = null;
 		}
 
@@ -115,12 +110,11 @@ package org.swiftsuspenders
 			for each (var node : XML in _currentFactoryXML.*.
 					(name() == 'variable' || name() == 'accessor').metadata.(@name == 'Inject'))
 			{
-				var config : InjectionPointConfig =
-						_configMap.getInjectionPointConfig(node.parent().@type,
-						node.arg.(@key == 'name').attribute('value'));
+				var mappingId : String =
+						node.parent().@type + '|' + node.arg.(@key == 'name').attribute('value');
 				var propertyName : String = node.parent().@name;
-				var injectionPoint : PropertyInjectionPoint = new PropertyInjectionPoint(
-						config, propertyName, getOptionalFlagFromXMLNode(node));
+				var injectionPoint : PropertyInjectionPoint = new PropertyInjectionPoint(mappingId,
+						propertyName, getOptionalFlagFromXMLNode(node));
 				lastInjectionPoint.next = injectionPoint;
 				lastInjectionPoint = injectionPoint;
 			}
@@ -209,8 +203,7 @@ package org.swiftsuspenders
 				{
 					requiredParameters++;
 				}
-				parameters[i] = _configMap.getInjectionPointConfig(
-						parameterTypeName, injectionName);
+				parameters[i] = parameterTypeName + '|' + injectionName;
 			}
 			parameters.required = requiredParameters;
 			return parameters;
