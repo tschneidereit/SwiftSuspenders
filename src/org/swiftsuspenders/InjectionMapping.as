@@ -53,23 +53,23 @@ package org.swiftsuspenders
 
 		public function toType(type : Class) : InjectionMapping
 		{
-			setProvider(new ClassProvider(type));
+			toProvider(new ClassProvider(type));
 			return this;
 		}
 
 		public function toSingleton(type : Class) : InjectionMapping
 		{
-			setProvider(new SingletonProvider(type, _creatingInjector));
+			toProvider(new SingletonProvider(type, _creatingInjector));
 			return this;
 		}
 
 		public function toValue(value : Object) : InjectionMapping
 		{
-			setProvider(new ValueProvider(value));
+			toProvider(new ValueProvider(value));
 			return this;
 		}
 
-		public function setProvider(provider : DependencyProvider) : InjectionMapping
+		public function toProvider(provider : DependencyProvider) : InjectionMapping
 		{
 			if (hasProvider() && provider != null && !_defaultProviderSet)
 			{

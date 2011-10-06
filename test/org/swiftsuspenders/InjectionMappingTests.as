@@ -65,7 +65,7 @@ package org.swiftsuspenders
 		public function sameNamedSingletonIsReturnedOnSecondResponse():void
 		{
 			var config : InjectionMapping = new InjectionMapping(injector, Clazz, "named");
-			config.setProvider(new SingletonProvider(Clazz, injector));
+			config.toProvider(new SingletonProvider(Clazz, injector));
 			var returnedResponse:Object = config.apply(null, injector);
 			var secondResponse:Object = config.apply(null, injector);
 
@@ -76,10 +76,10 @@ package org.swiftsuspenders
 		public function callingSetProviderBetweenUsagesChangesResponse():void
 		{
 			var config : InjectionMapping = new InjectionMapping(injector, Clazz, '');
-			config.setProvider(new SingletonProvider(Clazz, injector));
+			config.toProvider(new SingletonProvider(Clazz, injector));
 			var returnedResponse:Object = config.apply(null, injector);
-			config.setProvider(null);
-			config.setProvider(new ClassProvider(Clazz));
+			config.toProvider(null);
+			config.toProvider(new ClassProvider(Clazz));
 			var secondResponse:Object = config.apply(null, injector);
 
 			Assert.assertFalse('First result doesn\'t equal second result',
