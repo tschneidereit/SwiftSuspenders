@@ -28,6 +28,7 @@ package org.swiftsuspenders
 	
 	import org.swiftsuspenders.support.injectees.ClassInjectee;
 	import org.swiftsuspenders.support.injectees.ComplexClassInjectee;
+	import org.swiftsuspenders.support.injectees.InnerTypeInjectee;
 	import org.swiftsuspenders.support.injectees.InterfaceInjectee;
 	import org.swiftsuspenders.support.injectees.MixedParametersConstructorInjectee;
 	import org.swiftsuspenders.support.injectees.MixedParametersMethodInjectee;
@@ -444,6 +445,14 @@ package org.swiftsuspenders
 //			Assert.assertEquals("Instance field 'property1' should be identical to Instance field 'property2'", injectee.property1, injectee.property2);
 //			Assert.assertEquals("Instance field 'property1' should be identical to Instance field 'namedProperty1'", injectee.property1, injectee.namedProperty1);
 //			Assert.assertEquals("Instance field 'property1' should be identical to Instance field 'namedProperty2'", injectee.property1, injectee.namedProperty2);
+		}
+
+		[Test]
+		public function performInjectionWithInnerType () : void
+		{
+			injector.mapClass(InnerTypeInjectee.innerType, InnerTypeInjectee.innerType);
+			var innerTypeInjectee:InnerTypeInjectee = injector.instantiate(InnerTypeInjectee);
+			Assert.assertNotNull("Inner type should have been injected as well as public type", innerTypeInjectee.property);
 		}
 
 		[Test]
