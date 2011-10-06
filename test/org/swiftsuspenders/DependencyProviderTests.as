@@ -92,7 +92,7 @@ package org.swiftsuspenders
 		public function injectionTypeOtherMappingReturnsOtherMappingsResponse():void
 		{
 			var otherConfig : InjectionMapping = new InjectionMapping(injector, ClazzExtension, '');
-			otherConfig.setProvider(new ClassProvider(ClazzExtension));
+			otherConfig.toProvider(new ClassProvider(ClazzExtension));
 			const otherMappingProvider : OtherMappingProvider = new OtherMappingProvider(otherConfig);
 			var returnedResponse:Object = otherMappingProvider.apply(null, injector);
 
@@ -104,7 +104,7 @@ package org.swiftsuspenders
 		public function dependencyProviderHasAccessToTargetType() : void
 		{
 			const provider : ClassNameStoringProvider = new ClassNameStoringProvider();
-			injector.map(Clazz).setProvider(provider);
+			injector.map(Clazz).toProvider(provider);
 			injector.getInstance(ClassInjectee);
 			
 			Assert.assertEquals('className stored in provider is fqn of ClassInjectee',

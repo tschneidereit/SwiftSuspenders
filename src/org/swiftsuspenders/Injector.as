@@ -60,7 +60,7 @@ package org.swiftsuspenders
 				throw new InjectorError('Error while removing an injector mapping: ' +
 						'No mapping defined for dependency ' + mappingId);
 			}
-			mapping.setProvider(null);
+			mapping.toProvider(null);
 		}
 
 		/**

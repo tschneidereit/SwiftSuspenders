@@ -417,7 +417,7 @@ package org.swiftsuspenders
 		{
 			var mapping : InjectionMapping = injector.map(Interface);
 			mapping.toSingleton(Clazz);
-			injector.map(Interface2).setProvider(new OtherMappingProvider(mapping));
+			injector.map(Interface2).toProvider(new OtherMappingProvider(mapping));
 			var injectee:MultipleSingletonsOfSameClassInjectee = injector.getInstance(MultipleSingletonsOfSameClassInjectee);
 			Assert.assertEquals("Instance field 'property1' should be identical to Instance field 'property2'", injectee.property1, injectee.property2);
 		}
@@ -427,9 +427,9 @@ package org.swiftsuspenders
 		{
 			var mapping : InjectionMapping = injector.map(Interface);
 			mapping.toSingleton(Clazz);
-			injector.map(Interface2).setProvider(new OtherMappingProvider(mapping));
-			injector.map(Interface, 'name1').setProvider(new OtherMappingProvider(mapping));
-			injector.map(Interface2, 'name2').setProvider(new OtherMappingProvider(mapping));
+			injector.map(Interface2).toProvider(new OtherMappingProvider(mapping));
+			injector.map(Interface, 'name1').toProvider(new OtherMappingProvider(mapping));
+			injector.map(Interface2, 'name2').toProvider(new OtherMappingProvider(mapping));
 			var injectee:MultipleNamedSingletonsOfSameClassInjectee = injector.getInstance(MultipleNamedSingletonsOfSameClassInjectee);
 			Assert.assertEquals("Instance field 'property1' should be identical to Instance field 'property2'", injectee.property1, injectee.property2);
 			Assert.assertEquals("Instance field 'property1' should be identical to Instance field 'namedProperty1'", injectee.property1, injectee.namedProperty1);
