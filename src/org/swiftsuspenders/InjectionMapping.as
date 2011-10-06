@@ -17,7 +17,7 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.dependencyproviders.ValueProvider;
 	import org.swiftsuspenders.utils.SsInternal;
 
-	public class InjectionRule
+	public class InjectionMapping
 	{
 		//----------------------       Private / Protected Properties       ----------------------//
 		private var _type : Class;
@@ -31,7 +31,7 @@ package org.swiftsuspenders
 
 
 		//----------------------               Public Methods               ----------------------//
-		public function InjectionRule(creatingInjector : Injector, type : Class, mappingId : String)
+		public function InjectionMapping(creatingInjector : Injector, type : Class, mappingId : String)
 		{
 			_creatingInjector = creatingInjector;
 			_type = type;
@@ -45,36 +45,36 @@ package org.swiftsuspenders
 		 * <code>injector.map(Type).toSingleton(Type);<code>. Removes the need to repeat the type.
 		 * @return The <code>DependencyProvider</code> that will be used to satisfy the dependency
 		 */
-		public function asSingleton() : InjectionRule
+		public function asSingleton() : InjectionMapping
 		{
 			toSingleton(_type);
 			return this;
 		}
 
-		public function toType(type : Class) : InjectionRule
+		public function toType(type : Class) : InjectionMapping
 		{
 			setProvider(new ClassProvider(type));
 			return this;
 		}
 
-		public function toSingleton(type : Class) : InjectionRule
+		public function toSingleton(type : Class) : InjectionMapping
 		{
 			setProvider(new SingletonProvider(type, _creatingInjector));
 			return this;
 		}
 
-		public function toValue(value : Object) : InjectionRule
+		public function toValue(value : Object) : InjectionMapping
 		{
 			setProvider(new ValueProvider(value));
 			return this;
 		}
 
-		public function setProvider(provider : DependencyProvider) : InjectionRule
+		public function setProvider(provider : DependencyProvider) : InjectionMapping
 		{
 			if (hasProvider() && provider != null && !_defaultProviderSet)
 			{
 				//TODO: consider making this throw
-				trace('Warning: Injector already has a rule for ' + _mappingId + '.\n ' +
+				trace('Warning: Injector already has a mapping for ' + _mappingId + '.\n ' +
 						'If you have overwritten this mapping intentionally you can use ' +
 						'"injector.unmap()" prior to your replacement mapping in order to ' +
 						'avoid seeing this message.');
@@ -84,7 +84,7 @@ package org.swiftsuspenders
 			return this;
 		}
 
-		public function soft() : InjectionRule
+		public function soft() : InjectionMapping
 		{
 			if (!_soft)
 			{
@@ -95,7 +95,7 @@ package org.swiftsuspenders
 			return this;
 		}
 
-		public function strong() : InjectionRule
+		public function strong() : InjectionMapping
 		{
 			if (_soft)
 			{
@@ -111,7 +111,7 @@ package org.swiftsuspenders
 		 * @return The mapping the method is invoked on, allowing for a fluent usage of the
 		 * different options
 		 */
-		public function local() : InjectionRule
+		public function local() : InjectionMapping
 		{
 			if (_local)
 			{
@@ -128,7 +128,7 @@ package org.swiftsuspenders
 		 * @return The mapping the method is invoked on, allowing for a fluent usage of the
 		 * different options
 		 */
-		public function shared() : InjectionRule
+		public function shared() : InjectionMapping
 		{
 			if (!_local)
 			{
@@ -159,7 +159,7 @@ package org.swiftsuspenders
 		 * allowing the use of a different Injector from a certain point in the constructed object
 		 * graph on.
 		 *
-		 * @param injector - The Injector to use in the rule. Set to null to reset.
+		 * @param injector - The Injector to use in the mapping. Set to null to reset.
 		 */
 		public function setInjector(injector : Injector) : void
 		{

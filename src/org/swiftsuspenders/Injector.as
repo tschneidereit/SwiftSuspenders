@@ -45,27 +45,27 @@ package org.swiftsuspenders
 			_applicationDomain = ApplicationDomain.currentDomain;
 		}
 
-		public function map(type : Class, name : String = '') : InjectionRule
+		public function map(type : Class, name : String = '') : InjectionMapping
 		{
 			const mappingId : String = getQualifiedClassName(type) + '|' + name;
-			return _mappings[mappingId] ||= createRule(type, mappingId);
+			return _mappings[mappingId] ||= createMapping(type, mappingId);
 		}
 
 		public function unmap(type : Class, name : String = '') : void
 		{
 			const mappingId : String = getQualifiedClassName(type) + '|' + name;
-			var rule : InjectionRule = _mappings[mappingId];
-			if (!rule)
+			var mapping : InjectionMapping = _mappings[mappingId];
+			if (!mapping)
 			{
 				throw new InjectorError('Error while removing an injector mapping: ' +
-						'No rule defined for dependency ' + mappingId);
+						'No mapping defined for dependency ' + mappingId);
 			}
-			rule.setProvider(null);
+			mapping.setProvider(null);
 		}
 
 		/**
 		 * Indicates whether the injector can supply a response for the specified dependency either
-		 * by using a rule mapped directly on itself or by querying one of its ancestor injectors.
+		 * by using a mapping of its own or by querying one of its ancestor injectors.
 		 *
 		 * @param type The dependency under query
 		 * @return <code>true</code> if the dependency can be satisfied, <code>false</code> if not
@@ -80,7 +80,7 @@ package org.swiftsuspenders
 		 * dependency
 		 *
 		 * In contrast to <code>satisfies</code>, <code>satisfiesDirectly</code> only informs
-		 * about rules mapped directly on itself, without querying its ancestor injectors.
+		 * about mappings on this injector itself, without querying its ancestor injectors.
 		 *
 		 * @param type The dependency under query
 		 * @return <code>true</code> if the dependency can be satisfied, <code>false</code> if not
@@ -91,28 +91,28 @@ package org.swiftsuspenders
 		}
 
 		/**
-		 * Returns the rule mapped to the specified dependency class
+		 * Returns the mapping for the specified dependency class
 		 *
-		 * Note that getRule will only return rules mapped in exactly this injector, not ones
-		 * mapped in an ancestor injector. To get rules from ancestor injectors, query them using
-		 * <code>parentInjector</code>.
-		 * This restriction is in place to prevent accidential changing of rules in ancestor
+		 * Note that getMapping will only return mappings in exactly this injector, not ones
+		 * mapped in an ancestor injector. To get mappings from ancestor injectors, query them 
+		 * using <code>parentInjector</code>.
+		 * This restriction is in place to prevent accidential changing of mappings in ancestor
 		 * injectors where only the child's response is meant to be altered.
 		 * 
-		 * @param type The dependency to return the mapped rule for
-		 * @return The rule mapped to the specified dependency class
-		 * @throws InjectorError when no rule was found for the specified dependency
+		 * @param type The dependency to return the mapping for
+		 * @return The mapping for the specified dependency class
+		 * @throws InjectorError when no mapping was found for the specified dependency
 		 */
-		public function getRule(type : Class, name : String = '') : InjectionRule
+		public function getMapping(type : Class, name : String = '') : InjectionMapping
 		{
 			const mappingId : String = getQualifiedClassName(type) + '|' + name;
-			var rule : InjectionRule = _mappings[mappingId];
-			if (!rule)
+			var mapping : InjectionMapping = _mappings[mappingId];
+			if (!mapping)
 			{
 				throw new InjectorError('Error while retrieving an injector mapping: ' +
-						'No rule defined for dependency ' + mappingId);
+						'No mapping defined for dependency ' + mappingId);
 			}
-			return rule;
+			return mapping;
 		}
 
 		public function injectInto(target : Object) : void
@@ -216,9 +216,9 @@ package org.swiftsuspenders
 
 
 		//----------------------         Private / Protected Methods        ----------------------//
-		private function createRule(type : Class, mappingId : String) : InjectionRule
+		private function createMapping(type : Class, mappingId : String) : InjectionMapping
 		{
-			return new InjectionRule(this, type, mappingId);
+			return new InjectionMapping(this, type, mappingId);
 		}
 
 		private function applyInjectionPoints(

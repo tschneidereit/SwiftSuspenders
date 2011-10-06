@@ -39,9 +39,8 @@ package org.swiftsuspenders.injectionpoints
 					return;
 				}
 				throw(new InjectorError(
-						'Injector is missing a rule to handle injection into property "' +
-						_propertyName +
-						'" of object "' + target + '" with type "' + targetType +
+						'Injector is missing a mapping to handle injection into property "' +
+						_propertyName + '" of object "' + target + '" with type "' + targetType +
 						'". Target dependency: "' + _mappingId + '"'));
 			}
 			target[_propertyName] = injection;

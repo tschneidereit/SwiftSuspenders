@@ -74,8 +74,8 @@ package org.swiftsuspenders.injectionpoints
 						break;
 					}
 					throw(new InjectorError(
-						'Injector is missing a rule to handle injection into target "' + target +
-						'" of type "' + getQualifiedClassName(targetType) + '". \
+						'Injector is missing a mapping to handle injection into target "' +
+						target + '" of type "' + getQualifiedClassName(targetType) + '". \
 						Target dependency: ' + parameterMappingId +
 						', method: ' + _methodName + ', parameter: ' + (i + 1)
 					));

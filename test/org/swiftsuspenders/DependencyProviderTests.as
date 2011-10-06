@@ -12,7 +12,7 @@ package org.swiftsuspenders
 	import flexunit.framework.Assert;
 
 	import org.swiftsuspenders.dependencyproviders.ClassProvider;
-	import org.swiftsuspenders.dependencyproviders.OtherRuleProvider;
+	import org.swiftsuspenders.dependencyproviders.OtherMappingProvider;
 	import org.swiftsuspenders.dependencyproviders.SingletonProvider;
 	import org.swiftsuspenders.dependencyproviders.ValueProvider;
 	import org.swiftsuspenders.support.injectees.ClassInjectee;
@@ -89,12 +89,12 @@ package org.swiftsuspenders
 		}
 
 		[Test]
-		public function injectionTypeOtherRuleReturnsOtherRulesResponse():void
+		public function injectionTypeOtherMappingReturnsOtherMappingsResponse():void
 		{
-			var otherConfig : InjectionRule = new InjectionRule(injector, ClazzExtension, '');
+			var otherConfig : InjectionMapping = new InjectionMapping(injector, ClazzExtension, '');
 			otherConfig.setProvider(new ClassProvider(ClazzExtension));
-			const otherRuleProvider : OtherRuleProvider = new OtherRuleProvider(otherConfig);
-			var returnedResponse:Object = otherRuleProvider.apply(null, injector);
+			const otherMappingProvider : OtherMappingProvider = new OtherMappingProvider(otherConfig);
+			var returnedResponse:Object = otherMappingProvider.apply(null, injector);
 
 			Assert.assertTrue( returnedResponse is Clazz);
 			Assert.assertTrue( returnedResponse is ClazzExtension);

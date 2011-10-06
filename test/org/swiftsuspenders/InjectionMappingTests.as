@@ -16,7 +16,7 @@ package org.swiftsuspenders
 
 	use namespace SsInternal;
 
-	public class InjectionRuleTests
+	public class InjectionMappingTests
 	{
 		private var injector:Injector;
 		
@@ -36,24 +36,24 @@ package org.swiftsuspenders
 		[Test]
 		public function configIsInstantiated():void
 		{
-			var config : InjectionRule = new InjectionRule(injector, Clazz, '');
+			var config : InjectionMapping = new InjectionMapping(injector, Clazz, '');
 			
-			Assert.assertTrue(config is InjectionRule);
+			Assert.assertTrue(config is InjectionMapping);
 		}
 
 		[Test]
-		public function ruleWithoutProviderEverSetUsesClassProvider() : void
+		public function mappingWithoutProviderEverSetUsesClassProvider() : void
 		{
-			var config : InjectionRule = new InjectionRule(injector, Clazz, '');
+			var config : InjectionMapping = new InjectionMapping(injector, Clazz, '');
 			var returnedResponse:Object = config.apply(null, injector);
 
 			Assert.assertTrue(returnedResponse is Clazz);
 		}
 
 		[Test]
-		public function injectionRuleAsSingletonMethodCreatesSingletonProvider():void
+		public function injectionMappingAsSingletonMethodCreatesSingletonProvider():void
 		{
-			var config : InjectionRule = new InjectionRule(injector, Clazz, '');
+			var config : InjectionMapping = new InjectionMapping(injector, Clazz, '');
 			config.asSingleton();
 			var returnedResponse:Object = config.apply(null, injector);
 			var secondResponse:Object = config.apply(null, injector);
@@ -64,7 +64,7 @@ package org.swiftsuspenders
 		[Test]
 		public function sameNamedSingletonIsReturnedOnSecondResponse():void
 		{
-			var config : InjectionRule = new InjectionRule(injector, Clazz, "named");
+			var config : InjectionMapping = new InjectionMapping(injector, Clazz, "named");
 			config.setProvider(new SingletonProvider(Clazz, injector));
 			var returnedResponse:Object = config.apply(null, injector);
 			var secondResponse:Object = config.apply(null, injector);
@@ -75,7 +75,7 @@ package org.swiftsuspenders
 		[Test]
 		public function callingSetProviderBetweenUsagesChangesResponse():void
 		{
-			var config : InjectionRule = new InjectionRule(injector, Clazz, '');
+			var config : InjectionMapping = new InjectionMapping(injector, Clazz, '');
 			config.setProvider(new SingletonProvider(Clazz, injector));
 			var returnedResponse:Object = config.apply(null, injector);
 			config.setProvider(null);

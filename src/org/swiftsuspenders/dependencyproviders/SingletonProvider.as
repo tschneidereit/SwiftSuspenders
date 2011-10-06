@@ -24,7 +24,7 @@ package org.swiftsuspenders.dependencyproviders
 		 * @param responseType The class the provider returns the same, lazily created, instance
 		 * of for each request
 		 * @param creatingInjector The injector that was used to create the
-		 * <code>InjectionRule</code> this DependencyProvider is associated with
+		 * <code>InjectionMapping</code> this DependencyProvider is associated with
 		 */
 		public function SingletonProvider(responseType : Class, creatingInjector : Injector)
 		{

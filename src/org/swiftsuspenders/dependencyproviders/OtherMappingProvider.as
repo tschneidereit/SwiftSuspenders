@@ -7,30 +7,30 @@
 
 package org.swiftsuspenders.dependencyproviders
 {
-	import org.swiftsuspenders.InjectionRule;
+	import org.swiftsuspenders.InjectionMapping;
 	import org.swiftsuspenders.Injector;
 
-	public class OtherRuleProvider implements DependencyProvider
+	public class OtherMappingProvider implements DependencyProvider
 	{
 		//----------------------       Private / Protected Properties       ----------------------//
-		private var _rule : InjectionRule;
+		private var _mapping : InjectionMapping;
 
 
 		//----------------------               Public Methods               ----------------------//
-		public function OtherRuleProvider(rule : InjectionRule)
+		public function OtherMappingProvider(mapping : InjectionMapping)
 		{
-			_rule = rule;
+			_mapping = mapping;
 		}
 
 		/**
 		 * @inheritDoc
 		 *
-		 * @return The result of invoking <code>apply</code> on the <code>InjectionRule</code>
+		 * @return The result of invoking <code>apply</code> on the <code>InjectionMapping</code>
 		 * provided to this provider's constructor
 		 */
 		public function apply(targetType : Class, activeInjector : Injector) : Object
 		{
-			return _rule.apply(targetType, activeInjector);
+			return _mapping.apply(targetType, activeInjector);
 		}
 	}
 }
