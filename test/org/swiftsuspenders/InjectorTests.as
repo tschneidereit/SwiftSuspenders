@@ -28,7 +28,7 @@ package org.swiftsuspenders
 
 	import org.hamcrest.assertThat;
 	import org.hamcrest.collection.array;
-	import org.swiftsuspenders.dependencyproviders.OtherRuleProvider;
+	import org.swiftsuspenders.dependencyproviders.OtherMappingProvider;
 
 	import org.swiftsuspenders.support.injectees.ClassInjectee;
 	import org.swiftsuspenders.support.injectees.ComplexClassInjectee;
@@ -413,23 +413,23 @@ package org.swiftsuspenders
 		}
 		
 		[Test]
-		public function performMappedRuleInjection():void
+		public function performMappedMappingInjection():void
 		{
-			var rule : InjectionRule = injector.map(Interface);
-			rule.toSingleton(Clazz);
-			injector.map(Interface2).setProvider(new OtherRuleProvider(rule));
+			var mapping : InjectionMapping = injector.map(Interface);
+			mapping.toSingleton(Clazz);
+			injector.map(Interface2).setProvider(new OtherMappingProvider(mapping));
 			var injectee:MultipleSingletonsOfSameClassInjectee = injector.getInstance(MultipleSingletonsOfSameClassInjectee);
 			Assert.assertEquals("Instance field 'property1' should be identical to Instance field 'property2'", injectee.property1, injectee.property2);
 		}
 		
 		[Test]
-		public function performMappedNamedRuleInjection():void
+		public function performMappedNamedMappingInjection():void
 		{
-			var rule : InjectionRule = injector.map(Interface);
-			rule.toSingleton(Clazz);
-			injector.map(Interface2).setProvider(new OtherRuleProvider(rule));
-			injector.map(Interface, 'name1').setProvider(new OtherRuleProvider(rule));
-			injector.map(Interface2, 'name2').setProvider(new OtherRuleProvider(rule));
+			var mapping : InjectionMapping = injector.map(Interface);
+			mapping.toSingleton(Clazz);
+			injector.map(Interface2).setProvider(new OtherMappingProvider(mapping));
+			injector.map(Interface, 'name1').setProvider(new OtherMappingProvider(mapping));
+			injector.map(Interface2, 'name2').setProvider(new OtherMappingProvider(mapping));
 			var injectee:MultipleNamedSingletonsOfSameClassInjectee = injector.getInstance(MultipleNamedSingletonsOfSameClassInjectee);
 			Assert.assertEquals("Instance field 'property1' should be identical to Instance field 'property2'", injectee.property1, injectee.property2);
 			Assert.assertEquals("Instance field 'property1' should be identical to Instance field 'namedProperty1'", injectee.property1, injectee.namedProperty1);
@@ -542,7 +542,7 @@ package org.swiftsuspenders
 		}
 
 		[Test]
-		public function injectorRemovesSingletonInstanceOnRuleRemoval() : void
+		public function injectorRemovesSingletonInstanceOnMappingRemoval() : void
 		{
 			injector.map(Clazz).toSingleton(Clazz);
 			var injectee1 : ClassInjectee = injector.getInstance(ClassInjectee);

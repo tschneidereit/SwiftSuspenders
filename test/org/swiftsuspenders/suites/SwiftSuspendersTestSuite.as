@@ -13,7 +13,7 @@ package org.swiftsuspenders.suites
 	import org.swiftsuspenders.DescribeTypeJSONReflectorTests;
 	import org.swiftsuspenders.DescribeTypeReflectorTests;
 	import org.swiftsuspenders.GetConstructorTests;
-	import org.swiftsuspenders.InjectionRuleTests;
+	import org.swiftsuspenders.InjectionMappingTests;
 	import org.swiftsuspenders.InjectorTests;
 	import org.swiftsuspenders.injectionpoints.ConstructorInjectionPointTests;
 	import org.swiftsuspenders.injectionpoints.MethodInjectionPointTest;
@@ -33,7 +33,7 @@ package org.swiftsuspenders.suites
 		public var postConstructInjectionPointTests:PostConstructInjectionPointTests;
 		public var noParamConstructorInjectionPoint:NoParamsConstructorInjectionPointTests;
 		public var constructorInjectionPointTests:ConstructorInjectionPointTests;
-		public var injectionConfigTests:InjectionRuleTests;
+		public var injectionConfigTests:InjectionMappingTests;
 		public var dependencyProviderTests:DependencyProviderTests;
 		public var childInjectorTests : ChildInjectorTests;
 		public var getConstructorTests : GetConstructorTests;

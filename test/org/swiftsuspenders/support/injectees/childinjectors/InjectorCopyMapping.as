@@ -7,12 +7,12 @@
 
 package org.swiftsuspenders.support.injectees.childinjectors
 {
-	import org.swiftsuspenders.InjectionRule;
+	import org.swiftsuspenders.InjectionMapping;
 	import org.swiftsuspenders.Injector;
 
-	public class InjectorCopyRule extends InjectionRule
+	public class InjectorCopyMapping extends InjectionMapping
 	{
-		public function InjectorCopyRule(creatingInjector : Injector)
+		public function InjectorCopyMapping(creatingInjector : Injector)
 		{
 			super(creatingInjector, Injector, '');
 		}
