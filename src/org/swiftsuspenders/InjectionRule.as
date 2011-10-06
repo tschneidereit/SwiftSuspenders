@@ -151,7 +151,7 @@ package org.swiftsuspenders
 
 		public function apply(targetType : Class, injector : Injector) : Object
 		{
-			return _config.apply(targetType, injector);
+			return injector.SsInternal::applyMapping(targetType, _config.mappingId);
 		}
 
 		/**

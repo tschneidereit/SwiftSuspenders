@@ -11,6 +11,7 @@ package org.swiftsuspenders.injectionpoints
 
 	import org.swiftsuspenders.Injector;
 	import org.swiftsuspenders.InjectorError;
+	import org.swiftsuspenders.utils.SsInternal;
 
 	public class MethodInjectionPoint extends InjectionPoint
 	{
@@ -64,7 +65,8 @@ package org.swiftsuspenders.injectionpoints
 			for (var i : int = 0; i < length; i++)
 			{
 				var parameterConfig : InjectionPointConfig = _parameterInjectionConfigs[i];
-				var injection : Object = parameterConfig.apply(targetType, injector);
+				var injection : Object = injector.SsInternal::applyMapping(
+						targetType, parameterConfig.mappingId);
 				if (injection == null)
 				{
 					if (i >= _requiredParameters || _isOptional)

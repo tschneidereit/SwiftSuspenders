@@ -12,6 +12,8 @@ package org.swiftsuspenders
 	import flash.utils.getQualifiedClassName;
 
 	import org.swiftsuspenders.dependencyproviders.DependencyProvider;
+	import org.swiftsuspenders.dependencyproviders.LocalOnlyProvider;
+	import org.swiftsuspenders.dependencyproviders.SoftDependencyProvider;
 
 	import org.swiftsuspenders.injectionpoints.ConstructorInjectionPoint;
 	import org.swiftsuspenders.injectionpoints.InjectionPoint;
@@ -128,7 +130,7 @@ package org.swiftsuspenders
 			const mappingId : String = getQualifiedClassName(type) + '|' + name;
 			const config : InjectionPointConfig = 
 					_classDescriptor.getInjectionPointConfigById(mappingId);
-			var result : Object = config.apply(type, this);
+			var result : Object = applyMapping(type, config.mappingId);
 			if (result)
 			{
 				return result;
@@ -186,6 +188,34 @@ package org.swiftsuspenders
 			var instance : Object = ctorInjectionPoint.createInstance(type, this);
 			applyInjectionPoints(instance, type, ctorInjectionPoint.next);
 			return instance;
+		}
+
+		SsInternal function applyMapping(targetType : Class, mappingId : String) : Object
+		{
+			var softProvider : DependencyProvider;
+			var injector : Injector = this;
+			while (injector)
+			{
+				var provider : DependencyProvider =
+						injector.SsInternal::providerMappings[mappingId];
+				if (provider)
+				{
+					if (provider is SoftDependencyProvider)
+					{
+						softProvider = provider;
+						injector = injector.parentInjector;
+						continue;
+					}
+					if (provider is LocalOnlyProvider && injector !== this)
+					{
+						injector = injector.parentInjector;
+						continue;
+					}
+					return provider.apply(targetType, this);
+				}
+				injector = injector.parentInjector;
+			}
+			return softProvider && softProvider.apply(targetType, this);
 		}
 
 

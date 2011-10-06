@@ -9,6 +9,7 @@ package org.swiftsuspenders.injectionpoints
 {
 	import org.swiftsuspenders.Injector;
 	import org.swiftsuspenders.InjectorError;
+	import org.swiftsuspenders.utils.SsInternal;
 
 	public class PropertyInjectionPoint extends InjectionPoint
 	{
@@ -30,7 +31,8 @@ package org.swiftsuspenders.injectionpoints
 		override public function applyInjection(
 				target : Object, targetType : Class, injector : Injector) : void
 		{
-			var injection : Object = _injectionConfig.apply(targetType, injector);
+			var injection : Object = injector.SsInternal::applyMapping(
+					targetType, _injectionConfig.mappingId);
 			if (injection == null)
 			{
 				if (_optional)
