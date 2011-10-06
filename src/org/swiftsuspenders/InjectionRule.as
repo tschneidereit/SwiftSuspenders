@@ -15,7 +15,6 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.dependencyproviders.SingletonProvider;
 	import org.swiftsuspenders.dependencyproviders.SoftDependencyProvider;
 	import org.swiftsuspenders.dependencyproviders.ValueProvider;
-	import org.swiftsuspenders.injectionpoints.InjectionPointConfig;
 	import org.swiftsuspenders.utils.SsInternal;
 
 	public class InjectionRule
@@ -23,7 +22,6 @@ package org.swiftsuspenders
 		//----------------------       Private / Protected Properties       ----------------------//
 		private var _type : Class;
 		private var _mappingId : String;
-		private var _config : InjectionPointConfig;
 		private var _creatingInjector : Injector;
 		private var _defaultProviderSet : Boolean;
 
@@ -33,13 +31,11 @@ package org.swiftsuspenders
 
 
 		//----------------------               Public Methods               ----------------------//
-		public function InjectionRule(creatingInjector : Injector, type : Class, mappingId : String,
-				config : InjectionPointConfig)
+		public function InjectionRule(creatingInjector : Injector, type : Class, mappingId : String)
 		{
 			_creatingInjector = creatingInjector;
 			_type = type;
 			_mappingId = mappingId;
-			_config = config;
 			_defaultProviderSet = true;
 			mapProvider(new ClassProvider(type));
 		}
@@ -151,7 +147,7 @@ package org.swiftsuspenders
 
 		public function apply(targetType : Class, injector : Injector) : Object
 		{
-			return injector.SsInternal::applyMapping(targetType, _config.mappingId);
+			return injector.SsInternal::applyMapping(targetType, _mappingId);
 		}
 
 		/**

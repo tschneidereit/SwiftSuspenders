@@ -14,10 +14,8 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.dependencyproviders.DependencyProvider;
 	import org.swiftsuspenders.dependencyproviders.LocalOnlyProvider;
 	import org.swiftsuspenders.dependencyproviders.SoftDependencyProvider;
-
 	import org.swiftsuspenders.injectionpoints.ConstructorInjectionPoint;
 	import org.swiftsuspenders.injectionpoints.InjectionPoint;
-	import org.swiftsuspenders.injectionpoints.InjectionPointConfig;
 	import org.swiftsuspenders.utils.ClassDescriptor;
 	import org.swiftsuspenders.utils.SsInternal;
 	import org.swiftsuspenders.utils.getConstructor;
@@ -128,9 +126,7 @@ package org.swiftsuspenders
 		public function getInstance(type : Class, name : String = '') : *
 		{
 			const mappingId : String = getQualifiedClassName(type) + '|' + name;
-			const config : InjectionPointConfig = 
-					_classDescriptor.getInjectionPointConfigById(mappingId);
-			var result : Object = applyMapping(type, config.mappingId);
+			var result : Object = applyMapping(type, mappingId);
 			if (result)
 			{
 				return result;
@@ -222,8 +218,7 @@ package org.swiftsuspenders
 		//----------------------         Private / Protected Methods        ----------------------//
 		private function createRule(type : Class, mappingId : String) : InjectionRule
 		{
-			return new InjectionRule(
-					this, type, mappingId, _classDescriptor.getInjectionPointConfigById(mappingId));
+			return new InjectionRule(this, type, mappingId);
 		}
 
 		private function applyInjectionPoints(

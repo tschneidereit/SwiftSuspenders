@@ -7,10 +7,6 @@
 
 package org.swiftsuspenders
 {
-	import flash.utils.Dictionary;
-
-	import org.swiftsuspenders.utils.ClassDescriptor;
-
 	public class DescribeTypeJSONReflectorTests extends ReflectorTests
 	{
 		
@@ -18,7 +14,6 @@ package org.swiftsuspenders
 		public function setup():void
 		{
 			reflector = new DescribeTypeJSONReflector();
-			configMap = new ClassDescriptor(new Dictionary());
 			injector = new Injector();
 		}
 	}

@@ -16,9 +16,8 @@ package org.swiftsuspenders.utils
 	import org.swiftsuspenders.Reflector;
 	import org.swiftsuspenders.injectionpoints.ConstructorInjectionPoint;
 	import org.swiftsuspenders.injectionpoints.InjectionPoint;
-	import org.swiftsuspenders.injectionpoints.InjectionPointConfig;
 
-	public class ClassDescriptor implements InjectionPointsConfigMap
+	public class ClassDescriptor
 	{
 		//----------------------       Private / Protected Properties       ----------------------//
 		public var _descriptionsCache : Dictionary;
@@ -40,22 +39,11 @@ package org.swiftsuspenders.utils
 			return _descriptionsCache[type] ||= createDescription(type);
 		}
 
-		public function getInjectionPointConfig(
-				typeName : String, injectionName : String) : InjectionPointConfig
-		{
-			return getInjectionPointConfigById(typeName + '|' + (injectionName || ''));
-		}
-
-		public function getInjectionPointConfigById(mappingId : String) : InjectionPointConfig
-		{
-			return _descriptionsCache[mappingId] ||= new InjectionPointConfig(mappingId);
-		}
-
 
 		//----------------------         Private / Protected Methods        ----------------------//
 		private function createDescription(type : Class) : ConstructorInjectionPoint
 		{
-			_reflector.startReflection(type, this);
+			_reflector.startReflection(type);
 			const ctorInjectionPoint : ConstructorInjectionPoint =
 					_reflector.getCtorInjectionPoint();
 			var lastInjectionPoint : InjectionPoint = ctorInjectionPoint;

@@ -26,7 +26,6 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.support.types.Clazz;
 	import org.swiftsuspenders.support.types.ClazzExtension;
 	import org.swiftsuspenders.support.types.Interface;
-	import org.swiftsuspenders.utils.InjectionPointsConfigMap;
 	import org.swiftsuspenders.utils.SsInternal;
 
 	use namespace SsInternal;
@@ -39,14 +38,12 @@ package org.swiftsuspenders
 		private static const CLASS_NAME_IN_ROOT_PACKAGE:String = "Date";
 		
 		protected var reflector:Reflector;
-		protected var configMap:InjectionPointsConfigMap;
 		protected var injector:Injector;
 		
 		[After]
 		public function teardown():void
 		{
 			reflector = null;
-			configMap = null;
 			Injector.SsInternal::purgeInjectionPointsCache();
 			injector = null;
 		}
@@ -170,7 +167,7 @@ package org.swiftsuspenders
 		[Test]
 		public function reflectorReturnsNoParamsCtorInjectionPointForNoParamsCtor() : void
 		{
-			reflector.startReflection(Clazz, configMap);
+			reflector.startReflection(Clazz);
 			var injectionPoint : InjectionPoint = reflector.getCtorInjectionPoint();
 			Assert.assertTrue('reflector-returned injectionPoint is no-params ctor injectionPoint',
 					injectionPoint is NoParamsConstructorInjectionPoint);
@@ -179,7 +176,7 @@ package org.swiftsuspenders
 		[Test]
 		public function reflectorReturnsCorrectCtorInjectionPointForParamsCtor() : void
 		{
-			reflector.startReflection(OneParameterConstructorInjectee, configMap);
+			reflector.startReflection(OneParameterConstructorInjectee);
 			var injectionPoint : InjectionPoint = reflector.getCtorInjectionPoint();
 			Assert.assertTrue('reflector-returned injectionPoint is ctor injectionPoint',
 					injectionPoint is ConstructorInjectionPoint);
@@ -188,7 +185,7 @@ package org.swiftsuspenders
 		[Test]
 		public function reflectorReturnsCorrectCtorInjectionPointForNamedParamsCtor() : void
 		{
-			reflector.startReflection(OneNamedParameterConstructorInjectee, configMap);
+			reflector.startReflection(OneNamedParameterConstructorInjectee);
 			var injectionPoint : ConstructorInjectionPoint = reflector.getCtorInjectionPoint();
 			Assert.assertTrue('reflector-returned injectionPoint is ctor injectionPoint',
 					injectionPoint is ConstructorInjectionPoint);
@@ -204,7 +201,7 @@ package org.swiftsuspenders
 		[Test]
 		public function reflectorCorrectlyCreatesInjectionPointForUnnamedPropertyInjection() : void
 		{
-			reflector.startReflection(InterfaceInjectee, configMap);
+			reflector.startReflection(InterfaceInjectee);
 			const ctorInjectionPoint : InjectionPoint = reflector.getCtorInjectionPoint();
 			const fieldInjectionPoint : InjectionPoint =
 					reflector.addFieldInjectionPointsToList(ctorInjectionPoint);
@@ -215,7 +212,7 @@ package org.swiftsuspenders
 		[Test]
 		public function reflectorCorrectlyCreatesInjectionPointForNamedPropertyInjection() : void
 		{
-			reflector.startReflection(NamedInterfaceInjectee, configMap);
+			reflector.startReflection(NamedInterfaceInjectee);
 			const ctorInjectionPoint : InjectionPoint = reflector.getCtorInjectionPoint();
 			const fieldInjectionPoint : InjectionPoint =
 					reflector.addFieldInjectionPointsToList(ctorInjectionPoint);
@@ -230,7 +227,7 @@ package org.swiftsuspenders
 		[Test]
 		public function reflectorCorrectlyCreatesInjectionPointForOptionalPropertyInjection() : void
 		{
-			reflector.startReflection(OptionalClassInjectee, configMap);
+			reflector.startReflection(OptionalClassInjectee);
 			const ctorInjectionPoint : InjectionPoint = reflector.getCtorInjectionPoint();
 			const fieldInjectionPoint : InjectionPoint =
 					reflector.addFieldInjectionPointsToList(ctorInjectionPoint);
@@ -243,7 +240,7 @@ package org.swiftsuspenders
 		[Test]
 		public function reflectorCorrectlyCreatesInjectionPointForOneParamMethodInjection() : void
 		{
-			reflector.startReflection(OneParameterMethodInjectee, configMap);
+			reflector.startReflection(OneParameterMethodInjectee);
 			const ctorInjectionPoint : InjectionPoint = reflector.getCtorInjectionPoint();
 			const methodInjectionPoint : InjectionPoint =
 					reflector.addMethodInjectionPointsToList(ctorInjectionPoint);
@@ -257,7 +254,7 @@ package org.swiftsuspenders
 		[Test]
 		public function reflectorCorrectlyCreatesInjectionPointForOneNamedParamMethodInjection() : void
 		{
-			reflector.startReflection(OneNamedParameterMethodInjectee, configMap);
+			reflector.startReflection(OneNamedParameterMethodInjectee);
 			const ctorInjectionPoint : InjectionPoint = reflector.getCtorInjectionPoint();
 			const methodInjectionPoint : InjectionPoint =
 					reflector.addMethodInjectionPointsToList(ctorInjectionPoint);
@@ -271,7 +268,7 @@ package org.swiftsuspenders
 		[Test]
 		public function reflectorCorrectlyCreatesInjectionPointForTwoNamedParamsMethodInjection() : void
 		{
-			reflector.startReflection(TwoNamedParametersMethodInjectee, configMap);
+			reflector.startReflection(TwoNamedParametersMethodInjectee);
 			const ctorInjectionPoint : InjectionPoint = reflector.getCtorInjectionPoint();
 			const methodInjectionPoint : InjectionPoint =
 					reflector.addMethodInjectionPointsToList(ctorInjectionPoint);
@@ -288,7 +285,7 @@ package org.swiftsuspenders
 		[Test]
 		public function reflectorCorrectlyCreatesInjectionPointForOneRequiredOneOptionalParamsMethodInjection() : void
 		{
-			reflector.startReflection(OneRequiredOneOptionalPropertyMethodInjectee, configMap);
+			reflector.startReflection(OneRequiredOneOptionalPropertyMethodInjectee);
 			const ctorInjectionPoint : InjectionPoint = reflector.getCtorInjectionPoint();
 			const methodInjectionPoint : InjectionPoint =
 					reflector.addMethodInjectionPointsToList(ctorInjectionPoint);
@@ -304,7 +301,7 @@ package org.swiftsuspenders
 		[Test]
 		public function reflectorCorrectlyCreatesInjectionPointForOptionalOneRequiredParamMethodInjection() : void
 		{
-			reflector.startReflection(OptionalOneRequiredParameterMethodInjectee, configMap);
+			reflector.startReflection(OptionalOneRequiredParameterMethodInjectee);
 			const ctorInjectionPoint : InjectionPoint = reflector.getCtorInjectionPoint();
 			const methodInjectionPoint : InjectionPoint =
 					reflector.addMethodInjectionPointsToList(ctorInjectionPoint);
@@ -317,7 +314,7 @@ package org.swiftsuspenders
 		[Test]
 		public function reflectorCreatesInjectionPointsForPostConstructMethods() : void
 		{
-			reflector.startReflection(OrderedPostConstructInjectee, configMap);
+			reflector.startReflection(OrderedPostConstructInjectee);
 			const ctorInjectionPoint : InjectionPoint = reflector.getCtorInjectionPoint();
 			reflector.addPostConstructMethodPointsToList(ctorInjectionPoint);
 			Assert.assertTrue('Four injection points has been added', ctorInjectionPoint.next
@@ -328,7 +325,7 @@ package org.swiftsuspenders
 		[Test]
 		public function reflectorCorrectlySortsInjectionPointsForPostConstructMethods() : void
 		{
-			reflector.startReflection(OrderedPostConstructInjectee, configMap);
+			reflector.startReflection(OrderedPostConstructInjectee);
 			const ctorInjectionPoint : InjectionPoint = reflector.getCtorInjectionPoint();
 			reflector.addPostConstructMethodPointsToList(ctorInjectionPoint);
 			Assert.assertEquals('First injection point has order "1"', 1,

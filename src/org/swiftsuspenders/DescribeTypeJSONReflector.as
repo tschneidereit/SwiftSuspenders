@@ -15,12 +15,10 @@ package org.swiftsuspenders
 
 	import org.swiftsuspenders.injectionpoints.ConstructorInjectionPoint;
 	import org.swiftsuspenders.injectionpoints.InjectionPoint;
-	import org.swiftsuspenders.injectionpoints.InjectionPointConfig;
 	import org.swiftsuspenders.injectionpoints.MethodInjectionPoint;
 	import org.swiftsuspenders.injectionpoints.NoParamsConstructorInjectionPoint;
 	import org.swiftsuspenders.injectionpoints.PostConstructInjectionPoint;
 	import org.swiftsuspenders.injectionpoints.PropertyInjectionPoint;
-	import org.swiftsuspenders.utils.InjectionPointsConfigMap;
 
 	public class DescribeTypeJSONReflector extends ReflectorBase implements Reflector
 	{
@@ -29,7 +27,6 @@ package org.swiftsuspenders
 		private var _descriptor : DescribeTypeJSON;
 		private var _description : Object;
 		private var _traits : Object;
-		private var _configMap : InjectionPointsConfigMap;
 
 		//----------------------               Public Methods               ----------------------//
 		public function DescribeTypeJSONReflector()
@@ -37,10 +34,9 @@ package org.swiftsuspenders
 			_descriptor = new DescribeTypeJSON();
 		}
 
-		public function startReflection(type : Class, configMap : InjectionPointsConfigMap) : void
+		public function startReflection(type : Class) : void
 		{
 			_currentType = type;
-			_configMap = configMap;
 			_description = _descriptor.getInstanceDescription(type);
 			_traits = _description.traits;
 		}
@@ -50,7 +46,6 @@ package org.swiftsuspenders
 			_currentType = null;
 			_description = null;
 			_traits = null;
-			_configMap = null;
 		}
 
 		public function classExtendsOrImplements(classOrClassName : Object, superclass : Class,
@@ -87,7 +82,7 @@ package org.swiftsuspenders
 			}
 			const superClassName : String = getQualifiedClassName(superclass);
 
-			startReflection(actualClass, null);
+			startReflection(actualClass);
 			return (_traits.bases as Array).indexOf(superClassName) > -1
 					|| (_traits.interfaces as Array).indexOf(superClassName) > -1;
 		}
@@ -205,10 +200,8 @@ package org.swiftsuspenders
 				}
 				var mappingName : String = extractMappingName(injectParameters)[0] || '';
 				var optional : Boolean = extractOptionalFlag(injectParameters);
-				var config : InjectionPointConfig =
-						_configMap.getInjectionPointConfig(field.type, mappingName);
-				var injectionPoint : PropertyInjectionPoint =
-						new PropertyInjectionPoint(config, field.name, optional);
+				var injectionPoint : PropertyInjectionPoint = new PropertyInjectionPoint(
+						field.type + '|' + mappingName, field.name, optional);
 				lastInjectionPoint.next = injectionPoint;
 				lastInjectionPoint = injectionPoint;
 			}
@@ -240,8 +233,7 @@ package org.swiftsuspenders
 				{
 					requiredLength++;
 				}
-				parameters[i] =
-						_configMap.getInjectionPointConfig(parameterTypeName, injectionName);
+				parameters[i] = parameterTypeName + '|' + injectionName;
 			}
 			return requiredLength;
 		}
