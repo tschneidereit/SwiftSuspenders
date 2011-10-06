@@ -24,33 +24,5 @@ package org.swiftsuspenders.injectionpoints
 		{
 			this.mappingId = mappingId;
 		}
-
-		public function apply(targetType : Class, injector : Injector) : Object
-		{
-			var softProvider : DependencyProvider;
-			var usingInjector : Injector = injector;
-			while (injector)
-			{
-				var provider : DependencyProvider =
-						injector.SsInternal::providerMappings[mappingId];
-				if (provider)
-				{
-					if (provider is SoftDependencyProvider)
-					{
-						softProvider = provider;
-						injector = injector.parentInjector;
-						continue;
-					}
-					if (provider is LocalOnlyProvider && injector !== usingInjector)
-					{
-						injector = injector.parentInjector;
-						continue;
-					}
-					return provider.apply(targetType, usingInjector);
-				}
-				injector = injector.parentInjector;
-			}
-			return softProvider && softProvider.apply(targetType, usingInjector);
-		}
 	}
 }
