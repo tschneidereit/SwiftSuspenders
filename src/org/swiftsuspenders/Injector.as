@@ -55,12 +55,17 @@ package org.swiftsuspenders
 		{
 			const mappingId : String = getQualifiedClassName(type) + '|' + name;
 			var mapping : InjectionMapping = _mappings[mappingId];
+			if (mapping && mapping.isSealed)
+			{
+				throw new InjectorError('Can\'t unmap a sealed mapping');
+			}
 			if (!mapping)
 			{
 				throw new InjectorError('Error while removing an injector mapping: ' +
 						'No mapping defined for dependency ' + mappingId);
 			}
-			mapping.toProvider(null);
+			delete _mappings[mappingId];
+			delete providerMappings[mappingId];
 		}
 
 		/**
