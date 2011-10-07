@@ -28,6 +28,7 @@ package org.swiftsuspenders
 		private var _overridingInjector : Injector;
 		private var _soft : Boolean;
 		private var _local : Boolean;
+		private var _sealed : Boolean;
 
 
 		//----------------------               Public Methods               ----------------------//
@@ -71,6 +72,7 @@ package org.swiftsuspenders
 
 		public function toProvider(provider : DependencyProvider) : InjectionMapping
 		{
+			_sealed && throwSealedError();
 			if (hasProvider() && provider != null && !_defaultProviderSet)
 			{
 				//TODO: consider making this throw
@@ -86,6 +88,7 @@ package org.swiftsuspenders
 
 		public function soft() : InjectionMapping
 		{
+			_sealed && throwSealedError();
 			if (!_soft)
 			{
 				const provider : DependencyProvider = getProvider();
@@ -97,6 +100,7 @@ package org.swiftsuspenders
 
 		public function strong() : InjectionMapping
 		{
+			_sealed && throwSealedError();
 			if (_soft)
 			{
 				const provider : DependencyProvider = getProvider();
@@ -113,6 +117,7 @@ package org.swiftsuspenders
 		 */
 		public function local() : InjectionMapping
 		{
+			_sealed && throwSealedError();
 			if (_local)
 			{
 				return this;
@@ -130,6 +135,7 @@ package org.swiftsuspenders
 		 */
 		public function shared() : InjectionMapping
 		{
+			_sealed && throwSealedError();
 			if (!_local)
 			{
 				return this;
@@ -140,9 +146,25 @@ package org.swiftsuspenders
 			return this;
 		}
 
+		/**
+		 * Prevents all subsequent changes to the mapping, including removal. Trying to change it
+		 * in any way at all will throw an <code>InjectorError</code>.
+		 *
+		 * This makes the mapping completely final and can't be undone, so be careful with it.
+		 */
+		public function seal() : void
+		{
+			_sealed = true;
+		}
+
+		public function get isSealed() : Boolean
+		{
+			return _sealed;
+		}
+
 		public function hasProvider() : Boolean
 		{
-			return _creatingInjector.SsInternal::providerMappings[_mappingId] != null;
+			return Boolean(_creatingInjector.SsInternal::providerMappings[_mappingId]);
 		}
 
 		public function apply(targetType : Class, injector : Injector) : Object
@@ -200,6 +222,11 @@ package org.swiftsuspenders
 				provider = new InjectorUsingProvider(_overridingInjector, provider);
 			}
 			_creatingInjector.SsInternal::providerMappings[_mappingId] = provider;
+		}
+
+		private function throwSealedError() : void
+		{
+			throw new InjectorError('Can\t change a sealed mapping');
 		}
 	}
 }
