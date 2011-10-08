@@ -31,7 +31,7 @@ package org.swiftsuspenders.dependencyproviders
 		public function apply(
 				targetType : Class, activeInjector : Injector) : Object
 		{
-			return activeInjector.SsInternal::instantiateUnmapped(_responseType);
+			return activeInjector.SsInternal::instantiateUnmapped(_responseType, targetType);
 		}
 
 		override public function equals(otherResult : InjectionResult) : Boolean

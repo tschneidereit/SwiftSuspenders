@@ -7,6 +7,7 @@
 
 package org.swiftsuspenders
 {
+	import flash.events.EventDispatcher;
 	import flash.system.ApplicationDomain;
 	import flash.utils.Dictionary;
 	import flash.utils.getQualifiedClassName;
@@ -22,7 +23,57 @@ package org.swiftsuspenders
 
 	use namespace SsInternal;
 
-	public class Injector
+	/**
+	 * This event is dispatched each time the injector instantiated a class
+	 *
+	 * At the point where the event is dispatched none of the injection points have been processed.
+	 *
+	 * The only difference to the <code>PRE_CONSTRUCT</code> event is that
+	 * <code>POST_INSTANTIATE</code> is only dispatched for instances that are created in the
+	 * injector, whereas <code>PRE_CONSTRUCT</code> is also dispatched for instances the injector
+	 * only injects into.
+	 *
+	 * This event is only dispatched when there are one or more relevant listeners
+	 * attached to the dispatching injector.
+	 *
+	 * @eventType org.swiftsuspenders.InjectorEvent
+	 */
+	[Event(name='postInstantiate', type='org.swiftsuspenders.InjectorEvent')]
+	/**
+	 * This event is dispatched each time the injector is about to inject into a class
+	 *
+	 * At the point where the event is dispatched none of the injection points have been processed.
+	 *
+	 * The only difference to the <code>POST_INSTANTIATE</code> event is that
+	 * <code>PRE_CONSTRUCT</code> is only dispatched for instances that are created in the
+	 * injector, whereas <code>POST_INSTANTIATE</code> is also dispatched for instances the
+	 * injector only injects into.
+	 *
+	 * This event is only dispatched when there are one or more relevant listeners
+	 * attached to the dispatching injector.
+	 *
+	 * @eventType org.swiftsuspenders.InjectorEvent
+	 */
+	[Event(name='preConstruct', type='org.swiftsuspenders.InjectorEvent')]
+	/**
+	 * This event is dispatched each time the injector created and fully initialized a new instance
+	 *
+	 * At the point where the event is dispatched all dependencies for the newly created instance
+	 * have already been injected. That means that creation-events for leaf nodes of the created
+	 * object graph will be dispatched before the creation-events for the branches they are
+	 * injected into.
+	 *
+	 * The newly created instance's [PostConstruct]-annotated methods will also have run already.
+	 *
+	 * This event is only dispatched when there are one or more relevant listeners
+	 * attached to the dispatching injector.
+	 *
+	 * @eventType org.swiftsuspenders.InjectorEvent
+	 */
+	[Event(name='postConstruct', type='org.swiftsuspenders.InjectorEvent')]
+
+
+	public class Injector extends EventDispatcher
 	{
 		//----------------------       Private / Protected Properties       ----------------------//
 		private static var INJECTION_POINTS_CACHE : Dictionary = new Dictionary(true);
@@ -141,7 +192,7 @@ package org.swiftsuspenders
 				throw new InjectorError('No mapping found for request ' + mappingId
 						+ '. getInstance only creates an unmapped instance if no name is given.');
 			}
-			return instantiateUnmapped(type);
+			return instantiateUnmapped(type, type);
 		}
 		
 		public function createChildInjector(applicationDomain : ApplicationDomain = null) : Injector
@@ -177,7 +228,7 @@ package org.swiftsuspenders
 			INJECTION_POINTS_CACHE = new Dictionary(true);
 		}
 
-		SsInternal function instantiateUnmapped(type : Class) : Object
+		SsInternal function instantiateUnmapped(type : Class, targetType : Class) : Object
 		{
 			var ctorInjectionPoint : ConstructorInjectionPoint =
 					_classDescriptor.getDescription(type);
@@ -186,9 +237,16 @@ package org.swiftsuspenders
 				throw new InjectorError(
 						"Can't instantiate interface " + getQualifiedClassName(type));
 			}
-			var instance : Object = ctorInjectionPoint.createInstance(type, this);
-			applyInjectionPoints(instance, type, ctorInjectionPoint.next);
-			return instance;
+			const instanceInfo : InstanceInfo = new InstanceInfo(
+					ctorInjectionPoint.createInstance(type, this), type, targetType);
+			hasEventListener(InjectorEvent.POST_INSTANTIATE)
+				&& dispatchEvent(new InjectorEvent(InjectorEvent.POST_INSTANTIATE, instanceInfo));
+			hasEventListener(InjectorEvent.PRE_CONSTRUCT)
+				&& dispatchEvent(new InjectorEvent(InjectorEvent.PRE_CONSTRUCT, instanceInfo));
+			applyInjectionPoints(instanceInfo.instance, type, ctorInjectionPoint.next);
+			hasEventListener(InjectorEvent.POST_CONSTRUCT)
+				&& dispatchEvent(new InjectorEvent(InjectorEvent.POST_CONSTRUCT, instanceInfo));
+			return instanceInfo.instance;
 		}
 
 		SsInternal function applyMapping(targetType : Class, mappingId : String) : Object

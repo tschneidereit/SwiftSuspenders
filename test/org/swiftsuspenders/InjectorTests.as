@@ -22,14 +22,19 @@
 
 package org.swiftsuspenders
 {
+	import flash.events.Event;
+
 	import flexunit.framework.Assert;
-	
+
 	import mx.collections.ArrayCollection;
 
 	import org.hamcrest.assertThat;
 	import org.hamcrest.collection.array;
+	import org.hamcrest.core.isA;
+	import org.hamcrest.object.equalTo;
+	import org.hamcrest.object.hasPropertyWithValue;
+	import org.hamcrest.object.isTrue;
 	import org.swiftsuspenders.dependencyproviders.OtherMappingProvider;
-
 	import org.swiftsuspenders.support.injectees.ClassInjectee;
 	import org.swiftsuspenders.support.injectees.ComplexClassInjectee;
 	import org.swiftsuspenders.support.injectees.InterfaceInjectee;
@@ -56,6 +61,7 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.support.injectees.TwoParametersConstructorInjectee;
 	import org.swiftsuspenders.support.injectees.TwoParametersMethodInjectee;
 	import org.swiftsuspenders.support.injectees.XMLInjectee;
+	import org.swiftsuspenders.support.types.Clazz;
 	import org.swiftsuspenders.support.types.Clazz;
 	import org.swiftsuspenders.support.types.Clazz2;
 	import org.swiftsuspenders.support.types.ComplexClazz;
@@ -623,6 +629,52 @@ package org.swiftsuspenders
 			injector.map(Interface).toType(Clazz).local();
 			injector.map(Interface).toType(Clazz).shared();
 			Assert.assertNotNull(childInjector.getInstance(Interface));
+		}
+
+		[Test]
+		public function injectorDispatchesPostInstantiateEventDuringInstanceConstruction() : void
+		{
+			assertThat(constructMappedTypeAndListenForEvent(InjectorEvent.POST_INSTANTIATE), isTrue());
+		}
+
+		[Test]
+		public function injectorDispatchesPreConstructEventDuringInstanceConstruction() : void
+		{
+			assertThat(constructMappedTypeAndListenForEvent(InjectorEvent.PRE_CONSTRUCT), isTrue());
+		}
+
+		[Test]
+		public function injectorDispatchesPostConstructEventAfterInstanceConstruction() : void
+		{
+			assertThat(constructMappedTypeAndListenForEvent(InjectorEvent.POST_CONSTRUCT), isTrue());
+		}
+
+		[Test]
+		public function injectorEventsAfterInstantiateContainCreatedInstance() : void
+		{
+			function listener(event : InjectorEvent) : void
+			{
+				assertThat(event.instanceInfo, hasPropertyWithValue('instance', isA(Clazz)));
+			}
+			injector.map(Clazz);
+			injector.addEventListener(InjectorEvent.POST_INSTANTIATE, listener);
+			injector.addEventListener(InjectorEvent.PRE_CONSTRUCT, listener);
+			injector.addEventListener(InjectorEvent.POST_CONSTRUCT, listener);
+			const instance : Clazz = injector.getInstance(Clazz);
+		}
+
+		private function constructMappedTypeAndListenForEvent(
+				eventType : String, callback : Function = null) : Boolean
+		{
+			var eventReceived : Boolean;
+			injector.map(Clazz);
+			injector.addEventListener(eventType, function(event : InjectorEvent) : void
+			{
+				callback && callback(event.instanceInfo);
+				eventReceived = true;
+			});
+			injector.getInstance(Clazz);
+			return eventReceived;
 		}
 	}
 }
