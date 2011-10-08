@@ -654,7 +654,7 @@ package org.swiftsuspenders
 		{
 			function listener(event : InjectorEvent) : void
 			{
-				assertThat(event.instanceInfo, hasPropertyWithValue('instance', isA(Clazz)));
+				assertThat(event, hasPropertyWithValue('instance', isA(Clazz)));
 			}
 			injector.map(Clazz);
 			injector.addEventListener(InjectorEvent.POST_INSTANTIATE, listener);
@@ -663,17 +663,40 @@ package org.swiftsuspenders
 			const instance : Clazz = injector.getInstance(Clazz);
 		}
 
-		private function constructMappedTypeAndListenForEvent(
-				eventType : String, callback : Function = null) : Boolean
+		[Test]
+		public function injectIntoDispatchesPreConstructEventDuringObjectConstruction() : void
+		{
+			assertThat(injectIntoInstanceAndListenForEvent(InjectorEvent.PRE_CONSTRUCT), isTrue());
+		}
+
+		[Test]
+		public function injectIntoDispatchesPostConstructEventDuringObjectConstruction() : void
+		{
+			assertThat(injectIntoInstanceAndListenForEvent(InjectorEvent.POST_CONSTRUCT), isTrue());
+		}
+
+		private function constructMappedTypeAndListenForEvent(eventType : String) : Boolean
 		{
 			var eventReceived : Boolean;
 			injector.map(Clazz);
 			injector.addEventListener(eventType, function(event : InjectorEvent) : void
 			{
-				callback && callback(event.instanceInfo);
 				eventReceived = true;
 			});
 			injector.getInstance(Clazz);
+			return eventReceived;
+		}
+
+		private function injectIntoInstanceAndListenForEvent(eventType : String) : Boolean
+		{
+			var eventReceived : Boolean;
+			const injectee : ClassInjectee = new ClassInjectee();
+			injector.map(Clazz).toValue(new Clazz());
+			injector.addEventListener(eventType, function(event : InjectorEvent) : void
+			{
+				eventReceived = true;
+			});
+			injector.injectInto(injectee);
 			return eventReceived;
 		}
 	}

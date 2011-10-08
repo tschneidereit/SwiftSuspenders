@@ -237,16 +237,11 @@ package org.swiftsuspenders
 				throw new InjectorError(
 						"Can't instantiate interface " + getQualifiedClassName(type));
 			}
-			const instanceInfo : InstanceInfo = new InstanceInfo(
-					ctorInjectionPoint.createInstance(type, this), type, targetType);
+			const instance : * = ctorInjectionPoint.createInstance(type, this);
 			hasEventListener(InjectorEvent.POST_INSTANTIATE)
-				&& dispatchEvent(new InjectorEvent(InjectorEvent.POST_INSTANTIATE, instanceInfo));
-			hasEventListener(InjectorEvent.PRE_CONSTRUCT)
-				&& dispatchEvent(new InjectorEvent(InjectorEvent.PRE_CONSTRUCT, instanceInfo));
-			applyInjectionPoints(instanceInfo.instance, type, ctorInjectionPoint.next);
-			hasEventListener(InjectorEvent.POST_CONSTRUCT)
-				&& dispatchEvent(new InjectorEvent(InjectorEvent.POST_CONSTRUCT, instanceInfo));
-			return instanceInfo.instance;
+				&& dispatchEvent(new InjectorEvent(InjectorEvent.POST_INSTANTIATE, instance, type));
+			applyInjectionPoints(instance, type, ctorInjectionPoint.next);
+			return instance;
 		}
 
 		SsInternal function applyMapping(targetType : Class, mappingId : String) : Object
@@ -287,11 +282,15 @@ package org.swiftsuspenders
 		private function applyInjectionPoints(
 				target : Object, targetType : Class, injectionPoint : InjectionPoint) : void
 		{
+			hasEventListener(InjectorEvent.PRE_CONSTRUCT) && dispatchEvent(
+					new InjectorEvent(InjectorEvent.PRE_CONSTRUCT, target, targetType));
 			while (injectionPoint)
 			{
 				injectionPoint.applyInjection(target, targetType, this);
 				injectionPoint = injectionPoint.next;
 			}
+			hasEventListener(InjectorEvent.POST_CONSTRUCT) && dispatchEvent(
+					new InjectorEvent(InjectorEvent.POST_CONSTRUCT, target, targetType));
 		}
 
 		private function getProvider(mappingId : String) : DependencyProvider
