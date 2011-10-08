@@ -74,7 +74,7 @@
       <!-- Include classes from SWCs in this folder, but only the ones we use. -->
       <arg value="-library-path+=${lib.loc}" />
 
-		<arg value="-target-player=10.1"/>
+		<arg value="-target-player=10.2"/>
 	
 	  <!-- Keep the magic alive. -->
       <arg value="-keep-as3-metadata+=Inject" />
@@ -109,7 +109,7 @@
       <!-- Include classes from SWCs in this folder, but only the ones we use. -->
       <arg value="-library-path+=${lib.loc}" />
 
-	  <arg value="-target-player=10.1"/>
+	  <arg value="-target-player=10.2"/>
 	
 	  <!-- So true. -->
       <arg value="-incremental=true" />
