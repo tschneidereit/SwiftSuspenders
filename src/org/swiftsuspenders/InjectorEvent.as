@@ -18,19 +18,21 @@ package org.swiftsuspenders
 		 */
 		public static const POST_CONSTRUCT : String = 'postConstruct';
 
-		public var instanceInfo : InstanceInfo;
+		public var instance : *;
+		public var instanceType : Class;
 
 
 		//----------------------               Public Methods               ----------------------//
-		public function InjectorEvent(type : String, instanceInfo : InstanceInfo)
+		public function InjectorEvent(type : String, instance : Object, instanceType : Class)
 		{
 			super(type);
-			this.instanceInfo = instanceInfo;
+			this.instance = instance;
+			this.instanceType = instanceType;
 		}
 
 		override public function clone() : Event
 		{
-			return new InjectorEvent(type, instanceInfo);
+			return new InjectorEvent(type, instance, instanceType);
 		}
 	}
 }
