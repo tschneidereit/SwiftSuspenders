@@ -74,11 +74,13 @@ package org.swiftsuspenders
 	public class InjectorTests
 	{
 		protected var injector:Injector;
+		protected var receivedInjectorEvents : Array;
 		
 		[Before]
 		public function runBeforeEachTest():void
 		{
 			injector = new Injector();
+			receivedInjectorEvents = [];
 		}
 
 		[After]
@@ -86,6 +88,7 @@ package org.swiftsuspenders
 		{
 			Injector.SsInternal::purgeInjectionPointsCache();
 			injector = null;
+			receivedInjectorEvents = null;
 		}
 		
 		[Test]
@@ -634,70 +637,143 @@ package org.swiftsuspenders
 		[Test]
 		public function injectorDispatchesPostInstantiateEventDuringInstanceConstruction() : void
 		{
-			assertThat(constructMappedTypeAndListenForEvent(InjectorEvent.POST_INSTANTIATE), isTrue());
+			assertThat(constructMappedTypeAndListenForEvent(InjectionEvent.POST_INSTANTIATE), isTrue());
 		}
 
 		[Test]
 		public function injectorDispatchesPreConstructEventDuringInstanceConstruction() : void
 		{
-			assertThat(constructMappedTypeAndListenForEvent(InjectorEvent.PRE_CONSTRUCT), isTrue());
+			assertThat(constructMappedTypeAndListenForEvent(InjectionEvent.PRE_CONSTRUCT), isTrue());
 		}
 
 		[Test]
 		public function injectorDispatchesPostConstructEventAfterInstanceConstruction() : void
 		{
-			assertThat(constructMappedTypeAndListenForEvent(InjectorEvent.POST_CONSTRUCT), isTrue());
+			assertThat(constructMappedTypeAndListenForEvent(InjectionEvent.POST_CONSTRUCT), isTrue());
 		}
 
 		[Test]
 		public function injectorEventsAfterInstantiateContainCreatedInstance() : void
 		{
-			function listener(event : InjectorEvent) : void
+			function listener(event : InjectionEvent) : void
 			{
 				assertThat(event, hasPropertyWithValue('instance', isA(Clazz)));
 			}
 			injector.map(Clazz);
-			injector.addEventListener(InjectorEvent.POST_INSTANTIATE, listener);
-			injector.addEventListener(InjectorEvent.PRE_CONSTRUCT, listener);
-			injector.addEventListener(InjectorEvent.POST_CONSTRUCT, listener);
+			injector.addEventListener(InjectionEvent.POST_INSTANTIATE, listener);
+			injector.addEventListener(InjectionEvent.PRE_CONSTRUCT, listener);
+			injector.addEventListener(InjectionEvent.POST_CONSTRUCT, listener);
 			const instance : Clazz = injector.getInstance(Clazz);
 		}
 
 		[Test]
 		public function injectIntoDispatchesPreConstructEventDuringObjectConstruction() : void
 		{
-			assertThat(injectIntoInstanceAndListenForEvent(InjectorEvent.PRE_CONSTRUCT), isTrue());
+			assertThat(injectIntoInstanceAndListenForEvent(InjectionEvent.PRE_CONSTRUCT), isTrue());
 		}
 
 		[Test]
 		public function injectIntoDispatchesPostConstructEventDuringObjectConstruction() : void
 		{
-			assertThat(injectIntoInstanceAndListenForEvent(InjectorEvent.POST_CONSTRUCT), isTrue());
+			assertThat(injectIntoInstanceAndListenForEvent(InjectionEvent.POST_CONSTRUCT), isTrue());
+		}
+
+		[Test]
+		public function injectorDispatchesEventBeforeCreatingNewMapping() : void
+		{
+			assertThat(createMappingAndListenForEvent(MappingEvent.PRE_MAPPING_CREATE));
+		}
+
+		[Test]
+		public function injectorDispatchesEventAfterCreatingNewMapping() : void
+		{
+			assertThat(createMappingAndListenForEvent(MappingEvent.POST_MAPPING_CREATE));
+		}
+
+		[Test]
+		public function injectorDispatchesEventBeforeChangingMappingProvider() : void
+		{
+			injector.map(Clazz);
+			listenToInjectorEvent(MappingEvent.PRE_MAPPING_CHANGE);
+			injector.map(Clazz).asSingleton();
+			assertThat(receivedInjectorEvents.pop(), equalTo(MappingEvent.PRE_MAPPING_CHANGE));
+		}
+
+		[Test]
+		public function injectorDispatchesEventAfterChangingMappingProvider() : void
+		{
+			injector.map(Clazz);
+			listenToInjectorEvent(MappingEvent.POST_MAPPING_CHANGE);
+			injector.map(Clazz).asSingleton();
+			assertThat(receivedInjectorEvents.pop(), equalTo(MappingEvent.POST_MAPPING_CHANGE));
+		}
+
+		[Test]
+		public function injectorDispatchesEventBeforeChangingMappingStrength() : void
+		{
+			injector.map(Clazz);
+			listenToInjectorEvent(MappingEvent.PRE_MAPPING_CHANGE);
+			injector.map(Clazz).soft();
+			assertThat(receivedInjectorEvents.pop(), equalTo(MappingEvent.PRE_MAPPING_CHANGE));
+		}
+
+		[Test]
+		public function injectorDispatchesEventAfterChangingMappingStrength() : void
+		{
+			injector.map(Clazz);
+			listenToInjectorEvent(MappingEvent.POST_MAPPING_CHANGE);
+			injector.map(Clazz).soft();
+			assertThat(receivedInjectorEvents.pop(), equalTo(MappingEvent.POST_MAPPING_CHANGE));
+		}
+
+		[Test]
+		public function injectorDispatchesEventBeforeChangingMappingScope() : void
+		{
+			injector.map(Clazz);
+			listenToInjectorEvent(MappingEvent.PRE_MAPPING_CHANGE);
+			injector.map(Clazz).local();
+			assertThat(receivedInjectorEvents.pop(), equalTo(MappingEvent.PRE_MAPPING_CHANGE));
+		}
+
+		[Test]
+		public function injectorDispatchesEventAfterChangingMappingScope() : void
+		{
+			injector.map(Clazz);
+			listenToInjectorEvent(MappingEvent.POST_MAPPING_CHANGE);
+			injector.map(Clazz).local();
+			assertThat(receivedInjectorEvents.pop(), equalTo(MappingEvent.POST_MAPPING_CHANGE));
 		}
 
 		private function constructMappedTypeAndListenForEvent(eventType : String) : Boolean
 		{
-			var eventReceived : Boolean;
 			injector.map(Clazz);
-			injector.addEventListener(eventType, function(event : InjectorEvent) : void
-			{
-				eventReceived = true;
-			});
+			listenToInjectorEvent(eventType);
 			injector.getInstance(Clazz);
-			return eventReceived;
+			return receivedInjectorEvents.pop() == eventType;
 		}
 
 		private function injectIntoInstanceAndListenForEvent(eventType : String) : Boolean
 		{
-			var eventReceived : Boolean;
 			const injectee : ClassInjectee = new ClassInjectee();
 			injector.map(Clazz).toValue(new Clazz());
-			injector.addEventListener(eventType, function(event : InjectorEvent) : void
-			{
-				eventReceived = true;
-			});
+			listenToInjectorEvent(eventType);
 			injector.injectInto(injectee);
-			return eventReceived;
+			return receivedInjectorEvents.pop() == eventType;
+		}
+
+		private function createMappingAndListenForEvent(eventType : String) : Boolean
+		{
+			listenToInjectorEvent(eventType);
+			injector.map(Clazz);
+			return receivedInjectorEvents.pop() == eventType;
+		}
+
+		private function listenToInjectorEvent(eventType : String) : void
+		{
+			injector.addEventListener(eventType, function(event : Event) : void
+			{
+				receivedInjectorEvents.push(event.type);
+			});
 		}
 	}
 }

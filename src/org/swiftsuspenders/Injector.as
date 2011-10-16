@@ -36,9 +36,9 @@ package org.swiftsuspenders
 	 * This event is only dispatched when there are one or more relevant listeners
 	 * attached to the dispatching injector.
 	 *
-	 * @eventType org.swiftsuspenders.InjectorEvent
+	 * @eventType org.swiftsuspenders.InjectionEvent
 	 */
-	[Event(name='postInstantiate', type='org.swiftsuspenders.InjectorEvent')]
+	[Event(name='postInstantiate', type='org.swiftsuspenders.InjectionEvent')]
 	/**
 	 * This event is dispatched each time the injector is about to inject into a class
 	 *
@@ -52,9 +52,9 @@ package org.swiftsuspenders
 	 * This event is only dispatched when there are one or more relevant listeners
 	 * attached to the dispatching injector.
 	 *
-	 * @eventType org.swiftsuspenders.InjectorEvent
+	 * @eventType org.swiftsuspenders.InjectionEvent
 	 */
-	[Event(name='preConstruct', type='org.swiftsuspenders.InjectorEvent')]
+	[Event(name='preConstruct', type='org.swiftsuspenders.InjectionEvent')]
 	/**
 	 * This event is dispatched each time the injector created and fully initialized a new instance
 	 *
@@ -68,9 +68,62 @@ package org.swiftsuspenders
 	 * This event is only dispatched when there are one or more relevant listeners
 	 * attached to the dispatching injector.
 	 *
-	 * @eventType org.swiftsuspenders.InjectorEvent
+	 * @eventType org.swiftsuspenders.InjectionEvent
 	 */
-	[Event(name='postConstruct', type='org.swiftsuspenders.InjectorEvent')]
+	[Event(name='postConstruct', type='org.swiftsuspenders.InjectionEvent')]
+
+	/**
+	 * This event is dispatched each time the injector creates a new mapping for a type/ name
+	 * combination, right before the mapping is created
+	 *
+	 * At the point where the event is dispatched the mapping hasn't yet been created. Thus, the
+	 * respective field in the event is null.
+	 *
+	 * This event is only dispatched when there are one or more relevant listeners
+	 * attached to the dispatching injector.
+	 *
+	 * @eventType org.swiftsuspenders.MappingEvent
+	 */
+	[Event(name='preMappingCreate', type='org.swiftsuspenders.MappingEvent')]
+	/**
+	 * This event is dispatched each time the injector creates a new mapping for a type/ name
+	 * combination, right after the mapping was created
+	 *
+	 * At the point where the event is dispatched the mapping has already been created and stored
+	 * in the injector's lookup table.
+	 *
+	 * This event is only dispatched when there are one or more relevant listeners
+	 * attached to the dispatching injector.
+	 *
+	 * @eventType org.swiftsuspenders.MappingEvent
+	 */
+	[Event(name='postMappingCreate', type='org.swiftsuspenders.MappingEvent')]
+	/**
+	 * This event is dispatched each time an injector mapping is changed in any way, right before
+	 * the change is applied.
+	 *
+	 * At the point where the event is dispatched the changes haven't yet been applied, meaning the
+	 * mapping stored in the event can be queried for its pre-change state
+	 *
+	 * This event is only dispatched when there are one or more relevant listeners
+	 * attached to the dispatching injector.
+	 *
+	 * @eventType org.swiftsuspenders.MappingEvent
+	 */
+	[Event(name='preMappingChange', type='org.swiftsuspenders.MappingEvent')]
+	/**
+	 * This event is dispatched each time an injector mapping is changed in any way, right after
+	 * the change is applied.
+	 *
+	 * At the point where the event is dispatched the changes have already been applied, meaning
+	 * the mapping stored in the event can be queried for its post-change state
+	 *
+	 * This event is only dispatched when there are one or more relevant listeners
+	 * attached to the dispatching injector.
+	 *
+	 * @eventType org.swiftsuspenders.MappingEvent
+	 */
+	[Event(name='postMappingChange', type='org.swiftsuspenders.MappingEvent')]
 
 
 	public class Injector extends EventDispatcher
@@ -99,7 +152,7 @@ package org.swiftsuspenders
 		public function map(type : Class, name : String = '') : InjectionMapping
 		{
 			const mappingId : String = getQualifiedClassName(type) + '|' + name;
-			return _mappings[mappingId] ||= createMapping(type, mappingId);
+			return _mappings[mappingId] || createMapping(type, name, mappingId);
 		}
 
 		public function unmap(type : Class, name : String = '') : void
@@ -238,8 +291,8 @@ package org.swiftsuspenders
 						"Can't instantiate interface " + getQualifiedClassName(type));
 			}
 			const instance : * = ctorInjectionPoint.createInstance(type, this);
-			hasEventListener(InjectorEvent.POST_INSTANTIATE)
-				&& dispatchEvent(new InjectorEvent(InjectorEvent.POST_INSTANTIATE, instance, type));
+			hasEventListener(InjectionEvent.POST_INSTANTIATE)
+				&& dispatchEvent(new InjectionEvent(InjectionEvent.POST_INSTANTIATE, instance, type));
 			applyInjectionPoints(instance, type, ctorInjectionPoint.next);
 			return instance;
 		}
@@ -274,23 +327,30 @@ package org.swiftsuspenders
 
 
 		//----------------------         Private / Protected Methods        ----------------------//
-		private function createMapping(type : Class, mappingId : String) : InjectionMapping
+		private function createMapping(
+			type : Class, name: String, mappingId : String) : InjectionMapping
 		{
-			return new InjectionMapping(this, type, mappingId);
+			hasEventListener(MappingEvent.PRE_MAPPING_CREATE) && dispatchEvent(
+				new MappingEvent(MappingEvent.PRE_MAPPING_CREATE, type, name, null));
+			const mapping : InjectionMapping = new InjectionMapping(this, type, name, mappingId);
+			_mappings[mappingId] = mapping;
+			hasEventListener(MappingEvent.POST_MAPPING_CREATE) && dispatchEvent(
+				new MappingEvent(MappingEvent.POST_MAPPING_CREATE, type, name, mapping));
+			return mapping;
 		}
 
 		private function applyInjectionPoints(
 				target : Object, targetType : Class, injectionPoint : InjectionPoint) : void
 		{
-			hasEventListener(InjectorEvent.PRE_CONSTRUCT) && dispatchEvent(
-					new InjectorEvent(InjectorEvent.PRE_CONSTRUCT, target, targetType));
+			hasEventListener(InjectionEvent.PRE_CONSTRUCT) && dispatchEvent(
+					new InjectionEvent(InjectionEvent.PRE_CONSTRUCT, target, targetType));
 			while (injectionPoint)
 			{
 				injectionPoint.applyInjection(target, targetType, this);
 				injectionPoint = injectionPoint.next;
 			}
-			hasEventListener(InjectorEvent.POST_CONSTRUCT) && dispatchEvent(
-					new InjectorEvent(InjectorEvent.POST_CONSTRUCT, target, targetType));
+			hasEventListener(InjectionEvent.POST_CONSTRUCT) && dispatchEvent(
+					new InjectionEvent(InjectionEvent.POST_CONSTRUCT, target, targetType));
 		}
 
 		private function getProvider(mappingId : String) : DependencyProvider

@@ -104,7 +104,7 @@ package org.swiftsuspenders
 		public function getFullyQualifiedClassNameFromClass():void
 		{
 			var fqcn:String = reflector.getFQCN(Clazz);
-			
+
 			Assert.assertEquals(CLAZZ_FQCN_COLON_NOTATION,fqcn)
 		}
 
