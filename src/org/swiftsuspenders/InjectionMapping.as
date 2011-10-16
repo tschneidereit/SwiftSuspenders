@@ -21,6 +21,7 @@ package org.swiftsuspenders
 	{
 		//----------------------       Private / Protected Properties       ----------------------//
 		private var _type : Class;
+		private var _name : String;
 		private var _mappingId : String;
 		private var _creatingInjector : Injector;
 		private var _defaultProviderSet : Boolean;
@@ -32,10 +33,12 @@ package org.swiftsuspenders
 
 
 		//----------------------               Public Methods               ----------------------//
-		public function InjectionMapping(creatingInjector : Injector, type : Class, mappingId : String)
+		public function InjectionMapping(
+			creatingInjector : Injector, type : Class, name : String, mappingId : String)
 		{
 			_creatingInjector = creatingInjector;
 			_type = type;
+			_name = name;
 			_mappingId = mappingId;
 			_defaultProviderSet = true;
 			mapProvider(new ClassProvider(type));
@@ -81,8 +84,10 @@ package org.swiftsuspenders
 						'"injector.unmap()" prior to your replacement mapping in order to ' +
 						'avoid seeing this message.');
 			}
+			dispatchPreChangeEvent();
 			_defaultProviderSet = false;
 			mapProvider(provider);
+			dispatchPostChangeEvent();
 			return this;
 		}
 
@@ -92,8 +97,10 @@ package org.swiftsuspenders
 			if (!_soft)
 			{
 				const provider : DependencyProvider = getProvider();
+				dispatchPreChangeEvent();
 				_soft = true;
 				mapProvider(provider);
+				dispatchPostChangeEvent();
 			}
 			return this;
 		}
@@ -104,8 +111,10 @@ package org.swiftsuspenders
 			if (_soft)
 			{
 				const provider : DependencyProvider = getProvider();
+				dispatchPreChangeEvent();
 				_soft = false;
 				mapProvider(provider);
+				dispatchPostChangeEvent();
 			}
 			return this;
 		}
@@ -123,8 +132,10 @@ package org.swiftsuspenders
 				return this;
 			}
 			const provider : DependencyProvider = getProvider();
+			dispatchPreChangeEvent();
 			_local = true;
 			mapProvider(provider);
+			dispatchPostChangeEvent();
 			return this;
 		}
 
@@ -141,8 +152,10 @@ package org.swiftsuspenders
 				return this;
 			}
 			const provider : DependencyProvider = getProvider();
+			dispatchPreChangeEvent();
 			_local = false;
 			mapProvider(provider);
+			dispatchPostChangeEvent();
 			return this;
 		}
 
@@ -185,6 +198,7 @@ package org.swiftsuspenders
 		 */
 		public function setInjector(injector : Injector) : void
 		{
+			_sealed && throwSealedError();
 			if (injector == _overridingInjector)
 			{
 				return;
@@ -227,6 +241,20 @@ package org.swiftsuspenders
 		private function throwSealedError() : void
 		{
 			throw new InjectorError('Can\t change a sealed mapping');
+		}
+
+		private function dispatchPreChangeEvent() : void
+		{
+			_creatingInjector.hasEventListener(MappingEvent.PRE_MAPPING_CHANGE)
+				&& _creatingInjector.dispatchEvent(
+				new MappingEvent(MappingEvent.PRE_MAPPING_CHANGE, _type, _name, this));
+		}
+
+		private function dispatchPostChangeEvent() : void
+		{
+			_creatingInjector.hasEventListener(MappingEvent.POST_MAPPING_CHANGE)
+				&& _creatingInjector.dispatchEvent(
+				new MappingEvent(MappingEvent.POST_MAPPING_CHANGE, _type, _name, this));
 		}
 	}
 }

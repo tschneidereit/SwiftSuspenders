@@ -91,7 +91,8 @@ package org.swiftsuspenders
 		[Test]
 		public function injectionTypeOtherMappingReturnsOtherMappingsResponse():void
 		{
-			var otherConfig : InjectionMapping = new InjectionMapping(injector, ClazzExtension, '');
+			var otherConfig : InjectionMapping = new InjectionMapping(injector, ClazzExtension,
+				'', '');
 			otherConfig.toProvider(new ClassProvider(ClazzExtension));
 			const otherMappingProvider : OtherMappingProvider = new OtherMappingProvider(otherConfig);
 			var returnedResponse:Object = otherMappingProvider.apply(null, injector);

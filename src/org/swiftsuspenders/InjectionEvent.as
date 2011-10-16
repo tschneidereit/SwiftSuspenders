@@ -2,7 +2,7 @@ package org.swiftsuspenders
 {
 	import flash.events.Event;
 
-	public class InjectorEvent extends Event
+	public class InjectionEvent extends Event
 	{
 		//----------------------              Public Properties             ----------------------//
 		/**
@@ -23,7 +23,7 @@ package org.swiftsuspenders
 
 
 		//----------------------               Public Methods               ----------------------//
-		public function InjectorEvent(type : String, instance : Object, instanceType : Class)
+		public function InjectionEvent(type : String, instance : Object, instanceType : Class)
 		{
 			super(type);
 			this.instance = instance;
@@ -32,7 +32,7 @@ package org.swiftsuspenders
 
 		override public function clone() : Event
 		{
-			return new InjectorEvent(type, instance, instanceType);
+			return new InjectionEvent(type, instance, instanceType);
 		}
 	}
 }

@@ -40,7 +40,7 @@ package org.swiftsuspenders
 		[Test]
 		public function configIsInstantiated():void
 		{
-			var config : InjectionMapping = new InjectionMapping(injector, Clazz, '');
+			var config : InjectionMapping = new InjectionMapping(injector, Clazz, '', '');
 			
 			Assert.assertTrue(config is InjectionMapping);
 		}
@@ -48,7 +48,7 @@ package org.swiftsuspenders
 		[Test]
 		public function mappingWithoutProviderEverSetUsesClassProvider() : void
 		{
-			var config : InjectionMapping = new InjectionMapping(injector, Clazz, '');
+			var config : InjectionMapping = new InjectionMapping(injector, Clazz, '', '');
 			var returnedResponse:Object = config.apply(null, injector);
 
 			Assert.assertTrue(returnedResponse is Clazz);
@@ -57,7 +57,7 @@ package org.swiftsuspenders
 		[Test]
 		public function injectionMappingAsSingletonMethodCreatesSingletonProvider():void
 		{
-			var config : InjectionMapping = new InjectionMapping(injector, Clazz, '');
+			var config : InjectionMapping = new InjectionMapping(injector, Clazz, '', '');
 			config.asSingleton();
 			var returnedResponse:Object = config.apply(null, injector);
 			var secondResponse:Object = config.apply(null, injector);
@@ -68,7 +68,7 @@ package org.swiftsuspenders
 		[Test]
 		public function sameNamedSingletonIsReturnedOnSecondResponse():void
 		{
-			var config : InjectionMapping = new InjectionMapping(injector, Clazz, "named");
+			var config : InjectionMapping = new InjectionMapping(injector, Clazz, '', "named");
 			config.toProvider(new SingletonProvider(Clazz, injector));
 			var returnedResponse:Object = config.apply(null, injector);
 			var secondResponse:Object = config.apply(null, injector);
@@ -79,7 +79,7 @@ package org.swiftsuspenders
 		[Test]
 		public function callingSetProviderBetweenUsagesChangesResponse():void
 		{
-			var config : InjectionMapping = new InjectionMapping(injector, Clazz, '');
+			var config : InjectionMapping = new InjectionMapping(injector, Clazz, '', '');
 			config.toProvider(new SingletonProvider(Clazz, injector));
 			var returnedResponse:Object = config.apply(null, injector);
 			config.toProvider(null);
@@ -93,7 +93,7 @@ package org.swiftsuspenders
 		[Test]
 		public function sealingAMappingMakesItSealed() : void
 		{
-			const config : InjectionMapping = new InjectionMapping(injector, Interface, '');
+			const config : InjectionMapping = new InjectionMapping(injector, Interface, '', '');
 			config.seal();
 			assertThat(config.isSealed, isTrue());
 		}
@@ -101,7 +101,7 @@ package org.swiftsuspenders
 		[Test]
 		public function sealingAMappingMakesItUnchangable() : void
 		{
-			const config : InjectionMapping = new InjectionMapping(injector, Interface, '');
+			const config : InjectionMapping = new InjectionMapping(injector, Interface, '', '');
 			config.seal();
 			const methods : Array = [
 				{method : 'asSingleton', args : []},
