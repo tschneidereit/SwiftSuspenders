@@ -12,6 +12,7 @@ package org.swiftsuspenders
 	import org.hamcrest.assertThat;
 	import org.hamcrest.object.hasProperties;
 	import org.hamcrest.object.isTrue;
+	import org.hamcrest.object.notNullValue;
 	import org.swiftsuspenders.dependencyproviders.ClassProvider;
 	import org.swiftsuspenders.dependencyproviders.SingletonProvider;
 	import org.swiftsuspenders.support.types.Clazz;
@@ -133,6 +134,42 @@ package org.swiftsuspenders
 		{
 			injector.map(Interface).seal();
 			injector.unmap(Interface);
+		}
+
+		[Test(expects='org.swiftsuspenders.InjectorError')]
+		public function doubleSealingAMappingThrows() : void
+		{
+			injector.map(Interface).seal();
+			injector.map(Interface).seal();
+		}
+
+		[Test]
+		public function sealReturnsAnUnsealingKeyObject() : void
+		{
+			const config : InjectionMapping = new InjectionMapping(injector, Interface, '', '');
+			assertThat(config.seal(), notNullValue());
+		}
+
+		[Test(expects='org.swiftsuspenders.InjectorError')]
+		public function unsealingAMappingWithoutKeyThrows() : void
+		{
+			injector.map(Interface).seal();
+			injector.map(Interface).unseal(null);
+		}
+
+		[Test(expects='org.swiftsuspenders.InjectorError')]
+		public function unsealingAMappingWithWrongKeyThrows() : void
+		{
+			injector.map(Interface).seal();
+			injector.map(Interface).unseal({});
+		}
+
+		[Test]
+		public function unsealingAMappingWithRightKeyMakesItChangable() : void
+		{
+			const key : Object = injector.map(Interface).seal();
+			injector.map(Interface).unseal(key);
+			injector.map(Interface).local();
 		}
 	}
 }
