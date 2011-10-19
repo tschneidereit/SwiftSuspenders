@@ -135,6 +135,7 @@ package org.swiftsuspenders
         private var _applicationDomain:ApplicationDomain;
 		private var _classDescriptor : ClassDescriptor;
 		private var _mappings : Dictionary;
+		private var _mappingsInProcess : Dictionary;
 
 
 		//----------------------            Internal Properties             ----------------------//
@@ -145,6 +146,7 @@ package org.swiftsuspenders
 		public function Injector()
 		{
 			_mappings = new Dictionary();
+			_mappingsInProcess = new Dictionary();
 			_classDescriptor = new ClassDescriptor(INJECTION_POINTS_CACHE);
 			_applicationDomain = ApplicationDomain.currentDomain;
 		}
@@ -330,12 +332,24 @@ package org.swiftsuspenders
 		private function createMapping(
 			type : Class, name: String, mappingId : String) : InjectionMapping
 		{
+			if (_mappingsInProcess[mappingId])
+			{
+				throw new InjectorError(
+					'Can\'t change a mapping from inside a listener to it\'s creation event');
+			}
+			_mappingsInProcess[mappingId] = true;
+			
 			hasEventListener(MappingEvent.PRE_MAPPING_CREATE) && dispatchEvent(
 				new MappingEvent(MappingEvent.PRE_MAPPING_CREATE, type, name, null));
+
 			const mapping : InjectionMapping = new InjectionMapping(this, type, name, mappingId);
 			_mappings[mappingId] = mapping;
+
+			const sealKey : Object = mapping.seal();
 			hasEventListener(MappingEvent.POST_MAPPING_CREATE) && dispatchEvent(
 				new MappingEvent(MappingEvent.POST_MAPPING_CREATE, type, name, mapping));
+			delete _mappingsInProcess[mappingId];
+			mapping.unseal(sealKey);
 			return mapping;
 		}
 
