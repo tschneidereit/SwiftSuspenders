@@ -62,7 +62,6 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.support.injectees.TwoParametersMethodInjectee;
 	import org.swiftsuspenders.support.injectees.XMLInjectee;
 	import org.swiftsuspenders.support.types.Clazz;
-	import org.swiftsuspenders.support.types.Clazz;
 	import org.swiftsuspenders.support.types.Clazz2;
 	import org.swiftsuspenders.support.types.ComplexClazz;
 	import org.swiftsuspenders.support.types.Interface;
@@ -742,6 +741,46 @@ package org.swiftsuspenders
 			listenToInjectorEvent(MappingEvent.POST_MAPPING_CHANGE);
 			injector.map(Clazz).local();
 			assertThat(receivedInjectorEvents.pop(), equalTo(MappingEvent.POST_MAPPING_CHANGE));
+		}
+
+		[Test]
+		public function injectorThrowsWhenTryingToCreateMappingForSameTypeFromPreMappingCreateHandler() : void
+		{
+			var errorThrown : Boolean;
+			injector.addEventListener(MappingEvent.PRE_MAPPING_CREATE,
+				function(event : MappingEvent) : void
+			{
+				try
+				{
+					injector.map(Clazz);
+				}
+				catch (error : InjectorError)
+				{
+					errorThrown = true;
+				}
+			});
+			injector.map(Clazz);
+			assertThat(errorThrown, isTrue());
+		}
+
+		[Test]
+		public function injectorThrowsWhenTryingToCreateMappingForSameTypeFromPostMappingCreateHandler() : void
+		{
+			var errorThrown : Boolean;
+			injector.addEventListener(MappingEvent.POST_MAPPING_CREATE,
+				function(event : MappingEvent) : void
+				{
+					try
+					{
+						injector.map(Clazz).local();
+					}
+					catch (error : InjectorError)
+					{
+						errorThrown = true;
+					}
+				});
+			injector.map(Clazz);
+			assertThat(errorThrown, isTrue());
 		}
 
 		private function constructMappedTypeAndListenForEvent(eventType : String) : Boolean
