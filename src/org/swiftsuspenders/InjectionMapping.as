@@ -30,6 +30,7 @@ package org.swiftsuspenders
 		private var _soft : Boolean;
 		private var _local : Boolean;
 		private var _sealed : Boolean;
+		private var _sealKey : Object;
 
 
 		//----------------------               Public Methods               ----------------------//
@@ -163,11 +164,38 @@ package org.swiftsuspenders
 		 * Prevents all subsequent changes to the mapping, including removal. Trying to change it
 		 * in any way at all will throw an <code>InjectorError</code>.
 		 *
-		 * This makes the mapping completely final and can't be undone, so be careful with it.
+		 * @returns An internally created object that can be used as the key for unseal
 		 */
-		public function seal() : void
+		public function seal() : Object
 		{
+			if (_sealed)
+			{
+				throw new InjectorError('Mapping is already sealed.');
+			}
 			_sealed = true;
+			_sealKey = {};
+			return _sealKey;
+		}
+
+		/**
+		 * Makes the mapping changable again.
+		 *
+		 * @param key The key to unseal the mapping. Has to be the instance returned by
+		 * <code>seal()</code>
+		 * @throws InjectorError if the mapping isn't sealed or if no or the wrong key is given
+		 */
+		public function unseal(key : Object) : void
+		{
+			if (!_sealed)
+			{
+				throw new InjectorError('Can\'t unseal a non-sealed mapping.');
+			}
+			if (key !== _sealKey)
+			{
+				throw new InjectorError('Can\'t unseal mapping without the correct key.');
+			}
+			_sealed = false;
+			_sealKey = null;
 		}
 
 		public function get isSealed() : Boolean
@@ -240,7 +268,7 @@ package org.swiftsuspenders
 
 		private function throwSealedError() : void
 		{
-			throw new InjectorError('Can\t change a sealed mapping');
+			throw new InjectorError('Can\'t change a sealed mapping');
 		}
 
 		private function dispatchPreChangeEvent() : void
