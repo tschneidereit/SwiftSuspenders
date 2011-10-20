@@ -208,6 +208,18 @@ package org.swiftsuspenders
 			return Boolean(_creatingInjector.SsInternal::providerMappings[_mappingId]);
 		}
 
+		public function getProvider() : DependencyProvider
+		{
+			var provider : DependencyProvider =
+				_creatingInjector.SsInternal::providerMappings[_mappingId];
+			while (provider is ForwardingProvider)
+			{
+				provider = ForwardingProvider(provider).provider;
+			}
+			return provider;
+		}
+
+
 		public function apply(targetType : Class, injector : Injector) : Object
 		{
 			return injector.SsInternal::applyMapping(targetType, _mappingId);
@@ -238,17 +250,6 @@ package org.swiftsuspenders
 
 
 		//----------------------         Private / Protected Methods        ----------------------//
-		private function getProvider() : DependencyProvider
-		{
-			var provider : DependencyProvider =
-					_creatingInjector.SsInternal::providerMappings[_mappingId];
-			while (provider is ForwardingProvider)
-			{
-				provider = ForwardingProvider(provider).provider;
-			}
-			return provider;
-		}
-		
 		private function mapProvider(provider : DependencyProvider) : void
 		{
 			if (_soft)
