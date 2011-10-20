@@ -18,8 +18,7 @@
   <property file="build.properties"/>
   
   <!-- Set up Flex and FlexUnit ant tasks -->
-  <taskdef resource="flexTasks.tasks" classpath="${lib.loc}/flexTasks.jar"/>
-  <taskdef resource="flexUnitTasks.tasks" classpath="${lib.loc}/flexUnitTasks.jar"/>
+  <taskdef resource="flexUnitTasks.tasks" classpath="${lib.loc}/flexUnitTasks-4.1.0-8.jar"/>
 
   <target name="usage">
       <echo message=""/>
