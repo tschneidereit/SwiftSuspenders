@@ -28,9 +28,16 @@ package org.swiftsuspenders.utils
 		public function ClassDescriptor(descriptionsCache : Dictionary)
 		{
 			_descriptionsCache = descriptionsCache;
-			_reflector = DescribeTypeJSON.available
+			try
+			{
+				_reflector = DescribeTypeJSON.available
 					? new DescribeTypeJSONReflector()
 					: new DescribeTypeReflector();
+			}
+			catch (e:Error)
+			{
+				_reflector = new DescribeTypeReflector();
+			}
 		}
 
 		public function getDescription(type : Class) : ConstructorInjectionPoint
