@@ -10,6 +10,8 @@ package org.swiftsuspenders
 	import flexunit.framework.Assert;
 
 	import org.hamcrest.assertThat;
+	import org.hamcrest.core.isA;
+	import org.hamcrest.object.equalTo;
 	import org.hamcrest.object.hasProperties;
 	import org.hamcrest.object.isTrue;
 	import org.hamcrest.object.notNullValue;
@@ -50,9 +52,7 @@ package org.swiftsuspenders
 		public function mappingWithoutProviderEverSetUsesClassProvider() : void
 		{
 			var config : InjectionMapping = new InjectionMapping(injector, Clazz, '', '');
-			var returnedResponse:Object = config.apply(null, injector);
-
-			Assert.assertTrue(returnedResponse is Clazz);
+			assertThat(config.getProvider(), isA(ClassProvider));
 		}
 
 		[Test]
@@ -60,35 +60,30 @@ package org.swiftsuspenders
 		{
 			var config : InjectionMapping = new InjectionMapping(injector, Clazz, '', '');
 			config.asSingleton();
-			var returnedResponse:Object = config.apply(null, injector);
-			var secondResponse:Object = config.apply(null, injector);
-
-			Assert.assertStrictlyEquals( returnedResponse, secondResponse );
+			assertThat(config.getProvider(), isA(SingletonProvider));
 		}
 
 		[Test]
 		public function sameNamedSingletonIsReturnedOnSecondResponse():void
 		{
-			var config : InjectionMapping = new InjectionMapping(injector, Clazz, '', "named");
-			config.toProvider(new SingletonProvider(Clazz, injector));
-			var returnedResponse:Object = config.apply(null, injector);
-			var secondResponse:Object = config.apply(null, injector);
+			const provider : SingletonProvider = new SingletonProvider(Clazz, injector);
+			var returnedResponse:Object = provider.apply(null, injector);
+			var secondResponse:Object = provider.apply(null, injector);
 
 			Assert.assertStrictlyEquals( returnedResponse, secondResponse );
 		}
 
 		[Test]
-		public function callingSetProviderBetweenUsagesChangesResponse():void
+		public function setProviderChangesTheProvider():void
 		{
+			const provider1 : SingletonProvider = new SingletonProvider(Clazz, injector);
+			const provider2 : ClassProvider = new ClassProvider(Clazz);
 			var config : InjectionMapping = new InjectionMapping(injector, Clazz, '', '');
-			config.toProvider(new SingletonProvider(Clazz, injector));
-			var returnedResponse:Object = config.apply(null, injector);
+			config.toProvider(provider1);
+			assertThat(config.getProvider(), equalTo(provider1));
 			config.toProvider(null);
-			config.toProvider(new ClassProvider(Clazz));
-			var secondResponse:Object = config.apply(null, injector);
-
-			Assert.assertFalse('First result doesn\'t equal second result',
-					returnedResponse == secondResponse );
+			config.toProvider(provider2);
+			assertThat(config.getProvider(), equalTo(provider2));
 		}
 
 		[Test]

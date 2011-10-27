@@ -9,10 +9,8 @@ package org.swiftsuspenders
 {
 	import flexunit.framework.Assert;
 
-	import org.swiftsuspenders.dependencyproviders.OtherMappingProvider;
-
 	import org.swiftsuspenders.support.injectees.ClassInjectee;
-	import org.swiftsuspenders.support.injectees.childinjectors.InjectorCopyMapping;
+	import org.swiftsuspenders.support.injectees.childinjectors.ChildInjectorCreatingProvider;
 	import org.swiftsuspenders.support.injectees.childinjectors.InjectorInjectee;
 	import org.swiftsuspenders.support.injectees.childinjectors.LeftRobotFoot;
 	import org.swiftsuspenders.support.injectees.childinjectors.RightRobotFoot;
@@ -183,7 +181,7 @@ package org.swiftsuspenders
 		[Test]
 		public function injectorCanCreateChildInjectorDuringInjection():void
 		{
-			injector.map(Injector).toProvider(new OtherMappingProvider(new InjectorCopyMapping(injector)));
+			injector.map(Injector).toProvider(new ChildInjectorCreatingProvider());
 			injector.map(InjectorInjectee).toType(InjectorInjectee);
 			var injectee : InjectorInjectee = injector.getInstance(InjectorInjectee);
 			Assert.assertNotNull('Injection has been applied to injectorInjectee', injectee.injector);

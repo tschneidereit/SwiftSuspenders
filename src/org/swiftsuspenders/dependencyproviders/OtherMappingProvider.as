@@ -30,7 +30,7 @@ package org.swiftsuspenders.dependencyproviders
 		 */
 		public function apply(targetType : Class, activeInjector : Injector) : Object
 		{
-			return _mapping.apply(targetType, activeInjector);
+			return _mapping.getProvider().apply(targetType, activeInjector);
 		}
 	}
 }
