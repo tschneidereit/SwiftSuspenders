@@ -46,9 +46,16 @@ package org.swiftsuspenders
 		}
 
 		/**
-		 * Syntactic sugar method wholly equivalent to using
-		 * <code>injector.map(Type).toSingleton(Type);<code>. Removes the need to repeat the type.
-		 * @return The <code>DependencyProvider</code> that will be used to satisfy the dependency
+		 * Makes the mapping return a lazily constructed singleton instance of the mapped type for
+		 * each consecutive request.
+		 *
+		 * <p>Syntactic sugar method wholly equivalent to using <code>toSingleton(type)<code>.</p>
+		 *
+		 * @return The <code>InjectionMapping</code> the method is invoked on
+		 *
+		 * @throws org.swiftsuspenders.InjectorError Sealed mappings can't be changed in any way
+		 *
+		 * @see #toSingleton()
 		 */
 		public function asSingleton() : InjectionMapping
 		{
@@ -56,24 +63,79 @@ package org.swiftsuspenders
 			return this;
 		}
 
+		/**
+		 * Makes the mapping return a newly created instance of the given <code>type</code> for
+		 * each consecutive request.
+		 *
+		 * <p>Syntactic sugar method wholly equivalent to using
+		 * <code>toProvider(new ClassProvider(type))</code>.</p>
+		 *
+		 * @param type The <code>class</code> to instantiate upon each request
+		 *
+		 * @return The <code>InjectionMapping</code> the method is invoked on
+		 *
+		 * @throws org.swiftsuspenders.InjectorError Sealed mappings can't be changed in any way
+		 *
+		 * @see #toProvider()
+		 */
 		public function toType(type : Class) : InjectionMapping
 		{
 			toProvider(new ClassProvider(type));
 			return this;
 		}
 
+		/**
+		 * Makes the mapping return a lazily constructed singleton instance of the mapped type for
+		 * each consecutive request.
+		 *
+		 * <p>Syntactic sugar method wholly equivalent to using
+		 * <code>toProvider(new SingletonProvider(type, injector))</code>, where
+		 * <code>injector</code> denotes the Injector that should manage the singleton.</p>
+		 *
+		 * @param type The <code>class</code> to instantiate upon each request
+		 *
+		 * @return The <code>InjectionMapping</code> the method is invoked on
+		 *
+		 * @throws org.swiftsuspenders.InjectorError Sealed mappings can't be changed in any way
+		 *
+		 * @see #toProvider()
+		 */
 		public function toSingleton(type : Class) : InjectionMapping
 		{
 			toProvider(new SingletonProvider(type, _creatingInjector));
 			return this;
 		}
 
+		/**
+		 * Makes the mapping return the given value for each consecutive request.
+		 *
+		 * <p>Syntactic sugar method wholly equivalent to using
+		 * <code>toProvider(new ValueProvider(value))</code>.</p>
+		 *
+		 * @param value The instance to return upon each request
+		 *
+		 * @return The <code>InjectionMapping</code> the method is invoked on
+		 *
+		 * @throws org.swiftsuspenders.InjectorError Sealed mappings can't be changed in any way
+		 *
+		 * @see #toProvider()
+		 */
 		public function toValue(value : Object) : InjectionMapping
 		{
 			toProvider(new ValueProvider(value));
 			return this;
 		}
 
+		/**
+		 * Makes the mapping apply the given <code>DependencyProvider</code> and return the
+		 * resulting value for each consecutive request.
+		 *
+		 * @param provider The <code>DependencyProvider</code> to use for fulfilling requests
+		 *
+		 * @return The <code>InjectionMapping</code> the method is invoked on
+		 *
+		 * @throws org.swiftsuspenders.InjectorError Sealed mappings can't be changed in any way
+		 */
 		public function toProvider(provider : DependencyProvider) : InjectionMapping
 		{
 			_sealed && throwSealedError();
@@ -92,6 +154,21 @@ package org.swiftsuspenders
 			return this;
 		}
 
+		/**
+		 * Causes the Injector the mapping is defined in to look further up in its inheritance
+		 * chain for other mappings for the requested dependency. The Injector will use the
+		 * inner-most strong mapping if one exists or the outer-most soft mapping otherwise.
+		 *
+		 * <p>Soft mappings enable modules to be set up in such a way that some of their settings
+		 * can optionally be configured from the outside without them failing to run in standalone
+		 * mode.</p>
+		 *
+		 * @return The <code>InjectionMapping</code> the method is invoked on
+		 *
+		 * @throws org.swiftsuspenders.InjectorError Sealed mappings can't be changed in any way
+		 *
+		 * @see #strong()
+		 */
 		public function soft() : InjectionMapping
 		{
 			_sealed && throwSealedError();
@@ -106,6 +183,16 @@ package org.swiftsuspenders
 			return this;
 		}
 
+		/**
+		 * Reverts the effect of <code>soft()</code> and makes the Injector the mapping is defined
+		 * in stop looking up its inheritance chain for the mapped request immediately.
+		 *
+		 * @return The <code>InjectionMapping</code> the method is invoked on
+		 *
+		 * @throws org.swiftsuspenders.InjectorError Sealed mappings can't be changed in any way
+		 *
+		 * @see #soft()
+		 */
 		public function strong() : InjectionMapping
 		{
 			_sealed && throwSealedError();
@@ -121,9 +208,13 @@ package org.swiftsuspenders
 		}
 
 		/**
-		 * Disables sharing the mapping with child injectors of the injector it is defined in
-		 * @return The mapping the method is invoked on, allowing for a fluent usage of the
-		 * different options
+		 * Disables sharing the mapping with child Injectors of the Injector it is defined in.
+		 *
+		 * @return The <code>InjectionMapping</code> the method is invoked on
+		 *
+		 * @throws org.swiftsuspenders.InjectorError Sealed mappings can't be changed in any way
+		 *
+		 * @see #shared()
 		 */
 		public function local() : InjectionMapping
 		{
@@ -141,9 +232,14 @@ package org.swiftsuspenders
 		}
 
 		/**
-		 * Enables sharing the mapping with child injectors of the injector it is defined in
-		 * @return The mapping the method is invoked on, allowing for a fluent usage of the
-		 * different options
+		 * Reverts the effect of <code>local</code>, enables sharing the mapping with child
+		 * Injectors of the Injector it is defined in.
+		 *
+		 * @return The <code>InjectionMapping</code> the method is invoked on
+		 *
+		 * @throws org.swiftsuspenders.InjectorError Sealed mappings can't be changed in any way
+		 *
+		 * @see #local()
 		 */
 		public function shared() : InjectionMapping
 		{
@@ -164,7 +260,15 @@ package org.swiftsuspenders
 		 * Prevents all subsequent changes to the mapping, including removal. Trying to change it
 		 * in any way at all will throw an <code>InjectorError</code>.
 		 *
+		 * <p>To enable unsealing of the mapping at a later time, <code>seal</code> returns a
+		 * unique object that can be used as the argument to <code>unseal</code>. As long as that
+		 * key object is kept secret, there's no way to tamper with or remove the mapping.</p>
+		 *
 		 * @returns An internally created object that can be used as the key for unseal
+		 *
+		 * @throws org.swiftsuspenders.InjectorError Can't be invoked on a mapping that's already sealed
+		 *
+		 * @see #unseal()
 		 */
 		public function seal() : Object
 		{
@@ -178,13 +282,19 @@ package org.swiftsuspenders
 		}
 
 		/**
-		 * Makes the mapping changable again.
+		 * Reverts the effect of <code>seal</code>, makes the mapping changeable again.
 		 *
 		 * @param key The key to unseal the mapping. Has to be the instance returned by
 		 * <code>seal()</code>
-		 * @throws InjectorError if the mapping isn't sealed or if no or the wrong key is given
+		 *
+		 * @return The <code>InjectionMapping</code> the method is invoked on
+		 *
+		 * @throws org.swiftsuspenders.InjectorError Has to be invoked with the unique key object returned by an earlier call to <code>seal</code>
+		 * @throws org.swiftsuspenders.InjectorError Can't unseal a mapping that's not sealed
+		 *
+		 * @see #seal()
 		 */
-		public function unseal(key : Object) : void
+		public function unseal(key : Object) : InjectionMapping
 		{
 			if (!_sealed)
 			{
@@ -196,18 +306,28 @@ package org.swiftsuspenders
 			}
 			_sealed = false;
 			_sealKey = null;
+			return this;
 		}
 
+		/**
+		 * @return <code>true</code> if the mapping is sealed, <code>false</code> if not
+		 */
 		public function get isSealed() : Boolean
 		{
 			return _sealed;
 		}
 
+		/**
+		 * @return <code>true</code> if the mapping has a provider, <code>false</code> if not
+		 */
 		public function hasProvider() : Boolean
 		{
 			return Boolean(_creatingInjector.SsInternal::providerMappings[_mappingId]);
 		}
 
+		/**
+		 * @return The provider currently associated with the mapping
+		 */
 		public function getProvider() : DependencyProvider
 		{
 			var provider : DependencyProvider =
@@ -217,12 +337,6 @@ package org.swiftsuspenders
 				provider = ForwardingProvider(provider).provider;
 			}
 			return provider;
-		}
-
-
-		public function apply(targetType : Class, injector : Injector) : Object
-		{
-			return injector.SsInternal::applyMapping(targetType, _mappingId);
 		}
 
 		/**
@@ -235,17 +349,20 @@ package org.swiftsuspenders
 		 * graph on.
 		 *
 		 * @param injector - The Injector to use in the mapping. Set to null to reset.
+		 *
+		 * @return The <code>InjectionMapping</code> the method is invoked on
 		 */
-		public function setInjector(injector : Injector) : void
+		public function setInjector(injector : Injector) : InjectionMapping
 		{
 			_sealed && throwSealedError();
 			if (injector == _overridingInjector)
 			{
-				return;
+				return this;
 			}
 			const provider : DependencyProvider = getProvider();
 			_overridingInjector = injector;
 			mapProvider(provider);
+			return this;
 		}
 
 
