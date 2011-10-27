@@ -744,6 +744,15 @@ package org.swiftsuspenders
 		}
 
 		[Test]
+		public function injectorDispatchesEventAfterRemovingMapping() : void
+		{
+			injector.map(Clazz);
+			listenToInjectorEvent(MappingEvent.POST_MAPPING_REMOVE);
+			injector.unmap(Clazz);
+			assertThat(receivedInjectorEvents.pop(), equalTo(MappingEvent.POST_MAPPING_REMOVE));
+		}
+
+		[Test]
 		public function injectorThrowsWhenTryingToCreateMappingForSameTypeFromPreMappingCreateHandler() : void
 		{
 			var errorThrown : Boolean;

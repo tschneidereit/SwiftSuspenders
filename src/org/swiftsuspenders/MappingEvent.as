@@ -20,7 +20,14 @@ package org.swiftsuspenders
 		/**
 		 * @eventType postMappingChange
 		 */
+		/**
+		 * @eventType postMappingChange
+		 */
 		public static const POST_MAPPING_CHANGE : String = 'postMappingChange';
+		/**
+		 * @eventType postMappingRemove
+		 */
+		public static const POST_MAPPING_REMOVE : String = 'postMappingRemove';
 
 
 		public var mappedType : Class;

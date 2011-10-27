@@ -124,6 +124,19 @@ package org.swiftsuspenders
 	 * @eventType org.swiftsuspenders.MappingEvent
 	 */
 	[Event(name='postMappingChange', type='org.swiftsuspenders.MappingEvent')]
+	/**
+	 * This event is dispatched each time an injector mapping is removed, right after
+	 * the mapping is deleted from the configuration.
+	 *
+	 * At the point where the event is dispatched the changes have already been applied, meaning
+	 * the mapping is lost to the injector and can't be queried anymore
+	 *
+	 * This event is only dispatched when there are one or more relevant listeners
+	 * attached to the dispatching injector.
+	 *
+	 * @eventType org.swiftsuspenders.MappingEvent
+	 */
+	[Event(name='postMappingRemove', type='org.swiftsuspenders.MappingEvent')]
 
 
 	public class Injector extends EventDispatcher
@@ -172,6 +185,8 @@ package org.swiftsuspenders
 			}
 			delete _mappings[mappingId];
 			delete providerMappings[mappingId];
+			hasEventListener(MappingEvent.POST_MAPPING_REMOVE) && dispatchEvent(
+				new MappingEvent(MappingEvent.POST_MAPPING_REMOVE, type, name, null));
 		}
 
 		/**
