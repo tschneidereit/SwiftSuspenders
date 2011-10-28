@@ -30,19 +30,5 @@ package org.swiftsuspenders.dependencyproviders
 		{
 			return _value;
 		}
-
-		override public function equals(otherResult : InjectionResult) : Boolean
-		{
-			if (otherResult == this)
-			{
-				return true;
-			}
-			if (!(otherResult is InjectValueResult))
-			{
-				return false;
-			}
-			var castedResult : InjectValueResult =  InjectValueResult(otherResult);
-			return castedResult.m_value == m_value;
-		}
 	}
 }

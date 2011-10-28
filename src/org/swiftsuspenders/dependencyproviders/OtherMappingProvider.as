@@ -32,19 +32,5 @@ package org.swiftsuspenders.dependencyproviders
 		{
 			return _mapping.getProvider().apply(targetType, activeInjector);
 		}
-
-		override public function equals(otherResult : InjectionResult) : Boolean
-		{
-			if (otherResult == this)
-			{
-				return true;
-			}
-			if (!(otherResult is InjectOtherRuleResult))
-			{
-				return false;
-			}
-			var castedResult : InjectOtherRuleResult =  InjectOtherRuleResult(otherResult);
-			return castedResult.m_rule == m_rule;
-		}
 	}
 }

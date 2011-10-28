@@ -28,24 +28,9 @@ package org.swiftsuspenders.dependencyproviders
 		 * @return A new instance of the class given to the ClassProvider's constructor,
 		 * constructed using the <code>usingInjector</code>
 		 */
-		public function apply(
-				targetType : Class, activeInjector : Injector) : Object
+		public function apply(targetType : Class, activeInjector : Injector) : Object
 		{
 			return activeInjector.SsInternal::instantiateUnmapped(_responseType, targetType);
-		}
-
-		override public function equals(otherResult : InjectionResult) : Boolean
-		{
-			if (otherResult == this)
-			{
-				return true;
-			}
-			if (!(otherResult is InjectClassResult))
-			{
-				return false;
-			}
-			var castedResult : InjectClassResult =  InjectClassResult(otherResult);
-			return castedResult.m_responseType == m_responseType;
 		}
 	}
 }
