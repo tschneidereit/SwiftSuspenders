@@ -6,8 +6,10 @@
 /libs/*
 /bin/*
 /doc/*
-/report/*
-/dist/*
+/report
+/reports
+/target
+/dist
 /.FlexUnitSettings/*
 /.actionScriptProperties
 /.flexProperties
