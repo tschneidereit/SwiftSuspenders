@@ -6,15 +6,16 @@
   ~ in accordance with the terms of the license agreement accompanying it.
   -->
 
-<project name="SwiftSuspenders" basedir="." default="test">
+<project name="Swiftsuspenders" basedir="." default="test">
 
   <!-- set up a prefix for all environment variables -->
   <property environment="env."/>
 
   <!-- System environment must contain FLEX_HOME variable that points to Flex SDK -->
-  <property name="FLEX_HOME" location="${env.FLEX_HOME}"/>
-  
-  <!-- identify properties file -->
+  <!--<property name="FLEX_HOME" location="${env.FLEX_HOME}"/>-->
+  <taskdef resource="flexTasks.tasks" classpath="${FLEX_HOME}/ant/lib/flexTasks.jar" />
+
+	<!-- identify properties file -->
   <property file="build.properties"/>
   
   <!-- Set up Flex and FlexUnit ant tasks -->
@@ -22,15 +23,15 @@
 
   <target name="usage">
       <echo message=""/>
-      <echo message="SwiftSuspenders Build Usage"/>
+      <echo message="Swiftsuspenders Build Usage"/>
       <echo message="-----------------------------------"/>
       <echo message=""/>
       <echo message="Available targets are:"/>
       <echo message=""/>
-      <echo message="test          --> Build SwiftSuspenders SWC and run unit tests"/>
-      <echo message="asdoc         --> Build SwiftSuspenders SWC, test, and generate asdocs"/>
-      <echo message="package       --> Build SwiftSuspenders SWC, test, and create release zip"/>
-      <echo message="compile       --> Build SwiftSuspenders SWC"/>
+      <echo message="test          --> Build Swiftsuspenders SWC and run unit tests"/>
+      <echo message="asdoc         --> Build Swiftsuspenders SWC, test, and generate asdocs"/>
+      <echo message="package       --> Build Swiftsuspenders SWC, test, and create release zip"/>
+      <echo message="compile       --> Build Swiftsuspenders SWC"/>
       <echo message="clean         --> Remove all folders created by build script"/>
       <echo message="init          --> Clean and create build folders"/>
       <echo message=""/>
@@ -129,21 +130,14 @@
   </target>
   
   <!-- Build Documentation -->
-  <target name="asdoc" depends="test">
+  <target name="asdoc">
     <echo>[create-docs] Generating ASDOC documentation</echo>
     <tstamp>
       <format property="docgen.time" pattern="MM/dd/yyyy hh:mm aa" unit="hour"/>
     </tstamp>
-
-    <java jar="${FLEX_HOME}/lib/asdoc.jar" dir="${FLEX_HOME}/frameworks" fork="true" failonerror="true">
-      <arg line="-external-library-path ${lib.loc}"/>
-      <arg line="-doc-sources ${main.src.loc}"/>
-      <arg line="-source-path ${main.src.loc}"/>
-      <arg line="-output ${doc.loc}"/>
-      <arg line="-footer 'SwiftSuspenders ${swift.suspenders.version} - Documentation generated at: ${docgen.time}'" />
-      <arg line="-window-title 'SwiftSuspenders ${swift.suspenders.version}'"/>
-      <arg line="-main-title 'SwiftSuspenders ${swift.suspenders.version}'"/>
-	</java>
+	  <asdoc output="${doc.loc}" lenient="true" failonerror="true">
+		  <doc-sources path-element="${main.src.loc}"/>
+	  </asdoc>
     <echo>[create-docs] ASDOC documentation generated successfully</echo>
   </target>
   
