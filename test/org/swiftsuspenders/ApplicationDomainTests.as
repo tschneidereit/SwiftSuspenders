@@ -29,6 +29,7 @@ package org.swiftsuspenders
 	import flash.system.ApplicationDomain;
 	import flash.system.LoaderContext;
 	import flash.system.System;
+	import flash.utils.ByteArray;
 	import flash.utils.Dictionary;
 	import flash.utils.Timer;
 	import flash.utils.getQualifiedClassName;
@@ -130,6 +131,8 @@ package org.swiftsuspenders
 //					'it from being collected', weaklyKeyedDictionaryIsEmpty());
 //		}
 
+		[Embed(source="/../build/support/app-domain-test-files/app-domain-support.swf")]
+		private var supportSWF : Class;
 
 		private function loadSupportSWFIntoDomainWithCallback(
 				domain:ApplicationDomain, callback:Function) : void
@@ -139,8 +142,8 @@ package org.swiftsuspenders
 			_loader = new Loader();
 			_loader.contentLoaderInfo.addEventListener(Event.COMPLETE, supportSWFLoading_complete);
 			var context : LoaderContext = new LoaderContext(false, domain);
-			_loader.load(new URLRequest(
-					'../build/support/app-domain-test-files/app-domain-support.swf'), context);
+			const bytes : ByteArray = ByteArray((new supportSWF())['movieClipData']);
+			_loader.loadBytes(bytes, context);
 		}
 
 		private function supportSWFLoading_complete(event:Event):void
