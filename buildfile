@@ -1,5 +1,5 @@
 require "fileutils"
-require "buildr/as3" # needs buildr-as3 v0.2.25.pre
+require "buildr/as3" # needs buildr-as3 v0.2.27.pre
 
 # Installation: https://github.com/devboy/buildr_as3/wiki/Installation
 
@@ -19,13 +19,13 @@ define "SwiftSuspenders", :layout => layout do
   project.group = "org.swiftsuspenders"  
   project.version = THIS_VERSION  
 
-  compile.using( :compc, :flexsdk => flexsdk, :args => ["-static-link-runtime-shared-libraries=true"] )
+  compile.using( :compc, :flexsdk => flexsdk, :args => ["-static-link-runtime-shared-libraries=true", "-target-player=10.2" ] )
   compile.with _(:build,:libs,"hamcrest-as3-only-1.1.3.swc")
 
   testrunner = _(:source, :test, :as3, "SwiftSuspendersTestRunner.as" )
   
-  test.using( :flexunit4 => true, :localTrusted => true, :antjar => _(:build,:libs,"flexUnitTasks-4.1.0-8.jar") )
-  test.compile.using( :main => testrunner ).with( _(:build,:libs) )
+  test.using( :flexunit4 => true, :verbose => true, :localTrusted => false, :version => "4.1.0-8" )
+  test.compile.using( :main => testrunner ).with( FlexUnit4.swcs("4.1.0-8","4.1.0.16076") )
   
   doc_title = "#{project.name} #{project.version}"
   doc.using :maintitle => doc_title,
@@ -37,8 +37,8 @@ end
 
 def flexsdk
   @flexsdk ||= begin
-    flexsdk = FlexSDK.new("4.5.0.20967")
-    flexsdk.default_options << "-keep-as3-metadata+=Inject" << "-keep-as3-metadata+=PostConstruct"
+    flexsdk = FlexSDK.new("4.5.1.21328")
+    flexsdk.default_options << "-keep-as3-metadata+=Inject" << "-keep-as3-metadata+=PostConstruct" << "-verbose-stacktraces=true"
     flexsdk
   end
 end
