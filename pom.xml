@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.swiftsuspenders</groupId>
+	<artifactId>SwiftSuspenders</artifactId>
+	
+	<version>2.0.0-b1-SNAPSHOT</version>
+	
+	<packaging>swc</packaging>
+	
+	<name>Swift Suspenders</name>
+	<description>
+		SwiftSuspenders is a basic metadata driven IOC (Inversion Of Control) solution for AS3. In its basic approach, it is similar to the SmartyPants IOC framework by Josh McDonald, but it differs from SmartyPants in two respects: It is inferior in capabilities and it is quite somewhat faster.
+		
+		Its main Raison d’être is supporting the very nice Robotlegs AS3 MCVS framework by Shaun Smith – hence the name.
+	</description>
+	<url>https://github.com/tschneidereit/SwiftSuspenders</url>
+	<licenses>
+		<license>
+			<name>SwiftSuspenders Custom License</name>
+			<url>https://github.com/tschneidereit/SwiftSuspenders/blob/master/LICENSE</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<id>tschneidereit</id>
+			<name>Till Schneidereit</name>
+			<email></email>
+			<roles>
+				<role>Founder</role>
+			</roles>
+		</developer>
+	</developers>
+	<contributors>
+		<contributor>
+			<name>Justin J. Moses</name>
+			<url>http://about.me/justinj</url>
+			<roles>
+				<role>Maven contributor</role>
+			</roles>
+		</contributor>
+	</contributors>
+
+	<scm>
+		<url>https://github.com/tschneidereit/SwiftSuspenders</url>
+		<connection>git://github.com/tschneidereit/SwiftSuspenders.git</connection>
+	</scm>
+
+	<properties>
+		<flexmojos.version>4.0-RC2</flexmojos.version>
+		
+		<!-- The Flex SDK to compile against -->
+		<flex.sdk.version>4.5.1.21328</flex.sdk.version>
+		
+		<!-- Unit testing frameworks and dependencies -->
+		<flexunit.version>4.1.0-8</flexunit.version>
+		<hamcrest.version>1.1.3</hamcrest.version>
+	</properties>
+
+	<distributionManagement>
+		<repository>
+			<id>sonatype-staging</id>
+			<url>http://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+		</repository>
+		<snapshotRepository>
+			<id>sonatype-nexus-snapshots</id>
+			<name>Sonatype Nexus Snapshots</name>
+			<url>http://oss.sonatype.org/content/repositories/snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
+
+	<build>
+		<sourceDirectory>src</sourceDirectory>
+		<testSourceDirectory>test</testSourceDirectory>
+	
+		<plugins>
+			<plugin>
+				<groupId>org.sonatype.flexmojos</groupId>
+				<artifactId>flexmojos-maven-plugin</artifactId>
+				<version>${flexmojos.version}</version>
+				<extensions>true</extensions>
+				<configuration>
+					<keepAs3Metadatas>
+						<keepAs3Metadata>Inject</keepAs3Metadata>
+						<keepAs3Metadata>PostConstruct</keepAs3Metadata>
+					</keepAs3Metadatas>
+					<dumpConfigAttach>true</dumpConfigAttach>
+					<verboseStacktraces>true</verboseStacktraces>
+					<compilerWarnings>
+						<warn-no-constructor>false</warn-no-constructor>
+					</compilerWarnings>
+					<includeTestFiles>
+						<includeTestFile>org/swiftsuspenders/suites/SwiftSuspendersTestSuite.as</includeTestFile>
+					</includeTestFiles>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>com.adobe.flex</groupId>
+						<artifactId>compiler</artifactId>
+						<version>${flex.sdk.version}</version>
+						<type>pom</type>
+					</dependency>
+				</dependencies>
+			</plugin>
+	</plugins>
+	</build>
+
+	<dependencies>
+		<!-- Note: while this includes the entire flex framework for compilation, the default for SWCs is external linkage, so nothing from the Flex framework will be added to the final output. -->
+		<dependency>
+			<groupId>com.adobe.flex.framework</groupId>
+			<artifactId>flex-framework</artifactId>
+			<version>${flex.sdk.version}</version>
+			<type>pom</type>
+		</dependency>
+		
+		<!-- ======================== -->
+		<!-- TEST Dependencies. (Only compiled in the unit test runner) -->
+		<dependency>
+			<groupId>com.adobe.flexunit</groupId>
+			<artifactId>flexunit</artifactId>
+			<version>${flexunit.version}</version>
+			<type>swc</type>
+			<classifier>as3</classifier>
+			<scope>test</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest-as3</artifactId>
+			<version>${hamcrest.version}</version>
+			<type>swc</type>
+			<classifier>as3</classifier>
+			<scope>test</scope>
+		</dependency>
+		<!-- ======================== -->
+		
+    </dependencies>
+</project>
