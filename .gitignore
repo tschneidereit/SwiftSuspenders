@@ -6,6 +6,7 @@
 /libs/*
 /bin/*
 /doc/*
+/target
 /report/*
 /dist/*
 /.FlexUnitSettings/*
