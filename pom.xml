@@ -77,7 +77,16 @@
 	<build>
 		<sourceDirectory>src</sourceDirectory>
 		<testSourceDirectory>test</testSourceDirectory>
-	
+		<testResources>
+			<testResource>
+				<directory>build/support/app-domain-test-files</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>app-domain-support.swf</include>
+				</includes>
+				<targetPath>${project.build.directory}/build/support/app-domain-test-files</targetPath>
+			</testResource>
+		</testResources>
 		<plugins>
 			<plugin>
 				<groupId>org.sonatype.flexmojos</groupId>
