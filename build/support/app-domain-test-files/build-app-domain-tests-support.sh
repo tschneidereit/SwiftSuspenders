@@ -6,6 +6,9 @@
 #
 # The script expects the mxmlc compiler to be available in the shell's PATH.
 
+source ~/.bashrc
+shopt -s expand_aliases
+
 cd `dirname $0`
 #remove existing files
 [ -e "app-domain-support.swf" ] && rm app-domain-support.swf
@@ -30,4 +33,4 @@ injectees=${injectees//".........test."/}
 injectees=${injectees//".as,"/,}
 
 #compile swf
-mxmlc -debug -source-path=../../../src,../../../test -output=app-domain-support.swf -static-link-runtime-shared-libraries=true -includes=$injectees ../../../test/org/swiftsuspenders/support/AppDomainSupportSWFSprite.as
+mxmlc -debug -target-player 10.1 -source-path=../../../src,../../../test -output=app-domain-support.swf -static-link-runtime-shared-libraries=true -includes=$injectees ../../../test/org/swiftsuspenders/support/AppDomainSupportSWFSprite.as

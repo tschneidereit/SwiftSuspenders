@@ -49,7 +49,7 @@ package org.swiftsuspenders
 		 * Makes the mapping return a lazily constructed singleton instance of the mapped type for
 		 * each consecutive request.
 		 *
-		 * <p>Syntactic sugar method wholly equivalent to using <code>toSingleton(type)<code>.</p>
+		 * <p>Syntactic sugar method wholly equivalent to using <code>toSingleton(type)</code>.</p>
 		 *
 		 * @return The <code>InjectionMapping</code> the method is invoked on
 		 *
