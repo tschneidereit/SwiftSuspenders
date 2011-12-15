@@ -40,14 +40,14 @@ package org.swiftsuspenders.dependencyproviders
 		 */
 		public function apply(targetType : Class, activeInjector : Injector) : Object
 		{
-			return _response ||= createResponse(_creatingInjector, targetType);
+			return _response ||= createResponse(_creatingInjector);
 		}
 
 
 		//----------------------         Private / Protected Methods        ----------------------//
-		private function createResponse(injector : Injector, targetType : Class) : Object
+		private function createResponse(injector : Injector) : Object
 		{
-			return injector.SsInternal::instantiateUnmapped(_responseType, targetType);
+			return injector.SsInternal::instantiateUnmapped(_responseType);
 		}
 	}
 }

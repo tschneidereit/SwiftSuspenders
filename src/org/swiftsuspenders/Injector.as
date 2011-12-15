@@ -301,15 +301,21 @@ package org.swiftsuspenders
 		 * <p>If no <code>InjectionMapping</code> is found for the given <code>type</code> and no
 		 * <code>name</code> is given, the class is simply instantiated and then injected into.</p>
 		 *
+		 * <p>The parameter <code>targetType</code> is only useful if the
+		 * <code>InjectionMapping</code> used to satisfy the request might vary its result based on
+		 * that <code>targetType</code>. An Example of that would be a provider returning a logger
+		 * instance pre-configured for the instance it is used in.</p>
+		 *
 		 * @param type The <code>class</code> describing the mapping
-		 * @param name The name, as a case-sensitive string, to further describe the mapping
+		 * @param name The name, as a case-sensitive string, to use for mapping resolution
+		 * @param targetType The type of the instance that is dependent on the returned value
 		 *
 		 * @return The created instance
 		 */
-		public function getInstance(type : Class, name : String = '') : *
+		public function getInstance(type : Class, name : String = '', targetType : Class = null) : *
 		{
 			const mappingId : String = getQualifiedClassName(type) + '|' + name;
-			var result : Object = applyMapping(type, mappingId);
+			var result : Object = applyMapping(targetType, mappingId);
 			if (result)
 			{
 				return result;
@@ -319,7 +325,7 @@ package org.swiftsuspenders
 				throw new InjectorError('No mapping found for request ' + mappingId
 						+ '. getInstance only creates an unmapped instance if no name is given.');
 			}
-			return instantiateUnmapped(type, type);
+			return instantiateUnmapped(type);
 		}
 
 		/**
@@ -380,7 +386,7 @@ package org.swiftsuspenders
 			INJECTION_POINTS_CACHE = new Dictionary(true);
 		}
 
-		SsInternal function instantiateUnmapped(type : Class, targetType : Class) : Object
+		SsInternal function instantiateUnmapped(type : Class) : Object
 		{
 			var ctorInjectionPoint : ConstructorInjectionPoint =
 					_classDescriptor.getDescription(type);
