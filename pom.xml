@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.swiftsuspenders</groupId>
+	<artifactId>swiftsuspenders</artifactId>
+	<version>1.6.1-SNAPSHOT</version>
+	<packaging>swc</packaging>
+
+	<name>SwiftSuspenders 1.6.1</name>
+	<description>SwiftSuspenders is a basic metadata driven IOC (Inversion Of Control) solution for AS3.</description>
+	<url>https://github.com/tschneidereit/SwiftSuspenders</url>
+	<developers>
+		<developer>
+			<id>tschneidereit</id>
+			<email>tschneidereit@gmail.com</email>
+			<name>Till Schneidereit</name>
+			<timezone>+2</timezone>
+			<roles>
+				<role>owner</role>
+			</roles>
+		</developer>
+	</developers>
+	<licenses>
+		<license>
+			<name>Creative Commons</name>
+			<url>https://github.com/tschneidereit/SwiftSuspenders/blob/master/LICENSE</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<scm>
+		<connection>scm:git:git@github.com:tschneidereit/SwiftSuspenders.git</connection>
+		<developerConnection>scm:git:git@github.com:tschneidereit/SwiftSuspenders.git</developerConnection>
+		<url>git@github.com:tschneidereit/SwiftSuspenders.git</url>
+	</scm>
+
+	<properties>
+		<flexunit.version>4.0-rc-1</flexunit.version>
+		<flex.sdk.version>4.0.0.14159</flex.sdk.version>
+	</properties>
+
+	<parent>
+		<groupId>org.sonatype.flexmojos</groupId>
+		<artifactId>flexmojos-flex-super-pom</artifactId>
+		<version>3.8</version>
+	</parent>
+
+	<build>
+		<sourceDirectory>src</sourceDirectory>
+		<testSourceDirectory>test</testSourceDirectory>
+		<plugins>
+			<plugin>
+				<groupId>org.sonatype.flexmojos</groupId>
+				<artifactId>flexmojos-maven-plugin</artifactId>
+				<version>${project.parent.version}</version>
+				<dependencies>
+					<dependency>
+						<groupId>com.adobe.flex</groupId>
+						<artifactId>compiler</artifactId>
+						<version>${flex.sdk.version}</version>
+						<type>pom</type>
+					</dependency>
+				</dependencies>
+				<configuration>
+					<targetPlayer>10.0.0</targetPlayer>
+					<warnings>
+						<noConstructor>false</noConstructor>
+					</warnings>
+					<excludeTestFiles>
+						<excludeTestFile>**/ApplicationDomainTests.as</excludeTestFile>
+					</excludeTestFiles>
+					<includeTestFiles>
+						<includeTestFile>*Test.as</includeTestFile>
+						<includeTestFile>*Tests.as</includeTestFile>
+						<includeTestFile>Test*.as</includeTestFile>
+					</includeTestFiles>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.adobe.flexunit</groupId>
+			<artifactId>flexunit</artifactId>
+			<version>${flexunit.version}</version>
+			<type>swc</type>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.adobe.flex.framework</groupId>
+			<artifactId>flex-framework</artifactId>
+			<version>${flex.sdk.version}</version>
+			<type>pom</type>
+		</dependency>
+	</dependencies>
+</project>
