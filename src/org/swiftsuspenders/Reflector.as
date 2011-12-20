@@ -22,5 +22,7 @@ package org.swiftsuspenders
 				lastInjectionPoint : InjectionPoint) : InjectionPoint;
 		function addPostConstructMethodPointsToList(
 				lastInjectionPoint : InjectionPoint) : InjectionPoint;
+		function addPreDestroyMethodPointsToList(
+				lastInjectionPoint : InjectionPoint) : InjectionPoint;
 	}
 }

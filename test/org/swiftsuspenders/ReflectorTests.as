@@ -12,6 +12,7 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.injectionpoints.InjectionPoint;
 	import org.swiftsuspenders.injectionpoints.NoParamsConstructorInjectionPoint;
 	import org.swiftsuspenders.injectionpoints.PostConstructInjectionPoint;
+	import org.swiftsuspenders.injectionpoints.PreDestroyInjectionPoint;
 	import org.swiftsuspenders.support.injectees.InterfaceInjectee;
 	import org.swiftsuspenders.support.injectees.NamedInterfaceInjectee;
 	import org.swiftsuspenders.support.injectees.OneNamedParameterConstructorInjectee;
@@ -22,6 +23,7 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.support.injectees.OptionalClassInjectee;
 	import org.swiftsuspenders.support.injectees.OptionalOneRequiredParameterMethodInjectee;
 	import org.swiftsuspenders.support.injectees.OrderedPostConstructInjectee;
+	import org.swiftsuspenders.support.injectees.OrderedPreDestroyInjectee;
 	import org.swiftsuspenders.support.injectees.TwoNamedParametersMethodInjectee;
 	import org.swiftsuspenders.support.types.Clazz;
 	import org.swiftsuspenders.support.types.ClazzExtension;
@@ -317,7 +319,7 @@ package org.swiftsuspenders
 			reflector.startReflection(OrderedPostConstructInjectee);
 			const ctorInjectionPoint : InjectionPoint = reflector.getCtorInjectionPoint();
 			reflector.addPostConstructMethodPointsToList(ctorInjectionPoint);
-			Assert.assertTrue('Four injection points has been added', ctorInjectionPoint.next
+			Assert.assertTrue('Four injection points have been added', ctorInjectionPoint.next
 					&& ctorInjectionPoint.next.next && ctorInjectionPoint.next.next.next
 					&& ctorInjectionPoint.next.next.next.next);
 		}
@@ -336,6 +338,33 @@ package org.swiftsuspenders
 					PostConstructInjectionPoint(ctorInjectionPoint.next.next.next).order);
 			Assert.assertEquals('Fourth injection point has no order "int.MAX_VALUE"', int.MAX_VALUE,
 					PostConstructInjectionPoint(ctorInjectionPoint.next.next.next.next).order);
+		}
+
+		[Test]
+		public function reflectorCreatesInjectionPointsForPreDestroyMethods() : void
+		{
+			reflector.startReflection(OrderedPreDestroyInjectee);
+			const ctorInjectionPoint : InjectionPoint = reflector.getCtorInjectionPoint();
+			reflector.addPreDestroyMethodPointsToList(ctorInjectionPoint);
+			Assert.assertTrue('Four injection points have been added', ctorInjectionPoint.next
+				&& ctorInjectionPoint.next.next && ctorInjectionPoint.next.next.next
+				&& ctorInjectionPoint.next.next.next.next);
+		}
+
+		[Test]
+		public function reflectorCorrectlySortsInjectionPointsForPreDestroyMethods() : void
+		{
+			reflector.startReflection(OrderedPreDestroyInjectee);
+			const ctorInjectionPoint : InjectionPoint = reflector.getCtorInjectionPoint();
+			reflector.addPreDestroyMethodPointsToList(ctorInjectionPoint);
+			Assert.assertEquals('First injection point has order "1"', 1,
+				PreDestroyInjectionPoint(ctorInjectionPoint.next).order);
+			Assert.assertEquals('Second injection point has order "2"', 2,
+				PreDestroyInjectionPoint(ctorInjectionPoint.next.next).order);
+			Assert.assertEquals('Third injection point has order "3"', 3,
+				PreDestroyInjectionPoint(ctorInjectionPoint.next.next.next).order);
+			Assert.assertEquals('Fourth injection point has no order "int.MAX_VALUE"', int.MAX_VALUE,
+				PreDestroyInjectionPoint(ctorInjectionPoint.next.next.next.next).order);
 		}
 	}
 }

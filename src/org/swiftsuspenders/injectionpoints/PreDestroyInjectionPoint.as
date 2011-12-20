@@ -7,13 +7,14 @@
 
 package org.swiftsuspenders.injectionpoints
 {
-	public class PostConstructInjectionPoint extends OrderedInjectionPoint
+	public class PreDestroyInjectionPoint extends OrderedInjectionPoint
 	{
 		//----------------------               Public Methods               ----------------------//
-		public function PostConstructInjectionPoint(methodName : String, order : int)
+		public function PreDestroyInjectionPoint(methodName : String, order : int)
 		{
 			_methodName = methodName;
 			_orderValue = order;
 		}
+
 	}
 }

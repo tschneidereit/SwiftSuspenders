@@ -18,6 +18,7 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.injectionpoints.MethodInjectionPoint;
 	import org.swiftsuspenders.injectionpoints.NoParamsConstructorInjectionPoint;
 	import org.swiftsuspenders.injectionpoints.PostConstructInjectionPoint;
+	import org.swiftsuspenders.injectionpoints.PreDestroyInjectionPoint;
 	import org.swiftsuspenders.injectionpoints.PropertyInjectionPoint;
 
 	public class DescribeTypeJSONReflector extends ReflectorBase implements Reflector
@@ -92,16 +93,13 @@ package org.swiftsuspenders
 			const parameters : Array = _traits.constructor;
 			if (!parameters)
 			{
-				if (_traits.bases.length > 0)
-				{
-					return new NoParamsConstructorInjectionPoint();
-				}
-				return null;
+				return _traits.bases.length > 0 ? new NoParamsConstructorInjectionPoint() : null;
 			}
-			var injectParameters : Array =
-					_traits.metadata && extractInjectParameters(_traits.metadata);
-			var parameterNames : Array = extractMappingName(injectParameters || []);
-			const requiredParameters : uint = gatherMethodParameters(parameters, parameterNames);
+			const injectParameters : Object =
+					_traits.metadata && extractTagParameters('Inject', _traits.metadata);
+			const parameterNames : Array =
+				(injectParameters && injectParameters.name || '').split(',');
+			const requiredParameters : int = gatherMethodParameters(parameters, parameterNames);
 			return new ConstructorInjectionPoint(parameters, requiredParameters);
 		}
 
@@ -124,14 +122,15 @@ package org.swiftsuspenders
 			for (var i : int = 0; i < length; i++)
 			{
 				var method : Object = methods[i];
-				var injectParameters : Array =
-						method.metadata && extractInjectParameters(method.metadata);
+				var injectParameters : Object =
+						method.metadata && extractTagParameters('Inject', method.metadata);
 				if (!injectParameters)
 				{
 					continue;
 				}
-				var optional : Boolean = extractOptionalFlag(injectParameters);
-				var parameterNames : Array = extractMappingName(injectParameters);
+				var optional : Boolean = injectParameters.optional
+					&& (injectParameters.optional == 'true' || injectParameters.optional == '1');
+				var parameterNames : Array = (injectParameters.name || '').split(',');
 				var parameters : Array = method.parameters;
 				const requiredParameters : uint =
 						gatherMethodParameters(parameters, parameterNames);
@@ -146,37 +145,15 @@ package org.swiftsuspenders
 		public function addPostConstructMethodPointsToList(
 				lastInjectionPoint : InjectionPoint) : InjectionPoint
 		{
-			const postConstructMethodPoints : Array = [];
-			const methods : Array = _traits.methods;
-			if (!methods)
-			{
-				return lastInjectionPoint;
-			}
-			var length : uint = methods.length;
-			for (var i : int = 0; i < length; i++)
-			{
-				var method : Object = methods[i];
-				var postConstructParameters : Array =
-						method.metadata && extractPostConstructParameters(method.metadata);
-				if (!postConstructParameters)
-				{
-					continue;
-				}
-				var order : int = extractOrder(postConstructParameters);
-				postConstructMethodPoints.push(new PostConstructInjectionPoint(method.name, order));
-			}
-			if (postConstructMethodPoints.length > 0)
-			{
-				postConstructMethodPoints.sortOn('order', Array.NUMERIC);
-				length = postConstructMethodPoints.length;
-				for (i = 0; i < length; i++)
-				{
-					var injectionPoint : InjectionPoint = postConstructMethodPoints[i];
-					lastInjectionPoint.next = injectionPoint;
-					lastInjectionPoint = injectionPoint;
-				}
-			}
-			return lastInjectionPoint;
+			return gatherOrderedInjectionPointsForTag(lastInjectionPoint,
+				PostConstructInjectionPoint, 'PostConstruct');
+		}
+
+		public function addPreDestroyMethodPointsToList(
+			lastInjectionPoint : InjectionPoint) : InjectionPoint
+		{
+			return gatherOrderedInjectionPointsForTag(lastInjectionPoint,
+				PreDestroyInjectionPoint, 'PreDestroy');
 		}
 
 		
@@ -192,14 +169,15 @@ package org.swiftsuspenders
 			for (var i : int = 0; i < length; i++)
 			{
 				var field : Object = fields[i];
-				var injectParameters : Array =
-						field.metadata && extractInjectParameters(field.metadata);
+				var injectParameters : Object =
+						field.metadata && extractTagParameters('Inject', field.metadata);
 				if (!injectParameters)
 				{
 					continue;
 				}
-				var mappingName : String = extractMappingName(injectParameters)[0] || '';
-				var optional : Boolean = extractOptionalFlag(injectParameters);
+				var mappingName : String = injectParameters.name || '';
+				var optional : Boolean = injectParameters.optional
+					&& (injectParameters.optional == 'true' || injectParameters.optional == '1');
 				var injectionPoint : PropertyInjectionPoint = new PropertyInjectionPoint(
 						field.type + '|' + mappingName, field.name, optional);
 				lastInjectionPoint.next = injectionPoint;
@@ -238,76 +216,68 @@ package org.swiftsuspenders
 			return requiredLength;
 		}
 
-		private function extractInjectParameters(metadata : Array) : Array
+		private function gatherOrderedInjectionPointsForTag(lastInjectionPoint : InjectionPoint,
+				injectionPointClass : Class, tag : String) : InjectionPoint
+		{
+			const injectionPoints : Array = [];
+			const methods : Array = _traits.methods;
+			if (!methods)
+			{
+				return lastInjectionPoint;
+			}
+			var length : uint = methods.length;
+			for (var i : int = 0; i < length; i++)
+			{
+				var method : Object = methods[i];
+				var postConstructParameters : Object =
+					method.metadata && extractTagParameters(tag, method.metadata);
+				if (!postConstructParameters)
+				{
+					continue;
+				}
+				var order : int = parseInt(postConstructParameters.order, 10);
+				if (order != postConstructParameters.order)
+				{
+					order = int.MAX_VALUE;
+				}
+				injectionPoints.push(new injectionPointClass(method.name, order));
+			}
+			if (injectionPoints.length > 0)
+			{
+				injectionPoints.sortOn('order', Array.NUMERIC);
+				length = injectionPoints.length;
+				for (i = 0; i < length; i++)
+				{
+					var injectionPoint : InjectionPoint = injectionPoints[i];
+					lastInjectionPoint.next = injectionPoint;
+					lastInjectionPoint = injectionPoint;
+				}
+			}
+			return lastInjectionPoint;
+		}
+
+		private function extractTagParameters(tag : String, metadata : Array) : Object
 		{
 			var length : uint = metadata.length;
 			for (var i : int = 0; i < length; i++)
 			{
 				var entry : Object = metadata[i];
-				if (entry.name == 'Inject')
+				if (entry.name == tag)
 				{
-					return entry.value;
+					const parametersList : Array = entry.value;
+					const parametersMap : Object = {};
+					const parametersCount : int = parametersList.length;
+					for (var j : int = 0; j < parametersCount; j++)
+					{
+						const parameter : Object = parametersList[j];
+						parametersMap[parameter.key] = parametersMap[parameter.key]
+							? parametersMap[parameter.key] + ',' + parameter.value
+							: parameter.value;
+					}
+					return parametersMap;
 				}
 			}
 			return null;
-		}
-
-		private function extractPostConstructParameters(metadata : Array) : Array
-		{
-			var length : uint = metadata.length;
-			for (var i : int = 0; i < length; i++)
-			{
-				var entry : Object = metadata[i];
-				if (entry.name == 'PostConstruct')
-				{
-					return entry.value;
-				}
-			}
-			return null;
-		}
-
-		private function extractOrder(postConstructParameters : Array) : int
-		{
-			var length : uint = postConstructParameters.length;
-			for (var i : int = 0; i < length; i++)
-			{
-				var parameter : Object = postConstructParameters[i];
-				if (parameter.key == 'order')
-				{
-					const result : Number = parseInt(parameter.value, 10);
-					return isNaN(result) ? int.MAX_VALUE : result;
-				}
-			}
-			return int.MAX_VALUE;
-		}
-
-		private function extractMappingName(injectParameters : Array) : Array
-		{
-			var names : Array = [];
-			var length : uint = injectParameters.length;
-			for (var i : int = 0; i < length; i++)
-			{
-				var parameter : Object = injectParameters[i];
-				if (parameter.key == 'name')
-				{
-					names.push(parameter.value);
-				}
-			}
-			return names;
-		}
-
-		private function extractOptionalFlag(injectParameters : Array) : Boolean
-		{
-			var length : uint = injectParameters.length;
-			for (var i : int = 0; i < length; i++)
-			{
-				var parameter : Object = injectParameters[i];
-				if (parameter.key == 'optional')
-				{
-					return parameter.value == 'true' || parameter.value == '1';
-				}
-			}
-			return false;
 		}
 	}
 }

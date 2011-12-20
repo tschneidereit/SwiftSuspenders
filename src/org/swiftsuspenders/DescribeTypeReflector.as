@@ -17,6 +17,7 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.injectionpoints.MethodInjectionPoint;
 	import org.swiftsuspenders.injectionpoints.NoParamsConstructorInjectionPoint;
 	import org.swiftsuspenders.injectionpoints.PostConstructInjectionPoint;
+	import org.swiftsuspenders.injectionpoints.PreDestroyInjectionPoint;
 	import org.swiftsuspenders.injectionpoints.PropertyInjectionPoint;
 
 	public class DescribeTypeReflector extends ReflectorBase implements Reflector
@@ -143,24 +144,15 @@ package org.swiftsuspenders
 		public function addPostConstructMethodPointsToList(
 				lastInjectionPoint : InjectionPoint) : InjectionPoint
 		{
-			const postConstructMethodPoints : Array = [];
-			for each (var node : XML in
-					_currentFactoryXML.method.metadata.(@name == 'PostConstruct'))
-			{
-				var order : Number = parseInt(node.arg.(@key == 'order').@value);
-				postConstructMethodPoints.push(new PostConstructInjectionPoint(
-						node.parent().@name, isNaN(order) ? int.MAX_VALUE : order));
-			}
-			if (postConstructMethodPoints.length > 0)
-			{
-				postConstructMethodPoints.sortOn('order', Array.NUMERIC);
-				for each (var injectionPoint : InjectionPoint in postConstructMethodPoints)
-				{
-					lastInjectionPoint.next = injectionPoint;
-					lastInjectionPoint = injectionPoint;
-				}
-			}
-			return lastInjectionPoint;
+			return gatherOrderedInjectionPointsForTag(
+				lastInjectionPoint, PostConstructInjectionPoint, 'PostConstruct');
+		}
+
+		public function addPreDestroyMethodPointsToList(
+			lastInjectionPoint : InjectionPoint) : InjectionPoint
+		{
+			return gatherOrderedInjectionPointsForTag(
+				lastInjectionPoint, PreDestroyInjectionPoint, 'PreDestroy');
 		}
 
 		//----------------------         Private / Protected Methods        ----------------------//
@@ -207,6 +199,29 @@ package org.swiftsuspenders
 			}
 			parameters.required = requiredParameters;
 			return parameters;
+		}
+
+		private function gatherOrderedInjectionPointsForTag(lastInjectionPoint : InjectionPoint,
+				injectionPointClass : Class, tag : String) : InjectionPoint
+		{
+			const injectionPoints : Array = [];
+			for each (var node : XML in
+				_currentFactoryXML.method.metadata.(@name == tag))
+			{
+				var order : Number = parseInt(node.arg.(@key == 'order').@value);
+				injectionPoints.push(new injectionPointClass(
+					node.parent().@name, isNaN(order) ? int.MAX_VALUE : order));
+			}
+			if (injectionPoints.length > 0)
+			{
+				injectionPoints.sortOn('order', Array.NUMERIC);
+				for each (var injectionPoint : InjectionPoint in injectionPoints)
+				{
+					lastInjectionPoint.next = injectionPoint;
+					lastInjectionPoint = injectionPoint;
+				}
+			}
+			return lastInjectionPoint;
 		}
 
 		private function createDummyInstance(constructorNode : XML, clazz : Class) : void

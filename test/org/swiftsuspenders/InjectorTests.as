@@ -356,7 +356,7 @@ package org.swiftsuspenders
 		[Test]
 		public function performConstructorInjectionWithOneParameter():void
 		{
-			injector.map(Clazz).toType(Clazz);
+			injector.map(Clazz);
 			var injectee:OneParameterConstructorInjectee = injector.getInstance(OneParameterConstructorInjectee);
 			Assert.assertNotNull("Instance of Class should have been injected for Clazz parameter", injectee.getDependency() );
 		}
@@ -364,7 +364,7 @@ package org.swiftsuspenders
 		[Test]
 		public function performConstructorInjectionWithTwoParameters():void
 		{
-			injector.map(Clazz).toType(Clazz);
+			injector.map(Clazz);
 			injector.map(String).toValue('stringDependency');
 			var injectee:TwoParametersConstructorInjectee = injector.getInstance(TwoParametersConstructorInjectee);
 			Assert.assertNotNull("Instance of Class should have been injected for named Clazz parameter", injectee.getDependency());
