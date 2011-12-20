@@ -128,8 +128,7 @@ package org.swiftsuspenders
 				{
 					continue;
 				}
-				var optional : Boolean = injectParameters.optional
-					&& (injectParameters.optional == 'true' || injectParameters.optional == '1');
+				var optional : Boolean = injectParameters.optional == 'true';
 				var parameterNames : Array = (injectParameters.name || '').split(',');
 				var parameters : Array = method.parameters;
 				const requiredParameters : uint =
@@ -176,8 +175,7 @@ package org.swiftsuspenders
 					continue;
 				}
 				var mappingName : String = injectParameters.name || '';
-				var optional : Boolean = injectParameters.optional
-					&& (injectParameters.optional == 'true' || injectParameters.optional == '1');
+				var optional : Boolean = injectParameters.optional == 'true';
 				var injectionPoint : PropertyInjectionPoint = new PropertyInjectionPoint(
 						field.type + '|' + mappingName, field.name, optional);
 				lastInjectionPoint.next = injectionPoint;

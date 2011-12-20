@@ -158,8 +158,7 @@ package org.swiftsuspenders
 		//----------------------         Private / Protected Methods        ----------------------//
 		private function getOptionalFlagFromXMLNode(node : XML) : Boolean
 		{
-			return node.arg.(@key == 'optional' &&
-					(@value == 'true' || @value == '1')).length() != 0;
+			return node.arg.(@key == 'optional' && @value == 'true').length() != 0;
 		}
 
 		private function gatherMethodParameters(
