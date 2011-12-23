@@ -9,12 +9,9 @@ package org.swiftsuspenders
 {
 	import avmplus.DescribeTypeJSON;
 
-	import flash.system.ApplicationDomain;
-	import flash.utils.getDefinitionByName;
 	import flash.utils.getQualifiedClassName;
 
 	import org.swiftsuspenders.typedescriptions.ConstructorInjectionPoint;
-	import org.swiftsuspenders.typedescriptions.InjectionPoint;
 	import org.swiftsuspenders.typedescriptions.MethodInjectionPoint;
 	import org.swiftsuspenders.typedescriptions.NoParamsConstructorInjectionPoint;
 	import org.swiftsuspenders.typedescriptions.PostConstructInjectionPoint;

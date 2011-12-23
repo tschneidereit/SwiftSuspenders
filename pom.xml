@@ -123,6 +123,11 @@
 	<build>
 		<sourceDirectory>src</sourceDirectory>
 		<testSourceDirectory>test</testSourceDirectory>
+		<resources>
+			<resource>
+				<directory>src</directory>
+			</resource>
+		</resources>
 		<testResources>
 			<testResource>
 				<directory>build/support/app-domain-test-files</directory>
@@ -150,6 +155,11 @@
 					<compilerWarnings>
 						<warn-no-constructor>false</warn-no-constructor>
 					</compilerWarnings>
+					<includeFiles>
+						<includes>
+							<include>metadata.xml</include>
+						</includes>
+					</includeFiles>
 					<includeTestFiles>
 						<includeTestFile>org/swiftsuspenders/suites/SwiftSuspendersTestSuite.as</includeTestFile>
 					</includeTestFiles>
