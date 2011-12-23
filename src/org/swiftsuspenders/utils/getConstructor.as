@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2011 the original author or authors
+ * Copyright (c) 2011 the original author or authors
  *
  * Permission is hereby granted to use, modify, and distribute this file
  * in accordance with the terms of the license agreement accompanying it.
@@ -20,9 +20,10 @@ package org.swiftsuspenders.utils
 		   For these, we have to fall back to more verbose ways of getting the constructor.
 
 		   Additionally, Vector instances always return Vector.<*> when queried for their constructor.
-		   Ideally, that would also be resolved, but the SwiftSuspenders wouldn't be compatible with
-		   Flash Player < 10, anymore.
+		   Ideally, that would also be resolved, but then Swiftsuspenders wouldn't be compatible
+		   with Flash Player < 10, anymore.
 		 */
+		//TODO: enable Vector type checking, we don't support FP 9, anymore
 		if (value is Proxy || value is Number || value is XML || value is XMLList)
 		{
 			return Class(getDefinitionByName(getQualifiedClassName(value)));

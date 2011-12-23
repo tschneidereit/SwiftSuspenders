@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2011 the original author or authors
+  ~
+  ~ Permission is hereby granted to use, modify, and distribute this file
+  ~ in accordance with the terms of the license agreement accompanying it.
+  -->
+
 <project xmlns="http://maven.apache.org/POM/4.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
@@ -11,7 +18,7 @@
 	
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.swiftsuspenders</groupId>
-	<artifactId>SwiftSuspenders</artifactId>
+	<artifactId>swiftsuspenders</artifactId>
 	
 	<version>2.0.0-b1-SNAPSHOT</version>
 	
@@ -19,14 +26,14 @@
 	
 	<name>Swift Suspenders</name>
 	<description>
-		SwiftSuspenders is a basic metadata driven IOC (Inversion Of Control) solution for AS3. In its basic approach, it is similar to the SmartyPants IOC framework by Josh McDonald, but it differs from SmartyPants in two respects: It is inferior in capabilities and it is quite somewhat faster.
+		Swiftsuspenders is a fast and light-weight IoC container for AS3
 		
 		Its main Raison d’être is supporting the very nice Robotlegs AS3 MCVS framework by Shaun Smith – hence the name.
 	</description>
 	<url>https://github.com/tschneidereit/SwiftSuspenders</url>
 	<licenses>
 		<license>
-			<name>SwiftSuspenders Custom License</name>
+			<name>Swiftsuspenders Custom License</name>
 			<url>https://github.com/tschneidereit/SwiftSuspenders/blob/master/LICENSE</url>
 			<distribution>repo</distribution>
 		</license>

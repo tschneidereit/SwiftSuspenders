@@ -14,7 +14,7 @@ layout[:source, :test, :as3] = "test"
 
 THIS_VERSION = "2.0.0b1-SNAPSHOT"
 
-define "SwiftSuspenders", :layout => layout do
+define "Swiftsuspenders", :layout => layout do
   
   project.group = "org.swiftsuspenders"  
   project.version = THIS_VERSION  

@@ -225,7 +225,7 @@ package org.swiftsuspenders
 				trace('Exception caught while trying to create dummy instance for constructor ' +
 						'injection. It\'s almost certainly ok to ignore this exception, but you ' +
 						'might want to restructure your constructor to prevent errors from ' +
-						'happening. See the SwiftSuspenders documentation for more details. ' +
+						'happening. See the Swiftsuspenders documentation for more details. ' +
 						'The caught exception was:\n' + error);
 			}
 			constructorNode.setChildren(describeType(clazz).factory.constructor[0].children());
