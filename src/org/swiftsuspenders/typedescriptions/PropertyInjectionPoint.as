@@ -9,6 +9,7 @@ package org.swiftsuspenders.typedescriptions
 {
 	import org.swiftsuspenders.Injector;
 	import org.swiftsuspenders.InjectorError;
+	import org.swiftsuspenders.dependencyproviders.DependencyProvider;
 	import org.swiftsuspenders.utils.SsInternal;
 
 	public class PropertyInjectionPoint extends InjectionPoint
@@ -31,8 +32,8 @@ package org.swiftsuspenders.typedescriptions
 		override public function applyInjection(
 				target : Object, targetType : Class, injector : Injector) : void
 		{
-			var injection : Object = injector.SsInternal::applyMapping(targetType, _mappingId);
-			if (injection == null)
+			var provider : DependencyProvider = injector.SsInternal::getProvider(_mappingId);
+			if (!provider)
 			{
 				if (_optional)
 				{
@@ -43,7 +44,7 @@ package org.swiftsuspenders.typedescriptions
 						_propertyName + '" of object "' + target + '" with type "' + targetType +
 						'". Target dependency: "' + _mappingId + '"'));
 			}
-			target[_propertyName] = injection;
+			target[_propertyName] = provider.apply(targetType, injector);
 		}
 	}
 }

@@ -166,5 +166,12 @@ package org.swiftsuspenders
 			injector.map(Interface).unseal(key);
 			injector.map(Interface).local();
 		}
+
+		[Test]
+		public function valueMappingSupportsNullValue() : void
+		{
+			injector.map(Interface).toValue(null);
+			injector.getInstance(Interface);
+		}
 	}
 }

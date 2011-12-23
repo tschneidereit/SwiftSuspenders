@@ -11,6 +11,7 @@ package org.swiftsuspenders.typedescriptions
 
 	import org.swiftsuspenders.Injector;
 	import org.swiftsuspenders.InjectorError;
+	import org.swiftsuspenders.dependencyproviders.DependencyProvider;
 	import org.swiftsuspenders.utils.SsInternal;
 
 	public class MethodInjectionPoint extends InjectionPoint
@@ -65,9 +66,9 @@ package org.swiftsuspenders.typedescriptions
 			for (var i : int = 0; i < length; i++)
 			{
 				var parameterMappingId : String = _parameterMappingIDs[i];
-				var injection : Object = injector.SsInternal::applyMapping(
-						targetType, parameterMappingId);
-				if (injection == null)
+				var provider : DependencyProvider =
+					injector.SsInternal::getProvider(parameterMappingId);
+				if (!provider)
 				{
 					if (i >= _requiredParameters || _isOptional)
 					{
@@ -81,7 +82,7 @@ package org.swiftsuspenders.typedescriptions
 					));
 				}
 				
-				parameters[i] = injection;
+				parameters[i] = provider.apply(targetType, injector);
 			}
 			return parameters;
 		}

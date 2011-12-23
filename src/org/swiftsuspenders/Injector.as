@@ -15,7 +15,6 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.dependencyproviders.DependencyProvider;
 	import org.swiftsuspenders.dependencyproviders.LocalOnlyProvider;
 	import org.swiftsuspenders.dependencyproviders.SoftDependencyProvider;
-	import org.swiftsuspenders.typedescriptions.ConstructorInjectionPoint;
 	import org.swiftsuspenders.typedescriptions.InjectionPoint;
 	import org.swiftsuspenders.typedescriptions.TypeDescription;
 	import org.swiftsuspenders.utils.TypeDescriptor;
@@ -316,10 +315,10 @@ package org.swiftsuspenders
 		public function getInstance(type : Class, name : String = '', targetType : Class = null) : *
 		{
 			const mappingId : String = getQualifiedClassName(type) + '|' + name;
-			var result : Object = applyMapping(targetType, mappingId);
-			if (result)
+			var provider : DependencyProvider = getProvider(mappingId);
+			if (provider)
 			{
-				return result;
+				return provider.apply(targetType, this);
 			}
 			if (name)
 			{
@@ -402,7 +401,7 @@ package org.swiftsuspenders
 			return instance;
 		}
 
-		SsInternal function applyMapping(targetType : Class, mappingId : String) : Object
+		SsInternal function getProvider(mappingId : String) : DependencyProvider
 		{
 			var softProvider : DependencyProvider;
 			var injector : Injector = this;
@@ -423,11 +422,11 @@ package org.swiftsuspenders
 						injector = injector.parentInjector;
 						continue;
 					}
-					return provider.apply(targetType, this);
+					return provider;
 				}
 				injector = injector.parentInjector;
 			}
-			return softProvider && softProvider.apply(targetType, this);
+			return softProvider;
 		}
 
 
@@ -468,20 +467,6 @@ package org.swiftsuspenders
 			}
 			hasEventListener(InjectionEvent.POST_CONSTRUCT) && dispatchEvent(
 					new InjectionEvent(InjectionEvent.POST_CONSTRUCT, target, targetType));
-		}
-
-		private function getProvider(mappingId : String) : DependencyProvider
-		{
-			var injector : Injector = this;
-			while (injector)
-			{
-				if (injector.providerMappings[mappingId])
-				{
-					return injector.providerMappings[mappingId];
-				}
-				injector = injector.parentInjector;
-			}
-			return null;
 		}
 	}
 }
