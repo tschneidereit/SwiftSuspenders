@@ -7,10 +7,8 @@
 
 package org.swiftsuspenders
 {
-	import flash.system.ApplicationDomain;
 	import flash.utils.describeType;
 	import flash.utils.getDefinitionByName;
-	import flash.utils.getQualifiedClassName;
 
 	import org.swiftsuspenders.typedescriptions.ConstructorInjectionPoint;
 	import org.swiftsuspenders.typedescriptions.MethodInjectionPoint;
@@ -26,42 +24,18 @@ package org.swiftsuspenders
 		private var _currentFactoryXML : XML;
 
 		//----------------------               Public Methods               ----------------------//
-		public function classExtendsOrImplements(classOrClassName : Object,
-			superclass : Class, application : ApplicationDomain = null) : Boolean
+		public function typeImplements(type : Class, superType : Class) : Boolean
 		{
-            var actualClass : Class;
-			
-            if (classOrClassName is Class)
+            if (type == superType)
             {
-                actualClass = Class(classOrClassName);
-            }
-            else if (classOrClassName is String)
-            {
-                try
-                {
-                    actualClass = Class(getDefinitionByName(classOrClassName as String));
-                }
-                catch (e : Error)
-                {
-                    throw new Error("The class name " + classOrClassName +
-                    	" is not valid because of " + e + "\n" + e.getStackTrace());
-                }
+	            return true;
             }
 
-            if (!actualClass)
-            {
-                throw new Error("The parameter classOrClassName must be a valid Class " +
-                	"instance or fully qualified class name.");
-            }
-
-            if (actualClass == superclass)
-                return true;
-
-            var factoryDescription : XML = describeType(actualClass).factory[0];
+            var factoryDescription : XML = describeType(type).factory[0];
 
 			return (factoryDescription.children().(
             	name() == "implementsInterface" || name() == "extendsClass").(
-            	attribute("type") == getQualifiedClassName(superclass)).length() > 0);
+            	attribute("type") == getQualifiedClassName(superType)).length() > 0);
 		}
 
 		public function describeInjections(type : Class) : TypeDescription

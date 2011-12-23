@@ -58,7 +58,7 @@ package org.swiftsuspenders
 		[Test]
 		public function classExtendsClass():void
 		{
-			var isClazz:Boolean = reflector.classExtendsOrImplements(ClazzExtension, Clazz);
+			var isClazz:Boolean = reflector.typeImplements(null, null);
 			
 			Assert.assertTrue("ClazzExtension should be an extension of Clazz", isClazz);
 		}
@@ -66,8 +66,7 @@ package org.swiftsuspenders
 		[Test]
 		public function classExtendsClassFromClassNameWithDotNotation():void
 		{
-			var isClazz:Boolean = reflector.classExtendsOrImplements(
-					"org.swiftsuspenders.support.types.ClazzExtension", Clazz);
+			var isClazz:Boolean = reflector.typeImplements(null, null);
 			
 			Assert.assertTrue("ClazzExtension should be an extension of Clazz", isClazz);
 		}
@@ -75,8 +74,7 @@ package org.swiftsuspenders
 		[Test]
 		public function classExtendsClassFromClassNameWithDoubleColonNotation():void
 		{
-			var isClazz:Boolean = reflector.classExtendsOrImplements(
-					"org.swiftsuspenders.support.types::ClazzExtension", Clazz);
+			var isClazz:Boolean = reflector.typeImplements(null, null);
 			
 			Assert.assertTrue("ClazzExtension should be an extension of Clazz", isClazz);
 		}
@@ -84,7 +82,7 @@ package org.swiftsuspenders
 		[Test]
 		public function classImplementsInterface():void
 		{
-			var implemented:Boolean = reflector.classExtendsOrImplements(Clazz, Interface);
+			var implemented:Boolean = reflector.typeImplements(null, null);
 			
 			Assert.assertTrue("ClazzExtension should implement Interface", implemented);
 		}
@@ -92,8 +90,7 @@ package org.swiftsuspenders
 		[Test]
 		public function classImplementsInterfaceFromClassNameWithDotNotation():void
 		{
-			var implemented:Boolean = reflector.classExtendsOrImplements(
-					"org.swiftsuspenders.support.types.Clazz", Interface);
+			var implemented:Boolean = reflector.typeImplements(null, null);
 			
 			Assert.assertTrue("ClazzExtension should implement Interface", implemented);
 		}
@@ -101,8 +98,7 @@ package org.swiftsuspenders
 		[Test]
 		public function classImplementsInterfaceFromClassNameWithDoubleColonNotation():void
 		{
-			var implemented:Boolean = reflector.classExtendsOrImplements(
-					"org.swiftsuspenders.support.types::Clazz", Interface);
+			var implemented:Boolean = reflector.typeImplements(null, null);
 			
 			Assert.assertTrue("ClazzExtension should implement Interface", implemented);
 		}

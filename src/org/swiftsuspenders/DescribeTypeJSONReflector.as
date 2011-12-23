@@ -35,41 +35,15 @@ package org.swiftsuspenders
 			_descriptor = new DescribeTypeJSON();
 		}
 
-		public function classExtendsOrImplements(classOrClassName : Object, superclass : Class,
-		                                         application : ApplicationDomain = null) : Boolean
+		public function typeImplements(type : Class, superType : Class) : Boolean
 		{
-			var actualClass : Class;
-
-			if (classOrClassName is Class)
-			{
-				actualClass = Class(classOrClassName);
-			}
-			else if (classOrClassName is String)
-			{
-				try
-				{
-					actualClass = Class(getDefinitionByName(classOrClassName as String));
-				}
-				catch (e : Error)
-				{
-					throw new Error("The class name " + classOrClassName +
-							" is not valid because of " + e + "\n" + e.getStackTrace());
-				}
-			}
-
-			if (!actualClass)
-			{
-				throw new Error("The parameter classOrClassName must be a valid Class " +
-						"instance or fully qualified class name.");
-			}
-
-			if (actualClass == superclass)
+			if (type == superType)
 			{
 				return true;
 			}
-			const superClassName : String = getQualifiedClassName(superclass);
+			const superClassName : String = getQualifiedClassName(superType);
 
-			const traits : Object = _descriptor.getInstanceDescription(actualClass).traits;
+			const traits : Object = _descriptor.getInstanceDescription(type).traits;
 			return (traits.bases as Array).indexOf(superClassName) > -1
 					|| (traits.interfaces as Array).indexOf(superClassName) > -1;
 		}

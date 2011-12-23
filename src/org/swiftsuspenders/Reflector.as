@@ -15,8 +15,7 @@ package org.swiftsuspenders
 	{
 		function getClass(value : *, applicationDomain : ApplicationDomain = null) : Class;
 		function getFQCN(value : *, replaceColons : Boolean = false) : String;
-		function classExtendsOrImplements(classOrClassName : Object, superclass : Class,
-				application : ApplicationDomain = null) : Boolean;
+		function typeImplements(type : Class, superType : Class) : Boolean;
 
 		function describeInjections(type : Class) : TypeDescription;
 	}
