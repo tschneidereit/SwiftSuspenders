@@ -28,5 +28,18 @@ package org.swiftsuspenders.typedescriptions
 				injectionPoints.last = injectionPoint;
 			}
 		}
+		public function addPreDestroyMethod(method : PreDestroyInjectionPoint) : void
+		{
+			if (preDestroyMethods)
+			{
+				preDestroyMethods.last.next = method;
+				preDestroyMethods.last = method;
+			}
+			else
+			{
+				preDestroyMethods = method;
+				preDestroyMethods.last = method;
+			}
+		}
 	}
 }
