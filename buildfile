@@ -38,7 +38,7 @@ end
 def flexsdk
   @flexsdk ||= begin
     flexsdk = FlexSDK.new("4.5.1.21328")
-    flexsdk.default_options << "-keep-as3-metadata+=Inject" << "-keep-as3-metadata+=PostConstruct" << "-verbose-stacktraces=true"
+    flexsdk.default_options << "-keep-as3-metadata+=Inject" << "-keep-as3-metadata+=PostConstruct" << "-keep-as3-metadata+=PreDestroy" << "-verbose-stacktraces=true"
     flexsdk
   end
 end

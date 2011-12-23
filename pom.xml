@@ -143,6 +143,7 @@
 					<keepAs3Metadatas>
 						<keepAs3Metadata>Inject</keepAs3Metadata>
 						<keepAs3Metadata>PostConstruct</keepAs3Metadata>
+						<keepAs3Metadata>PreDestroy</keepAs3Metadata>
 					</keepAs3Metadatas>
 					<dumpConfigAttach>true</dumpConfigAttach>
 					<verboseStacktraces>true</verboseStacktraces>

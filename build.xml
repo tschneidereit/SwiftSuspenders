@@ -79,7 +79,8 @@
 	  <!-- Keep the magic alive. -->
       <arg value="-keep-as3-metadata+=Inject" />
 		<arg value="-keep-as3-metadata+=PostConstruct" />
-	
+		<arg value="-keep-as3-metadata+=PreDestroy" />
+
 	  <!-- Boolean mosh pit! -->
       <arg value="-incremental=true" />
       <arg value="-static-link-runtime-shared-libraries=true" />
