@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2011 the original author or authors
+ * Copyright (c) 2011 the original author or authors
  *
  * Permission is hereby granted to use, modify, and distribute this file
  * in accordance with the terms of the license agreement accompanying it.
@@ -12,18 +12,17 @@ package org.swiftsuspenders
 	import flash.utils.getDefinitionByName;
 	import flash.utils.getQualifiedClassName;
 
-	import org.swiftsuspenders.injectionpoints.ConstructorInjectionPoint;
-	import org.swiftsuspenders.injectionpoints.InjectionPoint;
-	import org.swiftsuspenders.injectionpoints.MethodInjectionPoint;
-	import org.swiftsuspenders.injectionpoints.NoParamsConstructorInjectionPoint;
-	import org.swiftsuspenders.injectionpoints.PostConstructInjectionPoint;
-	import org.swiftsuspenders.injectionpoints.PreDestroyInjectionPoint;
-	import org.swiftsuspenders.injectionpoints.PropertyInjectionPoint;
+	import org.swiftsuspenders.typedescriptions.ConstructorInjectionPoint;
+	import org.swiftsuspenders.typedescriptions.MethodInjectionPoint;
+	import org.swiftsuspenders.typedescriptions.NoParamsConstructorInjectionPoint;
+	import org.swiftsuspenders.typedescriptions.PostConstructInjectionPoint;
+	import org.swiftsuspenders.typedescriptions.PreDestroyInjectionPoint;
+	import org.swiftsuspenders.typedescriptions.PropertyInjectionPoint;
+	import org.swiftsuspenders.typedescriptions.TypeDescription;
 
 	public class DescribeTypeReflector extends ReflectorBase implements Reflector
 	{
 		//----------------------       Private / Protected Properties       ----------------------//
-		private var _currentType : Class;
 		private var _currentFactoryXML : XML;
 
 		//----------------------               Public Methods               ----------------------//
@@ -65,19 +64,21 @@ package org.swiftsuspenders
             	attribute("type") == getQualifiedClassName(superclass)).length() > 0);
 		}
 
-		public function startReflection(type : Class) : void
+		public function describeInjections(type : Class) : TypeDescription
 		{
-			_currentType = type;
 			_currentFactoryXML = describeType(type).factory[0];
-		}
-
-		public function endReflection() : void
-		{
-			_currentType = null;
+			const description : TypeDescription = new TypeDescription();
+			addCtorInjectionPoint(description, type);
+			addFieldInjectionPoints(description);
+			addMethodInjectionPoints(description);
+			addPostConstructMethodPoints(description);
+			addPreDestroyMethodPoints(description);
 			_currentFactoryXML = null;
+			return description;
 		}
 
-		public function getCtorInjectionPoint() : ConstructorInjectionPoint
+		//----------------------         Private / Protected Methods        ----------------------//
+		private function addCtorInjectionPoint(description : TypeDescription, type : Class) : void
 		{
 			const node : XML = _currentFactoryXML.constructor[0];
 			if (!node)
@@ -85,9 +86,9 @@ package org.swiftsuspenders
 				if (_currentFactoryXML.parent().@name == 'Object'
 						|| _currentFactoryXML.extendsClass.length() > 0)
 				{
-					return new NoParamsConstructorInjectionPoint();
+					description.ctor = new NoParamsConstructorInjectionPoint();
 				}
-				return null;
+				return;
 			}
 			var nameArgs : XMLList = node.parent().metadata.arg.(@key == 'name');
 			/*
@@ -97,16 +98,15 @@ package org.swiftsuspenders
 			 */
 			if (node.parameter.(@type == '*').length() == node.parameter.@type.length())
 			{
-				createDummyInstance(node, _currentType);
+				createDummyInstance(node, type);
 			}
 			const parameters : Array = gatherMethodParameters(node.parameter, nameArgs);
 			const requiredParameters : uint = parameters.required;
 			delete parameters.required;
-			return new ConstructorInjectionPoint(parameters, requiredParameters);
+			description.ctor = new ConstructorInjectionPoint(parameters, requiredParameters);
 		}
 
-		public function addFieldInjectionPointsToList(
-				lastInjectionPoint : InjectionPoint) : InjectionPoint
+		private function addFieldInjectionPoints(description : TypeDescription) : void
 		{
 			for each (var node : XML in _currentFactoryXML.*.
 					(name() == 'variable' || name() == 'accessor').metadata.(@name == 'Inject'))
@@ -116,14 +116,11 @@ package org.swiftsuspenders
 				var propertyName : String = node.parent().@name;
 				var injectionPoint : PropertyInjectionPoint = new PropertyInjectionPoint(mappingId,
 						propertyName, getOptionalFlagFromXMLNode(node));
-				lastInjectionPoint.next = injectionPoint;
-				lastInjectionPoint = injectionPoint;
+				description.addInjectionPoint(injectionPoint);
 			}
-			return lastInjectionPoint;
 		}
 
-		public function addMethodInjectionPointsToList(
-				lastInjectionPoint : InjectionPoint) : InjectionPoint
+		private function addMethodInjectionPoints(description : TypeDescription) : void
 		{
 			for each (var node : XML in _currentFactoryXML.method.metadata.(@name == 'Inject'))
 			{
@@ -135,27 +132,37 @@ package org.swiftsuspenders
 				var injectionPoint : MethodInjectionPoint =
 						new MethodInjectionPoint(node.parent().@name, parameters,
 								requiredParameters, getOptionalFlagFromXMLNode(node));
-				lastInjectionPoint.next = injectionPoint;
-				lastInjectionPoint = injectionPoint;
+				description.addInjectionPoint(injectionPoint);
 			}
-			return lastInjectionPoint;
 		}
 
-		public function addPostConstructMethodPointsToList(
-				lastInjectionPoint : InjectionPoint) : InjectionPoint
+		private function addPostConstructMethodPoints(description : TypeDescription) : void
 		{
-			return gatherOrderedInjectionPointsForTag(
-				lastInjectionPoint, PostConstructInjectionPoint, 'PostConstruct');
+			var injectionPoints : Array = gatherOrderedInjectionPointsForTag(
+				PostConstructInjectionPoint, 'PostConstruct');
+			for (var i : int = 0, length : int = injectionPoints.length; i < length; i++)
+			{
+				description.addInjectionPoint(injectionPoints[i]);
+			}
 		}
 
-		public function addPreDestroyMethodPointsToList(
-			lastInjectionPoint : InjectionPoint) : InjectionPoint
+		private function addPreDestroyMethodPoints(description : TypeDescription) : void
 		{
-			return gatherOrderedInjectionPointsForTag(
-				lastInjectionPoint, PreDestroyInjectionPoint, 'PreDestroy');
+			var injectionPoints : Array = gatherOrderedInjectionPointsForTag(
+				PreDestroyInjectionPoint, 'PreDestroy');
+			if (!injectionPoints.length)
+			{
+				return;
+			}
+			description.preDestroyMethods = injectionPoints[0];
+			description.preDestroyMethods.last = injectionPoints[0];
+			for (var i : int = 1, length : int = injectionPoints.length; i < length; i++)
+			{
+				description.preDestroyMethods.last.next = injectionPoints[i];
+				description.preDestroyMethods.last = injectionPoints[i];
+			}
 		}
 
-		//----------------------         Private / Protected Methods        ----------------------//
 		private function getOptionalFlagFromXMLNode(node : XML) : Boolean
 		{
 			return node.arg.(@key == 'optional' && @value == 'true').length() != 0;
@@ -200,27 +207,22 @@ package org.swiftsuspenders
 			return parameters;
 		}
 
-		private function gatherOrderedInjectionPointsForTag(lastInjectionPoint : InjectionPoint,
-				injectionPointClass : Class, tag : String) : InjectionPoint
+		private function gatherOrderedInjectionPointsForTag(
+				injectionPointType : Class, tag : String) : Array
 		{
 			const injectionPoints : Array = [];
 			for each (var node : XML in
 				_currentFactoryXML.method.metadata.(@name == tag))
 			{
 				var order : Number = parseInt(node.arg.(@key == 'order').@value);
-				injectionPoints.push(new injectionPointClass(
+				injectionPoints.push(new injectionPointType(
 					node.parent().@name, isNaN(order) ? int.MAX_VALUE : order));
 			}
 			if (injectionPoints.length > 0)
 			{
 				injectionPoints.sortOn('order', Array.NUMERIC);
-				for each (var injectionPoint : InjectionPoint in injectionPoints)
-				{
-					lastInjectionPoint.next = injectionPoint;
-					lastInjectionPoint = injectionPoint;
-				}
 			}
-			return lastInjectionPoint;
+			return injectionPoints;
 		}
 
 		private function createDummyInstance(constructorNode : XML, clazz : Class) : void

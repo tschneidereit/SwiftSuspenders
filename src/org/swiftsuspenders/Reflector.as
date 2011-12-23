@@ -1,9 +1,15 @@
+/*
+ * Copyright (c) 2011 the original author or authors
+ *
+ * Permission is hereby granted to use, modify, and distribute this file
+ * in accordance with the terms of the license agreement accompanying it.
+ */
+
 package org.swiftsuspenders
 {
 	import flash.system.ApplicationDomain;
 
-	import org.swiftsuspenders.injectionpoints.ConstructorInjectionPoint;
-	import org.swiftsuspenders.injectionpoints.InjectionPoint;
+	import org.swiftsuspenders.typedescriptions.TypeDescription;
 
 	public interface Reflector
 	{
@@ -12,17 +18,6 @@ package org.swiftsuspenders
 		function classExtendsOrImplements(classOrClassName : Object, superclass : Class,
 				application : ApplicationDomain = null) : Boolean;
 
-		function startReflection(type : Class) : void;
-		function endReflection() : void;
-
-		function getCtorInjectionPoint() : ConstructorInjectionPoint;
-		function addFieldInjectionPointsToList(
-				lastInjectionPoint : InjectionPoint) : InjectionPoint;
-		function addMethodInjectionPointsToList(
-				lastInjectionPoint : InjectionPoint) : InjectionPoint;
-		function addPostConstructMethodPointsToList(
-				lastInjectionPoint : InjectionPoint) : InjectionPoint;
-		function addPreDestroyMethodPointsToList(
-				lastInjectionPoint : InjectionPoint) : InjectionPoint;
+		function describeInjections(type : Class) : TypeDescription;
 	}
 }

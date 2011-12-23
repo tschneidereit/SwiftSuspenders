@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009 - 2011 the original author or authors
+ * Copyright (c) 2011 the original author or authors
  *
  * Permission is hereby granted to use, modify, and distribute this file
  * in accordance with the terms of the license agreement accompanying it.
@@ -15,11 +15,11 @@ package org.swiftsuspenders.suites
 	import org.swiftsuspenders.GetConstructorTests;
 	import org.swiftsuspenders.InjectionMappingTests;
 	import org.swiftsuspenders.InjectorTests;
-	import org.swiftsuspenders.injectionpoints.ConstructorInjectionPointTests;
-	import org.swiftsuspenders.injectionpoints.MethodInjectionPointTest;
-	import org.swiftsuspenders.injectionpoints.NoParamsConstructorInjectionPointTests;
-	import org.swiftsuspenders.injectionpoints.PostConstructInjectionPointTests;
-	import org.swiftsuspenders.injectionpoints.PropertyInjectionPointTests;
+	import org.swiftsuspenders.typedescriptions.ConstructorInjectionPointTests;
+	import org.swiftsuspenders.typedescriptions.MethodInjectionPointTest;
+	import org.swiftsuspenders.typedescriptions.NoParamsConstructorInjectionPointTests;
+	import org.swiftsuspenders.typedescriptions.PostConstructInjectionPointTests;
+	import org.swiftsuspenders.typedescriptions.PropertyInjectionPointTests;
 
 	[Suite]
 	[RunWith("org.flexunit.runners.Suite")]

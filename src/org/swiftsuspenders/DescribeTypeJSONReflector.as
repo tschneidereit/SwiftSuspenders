@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2011 the original author or authors
+ * Copyright (c) 2011 the original author or authors
  *
  * Permission is hereby granted to use, modify, and distribute this file
  * in accordance with the terms of the license agreement accompanying it.
@@ -13,40 +13,26 @@ package org.swiftsuspenders
 	import flash.utils.getDefinitionByName;
 	import flash.utils.getQualifiedClassName;
 
-	import org.swiftsuspenders.injectionpoints.ConstructorInjectionPoint;
-	import org.swiftsuspenders.injectionpoints.InjectionPoint;
-	import org.swiftsuspenders.injectionpoints.MethodInjectionPoint;
-	import org.swiftsuspenders.injectionpoints.NoParamsConstructorInjectionPoint;
-	import org.swiftsuspenders.injectionpoints.PostConstructInjectionPoint;
-	import org.swiftsuspenders.injectionpoints.PreDestroyInjectionPoint;
-	import org.swiftsuspenders.injectionpoints.PropertyInjectionPoint;
+	import org.swiftsuspenders.typedescriptions.ConstructorInjectionPoint;
+	import org.swiftsuspenders.typedescriptions.InjectionPoint;
+	import org.swiftsuspenders.typedescriptions.MethodInjectionPoint;
+	import org.swiftsuspenders.typedescriptions.NoParamsConstructorInjectionPoint;
+	import org.swiftsuspenders.typedescriptions.PostConstructInjectionPoint;
+	import org.swiftsuspenders.typedescriptions.PreDestroyInjectionPoint;
+	import org.swiftsuspenders.typedescriptions.PropertyInjectionPoint;
+	import org.swiftsuspenders.typedescriptions.TypeDescription;
 
 	public class DescribeTypeJSONReflector extends ReflectorBase implements Reflector
 	{
 		//----------------------       Private / Protected Properties       ----------------------//
-		private var _currentType : Class;
 		private var _descriptor : DescribeTypeJSON;
-		private var _description : Object;
+		private var _rawDescription : Object;
 		private var _traits : Object;
 
 		//----------------------               Public Methods               ----------------------//
 		public function DescribeTypeJSONReflector()
 		{
 			_descriptor = new DescribeTypeJSON();
-		}
-
-		public function startReflection(type : Class) : void
-		{
-			_currentType = type;
-			_description = _descriptor.getInstanceDescription(type);
-			_traits = _description.traits;
-		}
-
-		public function endReflection() : void
-		{
-			_currentType = null;
-			_description = null;
-			_traits = null;
 		}
 
 		public function classExtendsOrImplements(classOrClassName : Object, superclass : Class,
@@ -83,40 +69,52 @@ package org.swiftsuspenders
 			}
 			const superClassName : String = getQualifiedClassName(superclass);
 
-			startReflection(actualClass);
-			return (_traits.bases as Array).indexOf(superClassName) > -1
-					|| (_traits.interfaces as Array).indexOf(superClassName) > -1;
+			const traits : Object = _descriptor.getInstanceDescription(actualClass).traits;
+			return (traits.bases as Array).indexOf(superClassName) > -1
+					|| (traits.interfaces as Array).indexOf(superClassName) > -1;
 		}
 
-		public function getCtorInjectionPoint() : ConstructorInjectionPoint
+		public function describeInjections(type : Class) : TypeDescription
+		{
+			_rawDescription = _descriptor.getInstanceDescription(type);
+			_traits = _rawDescription.traits;
+			const description : TypeDescription = new TypeDescription();
+			addCtorInjectionPoint(description);
+			addFieldInjectionPoints(description, _traits.variables);
+			addFieldInjectionPoints(description, _traits.accessors);
+			addMethodInjectionPoints(description);
+			addPostConstructMethodPoints(description);
+			addPreDestroyMethodPoints(description);
+			_rawDescription = null;
+			_traits = null;
+			return description;
+		}
+
+		//----------------------         Private / Protected Methods        ----------------------//
+		private function addCtorInjectionPoint(description : TypeDescription) : void
 		{
 			const parameters : Array = _traits.constructor;
 			if (!parameters)
 			{
-				return _traits.bases.length > 0 ? new NoParamsConstructorInjectionPoint() : null;
+				description.ctor =  _traits.bases.length > 0
+					? new NoParamsConstructorInjectionPoint()
+					: null;
+				return;
 			}
 			const injectParameters : Object =
 					_traits.metadata && extractTagParameters('Inject', _traits.metadata);
 			const parameterNames : Array =
 				(injectParameters && injectParameters.name || '').split(',');
 			const requiredParameters : int = gatherMethodParameters(parameters, parameterNames);
-			return new ConstructorInjectionPoint(parameters, requiredParameters);
+			description.ctor = new ConstructorInjectionPoint(parameters, requiredParameters);
 		}
 
-		public function addFieldInjectionPointsToList(
-				lastInjectionPoint : InjectionPoint) : InjectionPoint
-		{
-			lastInjectionPoint = gatherFieldInjectionPoints(_traits.accessors, lastInjectionPoint);
-			return gatherFieldInjectionPoints(_traits.variables, lastInjectionPoint);
-		}
-
-		public function addMethodInjectionPointsToList(
-				lastInjectionPoint : InjectionPoint) : InjectionPoint
+		private function addMethodInjectionPoints(description : TypeDescription) : void
 		{
 			const methods : Array = _traits.methods;
 			if (!methods)
 			{
-				return lastInjectionPoint;
+				return;
 			}
 			const length : uint = methods.length;
 			for (var i : int = 0; i < length; i++)
@@ -135,34 +133,43 @@ package org.swiftsuspenders
 						gatherMethodParameters(parameters, parameterNames);
 				var injectionPoint : MethodInjectionPoint = new MethodInjectionPoint(
 						method.name, parameters, requiredParameters, optional);
-				lastInjectionPoint.next = injectionPoint;
-				lastInjectionPoint = injectionPoint;
+				description.addInjectionPoint(injectionPoint);
 			}
-			return lastInjectionPoint;
 		}
 
-		public function addPostConstructMethodPointsToList(
-				lastInjectionPoint : InjectionPoint) : InjectionPoint
+		private function addPostConstructMethodPoints(description : TypeDescription) : void
 		{
-			return gatherOrderedInjectionPointsForTag(lastInjectionPoint,
+			var injectionPoints : Array = gatherOrderedInjectionPointsForTag(
 				PostConstructInjectionPoint, 'PostConstruct');
+			for (var i : int = 0, length : int = injectionPoints.length; i < length; i++)
+			{
+				description.addInjectionPoint(injectionPoints[i]);
+			}
 		}
 
-		public function addPreDestroyMethodPointsToList(
-			lastInjectionPoint : InjectionPoint) : InjectionPoint
+		private function addPreDestroyMethodPoints(description : TypeDescription) : void
 		{
-			return gatherOrderedInjectionPointsForTag(lastInjectionPoint,
+			var injectionPoints : Array = gatherOrderedInjectionPointsForTag(
 				PreDestroyInjectionPoint, 'PreDestroy');
+			if (!injectionPoints.length)
+			{
+				return;
+			}
+			description.preDestroyMethods = injectionPoints[0];
+			description.preDestroyMethods.last = injectionPoints[0];
+			for (var i : int = 1, length : int = injectionPoints.length; i < length; i++)
+			{
+				description.preDestroyMethods.last.next = injectionPoints[i];
+				description.preDestroyMethods.last = injectionPoints[i];
+			}
 		}
 
-		
-		//----------------------         Private / Protected Methods        ----------------------//
-		private function gatherFieldInjectionPoints(
-				fields : Array, lastInjectionPoint : InjectionPoint) : InjectionPoint
+		private function addFieldInjectionPoints(
+			description : TypeDescription, fields : Array) : void
 		{
 			if (!fields)
 			{
-				return lastInjectionPoint;
+				return;
 			}
 			const length : uint = fields.length;
 			for (var i : int = 0; i < length; i++)
@@ -178,10 +185,8 @@ package org.swiftsuspenders
 				var optional : Boolean = injectParameters.optional == 'true';
 				var injectionPoint : PropertyInjectionPoint = new PropertyInjectionPoint(
 						field.type + '|' + mappingName, field.name, optional);
-				lastInjectionPoint.next = injectionPoint;
-				lastInjectionPoint = injectionPoint;
+				description.addInjectionPoint(injectionPoint);
 			}
-			return lastInjectionPoint;
 		}
 
 		private function gatherMethodParameters(parameters : Array, parameterNames : Array) : uint
@@ -198,7 +203,7 @@ package org.swiftsuspenders
 					if (!parameter.optional)
 					{
 						throw new InjectorError('Error in method definition of injectee "' +
-								_description.name + '. Required parameters can\'t have type "*".');
+								_rawDescription.name + '. Required parameters can\'t have type "*".');
 					}
 					else
 					{
@@ -214,27 +219,28 @@ package org.swiftsuspenders
 			return requiredLength;
 		}
 
-		private function gatherOrderedInjectionPointsForTag(lastInjectionPoint : InjectionPoint,
-				injectionPointClass : Class, tag : String) : InjectionPoint
+		private function gatherOrderedInjectionPointsForTag(
+				injectionPointClass : Class, tag : String) : Array
 		{
 			const injectionPoints : Array = [];
 			const methods : Array = _traits.methods;
 			if (!methods)
 			{
-				return lastInjectionPoint;
+				return injectionPoints;
 			}
 			var length : uint = methods.length;
 			for (var i : int = 0; i < length; i++)
 			{
 				var method : Object = methods[i];
-				var postConstructParameters : Object =
+				var parameters : Object =
 					method.metadata && extractTagParameters(tag, method.metadata);
-				if (!postConstructParameters)
+				if (!parameters)
 				{
 					continue;
 				}
-				var order : int = parseInt(postConstructParameters.order, 10);
-				if (order != postConstructParameters.order)
+				var order : int = parseInt(parameters.order, 10);
+				//int can't be NaN, so we have to verify that parsing succeeded by comparison
+				if (order.toString(10) != parameters.order)
 				{
 					order = int.MAX_VALUE;
 				}
@@ -243,17 +249,9 @@ package org.swiftsuspenders
 			if (injectionPoints.length > 0)
 			{
 				injectionPoints.sortOn('order', Array.NUMERIC);
-				length = injectionPoints.length;
-				for (i = 0; i < length; i++)
-				{
-					var injectionPoint : InjectionPoint = injectionPoints[i];
-					lastInjectionPoint.next = injectionPoint;
-					lastInjectionPoint = injectionPoint;
-				}
 			}
-			return lastInjectionPoint;
+			return injectionPoints;
 		}
-
 		private function extractTagParameters(tag : String, metadata : Array) : Object
 		{
 			var length : uint = metadata.length;

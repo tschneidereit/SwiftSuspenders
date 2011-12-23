@@ -11,20 +11,7 @@ package org.swiftsuspenders.support.injectees
 
 	public class OptionalClassInjectee
 	{
-		[Inject(optional=1)]
+		[Inject(optional=true)]
 		public var property:Clazz;
-		
-		public var someProperty:Boolean;
-		
-		public function OptionalClassInjectee()
-		{
-			someProperty = false;
-		}
-		
-		[PostConstruct(order=1)]
-		public function doSomeStuff():void
-		{
-			someProperty = true;
-		}
 	}
 }

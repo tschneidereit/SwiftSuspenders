@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2009-2011 the original author or authors
- * 
+ * Copyright (c) 2011 the original author or authors
+ *
  * Permission is hereby granted to use, modify, and distribute this file 
  * in accordance with the terms of the license agreement accompanying it.
  */
@@ -15,9 +15,10 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.dependencyproviders.DependencyProvider;
 	import org.swiftsuspenders.dependencyproviders.LocalOnlyProvider;
 	import org.swiftsuspenders.dependencyproviders.SoftDependencyProvider;
-	import org.swiftsuspenders.injectionpoints.ConstructorInjectionPoint;
-	import org.swiftsuspenders.injectionpoints.InjectionPoint;
-	import org.swiftsuspenders.utils.ClassDescriptor;
+	import org.swiftsuspenders.typedescriptions.ConstructorInjectionPoint;
+	import org.swiftsuspenders.typedescriptions.InjectionPoint;
+	import org.swiftsuspenders.typedescriptions.TypeDescription;
+	import org.swiftsuspenders.utils.TypeDescriptor;
 	import org.swiftsuspenders.utils.SsInternal;
 	import org.swiftsuspenders.utils.getConstructor;
 
@@ -149,7 +150,7 @@ package org.swiftsuspenders
 
 		private var _parentInjector : Injector;
         private var _applicationDomain:ApplicationDomain;
-		private var _classDescriptor : ClassDescriptor;
+		private var _classDescriptor : TypeDescriptor;
 		private var _mappings : Dictionary;
 		private var _mappingsInProcess : Dictionary;
 
@@ -163,7 +164,7 @@ package org.swiftsuspenders
 		{
 			_mappings = new Dictionary();
 			_mappingsInProcess = new Dictionary();
-			_classDescriptor = new ClassDescriptor(INJECTION_POINTS_CACHE);
+			_classDescriptor = new TypeDescriptor(INJECTION_POINTS_CACHE);
 			_applicationDomain = ApplicationDomain.currentDomain;
 		}
 
@@ -290,9 +291,9 @@ package org.swiftsuspenders
 		public function injectInto(target : Object) : void
 		{
 			const type : Class = getConstructor(target);
-			var ctorInjectionPoint : InjectionPoint = _classDescriptor.getDescription(type);
+			var description : TypeDescription = _classDescriptor.getDescription(type);
 
-			applyInjectionPoints(target, type, ctorInjectionPoint.next);
+			applyInjectionPoints(target, type, description.injectionPoints);
 		}
 
 		/**
@@ -388,17 +389,16 @@ package org.swiftsuspenders
 
 		SsInternal function instantiateUnmapped(type : Class) : Object
 		{
-			var ctorInjectionPoint : ConstructorInjectionPoint =
-					_classDescriptor.getDescription(type);
-			if (!ctorInjectionPoint)
+			var description : TypeDescription = _classDescriptor.getDescription(type);
+			if (!description.ctor)
 			{
 				throw new InjectorError(
 						"Can't instantiate interface " + getQualifiedClassName(type));
 			}
-			const instance : * = ctorInjectionPoint.createInstance(type, this);
-			hasEventListener(InjectionEvent.POST_INSTANTIATE)
-				&& dispatchEvent(new InjectionEvent(InjectionEvent.POST_INSTANTIATE, instance, type));
-			applyInjectionPoints(instance, type, ctorInjectionPoint.next);
+			const instance : * = description.ctor.createInstance(type, this);
+			hasEventListener(InjectionEvent.POST_INSTANTIATE) && dispatchEvent(
+				new InjectionEvent(InjectionEvent.POST_INSTANTIATE, instance, type));
+			applyInjectionPoints(instance, type, description.injectionPoints);
 			return instance;
 		}
 
