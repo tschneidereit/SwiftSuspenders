@@ -187,9 +187,14 @@ package org.swiftsuspenders
 			for each (var node : XML in
 				_currentFactoryXML.method.metadata.(@name == tag))
 			{
+				const nameArgs : XMLList = node.arg.(@key == 'name');
+				const parameters : Array =
+					gatherMethodParameters(node.parent().parameter, nameArgs);
+				const requiredParameters : uint = parameters.required;
+				delete parameters.required;
 				var order : Number = parseInt(node.arg.(@key == 'order').@value);
-				injectionPoints.push(new injectionPointType(
-					node.parent().@name, isNaN(order) ? int.MAX_VALUE : order));
+				injectionPoints.push(new injectionPointType(node.parent().@name,
+					parameters, requiredParameters, isNaN(order) ? int.MAX_VALUE : order));
 			}
 			if (injectionPoints.length > 0)
 			{

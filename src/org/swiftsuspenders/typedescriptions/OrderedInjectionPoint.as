@@ -7,37 +7,18 @@
 
 package org.swiftsuspenders.typedescriptions
 {
-	import org.swiftsuspenders.Injector;
-
-	public class OrderedInjectionPoint extends InjectionPoint
+	public class OrderedInjectionPoint extends MethodInjectionPoint
 	{
 		//----------------------              Public Properties             ----------------------//
-
-
-		//----------------------       Private / Protected Properties       ----------------------//
+		public var order : int;
 
 
 		//----------------------               Public Methods               ----------------------//
-		protected var _methodName : String;
-
-		protected var _orderValue : int;
-
-		public function OrderedInjectionPoint()
+		public function OrderedInjectionPoint(methodName : String, parameters : Array,
+		                                      requiredParameters : uint, order : int)
 		{
+			super(methodName, parameters, requiredParameters, false);
+			this.order = order;
 		}
-
-		public function get order() : int
-		{
-			return _orderValue;
-		}
-
-		override public function applyInjection(
-			target : Object, targetType : Class, injector : Injector) : void
-		{
-			//TODO: Restore parameter-injection
-			target[_methodName]();
-		}
-
-		//----------------------         Private / Protected Methods        ----------------------//
 	}
 }

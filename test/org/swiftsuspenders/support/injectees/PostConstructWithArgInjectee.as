@@ -9,22 +9,14 @@ package org.swiftsuspenders.support.injectees
 {
 	import org.swiftsuspenders.support.types.Clazz;
 
-	public class ClassInjectee
+	public class PostConstructWithArgInjectee
 	{
-		[Inject]
 		public var property:Clazz;
-		
-		public var someProperty:Boolean;
-		
-		public function ClassInjectee()
+
+		[PostConstruct]
+		public function doSomeStuff(arg : Clazz):void
 		{
-			someProperty = false;
-		}
-		
-		[PostConstruct(order=1)]
-		public function doSomeStuff():void
-		{
-			someProperty = true;
+			property = arg;
 		}
 	}
 }

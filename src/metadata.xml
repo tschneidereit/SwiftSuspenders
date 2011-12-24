@@ -12,7 +12,7 @@
 		<context name="method"/>
 		<context name="class"/>
 		<attribute name="name" type="String" required="false"
-			description="Name for a named injection"/>
+			description="Name for a named injection, can be used multiple times for naming individual method arguments"/>
 		<attribute name="optional" type="Boolean" required="false"
 			description="Flag indicating that the annotated injection is optional. If not set, a missing dependency will cause an exception"/>
 	</metadata>
@@ -21,11 +21,15 @@
 		<context name="method"/>
 		<attribute name="order" type="int" required="false"
 			description="Flag indicating at which point in the total order of PostConstruct-annotated methods this method should be called. Order is independent of inheritance"/>
+		<attribute name="name" type="String" required="false"
+           description="Name for a named injection, can be used multiple times for naming individual method arguments"/>
 	</metadata>
 	<metadata name="PreDestroy"
 		description="Swiftsuspenders flag to automatically call this method before object destruction (before the instance is removed from the Injector's lookup maps and thus not available to it anymore)">
 		<context name="method"/>
 		<attribute name="order" type="int" required="false"
 			description="Flag indicating at which point in the total order of PostConstruct-annotated methods this method should be called. Order is independent of inheritance"/>
+		<attribute name="name" type="String" required="false"
+           description="Name for a named injection, can be used multiple times for naming individual method arguments"/>
 	</metadata>
 </annotations>

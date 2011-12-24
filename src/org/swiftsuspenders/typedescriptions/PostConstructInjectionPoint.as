@@ -10,10 +10,10 @@ package org.swiftsuspenders.typedescriptions
 	public class PostConstructInjectionPoint extends OrderedInjectionPoint
 	{
 		//----------------------               Public Methods               ----------------------//
-		public function PostConstructInjectionPoint(methodName : String, order : int)
+		public function PostConstructInjectionPoint(methodName : String, parameters : Array,
+		                                            requiredParameters : uint, order : int)
 		{
-			_methodName = methodName;
-			_orderValue = order;
+			super(methodName, parameters, requiredParameters, order);
 		}
 	}
 }

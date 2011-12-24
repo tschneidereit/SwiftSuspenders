@@ -10,11 +10,10 @@ package org.swiftsuspenders.typedescriptions
 	public class PreDestroyInjectionPoint extends OrderedInjectionPoint
 	{
 		//----------------------               Public Methods               ----------------------//
-		public function PreDestroyInjectionPoint(methodName : String, order : int)
+		public function PreDestroyInjectionPoint(methodName : String, parameters : Array,
+		                                         requiredParameters : uint, order : int)
 		{
-			_methodName = methodName;
-			_orderValue = order;
+			super(methodName, parameters, requiredParameters, order);
 		}
-
 	}
 }

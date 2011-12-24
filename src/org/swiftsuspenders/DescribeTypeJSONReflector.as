@@ -203,19 +203,24 @@ package org.swiftsuspenders
 			for (var i : int = 0; i < length; i++)
 			{
 				var method : Object = methods[i];
-				var parameters : Object =
+				var injectParameters : Object =
 					method.metadata && extractTagParameters(tag, method.metadata);
-				if (!parameters)
+				if (!injectParameters)
 				{
 					continue;
 				}
-				var order : int = parseInt(parameters.order, 10);
+				var parameterNames : Array = (injectParameters.name || '').split(',');
+				var parameters : Array = method.parameters;
+				const requiredParameters : uint =
+					gatherMethodParameters(parameters, parameterNames);
+				var order : int = parseInt(injectParameters.order, 10);
 				//int can't be NaN, so we have to verify that parsing succeeded by comparison
-				if (order.toString(10) != parameters.order)
+				if (order.toString(10) != injectParameters.order)
 				{
 					order = int.MAX_VALUE;
 				}
-				injectionPoints.push(new injectionPointClass(method.name, order));
+				injectionPoints.push(new injectionPointClass(
+					method.name, parameters, requiredParameters, order));
 			}
 			if (injectionPoints.length > 0)
 			{
