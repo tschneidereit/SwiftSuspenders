@@ -8,7 +8,7 @@
 package org.swiftsuspenders
 {
 	import flash.utils.describeType;
-	import flash.utils.getDefinitionByName;
+	import flash.utils.getQualifiedClassName;
 
 	import org.swiftsuspenders.typedescriptions.ConstructorInjectionPoint;
 	import org.swiftsuspenders.typedescriptions.MethodInjectionPoint;
@@ -162,9 +162,8 @@ package org.swiftsuspenders
 				{
 					if (!optional)
 					{
-						//TODO: Find a way to trace name of affected class here
-						throw new InjectorError('Error in method definition of injectee. ' +
-								'Required parameters can\'t have type "*".');
+						throw new InjectorError('Error in method definition of injectee "' +
+							_currentFactoryXML.@type + 'Required parameters can\'t have type "*".');
 					}
 					else
 					{

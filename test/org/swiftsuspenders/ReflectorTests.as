@@ -10,7 +10,6 @@ package org.swiftsuspenders
 	import org.flexunit.Assert;
 	import org.hamcrest.assertThat;
 	import org.hamcrest.core.isA;
-	import org.hamcrest.object.hasProperty;
 	import org.swiftsuspenders.typedescriptions.ConstructorInjectionPoint;
 	import org.swiftsuspenders.typedescriptions.InjectionPoint;
 	import org.swiftsuspenders.typedescriptions.NoParamsConstructorInjectionPoint;
@@ -58,23 +57,7 @@ package org.swiftsuspenders
 		[Test]
 		public function classExtendsClass():void
 		{
-			var isClazz:Boolean = reflector.typeImplements(null, null);
-			
-			Assert.assertTrue("ClazzExtension should be an extension of Clazz", isClazz);
-		}
-
-		[Test]
-		public function classExtendsClassFromClassNameWithDotNotation():void
-		{
-			var isClazz:Boolean = reflector.typeImplements(null, null);
-			
-			Assert.assertTrue("ClazzExtension should be an extension of Clazz", isClazz);
-		}
-
-		[Test]
-		public function classExtendsClassFromClassNameWithDoubleColonNotation():void
-		{
-			var isClazz:Boolean = reflector.typeImplements(null, null);
+			var isClazz:Boolean = reflector.typeImplements(ClazzExtension, Clazz);
 			
 			Assert.assertTrue("ClazzExtension should be an extension of Clazz", isClazz);
 		}
@@ -82,23 +65,7 @@ package org.swiftsuspenders
 		[Test]
 		public function classImplementsInterface():void
 		{
-			var implemented:Boolean = reflector.typeImplements(null, null);
-			
-			Assert.assertTrue("ClazzExtension should implement Interface", implemented);
-		}
-
-		[Test]
-		public function classImplementsInterfaceFromClassNameWithDotNotation():void
-		{
-			var implemented:Boolean = reflector.typeImplements(null, null);
-			
-			Assert.assertTrue("ClazzExtension should implement Interface", implemented);
-		}
-
-		[Test]
-		public function classImplementsInterfaceFromClassNameWithDoubleColonNotation():void
-		{
-			var implemented:Boolean = reflector.typeImplements(null, null);
+			var implemented:Boolean = reflector.typeImplements(ClazzExtension, Interface);
 			
 			Assert.assertTrue("ClazzExtension should implement Interface", implemented);
 		}
