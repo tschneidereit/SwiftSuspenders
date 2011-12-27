@@ -22,16 +22,9 @@ package org.swiftsuspenders
 	public class DescribeTypeJSONReflector extends ReflectorBase implements Reflector
 	{
 		//----------------------       Private / Protected Properties       ----------------------//
-		private var _descriptor : DescribeTypeJSON;
-		private var _rawDescription : Object;
-		private var _traits : Object;
+		private const _descriptor : DescribeTypeJSON = new DescribeTypeJSON();
 
 		//----------------------               Public Methods               ----------------------//
-		public function DescribeTypeJSONReflector()
-		{
-			_descriptor = new DescribeTypeJSON();
-		}
-
 		public function typeImplements(type : Class, superType : Class) : Boolean
 		{
 			if (type == superType)
@@ -47,42 +40,43 @@ package org.swiftsuspenders
 
 		public function describeInjections(type : Class) : TypeDescription
 		{
-			_rawDescription = _descriptor.getInstanceDescription(type);
-			_traits = _rawDescription.traits;
+			var rawDescription : Object = _descriptor.getInstanceDescription(type);
+			const traits : Object = rawDescription.traits;
+			const typeName : String = rawDescription.name;
 			const description : TypeDescription = new TypeDescription();
-			addCtorInjectionPoint(description);
-			addFieldInjectionPoints(description, _traits.variables);
-			addFieldInjectionPoints(description, _traits.accessors);
-			addMethodInjectionPoints(description);
-			addPostConstructMethodPoints(description);
-			addPreDestroyMethodPoints(description);
-			_rawDescription = null;
-			_traits = null;
+			addCtorInjectionPoint(description, traits, typeName);
+			addFieldInjectionPoints(description, traits.variables);
+			addFieldInjectionPoints(description, traits.accessors);
+			addMethodInjectionPoints(description, traits.methods, typeName);
+			addPostConstructMethodPoints(description, traits.methods, typeName);
+			addPreDestroyMethodPoints(description, traits.methods, typeName);
 			return description;
 		}
 
 		//----------------------         Private / Protected Methods        ----------------------//
-		private function addCtorInjectionPoint(description : TypeDescription) : void
+		private function addCtorInjectionPoint(
+			description : TypeDescription, traits : Object, typeName : String) : void
 		{
-			const parameters : Array = _traits.constructor;
+			const parameters : Array = traits.constructor;
 			if (!parameters)
 			{
-				description.ctor =  _traits.bases.length > 0
+				description.ctor =  traits.bases.length > 0
 					? new NoParamsConstructorInjectionPoint()
 					: null;
 				return;
 			}
 			const injectParameters : Object =
-					_traits.metadata && extractTagParameters('Inject', _traits.metadata);
+					traits.metadata && extractTagParameters('Inject', traits.metadata);
 			const parameterNames : Array =
 				(injectParameters && injectParameters.name || '').split(',');
-			const requiredParameters : int = gatherMethodParameters(parameters, parameterNames);
+			const requiredParameters : int =
+				gatherMethodParameters(parameters, parameterNames, typeName);
 			description.ctor = new ConstructorInjectionPoint(parameters, requiredParameters);
 		}
 
-		private function addMethodInjectionPoints(description : TypeDescription) : void
+		private function addMethodInjectionPoints(
+			description : TypeDescription, methods : Array, typeName : String) : void
 		{
-			const methods : Array = _traits.methods;
 			if (!methods)
 			{
 				return;
@@ -101,27 +95,29 @@ package org.swiftsuspenders
 				var parameterNames : Array = (injectParameters.name || '').split(',');
 				var parameters : Array = method.parameters;
 				const requiredParameters : uint =
-						gatherMethodParameters(parameters, parameterNames);
+						gatherMethodParameters(parameters, parameterNames, typeName);
 				var injectionPoint : MethodInjectionPoint = new MethodInjectionPoint(
 						method.name, parameters, requiredParameters, optional);
 				description.addInjectionPoint(injectionPoint);
 			}
 		}
 
-		private function addPostConstructMethodPoints(description : TypeDescription) : void
+		private function addPostConstructMethodPoints(
+			description : TypeDescription, methods : Array, typeName : String) : void
 		{
 			var injectionPoints : Array = gatherOrderedInjectionPointsForTag(
-				PostConstructInjectionPoint, 'PostConstruct');
+				PostConstructInjectionPoint, 'PostConstruct', methods, typeName);
 			for (var i : int = 0, length : int = injectionPoints.length; i < length; i++)
 			{
 				description.addInjectionPoint(injectionPoints[i]);
 			}
 		}
 
-		private function addPreDestroyMethodPoints(description : TypeDescription) : void
+		private function addPreDestroyMethodPoints(
+			description : TypeDescription, methods : Array, typeName : String) : void
 		{
 			var injectionPoints : Array = gatherOrderedInjectionPointsForTag(
-				PreDestroyInjectionPoint, 'PreDestroy');
+				PreDestroyInjectionPoint, 'PreDestroy', methods, typeName);
 			if (!injectionPoints.length)
 			{
 				return;
@@ -160,7 +156,8 @@ package org.swiftsuspenders
 			}
 		}
 
-		private function gatherMethodParameters(parameters : Array, parameterNames : Array) : uint
+		private function gatherMethodParameters(
+			parameters : Array, parameterNames : Array, typeName : String) : uint
 		{
 			var requiredLength : uint = 0;
 			const length : uint = parameters.length;
@@ -174,7 +171,7 @@ package org.swiftsuspenders
 					if (!parameter.optional)
 					{
 						throw new InjectorError('Error in method definition of injectee "' +
-								_rawDescription.name + '. Required parameters can\'t have type "*".');
+								typeName + '. Required parameters can\'t have type "*".');
 					}
 					else
 					{
@@ -191,10 +188,9 @@ package org.swiftsuspenders
 		}
 
 		private function gatherOrderedInjectionPointsForTag(
-				injectionPointClass : Class, tag : String) : Array
+			injectionPointClass : Class, tag : String, methods : Array, typeName : String) : Array
 		{
 			const injectionPoints : Array = [];
-			const methods : Array = _traits.methods;
 			if (!methods)
 			{
 				return injectionPoints;
@@ -212,7 +208,7 @@ package org.swiftsuspenders
 				var parameterNames : Array = (injectParameters.name || '').split(',');
 				var parameters : Array = method.parameters;
 				const requiredParameters : uint =
-					gatherMethodParameters(parameters, parameterNames);
+					gatherMethodParameters(parameters, parameterNames, typeName);
 				var order : int = parseInt(injectParameters.order, 10);
 				//int can't be NaN, so we have to verify that parsing succeeded by comparison
 				if (order.toString(10) != injectParameters.order)
