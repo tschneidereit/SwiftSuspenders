@@ -7,14 +7,17 @@
 
 package org.swiftsuspenders.typedescriptions
 {
+	import flash.utils.Dictionary;
+
 	import org.swiftsuspenders.Injector;
 
 	public class ConstructorInjectionPoint extends MethodInjectionPoint
 	{
 		//----------------------               Public Methods               ----------------------//
-		public function ConstructorInjectionPoint(parameters : Array, requiredParameters : uint)
+		public function ConstructorInjectionPoint(parameters : Array, requiredParameters : uint,
+			injectParameters : Dictionary)
 		{
-			super('ctor', parameters, requiredParameters, false);
+			super('ctor', parameters, requiredParameters, false, injectParameters);
 		}
 
 		public function createInstance(type : Class, injector : Injector) : Object

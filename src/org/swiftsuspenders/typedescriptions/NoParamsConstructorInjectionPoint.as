@@ -13,7 +13,7 @@ package org.swiftsuspenders.typedescriptions
 	{
 		public function NoParamsConstructorInjectionPoint()
 		{
-			super([], 0);
+			super([], 0, injectParameters);
 		}
 
 		override public function createInstance(type : Class, injector : Injector) : Object

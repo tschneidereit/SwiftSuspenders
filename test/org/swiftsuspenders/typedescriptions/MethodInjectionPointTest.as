@@ -45,7 +45,7 @@ package  org.swiftsuspenders.typedescriptions
 				"org.swiftsuspenders.support.types::Interface|"
 			];
 			var injectionPoint:MethodInjectionPoint =
-					new MethodInjectionPoint("setDependencies", parameters, 2, false);
+					new MethodInjectionPoint("setDependencies", parameters, 2, false, null);
 
 			injectionPoint.applyInjection(injectee, TwoParametersMethodInjectee, injector);
 
@@ -62,7 +62,7 @@ package  org.swiftsuspenders.typedescriptions
 				"org.swiftsuspenders.support.types::Interface|"
 			];
 			var injectionPoint:MethodInjectionPoint =
-					new MethodInjectionPoint("setDependencies", parameters, 1, false);
+					new MethodInjectionPoint("setDependencies", parameters, 1, false, null);
 
 			injectionPoint.applyInjection(injectee, OneRequiredOneOptionalPropertyMethodInjectee, injector);
 			
@@ -77,7 +77,7 @@ package  org.swiftsuspenders.typedescriptions
 					new OptionalOneRequiredParameterMethodInjectee();
 			var parameters : Array = ["org.swiftsuspenders.support.types::Clazz|"];
 			var injectionPoint:MethodInjectionPoint =
-					new MethodInjectionPoint("setDependency", parameters, 1, true);
+					new MethodInjectionPoint("setDependency", parameters, 1, true, null);
 
 			injectionPoint.applyInjection(injectee, OptionalOneRequiredParameterMethodInjectee, injector);
 

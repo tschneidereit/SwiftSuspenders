@@ -43,7 +43,7 @@ package  org.swiftsuspenders.typedescriptions
 			
 			var parameters : Array = ["org.swiftsuspenders.support.types::Clazz|","String|"];
 			var injectionPoint:ConstructorInjectionPoint =
-					new ConstructorInjectionPoint(parameters, 2);
+					new ConstructorInjectionPoint(parameters, 2, null);
 
 			var injectee:TwoParametersConstructorInjectee = injectionPoint.createInstance(
 					TwoParametersConstructorInjectee, injector) as TwoParametersConstructorInjectee;
@@ -59,7 +59,7 @@ package  org.swiftsuspenders.typedescriptions
 			
 			var parameters : Array = ["org.swiftsuspenders.support.types::Clazz|", "String|"];
 			var injectionPoint:ConstructorInjectionPoint =
-					new ConstructorInjectionPoint(parameters, 0);
+					new ConstructorInjectionPoint(parameters, 0, null);
 
 			var injectee:TwoOptionalParametersConstructorInjectee = injectionPoint.createInstance(
 					TwoOptionalParametersConstructorInjectee, injector) as TwoOptionalParametersConstructorInjectee;
@@ -76,7 +76,7 @@ package  org.swiftsuspenders.typedescriptions
 			
 			var parameters : Array = ["org.swiftsuspenders.support.types::Clazz|", "String|"];
 			var injectionPoint:ConstructorInjectionPoint =
-					new ConstructorInjectionPoint(parameters, 0);
+					new ConstructorInjectionPoint(parameters, 0, null);
 			
 			var injectee:TwoOptionalParametersConstructorInjectee = injectionPoint.createInstance(
 					TwoOptionalParametersConstructorInjectee, injector) as TwoOptionalParametersConstructorInjectee;

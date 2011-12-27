@@ -9,6 +9,8 @@ package org.swiftsuspenders.typedescriptions
 {
 	import avmplus.getQualifiedClassName;
 
+	import flash.utils.Dictionary;
+
 	import org.swiftsuspenders.Injector;
 	import org.swiftsuspenders.InjectorError;
 	import org.swiftsuspenders.dependencyproviders.DependencyProvider;
@@ -25,15 +27,15 @@ package org.swiftsuspenders.typedescriptions
 		private var _isOptional : Boolean;
 		private var _methodName : String;
 
-
 		//----------------------               Public Methods               ----------------------//
 		public function MethodInjectionPoint(methodName : String, parameters : Array,
-		                                     requiredParameters : uint, isOptional : Boolean)
+			requiredParameters : uint, isOptional : Boolean, injectParameters : Dictionary)
 		{
 			_methodName = methodName;
 			_parameterMappingIDs = parameters;
 			_requiredParameters = requiredParameters;
 			_isOptional = isOptional;
+			this.injectParameters = injectParameters;
 		}
 		
 		override public function applyInjection(

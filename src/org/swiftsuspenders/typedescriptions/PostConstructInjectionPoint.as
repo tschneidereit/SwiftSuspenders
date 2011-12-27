@@ -11,7 +11,7 @@ package org.swiftsuspenders.typedescriptions
 	{
 		//----------------------               Public Methods               ----------------------//
 		public function PostConstructInjectionPoint(methodName : String, parameters : Array,
-		                                            requiredParameters : uint, order : int)
+			requiredParameters : uint, order : int)
 		{
 			super(methodName, parameters, requiredParameters, order);
 		}

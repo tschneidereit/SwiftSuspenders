@@ -7,6 +7,7 @@
 
 package org.swiftsuspenders
 {
+	import flash.utils.Dictionary;
 	import flash.utils.describeType;
 	import flash.utils.getQualifiedClassName;
 
@@ -64,22 +65,38 @@ package org.swiftsuspenders
 				}
 				return;
 			}
-			var nameArgs : XMLList = node.parent().metadata.arg.(@key == 'name');
+			const injectParameters : Dictionary = extractNodeParameters(node.parent().metadata.arg);
+			const parameterNames : Array = (injectParameters.name || '').split(',');
+			const parameterNodes : XMLList = node.parameter;
 			/*
 			 In many cases, the flash player doesn't give us type information for constructors until
 			 the class has been instantiated at least once. Therefore, we do just that if we don't get
 			 type information for at least one parameter.
 			 */
-			if (node.parameter.(@type == '*').length() == node.parameter.@type.length())
+			if (parameterNodes.(@type == '*').length() == parameterNodes.@type.length())
 			{
 				createDummyInstance(node, type);
 			}
-			const parameters : Array = gatherMethodParameters(node.parameter, nameArgs);
+			const parameters : Array = gatherMethodParameters(parameterNodes, parameterNames);
 			const requiredParameters : uint = parameters.required;
 			delete parameters.required;
-			description.ctor = new ConstructorInjectionPoint(parameters, requiredParameters);
+			description.ctor = new ConstructorInjectionPoint(parameters, requiredParameters,
+				injectParameters);
 		}
-
+		private function extractNodeParameters(args : XMLList) : Dictionary
+		{
+			const parametersMap : Dictionary = new Dictionary();
+			var length : uint = args.length();
+			for (var i : int = 0; i < length; i++)
+			{
+				var parameter : XML = args[i];
+				var key : String = parameter.@key;
+				parametersMap[key] = parametersMap[key]
+					? parametersMap[key] + ',' + parameter.attribute('value')
+					: parameter.attribute('value');
+			}
+			return parametersMap;
+		}
 		private function addFieldInjectionPoints(description : TypeDescription) : void
 		{
 			for each (var node : XML in _currentFactoryXML.*.
@@ -88,8 +105,9 @@ package org.swiftsuspenders
 				var mappingId : String =
 						node.parent().@type + '|' + node.arg.(@key == 'name').attribute('value');
 				var propertyName : String = node.parent().@name;
+				const injectParameters : Dictionary = extractNodeParameters(node.arg);
 				var injectionPoint : PropertyInjectionPoint = new PropertyInjectionPoint(mappingId,
-						propertyName, getOptionalFlagFromXMLNode(node));
+					propertyName, injectParameters.optional == 'true', injectParameters);
 				description.addInjectionPoint(injectionPoint);
 			}
 		}
@@ -98,14 +116,15 @@ package org.swiftsuspenders
 		{
 			for each (var node : XML in _currentFactoryXML.method.metadata.(@name == 'Inject'))
 			{
-				const nameArgs : XMLList = node.arg.(@key == 'name');
+				const injectParameters : Dictionary = extractNodeParameters(node.arg);
+				const parameterNames : Array = (injectParameters.name || '').split(',');
 				const parameters : Array =
-						gatherMethodParameters(node.parent().parameter, nameArgs);
+						gatherMethodParameters(node.parent().parameter, parameterNames);
 				const requiredParameters : uint = parameters.required;
 				delete parameters.required;
-				var injectionPoint : MethodInjectionPoint =
-						new MethodInjectionPoint(node.parent().@name, parameters,
-								requiredParameters, getOptionalFlagFromXMLNode(node));
+				var injectionPoint : MethodInjectionPoint = new MethodInjectionPoint(
+					node.parent().@name, parameters, requiredParameters,
+					injectParameters.optional == 'true', injectParameters);
 				description.addInjectionPoint(injectionPoint);
 			}
 		}
@@ -137,13 +156,8 @@ package org.swiftsuspenders
 			}
 		}
 
-		private function getOptionalFlagFromXMLNode(node : XML) : Boolean
-		{
-			return node.arg.(@key == 'optional' && @value == 'true').length() != 0;
-		}
-
 		private function gatherMethodParameters(
-				parameterNodes : XMLList, nameArgs : XMLList) : Array
+			parameterNodes : XMLList, parameterNames : Array) : Array
 		{
 			var requiredParameters : uint = 0;
 			const length : uint = parameterNodes.length();
@@ -151,11 +165,7 @@ package org.swiftsuspenders
 			for (var i : int = 0; i < length; i++)
 			{
 				var parameter : XML = parameterNodes[i];
-				var injectionName : String = '';
-				if (nameArgs[i])
-				{
-					injectionName = nameArgs[i].@value;
-				}
+				var injectionName : String = parameterNames[i] || '';
 				var parameterTypeName : String = parameter.@type;
 				var optional : Boolean = parameter.@optional == 'true';
 				if (parameterTypeName == '*')
@@ -187,9 +197,10 @@ package org.swiftsuspenders
 			for each (var node : XML in
 				_currentFactoryXML.method.metadata.(@name == tag))
 			{
-				const nameArgs : XMLList = node.arg.(@key == 'name');
+				const injectParameters : Dictionary = extractNodeParameters(node.arg);
+				const parameterNames : Array = (injectParameters.name || '').split(',');
 				const parameters : Array =
-					gatherMethodParameters(node.parent().parameter, nameArgs);
+					gatherMethodParameters(node.parent().parameter, parameterNames);
 				const requiredParameters : uint = parameters.required;
 				delete parameters.required;
 				var order : Number = parseInt(node.arg.(@key == 'order').@value);

@@ -7,6 +7,8 @@
 
 package org.swiftsuspenders.typedescriptions
 {
+	import flash.utils.Dictionary;
+
 	import org.swiftsuspenders.Injector;
 	import org.swiftsuspenders.InjectorError;
 	import org.swiftsuspenders.dependencyproviders.DependencyProvider;
@@ -21,12 +23,13 @@ package org.swiftsuspenders.typedescriptions
 
 
 		//----------------------               Public Methods               ----------------------//
-		public function PropertyInjectionPoint(
-				mappingId : String, propertyName : String, optional : Boolean)
+		public function PropertyInjectionPoint(mappingId : String, propertyName : String,
+			optional : Boolean, injectParameters : Dictionary)
 		{
 			_propertyName = propertyName;
 			_mappingId = mappingId;
 			_optional = optional;
+			this.injectParameters = injectParameters;
 		}
 		
 		override public function applyInjection(

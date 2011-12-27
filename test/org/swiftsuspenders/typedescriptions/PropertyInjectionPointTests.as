@@ -38,7 +38,7 @@ package org.swiftsuspenders.typedescriptions
 			injector.map(Clazz).toSingleton(Clazz);
 			var injectee:ClassInjectee = new ClassInjectee();
 			var injectionPoint:PropertyInjectionPoint = new PropertyInjectionPoint(
-					'org.swiftsuspenders.support.types::Clazz|', 'property', false);
+				'org.swiftsuspenders.support.types::Clazz|', 'property', false, null);
 			
 			injectionPoint.applyInjection(injectee, ClassInjectee, injector);
 			
@@ -50,7 +50,7 @@ package org.swiftsuspenders.typedescriptions
 		{
 			var injectee:ClassInjectee = new ClassInjectee();
 			var injectionPoint:PropertyInjectionPoint = new PropertyInjectionPoint(
-					'org.swiftsuspenders.support.types::Clazz|', 'property', true);
+				'org.swiftsuspenders.support.types::Clazz|', 'property', true, null);
 
 			injectionPoint.applyInjection(injectee, ClassInjectee, injector);
 

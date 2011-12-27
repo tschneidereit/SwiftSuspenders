@@ -15,9 +15,9 @@ package org.swiftsuspenders.typedescriptions
 
 		//----------------------               Public Methods               ----------------------//
 		public function OrderedInjectionPoint(methodName : String, parameters : Array,
-		                                      requiredParameters : uint, order : int)
+			requiredParameters : uint, order : int)
 		{
-			super(methodName, parameters, requiredParameters, false);
+			super(methodName, parameters, requiredParameters, false, null);
 			this.order = order;
 		}
 	}

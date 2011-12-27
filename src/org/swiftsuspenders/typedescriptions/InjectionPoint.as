@@ -7,6 +7,8 @@
 
 package org.swiftsuspenders.typedescriptions
 {
+	import flash.utils.Dictionary;
+
 	import org.swiftsuspenders.Injector;
 
 	public class InjectionPoint
@@ -14,7 +16,7 @@ package org.swiftsuspenders.typedescriptions
 		//----------------------              Public Properties             ----------------------//
 		public var next : InjectionPoint;
 		public var last : InjectionPoint;
-
+		public var injectParameters : Dictionary;
 		
 		//----------------------               Public Methods               ----------------------//
 		public function InjectionPoint()

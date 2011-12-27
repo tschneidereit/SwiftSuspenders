@@ -9,6 +9,7 @@ package org.swiftsuspenders
 {
 	import avmplus.DescribeTypeJSON;
 
+	import flash.utils.Dictionary;
 	import flash.utils.getQualifiedClassName;
 
 	import org.swiftsuspenders.typedescriptions.ConstructorInjectionPoint;
@@ -65,13 +66,13 @@ package org.swiftsuspenders
 					: null;
 				return;
 			}
-			const injectParameters : Object =
-					traits.metadata && extractTagParameters('Inject', traits.metadata);
+			const injectParameters : Dictionary = extractTagParameters('Inject', traits.metadata);
 			const parameterNames : Array =
 				(injectParameters && injectParameters.name || '').split(',');
 			const requiredParameters : int =
 				gatherMethodParameters(parameters, parameterNames, typeName);
-			description.ctor = new ConstructorInjectionPoint(parameters, requiredParameters);
+			description.ctor =
+				new ConstructorInjectionPoint(parameters, requiredParameters, injectParameters);
 		}
 
 		private function addMethodInjectionPoints(
@@ -85,8 +86,7 @@ package org.swiftsuspenders
 			for (var i : int = 0; i < length; i++)
 			{
 				var method : Object = methods[i];
-				var injectParameters : Object =
-						method.metadata && extractTagParameters('Inject', method.metadata);
+				var injectParameters : Dictionary = extractTagParameters('Inject', method.metadata);
 				if (!injectParameters)
 				{
 					continue;
@@ -96,8 +96,8 @@ package org.swiftsuspenders
 				var parameters : Array = method.parameters;
 				const requiredParameters : uint =
 						gatherMethodParameters(parameters, parameterNames, typeName);
-				var injectionPoint : MethodInjectionPoint = new MethodInjectionPoint(
-						method.name, parameters, requiredParameters, optional);
+				var injectionPoint : MethodInjectionPoint = new MethodInjectionPoint(method.name,
+					parameters, requiredParameters, optional, injectParameters);
 				description.addInjectionPoint(injectionPoint);
 			}
 		}
@@ -142,8 +142,7 @@ package org.swiftsuspenders
 			for (var i : int = 0; i < length; i++)
 			{
 				var field : Object = fields[i];
-				var injectParameters : Object =
-						field.metadata && extractTagParameters('Inject', field.metadata);
+				var injectParameters : Dictionary = extractTagParameters('Inject', field.metadata);
 				if (!injectParameters)
 				{
 					continue;
@@ -151,7 +150,7 @@ package org.swiftsuspenders
 				var mappingName : String = injectParameters.name || '';
 				var optional : Boolean = injectParameters.optional == 'true';
 				var injectionPoint : PropertyInjectionPoint = new PropertyInjectionPoint(
-						field.type + '|' + mappingName, field.name, optional);
+						field.type + '|' + mappingName, field.name, optional, injectParameters);
 				description.addInjectionPoint(injectionPoint);
 			}
 		}
@@ -199,8 +198,7 @@ package org.swiftsuspenders
 			for (var i : int = 0; i < length; i++)
 			{
 				var method : Object = methods[i];
-				var injectParameters : Object =
-					method.metadata && extractTagParameters(tag, method.metadata);
+				var injectParameters : Object = extractTagParameters(tag, method.metadata);
 				if (!injectParameters)
 				{
 					continue;
@@ -224,16 +222,16 @@ package org.swiftsuspenders
 			}
 			return injectionPoints;
 		}
-		private function extractTagParameters(tag : String, metadata : Array) : Object
+		private function extractTagParameters(tag : String, metadata : Array) : Dictionary
 		{
-			var length : uint = metadata.length;
+			var length : uint = metadata ? metadata.length : 0;
 			for (var i : int = 0; i < length; i++)
 			{
 				var entry : Object = metadata[i];
 				if (entry.name == tag)
 				{
 					const parametersList : Array = entry.value;
-					const parametersMap : Object = {};
+					const parametersMap : Dictionary = new Dictionary();
 					const parametersCount : int = parametersList.length;
 					for (var j : int = 0; j < parametersCount; j++)
 					{
