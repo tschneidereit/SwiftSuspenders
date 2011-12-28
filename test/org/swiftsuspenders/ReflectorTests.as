@@ -10,6 +10,9 @@ package org.swiftsuspenders
 	import org.flexunit.Assert;
 	import org.hamcrest.assertThat;
 	import org.hamcrest.core.isA;
+	import org.hamcrest.object.hasProperties;
+	import org.swiftsuspenders.support.injectees.UnknownInjectParametersInjectee;
+	import org.swiftsuspenders.support.injectees.UnknownInjectParametersListInjectee;
 	import org.swiftsuspenders.typedescriptions.ConstructorInjectionPoint;
 	import org.swiftsuspenders.typedescriptions.InjectionPoint;
 	import org.swiftsuspenders.typedescriptions.NoParamsConstructorInjectionPoint;
@@ -309,6 +312,23 @@ package org.swiftsuspenders
 				PreDestroyInjectionPoint(first.next.next).order);
 			Assert.assertEquals('Fourth injection point has no order "int.MAX_VALUE"', int.MAX_VALUE,
 				PreDestroyInjectionPoint(first.next.next.next).order);
+		}
+
+		[Test]
+		public function reflectorStoresUnknownInjectParameters() : void
+		{
+			const first : InjectionPoint =
+				reflector.describeInjections(UnknownInjectParametersInjectee).injectionPoints;
+			assertThat(first.injectParameters, hasProperties(
+				{optional:"true",name:'test',param1:"true",param2:'str',param3:"123"}));
+		}
+
+		[Test]
+		public function reflectorStoresUnknownInjectParametersListAsCSV() : void
+		{
+			const first : InjectionPoint =
+				reflector.describeInjections(UnknownInjectParametersListInjectee).injectionPoints;
+			assertThat(first.injectParameters, hasProperties({param:"true,str,123"}));
 		}
 	}
 }
