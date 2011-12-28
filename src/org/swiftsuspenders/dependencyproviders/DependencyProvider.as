@@ -7,6 +7,8 @@
 
 package org.swiftsuspenders.dependencyproviders
 {
+	import flash.utils.Dictionary;
+
 	import org.swiftsuspenders.Injector;
 
 	public interface DependencyProvider
@@ -17,8 +19,10 @@ package org.swiftsuspenders.dependencyproviders
 		 * @param targetType The type of the object the dependency is to be injected into
 		 * @param activeInjector The injector through which this DependencyProvider is currently
 		 * invoked
+		 * @param injectParameters Dictionary containing all parameters for the current injection point
 		 * @return The result of the specific DependencyProvider's mechanism
 		 */
-		function apply(targetType : Class, activeInjector : Injector) : Object;
+		function apply(
+			targetType : Class, activeInjector : Injector, injectParameters : Dictionary) : Object;
 	}
 }

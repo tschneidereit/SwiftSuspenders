@@ -46,7 +46,9 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.support.injectees.TwoNamedParametersMethodInjectee;
 	import org.swiftsuspenders.support.injectees.TwoParametersConstructorInjectee;
 	import org.swiftsuspenders.support.injectees.TwoParametersMethodInjectee;
+	import org.swiftsuspenders.support.injectees.UnknownInjectParametersListInjectee;
 	import org.swiftsuspenders.support.injectees.XMLInjectee;
+	import org.swiftsuspenders.support.providers.UnknownParametersUsingProvider;
 	import org.swiftsuspenders.support.types.Clazz;
 	import org.swiftsuspenders.support.types.Clazz2;
 	import org.swiftsuspenders.support.types.ComplexClazz;
@@ -817,6 +819,15 @@ package org.swiftsuspenders
 			{
 				receivedInjectorEvents.push(event.type);
 			});
+		}
+
+		[Test]
+		public function injectorMakesInjectParametersAvailableToProviders() : void
+		{
+			const provider : UnknownParametersUsingProvider = new UnknownParametersUsingProvider();
+			injector.map(Clazz).toProvider(provider);
+			injector.getInstance(UnknownInjectParametersListInjectee);
+			assertThat(provider.parameterValue, equalTo('true,str,123'));
 		}
 	}
 }

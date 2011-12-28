@@ -47,7 +47,7 @@ package org.swiftsuspenders.typedescriptions
 						_propertyName + '" of object "' + target + '" with type "' + targetType +
 						'". Target dependency: "' + _mappingId + '"'));
 			}
-			target[_propertyName] = provider.apply(targetType, injector);
+			target[_propertyName] = provider.apply(targetType, injector, injectParameters);
 		}
 	}
 }

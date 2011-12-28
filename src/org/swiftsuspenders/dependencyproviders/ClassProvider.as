@@ -1,12 +1,14 @@
 /*
-* Copyright (c) 2009-2011 the original author or authors
-* 
-* Permission is hereby granted to use, modify, and distribute this file 
-* in accordance with the terms of the license agreement accompanying it.
-*/
+ * Copyright (c) 2011 the original author or authors
+ *
+ * Permission is hereby granted to use, modify, and distribute this file
+ * in accordance with the terms of the license agreement accompanying it.
+ */
 
 package org.swiftsuspenders.dependencyproviders
 {
+	import flash.utils.Dictionary;
+
 	import org.swiftsuspenders.Injector;
 	import org.swiftsuspenders.utils.SsInternal;
 
@@ -28,7 +30,8 @@ package org.swiftsuspenders.dependencyproviders
 		 * @return A new instance of the class given to the ClassProvider's constructor,
 		 * constructed using the <code>usingInjector</code>
 		 */
-		public function apply(targetType : Class, activeInjector : Injector) : Object
+		public function apply(
+			targetType : Class, activeInjector : Injector, injectParameters : Dictionary) : Object
 		{
 			return activeInjector.SsInternal::instantiateUnmapped(_responseType);
 		}

@@ -7,6 +7,8 @@
 
 package org.swiftsuspenders.dependencyproviders
 {
+	import flash.utils.Dictionary;
+
 	import org.swiftsuspenders.Injector;
 
 	public class ForwardingProvider implements DependencyProvider
@@ -14,16 +16,16 @@ package org.swiftsuspenders.dependencyproviders
 		//----------------------              Public Properties             ----------------------//
 		public var provider : DependencyProvider;
 
-
 		//----------------------               Public Methods               ----------------------//
 		public function ForwardingProvider(provider : DependencyProvider)
 		{
 			this.provider = provider;
 		}
 
-		public function apply(targetType : Class, activeInjector : Injector) : Object
+		public function apply(
+			targetType : Class, activeInjector : Injector, injectParameters : Dictionary) : Object
 		{
-			return provider.apply(targetType, activeInjector);
+			return provider.apply(targetType, activeInjector, injectParameters);
 		}
 	}
 }

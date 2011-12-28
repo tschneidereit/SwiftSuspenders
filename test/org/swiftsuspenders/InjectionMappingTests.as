@@ -67,8 +67,8 @@ package org.swiftsuspenders
 		public function sameNamedSingletonIsReturnedOnSecondResponse():void
 		{
 			const provider : SingletonProvider = new SingletonProvider(Clazz, injector);
-			var returnedResponse:Object = provider.apply(null, injector);
-			var secondResponse:Object = provider.apply(null, injector);
+			var returnedResponse:Object = provider.apply(null, injector, null);
+			var secondResponse:Object = provider.apply(null, injector, null);
 
 			Assert.assertStrictlyEquals( returnedResponse, secondResponse );
 		}

@@ -45,7 +45,7 @@ package org.swiftsuspenders
 		{
 			var response:Clazz = new Clazz();
 			const provider : ValueProvider = new ValueProvider(response);
-			var returnedResponse:Object = provider.apply(null, injector);
+			var returnedResponse:Object = provider.apply(null, injector, null);
 			
 			Assert.assertStrictlyEquals(response, returnedResponse);
 		}
@@ -54,7 +54,7 @@ package org.swiftsuspenders
 		public function classProviderReturnsClassInstance():void
 		{
 			const classProvider : ClassProvider = new ClassProvider(Clazz);
-			var returnedResponse:Object = classProvider.apply(null, injector);
+			var returnedResponse:Object = classProvider.apply(null, injector, null);
 
 			Assert.assertTrue( returnedResponse is Clazz);
 		}
@@ -63,8 +63,8 @@ package org.swiftsuspenders
 		public function classProviderReturnsDifferentInstancesOnEachApply():void
 		{
 			const classProvider : ClassProvider = new ClassProvider(Clazz);
-			var firstResponse:Object = classProvider.apply(null, injector);
-			var secondResponse:Object = classProvider.apply(null, injector);
+			var firstResponse:Object = classProvider.apply(null, injector, null);
+			var secondResponse:Object = classProvider.apply(null, injector, null);
 
 			Assert.assertFalse(firstResponse == secondResponse);
 		}
@@ -73,7 +73,7 @@ package org.swiftsuspenders
 		public function singletonProviderReturnsInstance():void
 		{
 			const singletonProvider : SingletonProvider = new SingletonProvider(Clazz, injector);
-			var returnedResponse:Object = singletonProvider.apply(null, injector);
+			var returnedResponse:Object = singletonProvider.apply(null, injector, null);
 			
 			Assert.assertTrue(returnedResponse is Clazz);
 		}
@@ -82,8 +82,8 @@ package org.swiftsuspenders
 		public function sameSingletonIsReturnedOnSecondResponse():void
 		{
 			const singletonProvider : SingletonProvider = new SingletonProvider(Clazz, injector);
-			var returnedResponse:Object = singletonProvider.apply(null, injector);
-			var secondResponse:Object = singletonProvider.apply(null, injector);
+			var returnedResponse:Object = singletonProvider.apply(null, injector, null);
+			var secondResponse:Object = singletonProvider.apply(null, injector, null);
 
 			Assert.assertStrictlyEquals(returnedResponse, secondResponse);
 		}
@@ -95,7 +95,7 @@ package org.swiftsuspenders
 				'', '');
 			otherConfig.toProvider(new ClassProvider(ClazzExtension));
 			const otherMappingProvider : OtherMappingProvider = new OtherMappingProvider(otherConfig);
-			var returnedResponse:Object = otherMappingProvider.apply(null, injector);
+			var returnedResponse:Object = otherMappingProvider.apply(null, injector, null);
 
 			Assert.assertTrue( returnedResponse is Clazz);
 			Assert.assertTrue( returnedResponse is ClazzExtension);

@@ -7,6 +7,8 @@
 
 package org.swiftsuspenders.dependencyproviders
 {
+	import flash.utils.Dictionary;
+
 	import org.swiftsuspenders.Injector;
 
 	public class FactoryProvider implements DependencyProvider
@@ -14,17 +16,17 @@ package org.swiftsuspenders.dependencyproviders
 		//----------------------       Private / Protected Properties       ----------------------//
 		private var _factoryClass : Class;
 
-
 		//----------------------               Public Methods               ----------------------//
 		public function FactoryProvider(factoryClass : Class)
 		{
 			_factoryClass = factoryClass;
 		}
 
-		public function apply(targetType : Class, activeInjector : Injector) : Object
+		public function apply(
+			targetType : Class, activeInjector : Injector, injectParameters : Dictionary) : Object
 		{
 			return DependencyProvider(activeInjector.getInstance(_factoryClass))
-					.apply(targetType, activeInjector);
+					.apply(targetType, activeInjector, injectParameters);
 		}
 	}
 }

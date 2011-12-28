@@ -14,16 +14,16 @@ package org.swiftsuspenders.support.providers
 	import org.swiftsuspenders.dependencyproviders.DependencyProvider;
 	import org.swiftsuspenders.support.types.Clazz;
 
-	public class ClassNameStoringProvider implements DependencyProvider
+	public class UnknownParametersUsingProvider implements DependencyProvider
 	{
 		//----------------------              Public Properties             ----------------------//
-		public var lastTargetClassName : String;
+		public var parameterValue : String;
 
 		//----------------------               Public Methods               ----------------------//
 		public function apply(
 			targetType : Class, activeInjector : Injector, injectParameters : Dictionary) : Object
 		{
-			lastTargetClassName = getQualifiedClassName(targetType);
+			parameterValue = injectParameters.param;
 			return new Clazz();
 		}
 	}

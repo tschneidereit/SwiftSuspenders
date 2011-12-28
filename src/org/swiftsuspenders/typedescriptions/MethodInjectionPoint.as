@@ -84,7 +84,7 @@ package org.swiftsuspenders.typedescriptions
 					));
 				}
 				
-				parameters[i] = provider.apply(targetType, injector);
+				parameters[i] = provider.apply(targetType, injector, injectParameters);
 			}
 			return parameters;
 		}

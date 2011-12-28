@@ -7,13 +7,14 @@
 
 package org.swiftsuspenders.dependencyproviders
 {
+	import flash.utils.Dictionary;
+
 	import org.swiftsuspenders.Injector;
 
 	public class InjectorUsingProvider extends ForwardingProvider
 	{
 		//----------------------              Public Properties             ----------------------//
 		public var injector : Injector;
-
 
 		//----------------------               Public Methods               ----------------------//
 		public function InjectorUsingProvider(injector : Injector, provider : DependencyProvider)
@@ -22,9 +23,10 @@ package org.swiftsuspenders.dependencyproviders
 			this.injector = injector;
 		}
 
-		override public function apply(targetType : Class, activeInjector : Injector) : Object
+		override public function apply(
+			targetType : Class, activeInjector : Injector, injectParameters : Dictionary) : Object
 		{
-			return provider.apply(targetType, injector);
+			return provider.apply(targetType, injector, injectParameters);
 		}
 	}
 }
