@@ -57,7 +57,6 @@ package org.swiftsuspenders.typedescriptions
 			p.length = 0;
 		}
 
-
 		//----------------------         Private / Protected Methods        ----------------------//
 		protected function gatherParameterValues(
 				target : Object, targetType : Class, injector : Injector) : Array

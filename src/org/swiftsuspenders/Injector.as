@@ -382,6 +382,11 @@ package org.swiftsuspenders
 			return _applicationDomain;
 		}
 
+		public function addTypeDescription(type : Class, description : TypeDescription) : void
+		{
+			_classDescriptor.addDescription(type, description);
+		}
+
 
 		//----------------------             Internal Methods               ----------------------//
 		SsInternal static function purgeInjectionPointsCache() : void

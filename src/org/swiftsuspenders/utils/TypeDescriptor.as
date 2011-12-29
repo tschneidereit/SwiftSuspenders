@@ -44,5 +44,10 @@ package org.swiftsuspenders.utils
 			//get type description or cache it if the given type wasn't encountered before
 			return _descriptionsCache[type] ||= _reflector.describeInjections(type);
 		}
+
+		public function addDescription(type : Class, description : TypeDescription) : void
+		{
+			_descriptionsCache[type] = description;
+		}
 	}
 }

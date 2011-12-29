@@ -42,7 +42,7 @@ package org.swiftsuspenders
 		public function describeInjections(type : Class) : TypeDescription
 		{
 			_currentFactoryXML = describeType(type).factory[0];
-			const description : TypeDescription = new TypeDescription();
+			const description : TypeDescription = new TypeDescription(false);
 			addCtorInjectionPoint(description, type);
 			addFieldInjectionPoints(description);
 			addMethodInjectionPoints(description);

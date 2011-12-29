@@ -8,6 +8,8 @@
 package org.swiftsuspenders
 {
 	import flash.events.Event;
+	import flash.utils.Dictionary;
+	import flash.utils.getQualifiedClassName;
 
 	import flexunit.framework.Assert;
 
@@ -28,6 +30,7 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.support.injectees.MultipleNamedSingletonsOfSameClassInjectee;
 	import org.swiftsuspenders.support.injectees.MultipleSingletonsOfSameClassInjectee;
 	import org.swiftsuspenders.support.injectees.NamedArrayCollectionInjectee;
+	import org.swiftsuspenders.support.injectees.NamedClassInjectee;
 	import org.swiftsuspenders.support.injectees.NamedClassInjectee;
 	import org.swiftsuspenders.support.injectees.NamedInterfaceInjectee;
 	import org.swiftsuspenders.support.injectees.OneNamedParameterConstructorInjectee;
@@ -54,6 +57,9 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.support.types.ComplexClazz;
 	import org.swiftsuspenders.support.types.Interface;
 	import org.swiftsuspenders.support.types.Interface2;
+	import org.swiftsuspenders.typedescriptions.NoParamsConstructorInjectionPoint;
+	import org.swiftsuspenders.typedescriptions.PropertyInjectionPoint;
+	import org.swiftsuspenders.typedescriptions.TypeDescription;
 	import org.swiftsuspenders.utils.SsInternal;
 
 	use namespace SsInternal;
@@ -828,6 +834,53 @@ package org.swiftsuspenders
 			injector.map(Clazz).toProvider(provider);
 			injector.getInstance(UnknownInjectParametersListInjectee);
 			assertThat(provider.parameterValue, equalTo('true,str,123'));
+		}
+
+		[Test]
+		public function injectorUsesManuallySuppliedTypeDescriptionForField() : void
+		{
+			const description : TypeDescription = new TypeDescription();
+			description.addFieldInjection('property', Clazz);
+			injector.addTypeDescription(NamedClassInjectee, description);
+			injector.map(Clazz);
+			const injectee : NamedClassInjectee = injector.getInstance(NamedClassInjectee);
+			assertThat(injectee.property, isA(Clazz));
+		}
+
+		[Test]
+		public function injectorUsesManuallySuppliedTypeDescriptionForMethod() : void
+		{
+			const description : TypeDescription = new TypeDescription();
+			description.addMethodInjection('setDependency', [Clazz]);
+			injector.addTypeDescription(OneNamedParameterMethodInjectee, description);
+			injector.map(Clazz);
+			const injectee : OneNamedParameterMethodInjectee =
+				injector.getInstance(OneNamedParameterMethodInjectee);
+			assertThat(injectee.getDependency(), isA(Clazz));
+		}
+
+		[Test]
+		public function injectorUsesManuallySuppliedTypeDescriptionForCtor() : void
+		{
+			const description : TypeDescription = new TypeDescription(false);
+			description.setConstructor([Clazz]);
+			injector.addTypeDescription(OneNamedParameterConstructorInjectee, description);
+			injector.map(Clazz);
+			const injectee : OneNamedParameterConstructorInjectee =
+				injector.getInstance(OneNamedParameterConstructorInjectee);
+			assertThat(injectee.getDependency(), isA(Clazz));
+		}
+
+		[Test]
+		public function injectorUsesManuallySuppliedTypeDescriptionForPostConstructMethod() : void
+		{
+			const description : TypeDescription = new TypeDescription();
+			description.addPostConstructMethod('doSomeStuff', [Clazz]);
+			injector.addTypeDescription(PostConstructWithArgInjectee, description);
+			injector.map(Clazz);
+			const injectee : PostConstructWithArgInjectee =
+				injector.getInstance(PostConstructWithArgInjectee);
+			assertThat(injectee.property, isA(Clazz));
 		}
 	}
 }

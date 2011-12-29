@@ -44,7 +44,7 @@ package org.swiftsuspenders
 			var rawDescription : Object = _descriptor.getInstanceDescription(type);
 			const traits : Object = rawDescription.traits;
 			const typeName : String = rawDescription.name;
-			const description : TypeDescription = new TypeDescription();
+			const description : TypeDescription = new TypeDescription(false);
 			addCtorInjectionPoint(description, traits, typeName);
 			addFieldInjectionPoints(description, traits.variables);
 			addFieldInjectionPoints(description, traits.accessors);
