@@ -34,7 +34,7 @@ package org.swiftsuspenders
 	 * injector, whereas <code>PRE_CONSTRUCT</code> is also dispatched for instances the injector
 	 * only injects into.</p>
 	 *
-	 * <p>This event is only dispatched when there are one or more relevant listeners attached to
+	 * <p>This event is only dispatched if there are one or more relevant listeners attached to
 	 * the dispatching injector.</p>
 	 *
 	 * @eventType org.swiftsuspenders.InjectionEvent.POST_INSTANTIATE
@@ -50,7 +50,7 @@ package org.swiftsuspenders
 	 * injector, whereas <code>POST_INSTANTIATE</code> is also dispatched for instances the
 	 * injector only injects into.</p>
 	 *
-	 * <p>This event is only dispatched when there are one or more relevant listeners attached to
+	 * <p>This event is only dispatched if there are one or more relevant listeners attached to
 	 * the dispatching injector.</p>
 	 *
 	 * @eventType org.swiftsuspenders.InjectionEvent.PRE_CONSTRUCT
@@ -66,7 +66,7 @@ package org.swiftsuspenders
 	 *
 	 * <p>The newly created instance's [PostConstruct]-annotated methods will also have run already.</p>
 	 *
-	 * <p>This event is only dispatched when there are one or more relevant listeners attached to
+	 * <p>This event is only dispatched if there are one or more relevant listeners attached to
 	 * the dispatching injector.</p>
 	 *
 	 * @eventType org.swiftsuspenders.InjectionEvent.POST_CONSTRUCT
@@ -80,7 +80,7 @@ package org.swiftsuspenders
 	 * <p>At the point where the event is dispatched the mapping hasn't yet been created. Thus, the
 	 * respective field in the event is null.</p>
 	 *
-	 * <p>This event is only dispatched when there are one or more relevant listeners attached to
+	 * <p>This event is only dispatched if there are one or more relevant listeners attached to
 	 * the dispatching injector.</p>
 	 *
 	 * @eventType org.swiftsuspenders.MappingEvent.PRE_MAPPING_CREATE
@@ -93,7 +93,7 @@ package org.swiftsuspenders
 	 * <p>At the point where the event is dispatched the mapping has already been created and stored
 	 * in the injector's lookup table.</p>
 	 *
-	 * <p>This event is only dispatched when there are one or more relevant listeners attached to
+	 * <p>This event is only dispatched if there are one or more relevant listeners attached to
 	 * the dispatching injector.</p>
 	 *
 	 * @eventType org.swiftsuspenders.MappingEvent.POST_MAPPING_CREATE
@@ -106,7 +106,7 @@ package org.swiftsuspenders
 	 * <p>At the point where the event is dispatched the changes haven't yet been applied, meaning the
 	 * mapping stored in the event can be queried for its pre-change state.</p>
 	 *
-	 * <p>This event is only dispatched when there are one or more relevant listeners attached to 
+	 * <p>This event is only dispatched if there are one or more relevant listeners attached to 
 	 * the dispatching injector.</p>
 	 *
 	 * @eventType org.swiftsuspenders.MappingEvent.PRE_MAPPING_CHANGE
@@ -119,7 +119,7 @@ package org.swiftsuspenders
 	 * <p>At the point where the event is dispatched the changes have already been applied, meaning
 	 * the mapping stored in the event can be queried for its post-change state</p>
 	 *
-	 * <p>This event is only dispatched when there are one or more relevant listeners attached to 
+	 * <p>This event is only dispatched if there are one or more relevant listeners attached to 
 	 * the dispatching injector.</p>
 	 *
 	 * @eventType org.swiftsuspenders.MappingEvent.POST_MAPPING_CHANGE
@@ -132,12 +132,25 @@ package org.swiftsuspenders
 	 * <p>At the point where the event is dispatched the changes have already been applied, meaning
 	 * the mapping is lost to the injector and can't be queried anymore.</p>
 	 *
-	 * <p>This event is only dispatched when there are one or more relevant listeners attached to 
+	 * <p>This event is only dispatched if there are one or more relevant listeners attached to 
 	 * the dispatching injector.</p>
 	 *
 	 * @eventType org.swiftsuspenders.MappingEvent.POST_MAPPING_REMOVE
 	 */
 	[Event(name='postMappingRemove', type='org.swiftsuspenders.MappingEvent')]
+	/**
+	 * This event is dispatched if an existing mapping is overridden without first unmapping it.
+	 *
+	 * <p>The reason for dispatching an event (and tracing a warning) is that in most cases,
+	 * overriding existing mappings is a sign of bugs in the application. Deliberate mapping
+	 * changes should be done by first removing the existing mapping.</p>
+	 *
+	 * <p>This event is only dispatched if there are one or more relevant listeners attached to 
+	 * the dispatching injector.</p>
+	 *
+	 * @eventType org.swiftsuspenders.MappingEvent.POST_MAPPING_REMOVE
+	 */
+	[Event(name='mappingOverride', type='org.swiftsuspenders.MappingEvent')]
 
 	/**
 	 * The <code>Injector</code> manages the mappings and acts as the central hub from which all

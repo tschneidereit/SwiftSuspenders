@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2011 the original author or authors
+ *
+ * Permission is hereby granted to use, modify, and distribute this file
+ * in accordance with the terms of the license agreement accompanying it.
+ */
+
 package org.swiftsuspenders
 {
 	import flash.events.Event;
@@ -25,6 +32,10 @@ package org.swiftsuspenders
 		 * @eventType postMappingRemove
 		 */
 		public static const POST_MAPPING_REMOVE : String = 'postMappingRemove';
+		/**
+		 * @eventType mappingOverride
+		 */
+		public static const MAPPING_OVERRIDE : String = 'mappingOverride';
 
 
 		public var mappedType : Class;

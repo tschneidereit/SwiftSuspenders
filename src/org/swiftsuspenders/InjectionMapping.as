@@ -141,11 +141,13 @@ package org.swiftsuspenders
 			_sealed && throwSealedError();
 			if (hasProvider() && provider != null && !_defaultProviderSet)
 			{
-				//TODO: consider making this throw
 				trace('Warning: Injector already has a mapping for ' + _mappingId + '.\n ' +
-						'If you have overwritten this mapping intentionally you can use ' +
+						'If you have overridden this mapping intentionally you can use ' +
 						'"injector.unmap()" prior to your replacement mapping in order to ' +
 						'avoid seeing this message.');
+				_creatingInjector.hasEventListener(MappingEvent.MAPPING_OVERRIDE)
+				&& _creatingInjector.dispatchEvent(
+					new MappingEvent(MappingEvent.MAPPING_OVERRIDE, _type, _name, this));
 			}
 			dispatchPreChangeEvent();
 			_defaultProviderSet = false;
