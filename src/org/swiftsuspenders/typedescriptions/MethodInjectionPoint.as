@@ -44,14 +44,7 @@ package org.swiftsuspenders.typedescriptions
 			var p : Array = gatherParameterValues(target, targetType, injector);
 			if (p.length >= _requiredParameters)
 			{
-				switch (p.length)
-				{
-					case 0 : (target[_methodName] as Function)(); break;
-					case 1 : (target[_methodName] as Function)(p[0]); break;
-					case 2 : (target[_methodName] as Function)(p[0], p[1]); break;
-					case 3 : (target[_methodName] as Function)(p[0], p[1], p[2]); break;
-					default: (target[_methodName] as Function).apply(target, p);
-				}
+				(target[_methodName] as Function).apply(target, p);
 			}
 
 			p.length = 0;

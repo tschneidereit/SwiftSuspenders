@@ -11,6 +11,11 @@ package org.swiftsuspenders
 	import org.hamcrest.assertThat;
 	import org.hamcrest.core.isA;
 	import org.hamcrest.object.hasProperties;
+	import org.hamcrest.object.isTrue;
+	import org.hamcrest.object.notNullValue;
+	import org.swiftsuspenders.support.injectees.PostConstructGetterInjectee;
+	import org.swiftsuspenders.support.injectees.PostConstructInjectedVarInjectee;
+	import org.swiftsuspenders.support.injectees.PostConstructVarInjectee;
 	import org.swiftsuspenders.support.injectees.UnknownInjectParametersInjectee;
 	import org.swiftsuspenders.support.injectees.UnknownInjectParametersListInjectee;
 	import org.swiftsuspenders.typedescriptions.ConstructorInjectionPoint;
@@ -329,6 +334,40 @@ package org.swiftsuspenders
 			const first : InjectionPoint =
 				reflector.describeInjections(UnknownInjectParametersListInjectee).injectionPoints;
 			assertThat(first.injectParameters, hasProperties({param:"true,str,123"}));
+		}
+
+		[Test]
+		public function reflectorFindsPostConstructMethodVars() : void
+		{
+			const first : PostConstructInjectionPoint = PostConstructInjectionPoint(
+				reflector.describeInjections(PostConstructVarInjectee).injectionPoints);
+			assertThat(first, notNullValue());
+		}
+
+		[Test]
+		public function reflectorFindsPostConstructMethodGetters() : void
+		{
+			const first : PostConstructInjectionPoint = PostConstructInjectionPoint(
+				reflector.describeInjections(PostConstructGetterInjectee).injectionPoints);
+			assertThat(first, notNullValue());
+		}
+
+		[Test]
+		public function injectorExecutesInjectedPostConstructMethodVars() : void
+		{
+			var callbackInvoked : Boolean;
+			injector.map(Function).toValue(function() : void {callbackInvoked = true});
+			injector.getInstance(PostConstructInjectedVarInjectee);
+			assertThat(callbackInvoked, isTrue());
+		}
+
+		[Test]
+		public function injectorExecutesInjectedPostConstructMethodVarsInInjecteeScope() : void
+		{
+			injector.map(Function).toValue(function() : void {this.property = new Clazz();});
+			const injectee : PostConstructInjectedVarInjectee =
+				injector.getInstance(PostConstructInjectedVarInjectee);
+			assertThat(injectee.property, isA(Clazz));
 		}
 	}
 }

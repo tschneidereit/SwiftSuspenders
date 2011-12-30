@@ -49,6 +49,8 @@ package org.swiftsuspenders
 			addFieldInjectionPoints(description, traits.variables);
 			addFieldInjectionPoints(description, traits.accessors);
 			addMethodInjectionPoints(description, traits.methods, typeName);
+			addPostConstructMethodPoints(description, traits.variables, typeName);
+			addPostConstructMethodPoints(description, traits.accessors, typeName);
 			addPostConstructMethodPoints(description, traits.methods, typeName);
 			addPreDestroyMethodPoints(description, traits.methods, typeName);
 			return description;
@@ -205,8 +207,17 @@ package org.swiftsuspenders
 				}
 				var parameterNames : Array = (injectParameters.name || '').split(',');
 				var parameters : Array = method.parameters;
-				const requiredParameters : uint =
-					gatherMethodParameters(parameters, parameterNames, typeName);
+				var requiredParameters : uint;
+				if (parameters)
+				{
+					requiredParameters =
+						gatherMethodParameters(parameters, parameterNames, typeName);
+				}
+				else
+				{
+					parameters = [];
+					requiredParameters = 0;
+				}
 				var order : int = parseInt(injectParameters.order, 10);
 				//int can't be NaN, so we have to verify that parsing succeeded by comparison
 				if (order.toString(10) != injectParameters.order)

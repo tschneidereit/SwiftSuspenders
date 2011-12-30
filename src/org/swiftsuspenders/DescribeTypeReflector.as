@@ -195,7 +195,7 @@ package org.swiftsuspenders
 		{
 			const injectionPoints : Array = [];
 			for each (var node : XML in
-				_currentFactoryXML.method.metadata.(@name == tag))
+				_currentFactoryXML..metadata.(@name == tag))
 			{
 				const injectParameters : Dictionary = extractNodeParameters(node.arg);
 				const parameterNames : Array = (injectParameters.name || '').split(',');
