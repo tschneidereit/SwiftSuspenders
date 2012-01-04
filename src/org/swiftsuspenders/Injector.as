@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 the original author or authors
+ * Copyright (c) 2012 the original author or authors
  *
  * Permission is hereby granted to use, modify, and distribute this file 
  * in accordance with the terms of the license agreement accompanying it.
@@ -7,6 +7,8 @@
 
 package org.swiftsuspenders
 {
+	import avmplus.DescribeTypeJSON;
+
 	import flash.events.EventDispatcher;
 	import flash.system.ApplicationDomain;
 	import flash.utils.Dictionary;
@@ -20,7 +22,6 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.typedescriptions.TypeDescription;
 	import org.swiftsuspenders.utils.TypeDescriptor;
 	import org.swiftsuspenders.utils.SsInternal;
-	import org.swiftsuspenders.utils.getConstructor;
 
 	use namespace SsInternal;
 
@@ -166,6 +167,7 @@ package org.swiftsuspenders
 		private var _classDescriptor : TypeDescriptor;
 		private var _mappings : Dictionary;
 		private var _mappingsInProcess : Dictionary;
+		private var _reflector : Reflector;
 
 
 		//----------------------            Internal Properties             ----------------------//
@@ -177,7 +179,17 @@ package org.swiftsuspenders
 		{
 			_mappings = new Dictionary();
 			_mappingsInProcess = new Dictionary();
-			_classDescriptor = new TypeDescriptor(INJECTION_POINTS_CACHE);
+			try
+			{
+				_reflector = DescribeTypeJSON.available
+					? new DescribeTypeJSONReflector()
+					: new DescribeTypeReflector();
+			}
+			catch (e:Error)
+			{
+				_reflector = new DescribeTypeReflector();
+			}
+			_classDescriptor = new TypeDescriptor(_reflector, INJECTION_POINTS_CACHE);
 			_applicationDomain = ApplicationDomain.currentDomain;
 		}
 
@@ -303,7 +315,7 @@ package org.swiftsuspenders
 		 */
 		public function injectInto(target : Object) : void
 		{
-			const type : Class = getConstructor(target);
+			const type : Class = _reflector.getClass(target);
 			var description : TypeDescription = _classDescriptor.getDescription(type);
 
 			applyInjectionPoints(target, type, description.injectionPoints);

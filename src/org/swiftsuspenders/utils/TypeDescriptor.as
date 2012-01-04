@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 the original author or authors
+ * Copyright (c) 2012 the original author or authors
  *
  * Permission is hereby granted to use, modify, and distribute this file
  * in accordance with the terms of the license agreement accompanying it.
@@ -7,12 +7,8 @@
 
 package org.swiftsuspenders.utils
 {
-	import avmplus.DescribeTypeJSON;
-
 	import flash.utils.Dictionary;
 
-	import org.swiftsuspenders.DescribeTypeJSONReflector;
-	import org.swiftsuspenders.DescribeTypeReflector;
 	import org.swiftsuspenders.Reflector;
 	import org.swiftsuspenders.typedescriptions.TypeDescription;
 
@@ -24,19 +20,10 @@ package org.swiftsuspenders.utils
 
 
 		//----------------------               Public Methods               ----------------------//
-		public function TypeDescriptor(descriptionsCache : Dictionary)
+		public function TypeDescriptor(reflector : Reflector, descriptionsCache : Dictionary)
 		{
 			_descriptionsCache = descriptionsCache;
-			try
-			{
-				_reflector = DescribeTypeJSON.available
-					? new DescribeTypeJSONReflector()
-					: new DescribeTypeReflector();
-			}
-			catch (e:Error)
-			{
-				_reflector = new DescribeTypeReflector();
-			}
+			_reflector = reflector;
 		}
 
 		public function getDescription(type : Class) : TypeDescription
