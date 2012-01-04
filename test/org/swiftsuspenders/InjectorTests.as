@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 the original author or authors
+ * Copyright (c) 2012 the original author or authors
  *
  * Permission is hereby granted to use, modify, and distribute this file
  * in accordance with the terms of the license agreement accompanying it.
@@ -40,6 +40,7 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.support.injectees.OptionalClassInjectee;
 	import org.swiftsuspenders.support.injectees.OptionalOneRequiredParameterMethodInjectee;
 	import org.swiftsuspenders.support.injectees.OrderedPostConstructInjectee;
+	import org.swiftsuspenders.support.injectees.PostConstructInjectedVarInjectee;
 	import org.swiftsuspenders.support.injectees.PostConstructWithArgInjectee;
 	import org.swiftsuspenders.support.injectees.RecursiveInterfaceInjectee;
 	import org.swiftsuspenders.support.injectees.SetterInjectee;
@@ -880,6 +881,24 @@ package org.swiftsuspenders
 			injector.map(Clazz);
 			const injectee : PostConstructWithArgInjectee =
 				injector.getInstance(PostConstructWithArgInjectee);
+			assertThat(injectee.property, isA(Clazz));
+		}
+
+		[Test]
+		public function injectorExecutesInjectedPostConstructMethodVars() : void
+		{
+			var callbackInvoked : Boolean;
+			injector.map(Function).toValue(function() : void {callbackInvoked = true});
+			injector.getInstance(PostConstructInjectedVarInjectee);
+			assertThat(callbackInvoked, isTrue());
+		}
+
+		[Test]
+		public function injectorExecutesInjectedPostConstructMethodVarsInInjecteeScope() : void
+		{
+			injector.map(Function).toValue(function() : void {this.property = new Clazz();});
+			const injectee : PostConstructInjectedVarInjectee =
+				injector.getInstance(PostConstructInjectedVarInjectee);
 			assertThat(injectee.property, isA(Clazz));
 		}
 	}

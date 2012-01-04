@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 the original author or authors
+ * Copyright (c) 2012 the original author or authors
  *
  * Permission is hereby granted to use, modify, and distribute this file
  * in accordance with the terms of the license agreement accompanying it.
@@ -350,24 +350,6 @@ package org.swiftsuspenders
 			const first : PostConstructInjectionPoint = PostConstructInjectionPoint(
 				reflector.describeInjections(PostConstructGetterInjectee).injectionPoints);
 			assertThat(first, notNullValue());
-		}
-
-		[Test]
-		public function injectorExecutesInjectedPostConstructMethodVars() : void
-		{
-			var callbackInvoked : Boolean;
-			injector.map(Function).toValue(function() : void {callbackInvoked = true});
-			injector.getInstance(PostConstructInjectedVarInjectee);
-			assertThat(callbackInvoked, isTrue());
-		}
-
-		[Test]
-		public function injectorExecutesInjectedPostConstructMethodVarsInInjecteeScope() : void
-		{
-			injector.map(Function).toValue(function() : void {this.property = new Clazz();});
-			const injectee : PostConstructInjectedVarInjectee =
-				injector.getInstance(PostConstructInjectedVarInjectee);
-			assertThat(injectee.property, isA(Clazz));
 		}
 	}
 }
