@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 the original author or authors
+ * Copyright (c) 2012 the original author or authors
  *
  * Permission is hereby granted to use, modify, and distribute this file 
  * in accordance with the terms of the license agreement accompanying it.
@@ -11,10 +11,12 @@ package org.swiftsuspenders
 
 	import flexunit.framework.Assert;
 
-	import org.swiftsuspenders.dependencyproviders.ClassProvider;
-	import org.swiftsuspenders.dependencyproviders.OtherMappingProvider;
-	import org.swiftsuspenders.dependencyproviders.SingletonProvider;
-	import org.swiftsuspenders.dependencyproviders.ValueProvider;
+	import org.swiftsuspenders.injection.dependencyproviders.ClassProvider;
+	import org.swiftsuspenders.injection.dependencyproviders.OtherMappingProvider;
+	import org.swiftsuspenders.injection.dependencyproviders.SingletonProvider;
+	import org.swiftsuspenders.injection.dependencyproviders.ValueProvider;
+	import org.swiftsuspenders.injection.InjectionMapping;
+	import org.swiftsuspenders.injection.Injector;
 	import org.swiftsuspenders.support.injectees.ClassInjectee;
 	import org.swiftsuspenders.support.providers.ClassNameStoringProvider;
 	import org.swiftsuspenders.support.types.Clazz;

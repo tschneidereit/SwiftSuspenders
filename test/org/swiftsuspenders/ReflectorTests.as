@@ -13,6 +13,8 @@ package org.swiftsuspenders
 	import org.hamcrest.object.hasProperties;
 	import org.hamcrest.object.isTrue;
 	import org.hamcrest.object.notNullValue;
+	import org.swiftsuspenders.injection.Injector;
+	import org.swiftsuspenders.reflection.Reflector;
 	import org.swiftsuspenders.support.injectees.PostConstructGetterInjectee;
 	import org.swiftsuspenders.support.injectees.PostConstructInjectedVarInjectee;
 	import org.swiftsuspenders.support.injectees.PostConstructVarInjectee;

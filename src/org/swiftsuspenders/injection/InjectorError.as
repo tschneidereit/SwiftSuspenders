@@ -5,12 +5,13 @@
  * in accordance with the terms of the license agreement accompanying it.
  */
 
-package org.swiftsuspenders.support.injectees.childinjectors
+package org.swiftsuspenders.injection
 {
-	import org.swiftsuspenders.injection.Injector;
-
-	public class NestedNestedInjectorInjectee
+	public class InjectorError extends Error
 	{
-		[Inject] public var injector : Injector;
+		public function InjectorError(message:*="", id:*=0)
+		{
+			super(message, id);
+		}
 	}
 }

@@ -1,32 +1,31 @@
 /*
- * Copyright (c) 2011 the original author or authors
+ * Copyright (c) 2012 the original author or authors
  *
  * Permission is hereby granted to use, modify, and distribute this file
  * in accordance with the terms of the license agreement accompanying it.
  */
 
-package org.swiftsuspenders.dependencyproviders
+package org.swiftsuspenders.injection.dependencyproviders
 {
 	import flash.utils.Dictionary;
 
-	import org.swiftsuspenders.Injector;
+	import org.swiftsuspenders.injection.Injector;
 
-	public class InjectorUsingProvider extends ForwardingProvider
+	public class ForwardingProvider implements DependencyProvider
 	{
 		//----------------------              Public Properties             ----------------------//
-		public var injector : Injector;
+		public var provider : DependencyProvider;
 
 		//----------------------               Public Methods               ----------------------//
-		public function InjectorUsingProvider(injector : Injector, provider : DependencyProvider)
+		public function ForwardingProvider(provider : DependencyProvider)
 		{
-			super(provider);
-			this.injector = injector;
+			this.provider = provider;
 		}
 
-		override public function apply(
+		public function apply(
 			targetType : Class, activeInjector : Injector, injectParameters : Dictionary) : Object
 		{
-			return provider.apply(targetType, injector, injectParameters);
+			return provider.apply(targetType, activeInjector, injectParameters);
 		}
 	}
 }

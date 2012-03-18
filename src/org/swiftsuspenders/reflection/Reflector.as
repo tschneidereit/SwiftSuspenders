@@ -5,7 +5,7 @@
  * in accordance with the terms of the license agreement accompanying it.
  */
 
-package org.swiftsuspenders
+package org.swiftsuspenders.reflection
 {
 	import org.swiftsuspenders.typedescriptions.TypeDescription;
 

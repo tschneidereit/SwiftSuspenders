@@ -1,13 +1,16 @@
 /*
-* Copyright (c) 2009 the original author or authors
-* 
-* Permission is hereby granted to use, modify, and distribute this file 
-* in accordance with the terms of the license agreement accompanying it.
-*/
+ * Copyright (c) 2012 the original author or authors
+ *
+ * Permission is hereby granted to use, modify, and distribute this file
+ * in accordance with the terms of the license agreement accompanying it.
+ */
 
 package org.swiftsuspenders
 {
 	import flexunit.framework.Assert;
+
+	import org.swiftsuspenders.injection.InjectionMapping;
+	import org.swiftsuspenders.injection.Injector;
 
 	import org.swiftsuspenders.support.injectees.ClassInjectee;
 	import org.swiftsuspenders.support.injectees.childinjectors.ChildInjectorCreatingProvider;

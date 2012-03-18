@@ -9,6 +9,8 @@ package org.swiftsuspenders
 {
 	import flexunit.framework.Assert;
 
+	import org.swiftsuspenders.reflection.ReflectorBase;
+
 	public class ReflectorBaseTests
 	{
 		private var _reflector : ReflectorBase;

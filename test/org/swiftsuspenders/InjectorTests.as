@@ -21,7 +21,12 @@ package org.swiftsuspenders
 	import org.hamcrest.object.equalTo;
 	import org.hamcrest.object.hasPropertyWithValue;
 	import org.hamcrest.object.isTrue;
-	import org.swiftsuspenders.dependencyproviders.OtherMappingProvider;
+	import org.swiftsuspenders.injection.dependencyproviders.OtherMappingProvider;
+	import org.swiftsuspenders.injection.InjectionEvent;
+	import org.swiftsuspenders.injection.InjectionMapping;
+	import org.swiftsuspenders.injection.Injector;
+	import org.swiftsuspenders.injection.InjectorError;
+	import org.swiftsuspenders.injection.MappingEvent;
 	import org.swiftsuspenders.support.injectees.ClassInjectee;
 	import org.swiftsuspenders.support.injectees.ComplexClassInjectee;
 	import org.swiftsuspenders.support.injectees.InterfaceInjectee;
@@ -462,14 +467,14 @@ package org.swiftsuspenders
 			Assert.assertEquals('injected value should be indentical to mapped value', injectee.property, value);
 		}
 		
-		[Test(expects="org.swiftsuspenders.InjectorError")]
+		[Test(expects="org.swiftsuspenders.injection.InjectorError")]
 		public function haltOnMissingDependency():void
 		{
 			var injectee:InterfaceInjectee = new InterfaceInjectee();
 			injector.injectInto(injectee);
 		}
 		
-		[Test(expects="org.swiftsuspenders.InjectorError")]
+		[Test(expects="org.swiftsuspenders.injection.InjectorError")]
 		public function haltOnMissingNamedDependency():void
 		{
 			var injectee:NamedClassInjectee = new NamedClassInjectee();
@@ -531,7 +536,7 @@ package org.swiftsuspenders
 			Assert.assertTrue(injector.satisfies(Clazz, 'namedClass'));
 		}
 
-		[Test(expects="org.swiftsuspenders.InjectorError")]
+		[Test(expects="org.swiftsuspenders.injection.InjectorError")]
 		public function getMappingResponseFailsForUnmappedNamedClass():void
 		{
 			Assert.assertNull(injector.getInstance(Clazz, 'namedClass'));
@@ -565,7 +570,7 @@ package org.swiftsuspenders
 				injectee1.property == injectee2.property);
 		}
 
-		[Test(expects="org.swiftsuspenders.InjectorError")]
+		[Test(expects="org.swiftsuspenders.injection.InjectorError")]
 		public function instantiateThrowsMeaningfulErrorOnInterfaceInstantiation() : void
 		{
 			injector.getInstance(Interface);
@@ -620,7 +625,7 @@ package org.swiftsuspenders
 			Assert.assertNotNull(injector.getInstance(Interface));
 		}
 
-		[Test(expects="org.swiftsuspenders.InjectorError")]
+		[Test(expects="org.swiftsuspenders.injection.InjectorError")]
 		public function localMappingsArentSharedWithChildInjectors() : void
 		{
 			const childInjector : Injector = injector.createChildInjector();

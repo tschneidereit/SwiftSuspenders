@@ -1,20 +1,21 @@
 /*
- * Copyright (c) 2011 the original author or authors
+ * Copyright (c) 2012 the original author or authors
  *
  * Permission is hereby granted to use, modify, and distribute this file
  * in accordance with the terms of the license agreement accompanying it.
  */
 
-package org.swiftsuspenders
+package org.swiftsuspenders.injection
 {
-	import org.swiftsuspenders.dependencyproviders.ClassProvider;
-	import org.swiftsuspenders.dependencyproviders.DependencyProvider;
-	import org.swiftsuspenders.dependencyproviders.ForwardingProvider;
-	import org.swiftsuspenders.dependencyproviders.InjectorUsingProvider;
-	import org.swiftsuspenders.dependencyproviders.LocalOnlyProvider;
-	import org.swiftsuspenders.dependencyproviders.SingletonProvider;
-	import org.swiftsuspenders.dependencyproviders.SoftDependencyProvider;
-	import org.swiftsuspenders.dependencyproviders.ValueProvider;
+	import org.swiftsuspenders.*;
+	import org.swiftsuspenders.injection.dependencyproviders.ClassProvider;
+	import org.swiftsuspenders.injection.dependencyproviders.DependencyProvider;
+	import org.swiftsuspenders.injection.dependencyproviders.ForwardingProvider;
+	import org.swiftsuspenders.injection.dependencyproviders.InjectorUsingProvider;
+	import org.swiftsuspenders.injection.dependencyproviders.LocalOnlyProvider;
+	import org.swiftsuspenders.injection.dependencyproviders.SingletonProvider;
+	import org.swiftsuspenders.injection.dependencyproviders.SoftDependencyProvider;
+	import org.swiftsuspenders.injection.dependencyproviders.ValueProvider;
 	import org.swiftsuspenders.utils.SsInternal;
 
 	public class InjectionMapping
@@ -53,7 +54,7 @@ package org.swiftsuspenders
 		 *
 		 * @return The <code>InjectionMapping</code> the method is invoked on
 		 *
-		 * @throws org.swiftsuspenders.InjectorError Sealed mappings can't be changed in any way
+		 * @throws org.swiftsuspenders.injection.InjectorError Sealed mappings can't be changed in any way
 		 *
 		 * @see #toSingleton()
 		 */
@@ -74,7 +75,7 @@ package org.swiftsuspenders
 		 *
 		 * @return The <code>InjectionMapping</code> the method is invoked on
 		 *
-		 * @throws org.swiftsuspenders.InjectorError Sealed mappings can't be changed in any way
+		 * @throws org.swiftsuspenders.injection.InjectorError Sealed mappings can't be changed in any way
 		 *
 		 * @see #toProvider()
 		 */
@@ -96,7 +97,7 @@ package org.swiftsuspenders
 		 *
 		 * @return The <code>InjectionMapping</code> the method is invoked on
 		 *
-		 * @throws org.swiftsuspenders.InjectorError Sealed mappings can't be changed in any way
+		 * @throws org.swiftsuspenders.injection.InjectorError Sealed mappings can't be changed in any way
 		 *
 		 * @see #toProvider()
 		 */
@@ -116,7 +117,7 @@ package org.swiftsuspenders
 		 *
 		 * @return The <code>InjectionMapping</code> the method is invoked on
 		 *
-		 * @throws org.swiftsuspenders.InjectorError Sealed mappings can't be changed in any way
+		 * @throws org.swiftsuspenders.injection.InjectorError Sealed mappings can't be changed in any way
 		 *
 		 * @see #toProvider()
 		 */
@@ -134,7 +135,7 @@ package org.swiftsuspenders
 		 *
 		 * @return The <code>InjectionMapping</code> the method is invoked on
 		 *
-		 * @throws org.swiftsuspenders.InjectorError Sealed mappings can't be changed in any way
+		 * @throws org.swiftsuspenders.injection.InjectorError Sealed mappings can't be changed in any way
 		 */
 		public function toProvider(provider : DependencyProvider) : InjectionMapping
 		{
@@ -167,7 +168,7 @@ package org.swiftsuspenders
 		 *
 		 * @return The <code>InjectionMapping</code> the method is invoked on
 		 *
-		 * @throws org.swiftsuspenders.InjectorError Sealed mappings can't be changed in any way
+		 * @throws org.swiftsuspenders.injection.InjectorError Sealed mappings can't be changed in any way
 		 *
 		 * @see #strong()
 		 */
@@ -191,7 +192,7 @@ package org.swiftsuspenders
 		 *
 		 * @return The <code>InjectionMapping</code> the method is invoked on
 		 *
-		 * @throws org.swiftsuspenders.InjectorError Sealed mappings can't be changed in any way
+		 * @throws org.swiftsuspenders.injection.InjectorError Sealed mappings can't be changed in any way
 		 *
 		 * @see #soft()
 		 */
@@ -214,7 +215,7 @@ package org.swiftsuspenders
 		 *
 		 * @return The <code>InjectionMapping</code> the method is invoked on
 		 *
-		 * @throws org.swiftsuspenders.InjectorError Sealed mappings can't be changed in any way
+		 * @throws org.swiftsuspenders.injection.InjectorError Sealed mappings can't be changed in any way
 		 *
 		 * @see #shared()
 		 */
@@ -239,7 +240,7 @@ package org.swiftsuspenders
 		 *
 		 * @return The <code>InjectionMapping</code> the method is invoked on
 		 *
-		 * @throws org.swiftsuspenders.InjectorError Sealed mappings can't be changed in any way
+		 * @throws org.swiftsuspenders.injection.InjectorError Sealed mappings can't be changed in any way
 		 *
 		 * @see #local()
 		 */
@@ -268,7 +269,7 @@ package org.swiftsuspenders
 		 *
 		 * @returns An internally created object that can be used as the key for unseal
 		 *
-		 * @throws org.swiftsuspenders.InjectorError Can't be invoked on a mapping that's already sealed
+		 * @throws org.swiftsuspenders.injection.InjectorError Can't be invoked on a mapping that's already sealed
 		 *
 		 * @see #unseal()
 		 */
@@ -291,8 +292,8 @@ package org.swiftsuspenders
 		 *
 		 * @return The <code>InjectionMapping</code> the method is invoked on
 		 *
-		 * @throws org.swiftsuspenders.InjectorError Has to be invoked with the unique key object returned by an earlier call to <code>seal</code>
-		 * @throws org.swiftsuspenders.InjectorError Can't unseal a mapping that's not sealed
+		 * @throws org.swiftsuspenders.injection.InjectorError Has to be invoked with the unique key object returned by an earlier call to <code>seal</code>
+		 * @throws org.swiftsuspenders.injection.InjectorError Can't unseal a mapping that's not sealed
 		 *
 		 * @see #seal()
 		 */

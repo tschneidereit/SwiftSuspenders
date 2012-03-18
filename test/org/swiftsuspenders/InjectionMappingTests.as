@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 the original author or authors
+ * Copyright (c) 2012 the original author or authors
  *
  * Permission is hereby granted to use, modify, and distribute this file 
  * in accordance with the terms of the license agreement accompanying it.
@@ -15,8 +15,11 @@ package org.swiftsuspenders
 	import org.hamcrest.object.hasProperties;
 	import org.hamcrest.object.isTrue;
 	import org.hamcrest.object.notNullValue;
-	import org.swiftsuspenders.dependencyproviders.ClassProvider;
-	import org.swiftsuspenders.dependencyproviders.SingletonProvider;
+	import org.swiftsuspenders.injection.dependencyproviders.ClassProvider;
+	import org.swiftsuspenders.injection.dependencyproviders.SingletonProvider;
+	import org.swiftsuspenders.injection.InjectionMapping;
+	import org.swiftsuspenders.injection.Injector;
+	import org.swiftsuspenders.injection.InjectorError;
 	import org.swiftsuspenders.support.types.Clazz;
 	import org.swiftsuspenders.support.types.Interface;
 	import org.swiftsuspenders.utils.SsInternal;
@@ -124,14 +127,14 @@ package org.swiftsuspenders
 			assertThat(testedMethods, hasProperties(methods));
 		}
 
-		[Test(expects='org.swiftsuspenders.InjectorError')]
+		[Test(expects='org.swiftsuspenders.injection.InjectorError')]
 		public function unmappingASealedMappingThrows() : void
 		{
 			injector.map(Interface).seal();
 			injector.unmap(Interface);
 		}
 
-		[Test(expects='org.swiftsuspenders.InjectorError')]
+		[Test(expects='org.swiftsuspenders.injection.InjectorError')]
 		public function doubleSealingAMappingThrows() : void
 		{
 			injector.map(Interface).seal();
@@ -145,14 +148,14 @@ package org.swiftsuspenders
 			assertThat(config.seal(), notNullValue());
 		}
 
-		[Test(expects='org.swiftsuspenders.InjectorError')]
+		[Test(expects='org.swiftsuspenders.injection.InjectorError')]
 		public function unsealingAMappingWithoutKeyThrows() : void
 		{
 			injector.map(Interface).seal();
 			injector.map(Interface).unseal(null);
 		}
 
-		[Test(expects='org.swiftsuspenders.InjectorError')]
+		[Test(expects='org.swiftsuspenders.injection.InjectorError')]
 		public function unsealingAMappingWithWrongKeyThrows() : void
 		{
 			injector.map(Interface).seal();

@@ -9,7 +9,7 @@ package org.swiftsuspenders.utils
 {
 	import flash.utils.Dictionary;
 
-	import org.swiftsuspenders.Reflector;
+	import org.swiftsuspenders.reflection.Reflector;
 	import org.swiftsuspenders.typedescriptions.TypeDescription;
 
 	public class TypeDescriptor

@@ -5,8 +5,9 @@
  * in accordance with the terms of the license agreement accompanying it.
  */
 
-package org.swiftsuspenders
+package org.swiftsuspenders.injection
 {
+	import org.swiftsuspenders.*;
 	import avmplus.DescribeTypeJSON;
 
 	import flash.events.EventDispatcher;
@@ -14,9 +15,12 @@ package org.swiftsuspenders
 	import flash.utils.Dictionary;
 	import flash.utils.getQualifiedClassName;
 
-	import org.swiftsuspenders.dependencyproviders.DependencyProvider;
-	import org.swiftsuspenders.dependencyproviders.LocalOnlyProvider;
-	import org.swiftsuspenders.dependencyproviders.SoftDependencyProvider;
+	import org.swiftsuspenders.injection.dependencyproviders.DependencyProvider;
+	import org.swiftsuspenders.injection.dependencyproviders.LocalOnlyProvider;
+	import org.swiftsuspenders.injection.dependencyproviders.SoftDependencyProvider;
+	import org.swiftsuspenders.reflection.DescribeTypeJSONReflector;
+	import org.swiftsuspenders.reflection.DescribeTypeReflector;
+	import org.swiftsuspenders.reflection.Reflector;
 	import org.swiftsuspenders.typedescriptions.ConstructorInjectionPoint;
 	import org.swiftsuspenders.typedescriptions.InjectionPoint;
 	import org.swiftsuspenders.typedescriptions.TypeDescription;
@@ -40,7 +44,7 @@ package org.swiftsuspenders
 	 *
 	 * @eventType org.swiftsuspenders.InjectionEvent.POST_INSTANTIATE
 	 */
-	[Event(name='postInstantiate', type='org.swiftsuspenders.InjectionEvent')]
+	[Event(name='postInstantiate', type='org.swiftsuspenders.injection.InjectionEvent')]
 	/**
 	 * This event is dispatched each time the injector is about to inject into a class
 	 *
@@ -56,7 +60,7 @@ package org.swiftsuspenders
 	 *
 	 * @eventType org.swiftsuspenders.InjectionEvent.PRE_CONSTRUCT
 	 */
-	[Event(name='preConstruct', type='org.swiftsuspenders.InjectionEvent')]
+	[Event(name='preConstruct', type='org.swiftsuspenders.injection.InjectionEvent')]
 	/**
 	 * This event is dispatched each time the injector created and fully initialized a new instance
 	 *
@@ -72,7 +76,7 @@ package org.swiftsuspenders
 	 *
 	 * @eventType org.swiftsuspenders.InjectionEvent.POST_CONSTRUCT
 	 */
-	[Event(name='postConstruct', type='org.swiftsuspenders.InjectionEvent')]
+	[Event(name='postConstruct', type='org.swiftsuspenders.injection.InjectionEvent')]
 
 	/**
 	 * This event is dispatched each time the injector creates a new mapping for a type/ name
@@ -86,7 +90,7 @@ package org.swiftsuspenders
 	 *
 	 * @eventType org.swiftsuspenders.MappingEvent.PRE_MAPPING_CREATE
 	 */
-	[Event(name='preMappingCreate', type='org.swiftsuspenders.MappingEvent')]
+	[Event(name='preMappingCreate', type='org.swiftsuspenders.injection.MappingEvent')]
 	/**
 	 * This event is dispatched each time the injector creates a new mapping for a type/ name
 	 * combination, right after the mapping was created
@@ -99,7 +103,7 @@ package org.swiftsuspenders
 	 *
 	 * @eventType org.swiftsuspenders.MappingEvent.POST_MAPPING_CREATE
 	 */
-	[Event(name='postMappingCreate', type='org.swiftsuspenders.MappingEvent')]
+	[Event(name='postMappingCreate', type='org.swiftsuspenders.injection.MappingEvent')]
 	/**
 	 * This event is dispatched each time an injector mapping is changed in any way, right before
 	 * the change is applied.
@@ -112,7 +116,7 @@ package org.swiftsuspenders
 	 *
 	 * @eventType org.swiftsuspenders.MappingEvent.PRE_MAPPING_CHANGE
 	 */
-	[Event(name='preMappingChange', type='org.swiftsuspenders.MappingEvent')]
+	[Event(name='preMappingChange', type='org.swiftsuspenders.injection.MappingEvent')]
 	/**
 	 * This event is dispatched each time an injector mapping is changed in any way, right after
 	 * the change is applied.
@@ -125,7 +129,7 @@ package org.swiftsuspenders
 	 *
 	 * @eventType org.swiftsuspenders.MappingEvent.POST_MAPPING_CHANGE
 	 */
-	[Event(name='postMappingChange', type='org.swiftsuspenders.MappingEvent')]
+	[Event(name='postMappingChange', type='org.swiftsuspenders.injection.MappingEvent')]
 	/**
 	 * This event is dispatched each time an injector mapping is removed, right after
 	 * the mapping is deleted from the configuration.
@@ -138,7 +142,7 @@ package org.swiftsuspenders
 	 *
 	 * @eventType org.swiftsuspenders.MappingEvent.POST_MAPPING_REMOVE
 	 */
-	[Event(name='postMappingRemove', type='org.swiftsuspenders.MappingEvent')]
+	[Event(name='postMappingRemove', type='org.swiftsuspenders.injection.MappingEvent')]
 	/**
 	 * This event is dispatched if an existing mapping is overridden without first unmapping it.
 	 *
@@ -151,7 +155,7 @@ package org.swiftsuspenders
 	 *
 	 * @eventType org.swiftsuspenders.MappingEvent.POST_MAPPING_REMOVE
 	 */
-	[Event(name='mappingOverride', type='org.swiftsuspenders.MappingEvent')]
+	[Event(name='mappingOverride', type='org.swiftsuspenders.injection.MappingEvent')]
 
 	/**
 	 * The <code>Injector</code> manages the mappings and acts as the central hub from which all
@@ -208,7 +212,7 @@ package org.swiftsuspenders
 		 * @return The <code>InjectionMapping</code> for the given request description
 		 *
 		 * @see #unmap()
-		 * @see InjectionMapping
+		 * @see org.swiftsuspenders.injection.InjectionMapping
 		 */
 		public function map(type : Class, name : String = '') : InjectionMapping
 		{
@@ -222,12 +226,12 @@ package org.swiftsuspenders
 		 * @param type The <code>class</code> describing the mapping
 		 * @param name The name, as a case-sensitive string, to further describe the mapping
 		 *
-		 * @throws org.swiftsuspenders.InjectorError Descriptions that are not mapped can't be unmapped
-		 * @throws org.swiftsuspenders.InjectorError Sealed mappings have to be unsealed before unmapping them
+		 * @throws org.swiftsuspenders.injection.InjectorError Descriptions that are not mapped can't be unmapped
+		 * @throws org.swiftsuspenders.injection.InjectorError Sealed mappings have to be unsealed before unmapping them
 		 *
 		 * @see #map()
-		 * @see InjectionMapping
-		 * @see InjectionMapping#unseal()
+		 * @see org.swiftsuspenders.injection.InjectionMapping
+		 * @see org.swiftsuspenders.injection.InjectionMapping#unseal()
 		 */
 		public function unmap(type : Class, name : String = '') : void
 		{
@@ -290,7 +294,7 @@ package org.swiftsuspenders
 		 * 
 		 * @return The mapping for the specified dependency class
 		 * 
-		 * @throws InjectorError When no mapping was found for the specified dependency
+		 * @throws org.swiftsuspenders.injection.InjectorError When no mapping was found for the specified dependency
 		 */
 		public function getMapping(type : Class, name : String = '') : InjectionMapping
 		{
@@ -309,7 +313,7 @@ package org.swiftsuspenders
 		 *
 		 * @param target The instance to inject into
 		 *
-		 * @throws org.swiftsuspenders.InjectorError The <code>Injector</code> must have mappings for all injection points
+		 * @throws org.swiftsuspenders.injection.InjectorError The <code>Injector</code> must have mappings for all injection points
 		 *
 		 * @see #map()
 		 */
