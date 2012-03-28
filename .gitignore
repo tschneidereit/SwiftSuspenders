@@ -15,6 +15,7 @@
 /.flexProperties
 /.flexLibProperties
 /.project
+/.idea
 /*.iml
 /com.adobe.flexbuilder.project.prefs
 /org.eclipse.core.resources.prefs
