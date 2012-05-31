@@ -28,5 +28,9 @@ package org.swiftsuspenders.injection.dependencyproviders
 			return DependencyProvider(activeInjector.getInstance(_factoryClass))
 					.apply(targetType, activeInjector, injectParameters);
 		}
+
+		public function destroy() : void
+		{
+		}
 	}
 }

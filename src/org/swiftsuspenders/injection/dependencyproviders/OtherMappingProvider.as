@@ -34,5 +34,9 @@ package org.swiftsuspenders.injection.dependencyproviders
 		{
 			return _mapping.getProvider().apply(targetType, activeInjector, injectParameters);
 		}
+
+		public function destroy() : void
+		{
+		}
 	}
 }

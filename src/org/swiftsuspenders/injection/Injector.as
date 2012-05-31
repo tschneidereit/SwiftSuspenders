@@ -246,6 +246,7 @@ package org.swiftsuspenders.injection
 				throw new InjectorError('Error while removing an injector mapping: ' +
 						'No mapping defined for dependency ' + mappingId);
 			}
+			mapping.getProvider().destroy();
 			delete _mappings[mappingId];
 			delete providerMappings[mappingId];
 			hasEventListener(MappingEvent.POST_MAPPING_REMOVE) && dispatchEvent(
@@ -358,6 +359,18 @@ package org.swiftsuspenders.injection
 						+ '. getInstance only creates an unmapped instance if no name is given.');
 			}
 			return instantiateUnmapped(type);
+		}
+
+		/**
+		 * Returns a description of the given type containing its constructor, injection points
+		 * and post construct and pre destroy hooks
+		 *
+		 * @param type The type to describe
+		 * @return The TypeDescription containing all information the injector has about the type
+		 */
+		public function getTypeDescription(type : Class) : TypeDescription
+		{
+			return _reflector.describeInjections(type);
 		}
 
 		/**

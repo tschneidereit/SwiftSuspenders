@@ -27,5 +27,10 @@ package org.swiftsuspenders.injection.dependencyproviders
 		{
 			return provider.apply(targetType, activeInjector, injectParameters);
 		}
+
+		public function destroy() : void
+		{
+			provider.destroy();
+		}
 	}
 }

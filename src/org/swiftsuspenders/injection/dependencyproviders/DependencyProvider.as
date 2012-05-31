@@ -24,5 +24,13 @@ package org.swiftsuspenders.injection.dependencyproviders
 		 */
 		function apply(
 			targetType : Class, activeInjector : Injector, injectParameters : Dictionary) : Object;
+
+		/**
+		 * Cleans up any internal state the provider might keep as preparation for the Injector
+		 * dropping it
+		 *
+		 * Used in the SingletonProvider to invoke <code>[PreDestroy]</code> methods on unmapping
+		 */
+		function destroy() : void;
 	}
 }

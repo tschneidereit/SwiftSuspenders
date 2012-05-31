@@ -11,6 +11,10 @@ package org.swiftsuspenders
 
 	import flexunit.framework.Assert;
 
+	import org.hamcrest.assertThat;
+	import org.hamcrest.object.hasPropertyWithValue;
+	import org.swiftsuspenders.injection.InjectorError;
+
 	import org.swiftsuspenders.injection.dependencyproviders.ClassProvider;
 	import org.swiftsuspenders.injection.dependencyproviders.OtherMappingProvider;
 	import org.swiftsuspenders.injection.dependencyproviders.SingletonProvider;
@@ -91,7 +95,23 @@ package org.swiftsuspenders
 		}
 
 		[Test]
-		public function injectionTypeOtherMappingReturnsOtherMappingsResponse():void
+		public function destroyingSingletonProviderInvokesPreDestroyMethodsOnSingleton() : void
+		{
+			const provider : SingletonProvider = new SingletonProvider(Clazz, injector);
+			const singleton : Clazz = Clazz(provider.apply(null, injector, null));
+			provider.destroy();
+			assertThat(singleton, hasPropertyWithValue("preDestroyCalled", true));
+		}
+		[Test(expects="org.swiftsuspenders.injection.InjectorError")]
+		public function usingDestroyedSingletonProviderThrows() : void
+		{
+			const provider : SingletonProvider = new SingletonProvider(Clazz, injector);
+			provider.destroy();
+			const singleton : Clazz = Clazz(provider.apply(null, injector, null));
+		}
+
+		[Test]
+		public function mappingToProviderUsesProvidersResponse():void
 		{
 			var otherConfig : InjectionMapping = new InjectionMapping(injector, ClazzExtension,
 				'', '');

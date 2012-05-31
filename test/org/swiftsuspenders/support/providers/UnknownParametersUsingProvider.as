@@ -8,7 +8,6 @@
 package org.swiftsuspenders.support.providers
 {
 	import flash.utils.Dictionary;
-	import flash.utils.getQualifiedClassName;
 
 	import org.swiftsuspenders.injection.Injector;
 	import org.swiftsuspenders.injection.dependencyproviders.DependencyProvider;
@@ -25,6 +24,10 @@ package org.swiftsuspenders.support.providers
 		{
 			parameterValue = injectParameters.param;
 			return new Clazz();
+		}
+
+		public function destroy() : void
+		{
 		}
 	}
 }

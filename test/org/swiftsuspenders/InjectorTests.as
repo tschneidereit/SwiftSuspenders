@@ -36,7 +36,6 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.support.injectees.MultipleSingletonsOfSameClassInjectee;
 	import org.swiftsuspenders.support.injectees.NamedArrayCollectionInjectee;
 	import org.swiftsuspenders.support.injectees.NamedClassInjectee;
-	import org.swiftsuspenders.support.injectees.NamedClassInjectee;
 	import org.swiftsuspenders.support.injectees.NamedInterfaceInjectee;
 	import org.swiftsuspenders.support.injectees.OneNamedParameterConstructorInjectee;
 	import org.swiftsuspenders.support.injectees.OneNamedParameterMethodInjectee;
@@ -63,8 +62,6 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.support.types.ComplexClazz;
 	import org.swiftsuspenders.support.types.Interface;
 	import org.swiftsuspenders.support.types.Interface2;
-	import org.swiftsuspenders.typedescriptions.NoParamsConstructorInjectionPoint;
-	import org.swiftsuspenders.typedescriptions.PropertyInjectionPoint;
 	import org.swiftsuspenders.typedescriptions.TypeDescription;
 	import org.swiftsuspenders.utils.SsInternal;
 
@@ -905,6 +902,16 @@ package org.swiftsuspenders
 			const injectee : PostConstructInjectedVarInjectee =
 				injector.getInstance(PostConstructInjectedVarInjectee);
 			assertThat(injectee.property, isA(Clazz));
+		}
+
+		[Test]
+		public function unmappingSingletonProviderInvokesPreDestroyMethodsOnSingleton() : void
+		{
+			injector.map(Clazz).asSingleton();
+			const singleton : Clazz = injector.getInstance(Clazz);
+			assertThat(singleton, hasPropertyWithValue("preDestroyCalled", false));
+			injector.unmap(Clazz);
+			assertThat(singleton, hasPropertyWithValue("preDestroyCalled", true));
 		}
 	}
 }

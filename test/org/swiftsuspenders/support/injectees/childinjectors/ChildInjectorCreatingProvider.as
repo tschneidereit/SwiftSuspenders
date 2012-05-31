@@ -20,5 +20,9 @@ package org.swiftsuspenders.support.injectees.childinjectors
 		{
 			return activeInjector.createChildInjector();
 		}
+
+		public function destroy() : void
+		{
+		}
 	}
 }

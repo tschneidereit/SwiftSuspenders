@@ -32,5 +32,10 @@ package org.swiftsuspenders.injection.dependencyproviders
 		{
 			return _value;
 		}
+
+		public function destroy() : void
+		{
+			//TODO: figure out whether to invoke pre destroy methods here. And how.
+		}
 	}
 }

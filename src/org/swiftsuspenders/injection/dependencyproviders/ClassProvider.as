@@ -35,5 +35,9 @@ package org.swiftsuspenders.injection.dependencyproviders
 		{
 			return activeInjector.SsInternal::instantiateUnmapped(_responseType);
 		}
+
+		public function destroy() : void
+		{
+		}
 	}
 }

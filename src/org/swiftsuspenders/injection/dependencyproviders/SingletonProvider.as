@@ -8,8 +8,12 @@
 package org.swiftsuspenders.injection.dependencyproviders
 {
 	import flash.utils.Dictionary;
+	import flash.utils.getQualifiedClassName;
 
 	import org.swiftsuspenders.injection.Injector;
+	import org.swiftsuspenders.injection.InjectorError;
+	import org.swiftsuspenders.typedescriptions.PreDestroyInjectionPoint;
+	import org.swiftsuspenders.typedescriptions.TypeDescription;
 	import org.swiftsuspenders.utils.SsInternal;
 
 	public class SingletonProvider implements DependencyProvider
@@ -18,6 +22,7 @@ package org.swiftsuspenders.injection.dependencyproviders
 		private var _responseType : Class;
 		private var _creatingInjector : Injector;
 		private var _response : Object;
+		private var _destroyed : Boolean;
 
 		//----------------------               Public Methods               ----------------------//
 		/**
@@ -49,7 +54,29 @@ package org.swiftsuspenders.injection.dependencyproviders
 		//----------------------         Private / Protected Methods        ----------------------//
 		private function createResponse(injector : Injector) : Object
 		{
+			if (_destroyed)
+			{
+				throw new InjectorError("Forbidden usage of unmapped singleton provider for type "
+					+ getQualifiedClassName(_responseType));
+			}
 			return injector.SsInternal::instantiateUnmapped(_responseType);
+		}
+
+		public function destroy() : void
+		{
+			_destroyed = true;
+			if (!_response)
+			{
+				return;
+			}
+			const typeDescription : TypeDescription =
+				_creatingInjector.getTypeDescription(_responseType);
+			for (var preDestroyHook : PreDestroyInjectionPoint = typeDescription.preDestroyMethods;
+			     preDestroyHook; preDestroyHook = PreDestroyInjectionPoint(preDestroyHook.next))
+			{
+				preDestroyHook.applyInjection(_response, _responseType, _creatingInjector);
+			}
+			_response = null;
 		}
 	}
 }

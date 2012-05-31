@@ -26,5 +26,9 @@ package org.swiftsuspenders.support.providers
 			lastTargetClassName = getQualifiedClassName(targetType);
 			return new Clazz();
 		}
+
+		public function destroy() : void
+		{
+		}
 	}
 }
