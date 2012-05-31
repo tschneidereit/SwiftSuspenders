@@ -23,6 +23,7 @@ package org.swiftsuspenders.injection
 	import org.swiftsuspenders.reflection.Reflector;
 	import org.swiftsuspenders.typedescriptions.ConstructorInjectionPoint;
 	import org.swiftsuspenders.typedescriptions.InjectionPoint;
+	import org.swiftsuspenders.typedescriptions.PreDestroyInjectionPoint;
 	import org.swiftsuspenders.typedescriptions.TypeDescription;
 	import org.swiftsuspenders.utils.TypeDescriptor;
 	import org.swiftsuspenders.utils.SsInternal;
@@ -251,6 +252,28 @@ package org.swiftsuspenders.injection
 			delete providerMappings[mappingId];
 			hasEventListener(MappingEvent.POST_MAPPING_REMOVE) && dispatchEvent(
 				new MappingEvent(MappingEvent.POST_MAPPING_REMOVE, type, name, null));
+		}
+
+		/**
+		 * Uses the <code>TypeDescription</code> the injector associates with the given instance's
+		 * type to iterate over all <code>[PreDestroy]</code> methods in the instance, supporting
+		 * automated destruction.
+		 *
+		 * @param instance The instance to destroy
+		 */
+		public function destroyInstance(instance : Object) : void
+		{
+			if (!instance)
+			{
+				return;
+			}
+			const type : Class = _reflector.getClass(instance);
+			const typeDescription : TypeDescription = getTypeDescription(type);
+			for (var preDestroyHook : PreDestroyInjectionPoint = typeDescription.preDestroyMethods;
+			     preDestroyHook; preDestroyHook = PreDestroyInjectionPoint(preDestroyHook.next))
+			{
+				preDestroyHook.applyInjection(instance, type, this);
+			}
 		}
 
 		/**

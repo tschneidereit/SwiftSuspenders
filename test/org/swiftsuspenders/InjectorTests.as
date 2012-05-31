@@ -913,5 +913,14 @@ package org.swiftsuspenders
 			injector.unmap(Clazz);
 			assertThat(singleton, hasPropertyWithValue("preDestroyCalled", true));
 		}
+
+		[Test]
+		public function injectorDestroyInstanceInvokesPreDestroyMethodsOnInstance() : void
+		{
+			const target : Clazz = new Clazz();
+			assertThat(target, hasPropertyWithValue("preDestroyCalled", false));
+			injector.destroyInstance(target);
+			assertThat(target, hasPropertyWithValue("preDestroyCalled", true));
+		}
 	}
 }
