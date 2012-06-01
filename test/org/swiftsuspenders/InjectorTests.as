@@ -922,5 +922,18 @@ package org.swiftsuspenders
 			injector.destroyInstance(target);
 			assertThat(target, hasPropertyWithValue("preDestroyCalled", true));
 		}
+
+		[Test]
+		public function injectorTeardownDestroysAllSingletons() : void
+		{
+			injector.map(Clazz).asSingleton();
+			injector.map(Interface).toSingleton(Clazz);
+			const singleton1 : Clazz = injector.getInstance(Clazz);
+			const singleton2 : Clazz = injector.getInstance(Interface);
+			assertThat(singleton1, hasPropertyWithValue("preDestroyCalled", false));
+			assertThat(singleton2, hasPropertyWithValue("preDestroyCalled", false));
+			injector.teardown();
+			assertThat(singleton2, hasPropertyWithValue("preDestroyCalled", true));
+		}
 	}
 }

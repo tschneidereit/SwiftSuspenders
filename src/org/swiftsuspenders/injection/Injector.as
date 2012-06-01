@@ -7,7 +7,6 @@
 
 package org.swiftsuspenders.injection
 {
-	import org.swiftsuspenders.*;
 	import avmplus.DescribeTypeJSON;
 
 	import flash.events.EventDispatcher;
@@ -382,6 +381,27 @@ package org.swiftsuspenders.injection
 			{
 				preDestroyHook.applyInjection(instance, type, this);
 			}
+		}
+
+		/**
+		 * Destroys the injector by cleaning up all instances it manages.
+		 *
+		 * Cleanup in this context means iterating over all mapped dependency providers and invoking
+		 * their <code>destroy</code> methods and calling preDestroy methods on all objects the
+		 * injector created or injected into.
+		 *
+		 * Of note, the <link>SingletonProvider</link>'s implementation of <code>destroy</code>
+		 * invokes all preDestroy methods on the managed singleton to guarantee its orderly
+		 * destruction. Implementers of custom implementations of <link>DependencyProviders</link>
+		 * are encouraged to do likewise.
+		 */
+		public function teardown() : void
+		{
+			for each (var mapping : InjectionMapping in _mappings)
+			{
+				mapping.getProvider().destroy();
+			}
+			_mappings = null;
 		}
 
 		/**
