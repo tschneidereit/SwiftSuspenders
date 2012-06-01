@@ -171,6 +171,7 @@ package org.swiftsuspenders.injection
 		private var _classDescriptor : TypeDescriptor;
 		private var _mappings : Dictionary;
 		private var _mappingsInProcess : Dictionary;
+		private var _managedObjects : Dictionary;
 		private var _reflector : Reflector;
 
 
@@ -183,6 +184,7 @@ package org.swiftsuspenders.injection
 		{
 			_mappings = new Dictionary();
 			_mappingsInProcess = new Dictionary();
+			_managedObjects = new Dictionary();
 			try
 			{
 				_reflector = DescribeTypeJSON.available
@@ -321,9 +323,7 @@ package org.swiftsuspenders.injection
 		public function injectInto(target : Object) : void
 		{
 			const type : Class = _reflector.getClass(target);
-			var description : TypeDescription = _classDescriptor.getDescription(type);
-
-			applyInjectionPoints(target, type, description.injectionPoints);
+			applyInjectionPoints(target, type, _classDescriptor.getDescription(type));
 		}
 
 		/**
@@ -349,7 +349,6 @@ package org.swiftsuspenders.injection
 			const provider : DependencyProvider = getProvider(mappingId);
 			if (provider)
 			{
-
 				const ctor : ConstructorInjectionPoint = _classDescriptor.getDescription(type).ctor;
 				return provider.apply(targetType, this, ctor ? ctor.injectParameters : null);
 			}
@@ -400,6 +399,10 @@ package org.swiftsuspenders.injection
 			for each (var mapping : InjectionMapping in _mappings)
 			{
 				mapping.getProvider().destroy();
+			}
+			for each (var instance : Object in _managedObjects)
+			{
+				destroyInstance(instance);
 			}
 			_mappings = null;
 		}
@@ -500,7 +503,7 @@ package org.swiftsuspenders.injection
 			const instance : * = description.ctor.createInstance(type, this);
 			hasEventListener(InjectionEvent.POST_INSTANTIATE) && dispatchEvent(
 				new InjectionEvent(InjectionEvent.POST_INSTANTIATE, instance, type));
-			applyInjectionPoints(instance, type, description.injectionPoints);
+			applyInjectionPoints(instance, type, description);
 			return instance;
 		}
 
@@ -559,14 +562,19 @@ package org.swiftsuspenders.injection
 		}
 
 		private function applyInjectionPoints(
-				target : Object, targetType : Class, injectionPoint : InjectionPoint) : void
+				target : Object, targetType : Class, description : TypeDescription) : void
 		{
+			var injectionPoint : InjectionPoint = description.injectionPoints;
 			hasEventListener(InjectionEvent.PRE_CONSTRUCT) && dispatchEvent(
 					new InjectionEvent(InjectionEvent.PRE_CONSTRUCT, target, targetType));
 			while (injectionPoint)
 			{
 				injectionPoint.applyInjection(target, targetType, this);
 				injectionPoint = injectionPoint.next;
+			}
+			if (description.preDestroyMethods)
+			{
+				_managedObjects[target] = target;
 			}
 			hasEventListener(InjectionEvent.POST_CONSTRUCT) && dispatchEvent(
 					new InjectionEvent(InjectionEvent.POST_CONSTRUCT, target, targetType));

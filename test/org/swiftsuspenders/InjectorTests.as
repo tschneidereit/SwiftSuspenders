@@ -933,7 +933,22 @@ package org.swiftsuspenders
 			assertThat(singleton1, hasPropertyWithValue("preDestroyCalled", false));
 			assertThat(singleton2, hasPropertyWithValue("preDestroyCalled", false));
 			injector.teardown();
+			assertThat(singleton1, hasPropertyWithValue("preDestroyCalled", true));
 			assertThat(singleton2, hasPropertyWithValue("preDestroyCalled", true));
+		}
+
+		[Test]
+		public function injectorTeardownDestroysAllInstancesItInjectedInto() : void
+		{
+			const target1 : Clazz = new Clazz();
+			injector.injectInto(target1);
+			injector.map(Clazz);
+			const target2 : Clazz = injector.getInstance(Clazz);
+			assertThat(target1, hasPropertyWithValue("preDestroyCalled", false));
+			assertThat(target2, hasPropertyWithValue("preDestroyCalled", false));
+			injector.teardown();
+			assertThat(target1, hasPropertyWithValue("preDestroyCalled", true));
+			assertThat(target2, hasPropertyWithValue("preDestroyCalled", true));
 		}
 	}
 }
