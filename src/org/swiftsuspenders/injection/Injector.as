@@ -255,28 +255,6 @@ package org.swiftsuspenders.injection
 		}
 
 		/**
-		 * Uses the <code>TypeDescription</code> the injector associates with the given instance's
-		 * type to iterate over all <code>[PreDestroy]</code> methods in the instance, supporting
-		 * automated destruction.
-		 *
-		 * @param instance The instance to destroy
-		 */
-		public function destroyInstance(instance : Object) : void
-		{
-			if (!instance)
-			{
-				return;
-			}
-			const type : Class = _reflector.getClass(instance);
-			const typeDescription : TypeDescription = getTypeDescription(type);
-			for (var preDestroyHook : PreDestroyInjectionPoint = typeDescription.preDestroyMethods;
-			     preDestroyHook; preDestroyHook = PreDestroyInjectionPoint(preDestroyHook.next))
-			{
-				preDestroyHook.applyInjection(instance, type, this);
-			}
-		}
-
-		/**
 		 * Indicates whether the injector can supply a response for the specified dependency either
 		 * by using a mapping of its own or by querying one of its ancestor injectors.
 		 *
@@ -385,15 +363,25 @@ package org.swiftsuspenders.injection
 		}
 
 		/**
-		 * Returns a description of the given type containing its constructor, injection points
-		 * and post construct and pre destroy hooks
+		 * Uses the <code>TypeDescription</code> the injector associates with the given instance's
+		 * type to iterate over all <code>[PreDestroy]</code> methods in the instance, supporting
+		 * automated destruction.
 		 *
-		 * @param type The type to describe
-		 * @return The TypeDescription containing all information the injector has about the type
+		 * @param instance The instance to destroy
 		 */
-		public function getTypeDescription(type : Class) : TypeDescription
+		public function destroyInstance(instance : Object) : void
 		{
-			return _reflector.describeInjections(type);
+			if (!instance)
+			{
+				return;
+			}
+			const type : Class = _reflector.getClass(instance);
+			const typeDescription : TypeDescription = getTypeDescription(type);
+			for (var preDestroyHook : PreDestroyInjectionPoint = typeDescription.preDestroyMethods;
+			     preDestroyHook; preDestroyHook = PreDestroyInjectionPoint(preDestroyHook.next))
+			{
+				preDestroyHook.applyInjection(instance, type, this);
+			}
 		}
 
 		/**
@@ -447,9 +435,31 @@ package org.swiftsuspenders.injection
 			return _applicationDomain;
 		}
 
+		/**
+		 * Instructs the injector to use the description for the given type when constructing or
+		 * destroying instances.
+		 *
+		 * The description consists details for the constructor, all properties and methods to
+		 * inject into during construction and all methods to invoke during destruction.
+		 *
+		 * @param type
+		 * @param description
+		 */
 		public function addTypeDescription(type : Class, description : TypeDescription) : void
 		{
 			_classDescriptor.addDescription(type, description);
+		}
+
+		/**
+		 * Returns a description of the given type containing its constructor, injection points
+		 * and post construct and pre destroy hooks
+		 *
+		 * @param type The type to describe
+		 * @return The TypeDescription containing all information the injector has about the type
+		 */
+		public function getTypeDescription(type : Class) : TypeDescription
+		{
+			return _reflector.describeInjections(type);
 		}
 
 
