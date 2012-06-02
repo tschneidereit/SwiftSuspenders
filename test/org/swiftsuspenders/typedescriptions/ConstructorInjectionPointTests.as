@@ -8,10 +8,14 @@
 package  org.swiftsuspenders.typedescriptions
 {
 	import org.flexunit.Assert;
+	import org.hamcrest.assertThat;
+	import org.hamcrest.core.isA;
+	import org.hamcrest.object.equalTo;
 	import org.swiftsuspenders.injection.Injector;
 	import org.swiftsuspenders.support.injectees.TwoOptionalParametersConstructorInjectee;
 	import org.swiftsuspenders.support.injectees.TwoParametersConstructorInjectee;
 	import org.swiftsuspenders.support.types.Clazz;
+	import org.swiftsuspenders.support.types.Interface;
 	import org.swiftsuspenders.utils.SsInternal;
 
 	use namespace SsInternal;
@@ -55,18 +59,18 @@ package  org.swiftsuspenders.typedescriptions
 		[Test]
 		public function injectionOfFirstOptionalPropertyIntoTwoOptionalParametersConstructor():void
 		{
-			injector.map(Clazz).toSingleton(Clazz);
+			injector.map(Interface).toSingleton(Clazz);
 			
-			var parameters : Array = ["org.swiftsuspenders.support.types::Clazz|", "String|"];
+			var parameters : Array = ["org.swiftsuspenders.support.types::Interface|", "String|"];
 			var injectionPoint:ConstructorInjectionPoint =
 					new ConstructorInjectionPoint(parameters, 0, null);
 
 			var injectee:TwoOptionalParametersConstructorInjectee = injectionPoint.createInstance(
 					TwoOptionalParametersConstructorInjectee, injector) as TwoOptionalParametersConstructorInjectee;
-			
-			
-			Assert.assertTrue("dependency 1 should be Clazz instance", injectee.getDependency() is Clazz);		
-			Assert.assertTrue("dependency 2 should be null", injectee.getDependency2() == null);	
+
+
+			assertThat(injectee.getDependency(), isA(Clazz));
+			assertThat(injectee.getDependency2(), equalTo(null));
 		}
 		
 		[Test]
@@ -74,7 +78,7 @@ package  org.swiftsuspenders.typedescriptions
 		{
 			injector.map(String).toValue(STRING_REFERENCE);
 			
-			var parameters : Array = ["org.swiftsuspenders.support.types::Clazz|", "String|"];
+			var parameters : Array = ["org.swiftsuspenders.support.types::Interface|", "String|"];
 			var injectionPoint:ConstructorInjectionPoint =
 					new ConstructorInjectionPoint(parameters, 0, null);
 			
@@ -82,8 +86,8 @@ package  org.swiftsuspenders.typedescriptions
 					TwoOptionalParametersConstructorInjectee, injector) as TwoOptionalParametersConstructorInjectee;
 			
 			
-			Assert.assertTrue("dependency 1 should be Clazz null", injectee.getDependency() == null);		
-			Assert.assertTrue("dependency 2 should be null", injectee.getDependency2() == null);	
+			assertThat(injectee.getDependency(), equalTo(null));
+			assertThat(injectee.getDependency2(), equalTo(null));
 		}
 	}
 }

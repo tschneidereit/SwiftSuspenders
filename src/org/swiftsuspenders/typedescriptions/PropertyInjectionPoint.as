@@ -8,6 +8,7 @@
 package org.swiftsuspenders.typedescriptions
 {
 	import flash.utils.Dictionary;
+	import flash.utils.getQualifiedClassName;
 
 	import org.swiftsuspenders.injection.Injector;
 	import org.swiftsuspenders.injection.InjectorError;
@@ -44,7 +45,8 @@ package org.swiftsuspenders.typedescriptions
 				}
 				throw(new InjectorError(
 						'Injector is missing a mapping to handle injection into property "' +
-						_propertyName + '" of object "' + target + '" with type "' + targetType +
+						_propertyName + '" of object "' + target + '" with type "' +
+						getQualifiedClassName(targetType) +
 						'". Target dependency: "' + _mappingId + '"'));
 			}
 			target[_propertyName] = provider.apply(targetType, injector, injectParameters);

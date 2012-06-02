@@ -10,6 +10,7 @@ package org.swiftsuspenders.typedescriptions
 	import org.flexunit.Assert;
 	import org.swiftsuspenders.injection.Injector;
 	import org.swiftsuspenders.support.injectees.ClassInjectee;
+	import org.swiftsuspenders.support.injectees.InterfaceInjectee;
 	import org.swiftsuspenders.support.types.Clazz;
 	import org.swiftsuspenders.utils.SsInternal;
 
@@ -48,11 +49,11 @@ package org.swiftsuspenders.typedescriptions
 		[Test]
 		public function injectionAttemptWithUnmappedOptionalPropertyDoesntThrow():void
 		{
-			var injectee:ClassInjectee = new ClassInjectee();
+			var injectee:InterfaceInjectee = new InterfaceInjectee();
 			var injectionPoint:PropertyInjectionPoint = new PropertyInjectionPoint(
-				'org.swiftsuspenders.support.types::Clazz|', 'property', true, null);
+				'org.swiftsuspenders.support.types::Interface|', 'property', true, null);
 
-			injectionPoint.applyInjection(injectee, ClassInjectee, injector);
+			injectionPoint.applyInjection(injectee, InterfaceInjectee, injector);
 
 			Assert.assertNull("injectee mustn\'t contain Clazz instance", injectee.property);
 		}

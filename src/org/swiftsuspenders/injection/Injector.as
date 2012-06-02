@@ -14,6 +14,8 @@ package org.swiftsuspenders.injection
 	import flash.utils.Dictionary;
 	import flash.utils.getQualifiedClassName;
 
+	import org.swiftsuspenders.injection.dependencyproviders.ClassProvider;
+
 	import org.swiftsuspenders.injection.dependencyproviders.DependencyProvider;
 	import org.swiftsuspenders.injection.dependencyproviders.LocalOnlyProvider;
 	import org.swiftsuspenders.injection.dependencyproviders.SoftDependencyProvider;
@@ -171,6 +173,7 @@ package org.swiftsuspenders.injection
 		private var _classDescriptor : TypeDescriptor;
 		private var _mappings : Dictionary;
 		private var _mappingsInProcess : Dictionary;
+		private var _defaultProviders : Dictionary;
 		private var _managedObjects : Dictionary;
 		private var _reflector : Reflector;
 
@@ -184,6 +187,7 @@ package org.swiftsuspenders.injection
 		{
 			_mappings = new Dictionary();
 			_mappingsInProcess = new Dictionary();
+			_defaultProviders = new Dictionary();
 			_managedObjects = new Dictionary();
 			try
 			{
@@ -532,7 +536,29 @@ package org.swiftsuspenders.injection
 				}
 				injector = injector.parentInjector;
 			}
-			return softProvider;
+			return softProvider || getDefaultProvider(mappingId);
+		}
+
+		SsInternal function getDefaultProvider(mappingId : String) : DependencyProvider
+		{
+			//No meaningful way to automatically create Strings
+			if (mappingId === 'String|')
+			{
+				return null;
+			}
+			const parts : Array = mappingId.split('|');
+			const name : String = parts.pop();
+			if (name.length !== 0)
+			{
+				return null;
+			}
+			const type : Class = Class(_applicationDomain.getDefinition(parts.pop()));
+			var description : TypeDescription = _classDescriptor.getDescription(type);
+			if (!description.ctor)
+			{
+				return null;
+			}
+			return (_defaultProviders[type] ||= new ClassProvider(type));
 		}
 
 

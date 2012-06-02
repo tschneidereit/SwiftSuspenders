@@ -75,7 +75,7 @@ package  org.swiftsuspenders.typedescriptions
 		{
 			var injectee:OptionalOneRequiredParameterMethodInjectee =
 					new OptionalOneRequiredParameterMethodInjectee();
-			var parameters : Array = ["org.swiftsuspenders.support.types::Clazz|"];
+			var parameters : Array = ["org.swiftsuspenders.support.types::Interface|"];
 			var injectionPoint:MethodInjectionPoint =
 					new MethodInjectionPoint("setDependency", parameters, 1, true, null);
 

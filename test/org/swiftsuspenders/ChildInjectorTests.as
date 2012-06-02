@@ -23,6 +23,7 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.support.injectees.childinjectors.RobotLeg;
 	import org.swiftsuspenders.support.injectees.childinjectors.RobotToes;
 	import org.swiftsuspenders.support.types.Clazz;
+	import org.swiftsuspenders.support.types.Interface;
 	import org.swiftsuspenders.utils.SsInternal;
 
 	use namespace SsInternal;
@@ -161,8 +162,9 @@ package org.swiftsuspenders
         {
             var childInjector : Injector = injector.createChildInjector();
             
-            Assert.assertFalse('Child injector should not return true for hasMapping that does not exists on parent injector',
-                childInjector.satisfies(Clazz));
+            Assert.assertFalse('Child injector should not return true for hasMapping that does ' +
+	            'not exists on parent injector',
+                childInjector.satisfies(Interface));
         }  
         
         [Test]

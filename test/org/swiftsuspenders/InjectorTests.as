@@ -88,20 +88,14 @@ package org.swiftsuspenders
 		}
 		
 		[Test]
-		public function unbind():void
+		public function unbindRemovesMapping():void
 		{
-			var injectee:ClassInjectee = new ClassInjectee();
+			var injectee:InterfaceInjectee = new InterfaceInjectee();
 			var value:Clazz = new Clazz();
-			injector.map(Clazz).toValue(value);
-			injector.unmap(Clazz);
-			try
-			{
-				injector.injectInto(injectee);
-			}
-			catch(e:Error)
-			{
-			}
-			Assert.assertEquals("Property should not be injected", null, injectee.property);
+			injector.map(Interface).toValue(value);
+			Assert.assertTrue(injector.satisfies(Interface));
+			injector.unmap(Interface);
+			Assert.assertFalse(injector.satisfies(Interface));
 		}
 		
 		[Test]
@@ -441,18 +435,18 @@ package org.swiftsuspenders
 			Assert.assertEquals("Instance field 'property1' should be identical to Instance field 'namedProperty2'", injectee.property1, injectee.namedProperty2);
 		}
 		
-		[Test]
-		public function performInjectionIntoValueWithRecursiveSingeltonDependency():void
-		{
-			var valueInjectee : InterfaceInjectee = new InterfaceInjectee();
-			injector.map(InterfaceInjectee).toValue(valueInjectee);
-			injector.map(Interface).toSingleton(RecursiveInterfaceInjectee);
-			
-			injector.injectInto(valueInjectee);
+//		[Test]
+//		public function performInjectionIntoValueWithRecursiveSingletonDependency():void
+//		{
+//			var valueInjectee : InterfaceInjectee = new InterfaceInjectee();
+//			injector.map(InterfaceInjectee).toValue(valueInjectee);
+//			injector.map(Interface).toSingleton(RecursiveInterfaceInjectee);
+//
+//			injector.injectInto(valueInjectee);
 //			Assert.assertEquals("Instance field 'property1' should be identical to Instance field 'property2'", injectee.property1, injectee.property2);
 //			Assert.assertEquals("Instance field 'property1' should be identical to Instance field 'namedProperty1'", injectee.property1, injectee.namedProperty1);
 //			Assert.assertEquals("Instance field 'property1' should be identical to Instance field 'namedProperty2'", injectee.property1, injectee.namedProperty2);
-		}
+//		}
 
 		[Test]
 		public function injectXMLValue() : void
@@ -461,14 +455,22 @@ package org.swiftsuspenders
 			var value : XML = <test/>;
 			injector.map(XML).toValue(value);
 			injector.injectInto(injectee);
-			Assert.assertEquals('injected value should be indentical to mapped value', injectee.property, value);
+			Assert.assertEquals('injected value should be indentical to mapped value',
+				injectee.property, value);
 		}
 		
 		[Test(expects="org.swiftsuspenders.injection.InjectorError")]
-		public function haltOnMissingDependency():void
+		public function haltOnMissingInterfaceDependency():void
 		{
-			var injectee:InterfaceInjectee = new InterfaceInjectee();
+			injector.injectInto(new InterfaceInjectee());
+		}
+
+		[Test]
+		public function UseDefaultInjectorForUnmappedDependency():void
+		{
+			const injectee : ClassInjectee = new ClassInjectee();
 			injector.injectInto(injectee);
+			assertThat(injectee.property, isA(Clazz));
 		}
 		
 		[Test(expects="org.swiftsuspenders.injection.InjectorError")]
@@ -508,9 +510,15 @@ package org.swiftsuspenders
 		}
 
 		[Test]
-		public function hasMappingFailsForUnmappedUnnamedClass():void
+		public function satisfiesFailsForUnmappedUnnamedInterface():void
 		{
-			Assert.assertFalse(injector.satisfies(Clazz));
+			Assert.assertFalse(injector.satisfies(Interface));
+		}
+
+		[Test]
+		public function satisfiesSucceedsForUnmappedUnnamedClass():void
+		{
+			Assert.assertTrue(injector.satisfies(Clazz));
 		}
 
 		[Test]
@@ -536,7 +544,7 @@ package org.swiftsuspenders
 		[Test(expects="org.swiftsuspenders.injection.InjectorError")]
 		public function getMappingResponseFailsForUnmappedNamedClass():void
 		{
-			Assert.assertNull(injector.getInstance(Clazz, 'namedClass'));
+			injector.getInstance(Clazz, 'namedClass');
 		}
 
 		[Test]
@@ -585,7 +593,7 @@ package org.swiftsuspenders
 		{
 			var injectee : OptionalOneRequiredParameterMethodInjectee =
 					injector.getInstance(OptionalOneRequiredParameterMethodInjectee);
-			Assert.assertNull("injectee mustn\'t contain Clazz instance", injectee.getDependency());
+			Assert.assertNull("injectee mustn\'t contain Interface instance", injectee.getDependency());
 		}
 
 		[Test]
