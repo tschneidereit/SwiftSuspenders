@@ -5,13 +5,13 @@
  * in accordance with the terms of the license agreement accompanying it.
  */
 
-package org.swiftsuspenders.injection.dependencyproviders
+package org.swiftsuspenders
 {
-	public class LocalOnlyProvider extends ForwardingProvider
+	public class InjectorError extends Error
 	{
-		public function LocalOnlyProvider(provider : DependencyProvider)
+		public function InjectorError(message:*="", id:*=0)
 		{
-			super(provider);
+			super(message, id);
 		}
 	}
 }

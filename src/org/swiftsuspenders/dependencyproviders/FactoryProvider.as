@@ -5,34 +5,28 @@
  * in accordance with the terms of the license agreement accompanying it.
  */
 
-package org.swiftsuspenders.injection.dependencyproviders
+package org.swiftsuspenders.dependencyproviders
 {
 	import flash.utils.Dictionary;
 
-	import org.swiftsuspenders.injection.InjectionMapping;
-	import org.swiftsuspenders.injection.Injector;
+	import org.swiftsuspenders.Injector;
 
-	public class OtherMappingProvider implements DependencyProvider
+	public class FactoryProvider implements DependencyProvider
 	{
 		//----------------------       Private / Protected Properties       ----------------------//
-		private var _mapping : InjectionMapping;
+		private var _factoryClass : Class;
 
 		//----------------------               Public Methods               ----------------------//
-		public function OtherMappingProvider(mapping : InjectionMapping)
+		public function FactoryProvider(factoryClass : Class)
 		{
-			_mapping = mapping;
+			_factoryClass = factoryClass;
 		}
 
-		/**
-		 * @inheritDoc
-		 *
-		 * @return The result of invoking <code>apply</code> on the <code>InjectionMapping</code>
-		 * provided to this provider's constructor
-		 */
 		public function apply(
 			targetType : Class, activeInjector : Injector, injectParameters : Dictionary) : Object
 		{
-			return _mapping.getProvider().apply(targetType, activeInjector, injectParameters);
+			return DependencyProvider(activeInjector.getInstance(_factoryClass))
+					.apply(targetType, activeInjector, injectParameters);
 		}
 
 		public function destroy() : void

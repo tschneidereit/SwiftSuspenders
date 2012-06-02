@@ -8,8 +8,6 @@
 package org.swiftsuspenders
 {
 	import flash.events.Event;
-	import flash.utils.Dictionary;
-	import flash.utils.getQualifiedClassName;
 
 	import flexunit.framework.Assert;
 
@@ -21,12 +19,7 @@ package org.swiftsuspenders
 	import org.hamcrest.object.equalTo;
 	import org.hamcrest.object.hasPropertyWithValue;
 	import org.hamcrest.object.isTrue;
-	import org.swiftsuspenders.injection.dependencyproviders.OtherMappingProvider;
-	import org.swiftsuspenders.injection.InjectionEvent;
-	import org.swiftsuspenders.injection.InjectionMapping;
-	import org.swiftsuspenders.injection.Injector;
-	import org.swiftsuspenders.injection.InjectorError;
-	import org.swiftsuspenders.injection.MappingEvent;
+	import org.swiftsuspenders.dependencyproviders.OtherMappingProvider;
 	import org.swiftsuspenders.support.injectees.ClassInjectee;
 	import org.swiftsuspenders.support.injectees.ComplexClassInjectee;
 	import org.swiftsuspenders.support.injectees.InterfaceInjectee;
@@ -459,7 +452,7 @@ package org.swiftsuspenders
 				injectee.property, value);
 		}
 		
-		[Test(expects="org.swiftsuspenders.injection.InjectorError")]
+		[Test(expects="org.swiftsuspenders.InjectorError")]
 		public function haltOnMissingInterfaceDependency():void
 		{
 			injector.injectInto(new InterfaceInjectee());
@@ -473,7 +466,7 @@ package org.swiftsuspenders
 			assertThat(injectee.property, isA(Clazz));
 		}
 		
-		[Test(expects="org.swiftsuspenders.injection.InjectorError")]
+		[Test(expects="org.swiftsuspenders.InjectorError")]
 		public function haltOnMissingNamedDependency():void
 		{
 			var injectee:NamedClassInjectee = new NamedClassInjectee();
@@ -541,7 +534,7 @@ package org.swiftsuspenders
 			Assert.assertTrue(injector.satisfies(Clazz, 'namedClass'));
 		}
 
-		[Test(expects="org.swiftsuspenders.injection.InjectorError")]
+		[Test(expects="org.swiftsuspenders.InjectorError")]
 		public function getMappingResponseFailsForUnmappedNamedClass():void
 		{
 			injector.getInstance(Clazz, 'namedClass');
@@ -575,7 +568,7 @@ package org.swiftsuspenders
 				injectee1.property == injectee2.property);
 		}
 
-		[Test(expects="org.swiftsuspenders.injection.InjectorError")]
+		[Test(expects="org.swiftsuspenders.InjectorError")]
 		public function instantiateThrowsMeaningfulErrorOnInterfaceInstantiation() : void
 		{
 			injector.getInstance(Interface);
@@ -630,7 +623,7 @@ package org.swiftsuspenders
 			Assert.assertNotNull(injector.getInstance(Interface));
 		}
 
-		[Test(expects="org.swiftsuspenders.injection.InjectorError")]
+		[Test(expects="org.swiftsuspenders.InjectorError")]
 		public function localMappingsArentSharedWithChildInjectors() : void
 		{
 			const childInjector : Injector = injector.createChildInjector();

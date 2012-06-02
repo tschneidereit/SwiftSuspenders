@@ -5,11 +5,11 @@
  * in accordance with the terms of the license agreement accompanying it.
  */
 
-package org.swiftsuspenders.injection.dependencyproviders
+package org.swiftsuspenders.dependencyproviders
 {
 	import flash.utils.Dictionary;
 
-	import org.swiftsuspenders.injection.Injector;
+	import org.swiftsuspenders.Injector;
 
 	public interface DependencyProvider
 	{

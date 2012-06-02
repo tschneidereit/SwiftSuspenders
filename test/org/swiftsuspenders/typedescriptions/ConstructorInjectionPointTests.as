@@ -11,7 +11,7 @@ package  org.swiftsuspenders.typedescriptions
 	import org.hamcrest.assertThat;
 	import org.hamcrest.core.isA;
 	import org.hamcrest.object.equalTo;
-	import org.swiftsuspenders.injection.Injector;
+	import org.swiftsuspenders.Injector;
 	import org.swiftsuspenders.support.injectees.TwoOptionalParametersConstructorInjectee;
 	import org.swiftsuspenders.support.injectees.TwoParametersConstructorInjectee;
 	import org.swiftsuspenders.support.types.Clazz;

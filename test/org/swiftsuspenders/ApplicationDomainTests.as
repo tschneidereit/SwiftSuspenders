@@ -10,7 +10,6 @@ package org.swiftsuspenders
 	import flash.display.Loader;
 	import flash.events.Event;
 	import flash.events.TimerEvent;
-	import flash.net.URLRequest;
 	import flash.system.ApplicationDomain;
 	import flash.system.LoaderContext;
 	import flash.system.System;
@@ -22,7 +21,6 @@ package org.swiftsuspenders
 	import flexunit.framework.Assert;
 
 	import org.flexunit.async.Async;
-	import org.swiftsuspenders.injection.Injector;
 	import org.swiftsuspenders.support.injectees.ClassInjectee;
 	import org.swiftsuspenders.support.types.Clazz;
 	import org.swiftsuspenders.utils.SsInternal;

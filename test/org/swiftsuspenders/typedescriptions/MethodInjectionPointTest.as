@@ -8,7 +8,7 @@
 package  org.swiftsuspenders.typedescriptions
 {
 	import org.flexunit.Assert;
-	import org.swiftsuspenders.injection.Injector;
+	import org.swiftsuspenders.Injector;
 	import org.swiftsuspenders.support.injectees.OneRequiredOneOptionalPropertyMethodInjectee;
 	import org.swiftsuspenders.support.injectees.OptionalOneRequiredParameterMethodInjectee;
 	import org.swiftsuspenders.support.injectees.TwoParametersMethodInjectee;

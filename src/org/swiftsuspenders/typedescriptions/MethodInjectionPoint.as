@@ -11,9 +11,9 @@ package org.swiftsuspenders.typedescriptions
 
 	import flash.utils.Dictionary;
 
-	import org.swiftsuspenders.injection.Injector;
-	import org.swiftsuspenders.injection.InjectorError;
-	import org.swiftsuspenders.injection.dependencyproviders.DependencyProvider;
+	import org.swiftsuspenders.Injector;
+	import org.swiftsuspenders.InjectorError;
+	import org.swiftsuspenders.dependencyproviders.DependencyProvider;
 	import org.swiftsuspenders.utils.SsInternal;
 
 	public class MethodInjectionPoint extends InjectionPoint

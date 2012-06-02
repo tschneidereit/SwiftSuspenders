@@ -13,14 +13,10 @@ package org.swiftsuspenders
 
 	import org.hamcrest.assertThat;
 	import org.hamcrest.object.hasPropertyWithValue;
-	import org.swiftsuspenders.injection.InjectorError;
-
-	import org.swiftsuspenders.injection.dependencyproviders.ClassProvider;
-	import org.swiftsuspenders.injection.dependencyproviders.OtherMappingProvider;
-	import org.swiftsuspenders.injection.dependencyproviders.SingletonProvider;
-	import org.swiftsuspenders.injection.dependencyproviders.ValueProvider;
-	import org.swiftsuspenders.injection.InjectionMapping;
-	import org.swiftsuspenders.injection.Injector;
+	import org.swiftsuspenders.dependencyproviders.ClassProvider;
+	import org.swiftsuspenders.dependencyproviders.OtherMappingProvider;
+	import org.swiftsuspenders.dependencyproviders.SingletonProvider;
+	import org.swiftsuspenders.dependencyproviders.ValueProvider;
 	import org.swiftsuspenders.support.injectees.ClassInjectee;
 	import org.swiftsuspenders.support.providers.ClassNameStoringProvider;
 	import org.swiftsuspenders.support.types.Clazz;
@@ -102,7 +98,7 @@ package org.swiftsuspenders
 			provider.destroy();
 			assertThat(singleton, hasPropertyWithValue("preDestroyCalled", true));
 		}
-		[Test(expects="org.swiftsuspenders.injection.InjectorError")]
+		[Test(expects="org.swiftsuspenders.InjectorError")]
 		public function usingDestroyedSingletonProviderThrows() : void
 		{
 			const provider : SingletonProvider = new SingletonProvider(Clazz, injector);

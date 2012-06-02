@@ -5,37 +5,39 @@
  * in accordance with the terms of the license agreement accompanying it.
  */
 
-package org.swiftsuspenders.injection.dependencyproviders
+package org.swiftsuspenders.dependencyproviders
 {
 	import flash.utils.Dictionary;
 
-	import org.swiftsuspenders.injection.Injector;
+	import org.swiftsuspenders.Injector;
+	import org.swiftsuspenders.utils.SsInternal;
 
-	public class ValueProvider implements DependencyProvider
+	public class ClassProvider implements DependencyProvider
 	{
 		//----------------------       Private / Protected Properties       ----------------------//
-		private var _value : Object;
+		private var _responseType : Class;
+
 
 		//----------------------               Public Methods               ----------------------//
-		public function ValueProvider(value : Object)
+		public function ClassProvider(responseType : Class)
 		{
-			_value = value;
+			_responseType = responseType;
 		}
 
 		/**
 		 * @inheritDoc
 		 *
-		 * @return The value provided to this provider's constructor
+		 * @return A new instance of the class given to the ClassProvider's constructor,
+		 * constructed using the <code>usingInjector</code>
 		 */
 		public function apply(
 			targetType : Class, activeInjector : Injector, injectParameters : Dictionary) : Object
 		{
-			return _value;
+			return activeInjector.SsInternal::instantiateUnmapped(_responseType);
 		}
 
 		public function destroy() : void
 		{
-			//TODO: figure out whether to invoke pre destroy methods here. And how.
 		}
 	}
 }

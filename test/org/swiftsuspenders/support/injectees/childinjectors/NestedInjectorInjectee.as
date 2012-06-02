@@ -7,7 +7,7 @@
 
 package org.swiftsuspenders.support.injectees.childinjectors
 {
-	import org.swiftsuspenders.injection.Injector;
+	import org.swiftsuspenders.Injector;
 
 	public class NestedInjectorInjectee
 	{

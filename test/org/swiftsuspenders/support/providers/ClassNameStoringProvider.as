@@ -10,8 +10,8 @@ package org.swiftsuspenders.support.providers
 	import flash.utils.Dictionary;
 	import flash.utils.getQualifiedClassName;
 
-	import org.swiftsuspenders.injection.Injector;
-	import org.swiftsuspenders.injection.dependencyproviders.DependencyProvider;
+	import org.swiftsuspenders.Injector;
+	import org.swiftsuspenders.dependencyproviders.DependencyProvider;
 	import org.swiftsuspenders.support.types.Clazz;
 
 	public class ClassNameStoringProvider implements DependencyProvider

@@ -5,35 +5,34 @@
  * in accordance with the terms of the license agreement accompanying it.
  */
 
-package org.swiftsuspenders.injection.dependencyproviders
+package org.swiftsuspenders.dependencyproviders
 {
 	import flash.utils.Dictionary;
 
-	import org.swiftsuspenders.injection.Injector;
-	import org.swiftsuspenders.utils.SsInternal;
+	import org.swiftsuspenders.InjectionMapping;
+	import org.swiftsuspenders.Injector;
 
-	public class ClassProvider implements DependencyProvider
+	public class OtherMappingProvider implements DependencyProvider
 	{
 		//----------------------       Private / Protected Properties       ----------------------//
-		private var _responseType : Class;
-
+		private var _mapping : InjectionMapping;
 
 		//----------------------               Public Methods               ----------------------//
-		public function ClassProvider(responseType : Class)
+		public function OtherMappingProvider(mapping : InjectionMapping)
 		{
-			_responseType = responseType;
+			_mapping = mapping;
 		}
 
 		/**
 		 * @inheritDoc
 		 *
-		 * @return A new instance of the class given to the ClassProvider's constructor,
-		 * constructed using the <code>usingInjector</code>
+		 * @return The result of invoking <code>apply</code> on the <code>InjectionMapping</code>
+		 * provided to this provider's constructor
 		 */
 		public function apply(
 			targetType : Class, activeInjector : Injector, injectParameters : Dictionary) : Object
 		{
-			return activeInjector.SsInternal::instantiateUnmapped(_responseType);
+			return _mapping.getProvider().apply(targetType, activeInjector, injectParameters);
 		}
 
 		public function destroy() : void

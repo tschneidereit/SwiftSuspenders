@@ -9,8 +9,8 @@ package org.swiftsuspenders.support.injectees.childinjectors
 {
 	import flash.utils.Dictionary;
 
-	import org.swiftsuspenders.injection.Injector;
-	import org.swiftsuspenders.injection.dependencyproviders.DependencyProvider;
+	import org.swiftsuspenders.Injector;
+	import org.swiftsuspenders.dependencyproviders.DependencyProvider;
 
 	public class ChildInjectorCreatingProvider implements DependencyProvider
 	{

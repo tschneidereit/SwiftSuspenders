@@ -7,7 +7,7 @@
 
 package org.swiftsuspenders.typedescriptions
 {
-	import org.swiftsuspenders.injection.Injector;
+	import org.swiftsuspenders.Injector;
 
 	public class NoParamsConstructorInjectionPoint extends ConstructorInjectionPoint
 	{

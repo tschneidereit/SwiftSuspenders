@@ -5,32 +5,37 @@
  * in accordance with the terms of the license agreement accompanying it.
  */
 
-package org.swiftsuspenders.injection.dependencyproviders
+package org.swiftsuspenders.dependencyproviders
 {
 	import flash.utils.Dictionary;
 
-	import org.swiftsuspenders.injection.Injector;
+	import org.swiftsuspenders.Injector;
 
-	public class FactoryProvider implements DependencyProvider
+	public class ValueProvider implements DependencyProvider
 	{
 		//----------------------       Private / Protected Properties       ----------------------//
-		private var _factoryClass : Class;
+		private var _value : Object;
 
 		//----------------------               Public Methods               ----------------------//
-		public function FactoryProvider(factoryClass : Class)
+		public function ValueProvider(value : Object)
 		{
-			_factoryClass = factoryClass;
+			_value = value;
 		}
 
+		/**
+		 * @inheritDoc
+		 *
+		 * @return The value provided to this provider's constructor
+		 */
 		public function apply(
 			targetType : Class, activeInjector : Injector, injectParameters : Dictionary) : Object
 		{
-			return DependencyProvider(activeInjector.getInstance(_factoryClass))
-					.apply(targetType, activeInjector, injectParameters);
+			return _value;
 		}
 
 		public function destroy() : void
 		{
+			//TODO: figure out whether to invoke pre destroy methods here. And how.
 		}
 	}
 }

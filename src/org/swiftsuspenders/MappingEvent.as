@@ -5,7 +5,7 @@
  * in accordance with the terms of the license agreement accompanying it.
  */
 
-package org.swiftsuspenders.injection
+package org.swiftsuspenders
 {
 	import flash.events.Event;
 

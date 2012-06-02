@@ -12,9 +12,9 @@ package org.swiftsuspenders.suites
 	import org.swiftsuspenders.DependencyProviderTests;
 	import org.swiftsuspenders.DescribeTypeJSONReflectorTests;
 	import org.swiftsuspenders.DescribeTypeReflectorTests;
-	import org.swiftsuspenders.ReflectorBaseTests;
 	import org.swiftsuspenders.InjectionMappingTests;
 	import org.swiftsuspenders.InjectorTests;
+	import org.swiftsuspenders.ReflectorBaseTests;
 	import org.swiftsuspenders.typedescriptions.ConstructorInjectionPointTests;
 	import org.swiftsuspenders.typedescriptions.MethodInjectionPointTest;
 	import org.swiftsuspenders.typedescriptions.NoParamsConstructorInjectionPointTests;

@@ -7,7 +7,6 @@
 
 package org.swiftsuspenders
 {
-	import org.swiftsuspenders.injection.Injector;
 	import org.swiftsuspenders.reflection.DescribeTypeJSONReflector;
 
 	public class DescribeTypeJSONReflectorTests extends ReflectorTests

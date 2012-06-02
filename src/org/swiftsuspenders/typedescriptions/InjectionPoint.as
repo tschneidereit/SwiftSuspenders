@@ -9,7 +9,7 @@ package org.swiftsuspenders.typedescriptions
 {
 	import flash.utils.Dictionary;
 
-	import org.swiftsuspenders.injection.Injector;
+	import org.swiftsuspenders.Injector;
 
 	public class InjectionPoint
 	{

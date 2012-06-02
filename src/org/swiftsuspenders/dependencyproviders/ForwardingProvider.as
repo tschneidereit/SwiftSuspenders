@@ -5,28 +5,32 @@
  * in accordance with the terms of the license agreement accompanying it.
  */
 
-package org.swiftsuspenders.injection.dependencyproviders
+package org.swiftsuspenders.dependencyproviders
 {
 	import flash.utils.Dictionary;
 
-	import org.swiftsuspenders.injection.Injector;
+	import org.swiftsuspenders.Injector;
 
-	public class InjectorUsingProvider extends ForwardingProvider
+	public class ForwardingProvider implements DependencyProvider
 	{
 		//----------------------              Public Properties             ----------------------//
-		public var injector : Injector;
+		public var provider : DependencyProvider;
 
 		//----------------------               Public Methods               ----------------------//
-		public function InjectorUsingProvider(injector : Injector, provider : DependencyProvider)
+		public function ForwardingProvider(provider : DependencyProvider)
 		{
-			super(provider);
-			this.injector = injector;
+			this.provider = provider;
 		}
 
-		override public function apply(
+		public function apply(
 			targetType : Class, activeInjector : Injector, injectParameters : Dictionary) : Object
 		{
-			return provider.apply(targetType, injector, injectParameters);
+			return provider.apply(targetType, activeInjector, injectParameters);
+		}
+
+		public function destroy() : void
+		{
+			provider.destroy();
 		}
 	}
 }

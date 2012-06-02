@@ -5,13 +5,13 @@
  * in accordance with the terms of the license agreement accompanying it.
  */
 
-package org.swiftsuspenders.injection.dependencyproviders
+package org.swiftsuspenders.dependencyproviders
 {
 	import flash.utils.Dictionary;
 	import flash.utils.getQualifiedClassName;
 
-	import org.swiftsuspenders.injection.Injector;
-	import org.swiftsuspenders.injection.InjectorError;
+	import org.swiftsuspenders.Injector;
+	import org.swiftsuspenders.InjectorError;
 	import org.swiftsuspenders.typedescriptions.PreDestroyInjectionPoint;
 	import org.swiftsuspenders.typedescriptions.TypeDescription;
 	import org.swiftsuspenders.utils.SsInternal;

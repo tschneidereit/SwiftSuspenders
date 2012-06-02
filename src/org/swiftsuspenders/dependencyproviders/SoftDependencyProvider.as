@@ -5,7 +5,7 @@
  * in accordance with the terms of the license agreement accompanying it.
  */
 
-package org.swiftsuspenders.injection.dependencyproviders
+package org.swiftsuspenders.dependencyproviders
 {
 	public class SoftDependencyProvider extends ForwardingProvider
 	{

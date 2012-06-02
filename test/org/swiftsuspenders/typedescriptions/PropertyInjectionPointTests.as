@@ -8,7 +8,7 @@
 package org.swiftsuspenders.typedescriptions
 {
 	import org.flexunit.Assert;
-	import org.swiftsuspenders.injection.Injector;
+	import org.swiftsuspenders.Injector;
 	import org.swiftsuspenders.support.injectees.ClassInjectee;
 	import org.swiftsuspenders.support.injectees.InterfaceInjectee;
 	import org.swiftsuspenders.support.types.Clazz;
