@@ -10,9 +10,11 @@
 
   <!-- set up a prefix for all environment variables -->
   <property environment="env."/>
-
+  <!-- load user properties to override defaults -->
+  <property file="user.properties"/>
   <!-- System environment must contain FLEX_HOME variable that points to Flex SDK -->
-  <!--<property name="FLEX_HOME" location="${env.FLEX_HOME}"/>-->
+  <property name="FLEX_HOME" location="${env.FLEX_HOME}"/>
+  
   <taskdef resource="flexTasks.tasks" classpath="${FLEX_HOME}/ant/lib/flexTasks.jar" />
 
 	<!-- identify properties file -->
