@@ -7,7 +7,6 @@
 
 package org.swiftsuspenders.injection
 {
-	import org.swiftsuspenders.*;
 	import org.swiftsuspenders.injection.dependencyproviders.ClassProvider;
 	import org.swiftsuspenders.injection.dependencyproviders.DependencyProvider;
 	import org.swiftsuspenders.injection.dependencyproviders.ForwardingProvider;
