@@ -12,6 +12,7 @@ package org.swiftsuspenders
 	import flash.events.EventDispatcher;
 	import flash.system.ApplicationDomain;
 	import flash.utils.Dictionary;
+	import flash.utils.getDefinitionByName;
 	import flash.utils.getQualifiedClassName;
 
 	import org.swiftsuspenders.dependencyproviders.ClassProvider;
@@ -350,7 +351,7 @@ package org.swiftsuspenders
 		public function getInstance(type : Class, name : String = '', targetType : Class = null) : *
 		{
 			const mappingId : String = getQualifiedClassName(type) + '|' + name;
-			const provider : DependencyProvider = getProvider(mappingId);
+			const provider : DependencyProvider = getProvider(mappingId, false);
 			if (provider)
 			{
 				const ctor : ConstructorInjectionPoint = _classDescriptor.getDescription(type).ctor;
@@ -511,7 +512,8 @@ package org.swiftsuspenders
 			return instance;
 		}
 
-		SsInternal function getProvider(mappingId : String) : DependencyProvider
+		SsInternal function getProvider(
+			mappingId : String, fallbackToDefault : Boolean = true) : DependencyProvider
 		{
 			var softProvider : DependencyProvider;
 			var injector : Injector = this;
@@ -536,7 +538,11 @@ package org.swiftsuspenders
 				}
 				injector = injector.parentInjector;
 			}
-			return softProvider || getDefaultProvider(mappingId);
+			if (softProvider)
+			{
+				return softProvider;
+			}
+			return fallbackToDefault ? getDefaultProvider(mappingId) : null;
 		}
 
 		SsInternal function getDefaultProvider(mappingId : String) : DependencyProvider
@@ -552,7 +558,22 @@ package org.swiftsuspenders
 			{
 				return null;
 			}
-			const type : Class = Class(_applicationDomain.getDefinition(parts.pop()));
+			const typeName : String = parts.pop();
+			try
+			{
+				const definition : Object = _applicationDomain.hasDefinition(typeName)
+					? _applicationDomain.getDefinition(typeName)
+					: getDefinitionByName(typeName);
+			}
+			catch (e : Error)
+			{
+				return null;
+			}
+			if (!definition || !(definition is Class))
+			{
+				return null;
+			}
+			const type : Class = Class(definition);
 			var description : TypeDescription = _classDescriptor.getDescription(type);
 			if (!description.ctor)
 			{
