@@ -9,6 +9,8 @@ package org.swiftsuspenders
 {
 	import flexunit.framework.Assert;
 
+	import org.swiftsuspenders.mapping.InjectionMapping;
+
 	import org.swiftsuspenders.support.injectees.ClassInjectee;
 	import org.swiftsuspenders.support.injectees.childinjectors.ChildInjectorCreatingProvider;
 	import org.swiftsuspenders.support.injectees.childinjectors.InjectorInjectee;

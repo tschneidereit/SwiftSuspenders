@@ -20,6 +20,8 @@ package org.swiftsuspenders
 	import org.hamcrest.object.hasPropertyWithValue;
 	import org.hamcrest.object.isTrue;
 	import org.swiftsuspenders.dependencyproviders.OtherMappingProvider;
+	import org.swiftsuspenders.mapping.InjectionMapping;
+	import org.swiftsuspenders.mapping.MappingEvent;
 	import org.swiftsuspenders.support.injectees.ClassInjectee;
 	import org.swiftsuspenders.support.injectees.ComplexClassInjectee;
 	import org.swiftsuspenders.support.injectees.InterfaceInjectee;

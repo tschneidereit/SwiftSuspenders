@@ -5,8 +5,10 @@
  * in accordance with the terms of the license agreement accompanying it.
  */
 
-package org.swiftsuspenders
+package org.swiftsuspenders.mapping
 {
+	import org.swiftsuspenders.Injector;
+	import org.swiftsuspenders.InjectorError;
 	import org.swiftsuspenders.dependencyproviders.ClassProvider;
 	import org.swiftsuspenders.dependencyproviders.DependencyProvider;
 	import org.swiftsuspenders.dependencyproviders.ForwardingProvider;

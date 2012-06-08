@@ -17,6 +17,7 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.dependencyproviders.OtherMappingProvider;
 	import org.swiftsuspenders.dependencyproviders.SingletonProvider;
 	import org.swiftsuspenders.dependencyproviders.ValueProvider;
+	import org.swiftsuspenders.mapping.InjectionMapping;
 	import org.swiftsuspenders.support.injectees.ClassInjectee;
 	import org.swiftsuspenders.support.providers.ClassNameStoringProvider;
 	import org.swiftsuspenders.support.types.Clazz;
