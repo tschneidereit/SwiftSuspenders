@@ -19,7 +19,7 @@ package org.swiftsuspenders.mapping
 	import org.swiftsuspenders.dependencyproviders.ValueProvider;
 	import org.swiftsuspenders.utils.SsInternal;
 
-	public class InjectionMapping
+	public class InjectionMapping implements ProviderlessMapping, UnsealedMapping
 	{
 		//----------------------       Private / Protected Properties       ----------------------//
 		private var _type : Class;
@@ -59,7 +59,7 @@ package org.swiftsuspenders.mapping
 		 *
 		 * @see #toSingleton()
 		 */
-		public function asSingleton() : InjectionMapping
+		public function asSingleton() : UnsealedMapping
 		{
 			toSingleton(_type);
 			return this;
@@ -80,7 +80,7 @@ package org.swiftsuspenders.mapping
 		 *
 		 * @see #toProvider()
 		 */
-		public function toType(type : Class) : InjectionMapping
+		public function toType(type : Class) : UnsealedMapping
 		{
 			toProvider(new ClassProvider(type));
 			return this;
@@ -102,7 +102,7 @@ package org.swiftsuspenders.mapping
 		 *
 		 * @see #toProvider()
 		 */
-		public function toSingleton(type : Class) : InjectionMapping
+		public function toSingleton(type : Class) : UnsealedMapping
 		{
 			toProvider(new SingletonProvider(type, _creatingInjector));
 			return this;
@@ -122,7 +122,7 @@ package org.swiftsuspenders.mapping
 		 *
 		 * @see #toProvider()
 		 */
-		public function toValue(value : Object) : InjectionMapping
+		public function toValue(value : Object) : UnsealedMapping
 		{
 			toProvider(new ValueProvider(value));
 			return this;
@@ -138,15 +138,15 @@ package org.swiftsuspenders.mapping
 		 *
 		 * @throws org.swiftsuspenders.InjectorError Sealed mappings can't be changed in any way
 		 */
-		public function toProvider(provider : DependencyProvider) : InjectionMapping
+		public function toProvider(provider : DependencyProvider) : UnsealedMapping
 		{
 			_sealed && throwSealedError();
 			if (hasProvider() && provider != null && !_defaultProviderSet)
 			{
 				trace('Warning: Injector already has a mapping for ' + _mappingId + '.\n ' +
-						'If you have overridden this mapping intentionally you can use ' +
-						'"injector.unmap()" prior to your replacement mapping in order to ' +
-						'avoid seeing this message.');
+					'If you have overridden this mapping intentionally you can use ' +
+					'"injector.unmap()" prior to your replacement mapping in order to ' +
+					'avoid seeing this message.');
 				_creatingInjector.hasEventListener(MappingEvent.MAPPING_OVERRIDE)
 				&& _creatingInjector.dispatchEvent(
 					new MappingEvent(MappingEvent.MAPPING_OVERRIDE, _type, _name, this));
@@ -171,7 +171,7 @@ package org.swiftsuspenders.mapping
 		 *
 		 * @throws org.swiftsuspenders.InjectorError Sealed mappings can't be changed in any way
 		 */
-		public function soft() : InjectionMapping
+		public function softly() : ProviderlessMapping
 		{
 			_sealed && throwSealedError();
 			if (!_soft)
@@ -192,7 +192,7 @@ package org.swiftsuspenders.mapping
 		 *
 		 * @throws org.swiftsuspenders.InjectorError Sealed mappings can't be changed in any way
 		 */
-		public function local() : InjectionMapping
+		public function locally() : ProviderlessMapping
 		{
 			_sealed && throwSealedError();
 			if (_local)

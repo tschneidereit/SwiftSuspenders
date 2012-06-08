@@ -594,7 +594,7 @@ package org.swiftsuspenders
 		[Test]
 		public function softMappingIsUsedIfNoParentInjectorAvailable() : void
 		{
-			injector.map(Interface).toType(Clazz).soft();
+			injector.map(Interface).softly().toType(Clazz);
 			Assert.assertNotNull(injector.getInstance(Interface));
 		}
 
@@ -603,14 +603,14 @@ package org.swiftsuspenders
 		{
 			const childInjector : Injector = injector.createChildInjector();
 			injector.map(Interface).toType(Clazz);
-			childInjector.map(Interface).toType(Clazz2).soft();
+			childInjector.map(Interface).softly().toType(Clazz2);
 			Assert.assertEquals(Clazz, childInjector.getInstance(Interface)['constructor']);
 		}
 
 		[Test]
 		public function localMappingsAreUsedInOwnInjector() : void
 		{
-			injector.map(Interface).toType(Clazz).local();
+			injector.map(Interface).locally().toType(Clazz);
 			Assert.assertNotNull(injector.getInstance(Interface));
 		}
 
@@ -618,7 +618,7 @@ package org.swiftsuspenders
 		public function localMappingsArentSharedWithChildInjectors() : void
 		{
 			const childInjector : Injector = injector.createChildInjector();
-			injector.map(Interface).toType(Clazz).local();
+			injector.map(Interface).locally().toType(Clazz);
 			childInjector.getInstance(Interface);
 		}
 
@@ -701,7 +701,7 @@ package org.swiftsuspenders
 		{
 			injector.map(Clazz);
 			listenToInjectorEvent(MappingEvent.PRE_MAPPING_CHANGE);
-			injector.map(Clazz).soft();
+			injector.map(Clazz).softly();
 			assertThat(receivedInjectorEvents.pop(), equalTo(MappingEvent.PRE_MAPPING_CHANGE));
 		}
 
@@ -710,7 +710,7 @@ package org.swiftsuspenders
 		{
 			injector.map(Clazz);
 			listenToInjectorEvent(MappingEvent.POST_MAPPING_CHANGE);
-			injector.map(Clazz).soft();
+			injector.map(Clazz).softly();
 			assertThat(receivedInjectorEvents.pop(), equalTo(MappingEvent.POST_MAPPING_CHANGE));
 		}
 
@@ -719,7 +719,7 @@ package org.swiftsuspenders
 		{
 			injector.map(Clazz);
 			listenToInjectorEvent(MappingEvent.PRE_MAPPING_CHANGE);
-			injector.map(Clazz).local();
+			injector.map(Clazz).locally();
 			assertThat(receivedInjectorEvents.pop(), equalTo(MappingEvent.PRE_MAPPING_CHANGE));
 		}
 
@@ -728,7 +728,7 @@ package org.swiftsuspenders
 		{
 			injector.map(Clazz);
 			listenToInjectorEvent(MappingEvent.POST_MAPPING_CHANGE);
-			injector.map(Clazz).local();
+			injector.map(Clazz).locally();
 			assertThat(receivedInjectorEvents.pop(), equalTo(MappingEvent.POST_MAPPING_CHANGE));
 		}
 
@@ -770,7 +770,7 @@ package org.swiftsuspenders
 				{
 					try
 					{
-						injector.map(Clazz).local();
+						injector.map(Clazz).locally();
 					}
 					catch (error : InjectorError)
 					{

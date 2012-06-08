@@ -106,8 +106,8 @@ package org.swiftsuspenders
 				{method : 'toType', args : [Clazz]},
 				{method : 'toValue', args : [Clazz]},
 				{method : 'toProvider', args : [null]},
-				{method : 'local', args : []},
-				{method : 'soft', args : []}];
+				{method : 'locally', args : []},
+				{method : 'softly', args : []}];
 			const testedMethods : Array = [];
 			for each (var method : Object in methods)
 			{
@@ -163,7 +163,7 @@ package org.swiftsuspenders
 		{
 			const key : Object = injector.map(Interface).seal();
 			injector.map(Interface).unseal(key);
-			injector.map(Interface).local();
+			injector.map(Interface).locally();
 		}
 
 		[Test]
