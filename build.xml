@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--
-  ~ Copyright (c) 2011 the original author or authors
+  ~ Copyright (c) 2012 the original author or authors
   ~
   ~ Permission is hereby granted to use, modify, and distribute this file
   ~ in accordance with the terms of the license agreement accompanying it.
@@ -91,7 +91,7 @@
       <arg value="-verbose-stacktraces=true" />
       <arg value="-headless-server=true" />
 	</java>
-    <echo>[compile] Release SWC ${project.name}-${swift.suspenders.version}.swc created successfully</echo>
+    <echo>[compile] Release SWC ${project.name}-${swiftsuspenders.version}.swc created successfully</echo>
   </target>
   
   <!-- Run Unit Tests -->
@@ -157,7 +157,7 @@
     <mkdir dir="${dist.loc}"/>
     <mkdir dir="${dist.loc}/bin"/>
     <mkdir dir="${dist.loc}/src"/>
-    <copy file="${bin.loc}/${project.name}-${swift.suspenders.version}.swc" todir="${dist.loc}/bin"/>
+    <copy file="${bin.loc}/${project.name}-${swiftsuspenders.version}.swc" todir="${dist.loc}/bin"/>
     <copy todir="${dist.loc}/src/org">
       <fileset dir="${main.src.loc}/org"/>
     </copy>
@@ -166,10 +166,10 @@
       <filterchain>
         <replacetokens>
           <token key="date" value="${touch.time}"/>
-          <token key="rlversion" value="${swift.suspenders.version}"/>
-          <token key="releasename" value="${project.name}-${swift.suspenders.version}"/>
-          <token key="ssversion" value="${swift.suspenders.version}"/>
-          <token key="sslink" value="${swift.suspenders.link}"/>
+          <token key="rlversion" value="${swiftsuspenders.version}"/>
+          <token key="releasename" value="${project.name}-${swiftsuspenders.version}"/>
+          <token key="ssversion" value="${swiftsuspenders.version}"/>
+          <token key="sslink" value="${swiftsuspenders.link}"/>
           <token key="rlprojectlink" value="${robotlegs.project.link}"/>
           <token key="bestpracticeslink" value="${robotlegs.faq.link}"/>
           <token key="faqlink" value="${robotlegs.best.practices.link}"/>
@@ -179,11 +179,11 @@
     <!-- Copy LICENSE  -->
     <copy file="LICENSE" tofile="${dist.loc}/LICENSE" overwrite="true"/>
     <!-- Zip It  -->
-    <zip destfile="${dist.loc}/${project.name}-${swift.suspenders.version}.zip">
+    <zip destfile="${dist.loc}/${project.name}-${swiftsuspenders.version}.zip">
       <fileset dir="${dist.loc}"/>
     </zip>
     <!-- Clean Up  -->
-    <delete file="${dist.loc}/${project.name}-${swift.suspenders.version}.swc"/>
+    <delete file="${dist.loc}/${project.name}-${swiftsuspenders.version}.swc"/>
     <delete file="${dist.loc}/README"/>
     <delete file="${dist.loc}/LICENSE"/>
     <delete dir="${dist.loc}/bin"/>
