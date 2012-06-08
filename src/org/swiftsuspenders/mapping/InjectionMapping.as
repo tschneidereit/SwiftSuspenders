@@ -170,8 +170,6 @@ package org.swiftsuspenders.mapping
 		 * @return The <code>InjectionMapping</code> the method is invoked on
 		 *
 		 * @throws org.swiftsuspenders.InjectorError Sealed mappings can't be changed in any way
-		 *
-		 * @see #strong()
 		 */
 		public function soft() : InjectionMapping
 		{
@@ -188,37 +186,11 @@ package org.swiftsuspenders.mapping
 		}
 
 		/**
-		 * Reverts the effect of <code>soft()</code> and makes the Injector the mapping is defined
-		 * in stop looking up its inheritance chain for the mapped request immediately.
-		 *
-		 * @return The <code>InjectionMapping</code> the method is invoked on
-		 *
-		 * @throws org.swiftsuspenders.InjectorError Sealed mappings can't be changed in any way
-		 *
-		 * @see #soft()
-		 */
-		public function strong() : InjectionMapping
-		{
-			_sealed && throwSealedError();
-			if (_soft)
-			{
-				const provider : DependencyProvider = getProvider();
-				dispatchPreChangeEvent();
-				_soft = false;
-				mapProvider(provider);
-				dispatchPostChangeEvent();
-			}
-			return this;
-		}
-
-		/**
 		 * Disables sharing the mapping with child Injectors of the Injector it is defined in.
 		 *
 		 * @return The <code>InjectionMapping</code> the method is invoked on
 		 *
 		 * @throws org.swiftsuspenders.InjectorError Sealed mappings can't be changed in any way
-		 *
-		 * @see #shared()
 		 */
 		public function local() : InjectionMapping
 		{
@@ -230,31 +202,6 @@ package org.swiftsuspenders.mapping
 			const provider : DependencyProvider = getProvider();
 			dispatchPreChangeEvent();
 			_local = true;
-			mapProvider(provider);
-			dispatchPostChangeEvent();
-			return this;
-		}
-
-		/**
-		 * Reverts the effect of <code>local</code>, enables sharing the mapping with child
-		 * Injectors of the Injector it is defined in.
-		 *
-		 * @return The <code>InjectionMapping</code> the method is invoked on
-		 *
-		 * @throws org.swiftsuspenders.InjectorError Sealed mappings can't be changed in any way
-		 *
-		 * @see #local()
-		 */
-		public function shared() : InjectionMapping
-		{
-			_sealed && throwSealedError();
-			if (!_local)
-			{
-				return this;
-			}
-			const provider : DependencyProvider = getProvider();
-			dispatchPreChangeEvent();
-			_local = false;
 			mapProvider(provider);
 			dispatchPostChangeEvent();
 			return this;

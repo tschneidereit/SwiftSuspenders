@@ -608,17 +608,6 @@ package org.swiftsuspenders
 		}
 
 		[Test]
-		public function callingStrongTurnsSoftMappingsIntoStrongOnes() : void
-		{
-			const childInjector : Injector = injector.createChildInjector();
-			injector.map(Interface).toType(Clazz);
-			childInjector.map(Interface).toType(Clazz2).soft();
-			Assert.assertEquals(Clazz, childInjector.getInstance(Interface)['constructor']);
-			childInjector.map(Interface).toType(Clazz2).strong();
-			Assert.assertEquals(Clazz2, childInjector.getInstance(Interface)['constructor']);
-		}
-
-		[Test]
 		public function localMappingsAreUsedInOwnInjector() : void
 		{
 			injector.map(Interface).toType(Clazz).local();
@@ -631,15 +620,6 @@ package org.swiftsuspenders
 			const childInjector : Injector = injector.createChildInjector();
 			injector.map(Interface).toType(Clazz).local();
 			childInjector.getInstance(Interface);
-		}
-
-		[Test]
-		public function callingSharedTurnsLocalMappingsIntoSharedOnes() : void
-		{
-			const childInjector : Injector = injector.createChildInjector();
-			injector.map(Interface).toType(Clazz).local();
-			injector.map(Interface).toType(Clazz).shared();
-			Assert.assertNotNull(childInjector.getInstance(Interface));
 		}
 
 		[Test]

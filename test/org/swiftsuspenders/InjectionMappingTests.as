@@ -107,9 +107,7 @@ package org.swiftsuspenders
 				{method : 'toValue', args : [Clazz]},
 				{method : 'toProvider', args : [null]},
 				{method : 'local', args : []},
-				{method : 'shared', args : []},
-				{method : 'soft', args : []},
-				{method : 'strong', args : []}];
+				{method : 'soft', args : []}];
 			const testedMethods : Array = [];
 			for each (var method : Object in methods)
 			{
