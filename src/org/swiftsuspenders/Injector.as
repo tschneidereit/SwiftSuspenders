@@ -411,7 +411,10 @@ package org.swiftsuspenders
 			{
 				destroyInstance(instance);
 			}
-			_mappings = null;
+			_mappings = new Dictionary();
+			_mappingsInProcess = new Dictionary();
+			_defaultProviders = new Dictionary();
+			_managedObjects = new Dictionary();
 		}
 
 		/**
