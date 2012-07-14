@@ -59,6 +59,8 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.support.types.Interface2;
 	import org.swiftsuspenders.typedescriptions.TypeDescription;
 	import org.swiftsuspenders.utils.SsInternal;
+	import org.swiftsuspenders.errors.InjectorInterfaceConstructionError;
+	import org.swiftsuspenders.errors.InjectorMissingMappingError;
 
 	use namespace SsInternal;
 
@@ -454,7 +456,7 @@ package org.swiftsuspenders
 				injectee.property, value);
 		}
 		
-		[Test(expects="org.swiftsuspenders.InjectorError")]
+		[Test(expects="org.swiftsuspenders.errors.InjectorMissingMappingError")]
 		public function haltOnMissingInterfaceDependency():void
 		{
 			injector.injectInto(new InterfaceInjectee());
@@ -468,7 +470,7 @@ package org.swiftsuspenders
 			assertThat(injectee.property, isA(Clazz));
 		}
 		
-		[Test(expects="org.swiftsuspenders.InjectorError")]
+		[Test(expects="org.swiftsuspenders.errors.InjectorMissingMappingError")]
 		public function haltOnMissingNamedDependency():void
 		{
 			var injectee:NamedClassInjectee = new NamedClassInjectee();
@@ -536,7 +538,7 @@ package org.swiftsuspenders
 			Assert.assertTrue(injector.satisfies(Clazz, 'namedClass'));
 		}
 
-		[Test(expects="org.swiftsuspenders.InjectorError")]
+		[Test(expects="org.swiftsuspenders.errors.InjectorMissingMappingError")]
 		public function getMappingResponseFailsForUnmappedNamedClass():void
 		{
 			injector.getInstance(Clazz, 'namedClass');
@@ -570,7 +572,7 @@ package org.swiftsuspenders
 				injectee1.property == injectee2.property);
 		}
 
-		[Test(expects="org.swiftsuspenders.InjectorError")]
+		[Test(expects="org.swiftsuspenders.errors.InjectorInterfaceConstructionError")]
 		public function instantiateThrowsMeaningfulErrorOnInterfaceInstantiation() : void
 		{
 			injector.getInstance(Interface);

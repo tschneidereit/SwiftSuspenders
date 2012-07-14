@@ -31,6 +31,8 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.typedescriptions.TypeDescription;
 	import org.swiftsuspenders.utils.TypeDescriptor;
 	import org.swiftsuspenders.utils.SsInternal;
+	import org.swiftsuspenders.errors.InjectorInterfaceConstructionError;
+	import org.swiftsuspenders.errors.InjectorMissingMappingError;
 
 	use namespace SsInternal;
 
@@ -312,7 +314,7 @@ package org.swiftsuspenders
 			var mapping : InjectionMapping = _mappings[mappingId];
 			if (!mapping)
 			{
-				throw new InjectorError('Error while retrieving an injector mapping: ' +
+				throw new InjectorMissingMappingError('Error while retrieving an injector mapping: ' +
 						'No mapping defined for dependency ' + mappingId);
 			}
 			return mapping;
@@ -361,7 +363,7 @@ package org.swiftsuspenders
 			}
 			if (name)
 			{
-				throw new InjectorError('No mapping found for request ' + mappingId
+				throw new InjectorMissingMappingError('No mapping found for request ' + mappingId
 						+ '. getInstance only creates an unmapped instance if no name is given.');
 			}
 			return instantiateUnmapped(type);
@@ -507,7 +509,7 @@ package org.swiftsuspenders
 			var description : TypeDescription = _classDescriptor.getDescription(type);
 			if (!description.ctor)
 			{
-				throw new InjectorError(
+				throw new InjectorInterfaceConstructionError(
 						"Can't instantiate interface " + getQualifiedClassName(type));
 			}
 			const instance : * = description.ctor.createInstance(type, this);

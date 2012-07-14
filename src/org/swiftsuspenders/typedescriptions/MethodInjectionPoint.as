@@ -15,6 +15,7 @@ package org.swiftsuspenders.typedescriptions
 	import org.swiftsuspenders.InjectorError;
 	import org.swiftsuspenders.dependencyproviders.DependencyProvider;
 	import org.swiftsuspenders.utils.SsInternal;
+	import org.swiftsuspenders.errors.InjectorMissingMappingError;
 
 	public class MethodInjectionPoint extends InjectionPoint
 	{
@@ -68,7 +69,7 @@ package org.swiftsuspenders.typedescriptions
 					{
 						break;
 					}
-					throw(new InjectorError(
+					throw(new InjectorMissingMappingError(
 						'Injector is missing a mapping to handle injection into target "' +
 						target + '" of type "' + getQualifiedClassName(targetType) + '". \
 						Target dependency: ' + parameterMappingId +
