@@ -31,6 +31,7 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.typedescriptions.TypeDescription;
 	import org.swiftsuspenders.utils.TypeDescriptor;
 	import org.swiftsuspenders.utils.SsInternal;
+	import org.swiftsuspenders.errors.InjectorInterfaceConstructionError;
 
 	use namespace SsInternal;
 
@@ -507,7 +508,7 @@ package org.swiftsuspenders
 			var description : TypeDescription = _classDescriptor.getDescription(type);
 			if (!description.ctor)
 			{
-				throw new InjectorError(
+				throw new InjectorInterfaceConstructionError(
 						"Can't instantiate interface " + getQualifiedClassName(type));
 			}
 			const instance : * = description.ctor.createInstance(type, this);

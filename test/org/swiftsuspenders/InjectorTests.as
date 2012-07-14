@@ -59,6 +59,7 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.support.types.Interface2;
 	import org.swiftsuspenders.typedescriptions.TypeDescription;
 	import org.swiftsuspenders.utils.SsInternal;
+	import org.swiftsuspenders.errors.InjectorInterfaceConstructionError;
 
 	use namespace SsInternal;
 
@@ -570,7 +571,7 @@ package org.swiftsuspenders
 				injectee1.property == injectee2.property);
 		}
 
-		[Test(expects="org.swiftsuspenders.InjectorError")]
+		[Test(expects="org.swiftsuspenders.errors.InjectorInterfaceConstructionError")]
 		public function instantiateThrowsMeaningfulErrorOnInterfaceInstantiation() : void
 		{
 			injector.getInstance(Interface);
