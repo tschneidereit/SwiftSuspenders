@@ -14,6 +14,7 @@ package org.swiftsuspenders.typedescriptions
 	import org.swiftsuspenders.InjectorError;
 	import org.swiftsuspenders.dependencyproviders.DependencyProvider;
 	import org.swiftsuspenders.utils.SsInternal;
+	import org.swiftsuspenders.errors.InjectorMissingMappingError;
 
 	public class PropertyInjectionPoint extends InjectionPoint
 	{
@@ -43,7 +44,7 @@ package org.swiftsuspenders.typedescriptions
 				{
 					return;
 				}
-				throw(new InjectorError(
+				throw(new InjectorMissingMappingError(
 						'Injector is missing a mapping to handle injection into property "' +
 						_propertyName + '" of object "' + target + '" with type "' +
 						getQualifiedClassName(targetType) +
