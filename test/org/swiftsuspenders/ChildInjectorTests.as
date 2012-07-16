@@ -24,6 +24,7 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.support.types.Clazz;
 	import org.swiftsuspenders.support.types.Interface;
 	import org.swiftsuspenders.utils.SsInternal;
+	import org.swiftsuspenders.dependencyproviders.ClassProvider;
 
 	use namespace SsInternal;
 
@@ -70,7 +71,7 @@ package org.swiftsuspenders
 			rightChildInjector.map(RobotFoot).toType(RightRobotFoot);
 			rightFootMapping.setInjector(rightChildInjector);
 			
-			var robotBody : RobotBody = injector.getInstance(RobotBody);
+			var robotBody : RobotBody = injector.instantiateUnmapped(RobotBody);
 			
 			Assert.assertTrue('Right RobotLeg should have a RightRobotFoot', 
 				robotBody.rightLeg.ankle.foot is RightRobotFoot);
@@ -96,7 +97,7 @@ package org.swiftsuspenders
 			rightChildInjector.map(RobotFoot).toType(RightRobotFoot);
 			rightFootMapping.setInjector(rightChildInjector);
 
-			var robotBody : RobotBody = injector.getInstance(RobotBody);
+			var robotBody : RobotBody = injector.instantiateUnmapped(RobotBody);
 
 			Assert.assertTrue('Right RobotFoot should have toes',
 				robotBody.rightLeg.ankle.foot.toes is RobotToes);
@@ -137,7 +138,7 @@ package org.swiftsuspenders
 			rightChildInjector.map(RobotFoot).toType(RightRobotFoot);
 			rightFootMapping.setInjector(rightChildInjector);
 
-			var robotBody : RobotBody = injector.getInstance(RobotBody);
+			var robotBody : RobotBody = injector.instantiateUnmapped(RobotBody);
 
 			Assert.assertEquals('Right RobotFoot should have RightRobotFoot',
 					RightRobotFoot, robotBody.rightLeg.ankle.foot['constructor']);
@@ -152,7 +153,7 @@ package org.swiftsuspenders
             var class1 : Clazz = new Clazz();
             injector.map(Clazz).toValue(class1);  
             
-            Assert.assertTrue('Child injector should return true for hasMapping that exists on parent injector',
+            Assert.assertTrue('Child injector should return true for satisfies that exists on parent injector',
                 childInjector.satisfies(Clazz));
         }
         
@@ -161,7 +162,7 @@ package org.swiftsuspenders
         {
             var childInjector : Injector = injector.createChildInjector();
             
-            Assert.assertFalse('Child injector should not return true for hasMapping that does ' +
+            Assert.assertFalse('Child injector should not return true for satisfies that does ' +
 	            'not exists on parent injector',
                 childInjector.satisfies(Interface));
         }  
@@ -185,6 +186,7 @@ package org.swiftsuspenders
 		[Test]
 		public function injectorCanCreateChildInjectorDuringInjection():void
 		{
+			injector.fallbackProvider = ClassProvider;
 			injector.map(Injector).toProvider(new ChildInjectorCreatingProvider());
 			injector.map(InjectorInjectee).toType(InjectorInjectee);
 			var injectee : InjectorInjectee = injector.getInstance(InjectorInjectee);
@@ -194,5 +196,22 @@ package org.swiftsuspenders
 			Assert.assertTrue('injectorInjectee.nestedInjectee is grandchild of main injector',
 					injectee.nestedInjectee.nestedInjectee.injector.parentInjector.parentInjector.parentInjector == injector);
 		}
+		
+		[Test]
+		public function satisfies_with_fallbackProvider_trickles_down_to_children():void
+		{
+			injector.fallbackProvider = ClassProvider;
+			const childInjector:Injector = injector.createChildInjector();
+			Assert.assertTrue(childInjector.satisfies(Clazz));
+		}
+		
+		[Test]
+		public function getInstance_with_fallbackProvider_trickles_down_to_children():void
+		{
+			injector.fallbackProvider = ClassProvider;
+			const childInjector:Injector = injector.createChildInjector();
+			Assert.assertTrue(childInjector.getInstance(Clazz) != null);
+		}
+		
 	}
 }

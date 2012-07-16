@@ -15,8 +15,6 @@ package org.swiftsuspenders
 	import flash.utils.getDefinitionByName;
 	import flash.utils.getQualifiedClassName;
 
-	import org.swiftsuspenders.dependencyproviders.ClassProvider;
-
 	import org.swiftsuspenders.dependencyproviders.DependencyProvider;
 	import org.swiftsuspenders.dependencyproviders.LocalOnlyProvider;
 	import org.swiftsuspenders.dependencyproviders.SoftDependencyProvider;
@@ -33,6 +31,7 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.utils.SsInternal;
 	import org.swiftsuspenders.errors.InjectorInterfaceConstructionError;
 	import org.swiftsuspenders.errors.InjectorMissingMappingError;
+	import org.swiftsuspenders.dependencyproviders.FallbackDependencyProvider;
 
 	use namespace SsInternal;
 
@@ -290,7 +289,11 @@ package org.swiftsuspenders
 		 */
 		public function satisfiesDirectly(type : Class, name : String = '') : Boolean
 		{
-			return providerMappings[getQualifiedClassName(type) + '|' + name] != null;
+			if (hasDirectMapping(type, name))
+			{
+				return true;
+			}
+			return (getDefaultProvider(getQualifiedClassName(type) + '|' + name, false) != null);
 		}
 
 		/**
@@ -355,18 +358,27 @@ package org.swiftsuspenders
 		public function getInstance(type : Class, name : String = '', targetType : Class = null) : *
 		{
 			const mappingId : String = getQualifiedClassName(type) + '|' + name;
-			const provider : DependencyProvider = getProvider(mappingId, false);
-			if (provider)
+			var provider : DependencyProvider = getProvider(mappingId, false);
+			if (!provider)
+			{
+				provider = getDefaultProvider(mappingId);
+			}
+			if(provider)
 			{
 				const ctor : ConstructorInjectionPoint = _classDescriptor.getDescription(type).ctor;
 				return provider.apply(targetType, this, ctor ? ctor.injectParameters : null);
 			}
-			if (name)
+			
+			var fallbackMessage:String = " The injector has no fallbackProvider (not necessarily a bad thing).";
+			if(_fallbackProvider)
 			{
-				throw new InjectorMissingMappingError('No mapping found for request ' + mappingId
-						+ '. getInstance only creates an unmapped instance if no name is given.');
+				fallbackMessage = "The fallbackProvider, " + _fallbackProvider + " was unable to fulfill this request.";
 			}
-			return instantiateUnmapped(type);
+			
+			throw new InjectorMissingMappingError('No mapping found for request ' + mappingId
+					+ '. ' + fallbackMessage);
+					
+			return null;
 		}
 
 		/**
@@ -497,26 +509,70 @@ package org.swiftsuspenders
 			return _reflector.describeInjections(type);
 		}
 
+		// ADDED BY STRAY
+
+		private var _fallbackProvider:Object;
+
+		public function get fallbackProvider():Object
+		{
+			return _fallbackProvider;
+		}
+
+		public function set fallbackProvider(value:Object):void
+		{
+			if(value === _fallbackProvider)
+			{
+				return;
+			}
+			_defaultProviders = new Dictionary();
+
+			if((value == null) || (value is FallbackDependencyProvider) || (value is Class && _reflector.typeImplements(value as Class, FallbackDependencyProvider)))
+			{
+				_fallbackProvider = value;
+			}
+			else
+			{
+				throw new InjectorError(
+					"The fallbackProvider must be a Class or an"
+					+ " instance implementing FallbackDependencyProvider, but was " + value);
+			}
+		}
+		
+		public function instantiateUnmapped(type : Class) : *
+		{
+			if(! canBeInstantiated( type ))
+			{
+				throw new InjectorInterfaceConstructionError(
+						"Can't instantiate interface " + getQualifiedClassName(type));
+			}
+			const description : TypeDescription = _classDescriptor.getDescription(type);
+			const instance : * = description.ctor.createInstance(type, this);
+			hasEventListener(InjectionEvent.POST_INSTANTIATE) && dispatchEvent(
+				new InjectionEvent(InjectionEvent.POST_INSTANTIATE, instance, type));
+			applyInjectionPoints(instance, type, description);
+			return instance;
+		}
+		
+		public function hasMapping(type : Class, name : String = ''):Boolean
+		{
+			return getProvider(getQualifiedClassName(type) + '|' + name, false) != null;
+		}
+		
+		public function hasDirectMapping(type : Class, name : String = ''):Boolean
+		{
+			return providerMappings[getQualifiedClassName(type) + '|' + name] != null;
+		}
 
 		//----------------------             Internal Methods               ----------------------//
 		SsInternal static function purgeInjectionPointsCache() : void
 		{
 			INJECTION_POINTS_CACHE = new Dictionary(true);
 		}
-
-		SsInternal function instantiateUnmapped(type : Class) : Object
+				
+		SsInternal function canBeInstantiated(type : Class) : Boolean
 		{
-			var description : TypeDescription = _classDescriptor.getDescription(type);
-			if (!description.ctor)
-			{
-				throw new InjectorInterfaceConstructionError(
-						"Can't instantiate interface " + getQualifiedClassName(type));
-			}
-			const instance : * = description.ctor.createInstance(type, this);
-			hasEventListener(InjectionEvent.POST_INSTANTIATE) && dispatchEvent(
-				new InjectionEvent(InjectionEvent.POST_INSTANTIATE, instance, type));
-			applyInjectionPoints(instance, type, description);
-			return instance;
+			const description : TypeDescription = _classDescriptor.getDescription(type);
+			return description.ctor != null;
 		}
 
 		SsInternal function getProvider(
@@ -552,20 +608,32 @@ package org.swiftsuspenders
 			return fallbackToDefault ? getDefaultProvider(mappingId) : null;
 		}
 
-		SsInternal function getDefaultProvider(mappingId : String) : DependencyProvider
+		SsInternal function getDefaultProvider(mappingId : String, consultParents : Boolean = true) : DependencyProvider
 		{
-			//No meaningful way to automatically create Strings
-			if (mappingId === 'String|')
+			if(!(_fallbackProvider || (consultParents && _parentInjector)))
 			{
 				return null;
 			}
+			
+			//No meaningful way to automatically create base types without names
+			const baseTypes:Array = ["Array|", "Boolean|", "Class|", "Function|", "int|", "Number|", "Object|", "String|", "uint|"];
+			if(baseTypes.indexOf(mappingId) > -1)
+			{
+				return null;
+			}
+			
 			const parts : Array = mappingId.split('|');
 			const name : String = parts.pop();
-			if (name.length !== 0)
+			
+			// No names around here partner (as keeping 'satisfies' and actual responses consistent would
+			// mean you'd have to be updating strings in multiple places, which is the road to madness)
+			if(name.length > 0)
 			{
 				return null;
 			}
+
 			const typeName : String = parts.pop();
+			
 			try
 			{
 				const definition : Object = _applicationDomain.hasDefinition(typeName)
@@ -581,12 +649,45 @@ package org.swiftsuspenders
 				return null;
 			}
 			const type : Class = Class(definition);
-			var description : TypeDescription = _classDescriptor.getDescription(type);
-			if (!description.ctor)
+			
+			return getNearestDefaultProviderForType(type, consultParents);
+		}
+		
+		SsInternal function getNearestDefaultProviderForType(type : Class, consultParents : Boolean = true) : DependencyProvider
+		{
+			if(!_fallbackProvider && !_parentInjector)
 			{
 				return null;
 			}
-			return (_defaultProviders[type] ||= new ClassProvider(type));
+			
+			if(!_fallbackProvider && consultParents)
+			{
+				return _parentInjector.getNearestDefaultProviderForType( type );
+			}
+			
+			if(_defaultProviders[type])
+			{
+				return _defaultProviders[type];
+			}
+			
+			const provider:FallbackDependencyProvider = _fallbackProvider is Class
+				? new _fallbackProvider(type)
+				: _fallbackProvider as FallbackDependencyProvider;
+			
+			const description : TypeDescription = _classDescriptor.getDescription(type);
+
+			if(provider.satisfies(type, description))
+			{
+				_defaultProviders[type] = provider;
+				return provider;
+			}
+			
+			if(_parentInjector && consultParents)
+			{	
+				return _parentInjector.getNearestDefaultProviderForType( type );
+			}
+			
+			return null;
 		}
 
 

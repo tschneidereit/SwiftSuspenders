@@ -5,20 +5,21 @@
  * in accordance with the terms of the license agreement accompanying it.
  */
 
-package org.swiftsuspenders.dependencyproviders
+package org.swiftsuspenders.support.providers
 {
 	import flash.utils.Dictionary;
 
 	import org.swiftsuspenders.Injector;
+	import org.swiftsuspenders.dependencyproviders.FallbackDependencyProvider;
 	import org.swiftsuspenders.typedescriptions.TypeDescription;
 
-	public class ClassProvider implements FallbackDependencyProvider
+	public class ProviderThatCanDoInterfaces implements FallbackDependencyProvider
 	{
 		//----------------------       Private / Protected Properties       ----------------------//
 		private var _responseType : Class;
-
+		
 		//----------------------               Public Methods               ----------------------//
-		public function ClassProvider(responseType : Class)
+		public function ProviderThatCanDoInterfaces(responseType : Class)
 		{
 			_responseType = responseType;
 		}
@@ -32,7 +33,7 @@ package org.swiftsuspenders.dependencyproviders
 		public function apply(
 			targetType : Class, activeInjector : Injector, injectParameters : Dictionary) : Object
 		{
-			return activeInjector.instantiateUnmapped(_responseType);
+			return new Object();
 		}
 
 		public function destroy() : void
@@ -41,7 +42,7 @@ package org.swiftsuspenders.dependencyproviders
 		
 		public function satisfies(type:Class, description:TypeDescription): Boolean
 		{
-			return (description.ctor != null);
+			return true;
 		}
 	}
 }

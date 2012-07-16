@@ -8,7 +8,10 @@
 package org.swiftsuspenders
 {
 	import org.swiftsuspenders.reflection.DescribeTypeReflector;
-
+	import org.swiftsuspenders.reflection.Reflector;
+	import org.hamcrest.assertThat;
+	import org.hamcrest.object.isTrue;
+	
 	public class DescribeTypeReflectorTests extends ReflectorTests
 	{
 		
@@ -17,6 +20,12 @@ package org.swiftsuspenders
 		{
 			reflector = new DescribeTypeReflector();
 			injector = new Injector();
+		}
+		
+		[Test]
+		public function typeImplements_picks_up_interfaces_implemented() : void
+		{
+			assertThat( reflector.typeImplements(DescribeTypeReflector, Reflector), isTrue());
 		}
 	}
 }

@@ -125,7 +125,7 @@ package org.swiftsuspenders
 		{
 			const provider : ClassNameStoringProvider = new ClassNameStoringProvider();
 			injector.map(Clazz).toProvider(provider);
-			injector.getInstance(ClassInjectee);
+			injector.instantiateUnmapped(ClassInjectee);
 			
 			Assert.assertEquals('className stored in provider is fqn of ClassInjectee',
 					getQualifiedClassName(ClassInjectee), provider.lastTargetClassName);
