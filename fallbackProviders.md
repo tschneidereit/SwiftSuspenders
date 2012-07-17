@@ -15,7 +15,7 @@
 
 A fallbackProvider is where the injector turns for help when it doesn't have a mapping.
 
-- Set through the `injector.fallbackProvider` property.
+- Set through the `injector.fallbackProvider` property (default is `null`).
 - Either a class or instance.
 - Must implement `FallbackDependencyProvider`.
 - If a class is provided, a new instance of this class will be created for each dependency, with the dependency type passed to the constructor.
@@ -27,7 +27,7 @@ A fallbackProvider is where the injector turns for help when it doesn't have a m
 1. Local mappings
 2. Parent (and ancestor) mappings
 3. Local fallbackProvider
-4. Parent (and ancestor) fallbackProviders
+4. Parent (and ancestor) fallbackProviders (unless the `blockParentFallbackProvider` flag is set)
 5. Explode with `InjectorMissingMappingError`
 
 ### `satisfies` and `getInstance` are consistent
@@ -43,6 +43,7 @@ If there is a fallbackProvider it will be checked.
 - Can support injection of interfaces if the fallbackProvider supports this.
 - Can support async providers if you return a promise.
 - Can be a facade delegating to a number of custom fallbackProviders.
+- Setting `blockParentFallbackProvider` flag on the injector prevents the injector from consulting ancestors. This only applies to fallback providers; parent mappings can still be used. Useful for child injectors in extensions.
 
 ## `ClassProvider` fits the most common use case
 

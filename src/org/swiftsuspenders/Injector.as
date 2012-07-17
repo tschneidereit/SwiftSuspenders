@@ -168,10 +168,10 @@ package org.swiftsuspenders
 	 * injections are started.
 	 */
 	public class Injector extends EventDispatcher
-	{
+	{		
 		//----------------------       Private / Protected Properties       ----------------------//
 		private static var INJECTION_POINTS_CACHE : Dictionary = new Dictionary(true);
-
+		
 		private var _parentInjector : Injector;
         private var _applicationDomain:ApplicationDomain;
 		private var _classDescriptor : TypeDescriptor;
@@ -572,6 +572,21 @@ package org.swiftsuspenders
 		{
 			return providerMappings[getQualifiedClassName(type) + '|' + name] != null;
 		}
+		
+		private var _blockParentFallbackProvider:Boolean = false;
+
+		public function get blockParentFallbackProvider():Boolean
+		{
+			return _blockParentFallbackProvider;
+		}
+
+		public function set blockParentFallbackProvider(value:Boolean):void
+		{
+			if (value !== _blockParentFallbackProvider)
+			{
+				_blockParentFallbackProvider = value;
+			}
+		}
 
 		//----------------------             Internal Methods               ----------------------//
 		SsInternal static function purgeInjectionPointsCache() : void
@@ -620,7 +635,7 @@ package org.swiftsuspenders
 
 		SsInternal function getDefaultProvider(mappingId : String, consultParents : Boolean = true) : DependencyProvider
 		{
-			if(!(_fallbackProvider || (consultParents && _parentInjector)))
+			if((!_fallbackProvider) && (_blockParentFallbackProvider || (!(consultParents && _parentInjector))))
 			{
 				return null;
 			}

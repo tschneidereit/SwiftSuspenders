@@ -1122,6 +1122,24 @@ package org.swiftsuspenders
 			assertThat(instance1, not(equalTo(instance2)));
 		}
 		
+		[Test]
+		public function satisfies_doesnt_use_fallbackProvider_from_ancestors_if_blockParentFallbackProvider_is_set() : void
+		{
+			injector.fallbackProvider = ClassProvider;
+			const childInjector:Injector = injector.createChildInjector();
+			childInjector.blockParentFallbackProvider = true;
+			assertThat(childInjector.satisfies(Clazz), isFalse());
+		}
+		
+		[Test(expects="org.swiftsuspenders.errors.InjectorMissingMappingError")]
+		public function getInstance_doesnt_use_fallbackProvider_from_ancestors_if_blockParentFallbackProvider_is_set() : void
+		{
+			injector.fallbackProvider = ClassProvider;
+			const childInjector:Injector = injector.createChildInjector();
+			childInjector.blockParentFallbackProvider = true;
+			childInjector.getInstance(Clazz);
+		}
+		
 		// QUERY : This doesn't look like it's doing XML stuff??
 		
 		[Test]
