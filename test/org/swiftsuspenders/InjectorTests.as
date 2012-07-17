@@ -1122,11 +1122,6 @@ package org.swiftsuspenders
 			assertThat(instance1, not(equalTo(instance2)));
 		}
 		
-		[Test(expects="org.swiftsuspenders.InjectorError")]
-		public function getOrCreateNewInstance_throws_if_name_passed_and_cant_getInstance() : void
-		{
-			injector.getOrCreateNewInstance(Clazz, 'name');
-		}
 		// QUERY : This doesn't look like it's doing XML stuff??
 		
 		[Test]

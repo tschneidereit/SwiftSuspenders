@@ -53,6 +53,7 @@ If there is a fallbackProvider it will be checked.
 
 - Regardless of any mappings.
 - Ignores any fallbackProvider.
+- Can only be used for classes, not interfaces (type must have a constructor).
 - Will use mappings / fallbackProvider for the dependency tree.
 - In the case where you have relevant mappings but you don't want to use mappings / fallbackProvider for the dependency tree, you have options such as:
 	* Make a normal factory.
@@ -60,14 +61,18 @@ If there is a fallbackProvider it will be checked.
 	* Roll a fallbackProvider that forwards to a provider like the one in (2).
 	* Consider a different architecture, e.g. Entity based, for this part of the system.
 
-## `getOrCreateNewInstance` = `getInstance` or `instantiateUnmapped`
+## `getOrCreateNewInstance` = `getInstance` (unnamed) or `instantiateUnmapped`
 
-Provides a single point of entry to obtain a mapped instance if one exists, or a new instance if one doesn't.
+Provides a single point of entry to obtain a mapped instance if one exists, or a new instance if one doesn't, with identical constraints and flexibility to the methods it wraps.
 
-Essentially a sugar method for:	
+Essentially a sugar method so:
+
+	var instance:SomeType = injector.getOrCreateNewInstance(SomeType);
+	
+is equivalent to
 	
 	var instance:SomeType = injector.satisfies(SomeType)
 							? injector.getInstance(SomeType)
 							: injector.instantiateUnmapped(SomeType);
 
-
+This method doesn't support names. If you know you need a name then you should always use `getInstance(type, name)`;

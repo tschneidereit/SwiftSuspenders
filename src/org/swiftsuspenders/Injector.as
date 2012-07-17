@@ -553,17 +553,13 @@ package org.swiftsuspenders
 			return instance;
 		}
 		
-		public function getOrCreateNewInstance(type : Class, name : String = "") : *
+		public function getOrCreateNewInstance(type : Class) : *
 		{
-			if(satisfies(type, name))
+			if(satisfies(type))
 			{
-				return getInstance(type, name);
+				return getInstance(type);
 			}
-			if(name.length > 0)
-			{
-				throw new InjectorError("Named injection always requires a valid mapping, and none was found for "
-					+ getQualifiedClassName(type) + '|' + name);
-			}
+			
 			return instantiateUnmapped(type);
 		}
 		
