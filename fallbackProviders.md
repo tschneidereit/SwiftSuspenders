@@ -64,8 +64,10 @@ If there is a fallbackProvider it will be checked.
 
 - Provides a single point of entry to obtain a mapped instance if one exists, or a new instance if one doesn't.
 - Essentially a sugar method for 
-	var instance:SomeType = injector.satisfies(SomeType) 
+	
+
+	`var instance:SomeType = injector.satisfies(SomeType) 
 								? injector.getInstance(SomeType) 
-								: injector.instantiateUnmapped(SomeType);
+								: injector.instantiateUnmapped(SomeType);`
 
 
