@@ -1098,6 +1098,35 @@ package org.swiftsuspenders
 			assertThat(injector.hasDirectMapping(Clazz), isTrue());
 		}
 		
+		[Test]
+		public function getOrCreateNewInstance_provides_mapped_value_where_mapping_exists() : void
+		{
+			injector.map(Clazz).asSingleton();
+			const instance1:Clazz = injector.getOrCreateNewInstance(Clazz);
+			const instance2:Clazz = injector.getOrCreateNewInstance(Clazz);
+			assertThat(instance1, equalTo(instance2));
+		}
+		
+		[Test]
+		public function getOrCreateNewInstance_instantiates_new_instance_where_no_mapping_exists() : void
+		{
+			const instance1:Clazz = injector.getOrCreateNewInstance(Clazz);
+			assertThat(instance1, isA(Clazz));
+		}
+		
+		[Test]
+		public function getOrCreateNewInstance_instantiates_new_instances_each_time_where_no_mapping_exists() : void
+		{
+			const instance1:Clazz = injector.getOrCreateNewInstance(Clazz);
+			const instance2:Clazz = injector.getOrCreateNewInstance(Clazz);
+			assertThat(instance1, not(equalTo(instance2)));
+		}
+		
+		[Test(expects="org.swiftsuspenders.InjectorError")]
+		public function getOrCreateNewInstance_throws_if_name_passed_and_cant_getInstance() : void
+		{
+			injector.getOrCreateNewInstance(Clazz, 'name');
+		}
 		// QUERY : This doesn't look like it's doing XML stuff??
 		
 		[Test]
