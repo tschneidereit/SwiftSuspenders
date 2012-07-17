@@ -50,6 +50,12 @@ If there is a fallbackProvider it will be checked.
 - Can provide an injector-instantiated instance of any Class.
 - Does not support interfaces.
 
+To configure your injector to always allow instantiation of unmapped types requested for injection, just do:
+
+	injector.fallbackProvider = ClassProvider;
+	
+The `ClassProvider` uses `injector.instantiateUnmapped` internally, so injected types can have nested injections fulfilled too.
+
 ## `instantiateUnmapped` always returns a fresh instance
 
 - Regardless of any mappings.
