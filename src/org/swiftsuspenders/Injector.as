@@ -180,6 +180,9 @@ package org.swiftsuspenders
 		private var _defaultProviders : Dictionary;
 		private var _managedObjects : Dictionary;
 		private var _reflector : Reflector;
+		
+		private static const _baseTypes:Array = [Array, Boolean, Class, Function, int, Number, Object, String, uint];
+		
 
 
 		//----------------------            Internal Properties             ----------------------//
@@ -273,7 +276,15 @@ package org.swiftsuspenders
 		 */
 		public function satisfies(type : Class, name : String = '') : Boolean
 		{
-			return getProvider(getQualifiedClassName(type) + '|' + name) != null;
+			if(getProvider(getQualifiedClassName(type) + '|' + name) != null)
+			{
+				return true;
+			}
+			if(name.length > 0)
+			{
+				return false;
+			}
+			return getDefaultProvider(type, true) != null;
 		}
 
 		/**
@@ -293,7 +304,7 @@ package org.swiftsuspenders
 			{
 				return true;
 			}
-			return (getDefaultProvider(getQualifiedClassName(type) + '|' + name, false) != null);
+			return (getDefaultProvider(type, false) != null);
 		}
 
 		/**
@@ -358,10 +369,10 @@ package org.swiftsuspenders
 		public function getInstance(type : Class, name : String = '', targetType : Class = null) : *
 		{
 			const mappingId : String = getQualifiedClassName(type) + '|' + name;
-			var provider : DependencyProvider = getProvider(mappingId, false);
-			if (!provider)
+			var provider : DependencyProvider = getProvider(mappingId);
+			if (!provider && (name.length == 0))
 			{
-				provider = getDefaultProvider(mappingId);
+				provider = getDefaultProvider(type);
 			}
 			if(provider)
 			{
@@ -565,7 +576,7 @@ package org.swiftsuspenders
 		
 		public function hasMapping(type : Class, name : String = ''):Boolean
 		{
-			return getProvider(getQualifiedClassName(type) + '|' + name, false) != null;
+			return getProvider(getQualifiedClassName(type) + '|' + name) != null;
 		}
 		
 		public function hasDirectMapping(type : Class, name : String = ''):Boolean
@@ -600,8 +611,7 @@ package org.swiftsuspenders
 			return description.ctor != null;
 		}
 
-		SsInternal function getProvider(
-			mappingId : String, fallbackToDefault : Boolean = true) : DependencyProvider
+		SsInternal function getProvider(mappingId : String) : DependencyProvider
 		{
 			var softProvider : DependencyProvider;
 			var injector : Injector = this;
@@ -630,10 +640,10 @@ package org.swiftsuspenders
 			{
 				return softProvider;
 			}
-			return fallbackToDefault ? getDefaultProvider(mappingId) : null;
+			return null;
 		}
 
-		SsInternal function getDefaultProvider(mappingId : String, consultParents : Boolean = true) : DependencyProvider
+		SsInternal function getDefaultProvider(type : Class, consultParents : Boolean = true) : DependencyProvider
 		{
 			if((!_fallbackProvider) && (_blockParentFallbackProvider || (!(consultParents && _parentInjector))))
 			{
@@ -641,39 +651,10 @@ package org.swiftsuspenders
 			}
 			
 			//No meaningful way to automatically create base types without names
-			const baseTypes:Array = ["Array|", "Boolean|", "Class|", "Function|", "int|", "Number|", "Object|", "String|", "uint|"];
-			if(baseTypes.indexOf(mappingId) > -1)
+			if(_baseTypes.indexOf(type) > -1)
 			{
 				return null;
 			}
-			
-			const parts : Array = mappingId.split('|');
-			const name : String = parts.pop();
-			
-			// No names around here partner (as keeping 'satisfies' and actual responses consistent would
-			// mean you'd have to be updating strings in multiple places, which is the road to madness)
-			if(name.length > 0)
-			{
-				return null;
-			}
-
-			const typeName : String = parts.pop();
-			
-			try
-			{
-				const definition : Object = _applicationDomain.hasDefinition(typeName)
-					? _applicationDomain.getDefinition(typeName)
-					: getDefinitionByName(typeName);
-			}
-			catch (e : Error)
-			{
-				return null;
-			}
-			if (!definition || !(definition is Class))
-			{
-				return null;
-			}
-			const type : Class = Class(definition);
 			
 			return getNearestDefaultProviderForType(type, consultParents);
 		}
