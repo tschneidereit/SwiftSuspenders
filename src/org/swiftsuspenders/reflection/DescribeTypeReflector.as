@@ -11,7 +11,7 @@ package org.swiftsuspenders.reflection
 	import flash.utils.describeType;
 	import flash.utils.getQualifiedClassName;
 
-	import org.swiftsuspenders.InjectorError;
+	import org.swiftsuspenders.errors.InjectorError;
 
 	import org.swiftsuspenders.typedescriptions.ConstructorInjectionPoint;
 	import org.swiftsuspenders.typedescriptions.MethodInjectionPoint;

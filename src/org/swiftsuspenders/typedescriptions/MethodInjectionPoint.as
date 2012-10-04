@@ -12,10 +12,9 @@ package org.swiftsuspenders.typedescriptions
 	import flash.utils.Dictionary;
 
 	import org.swiftsuspenders.Injector;
-	import org.swiftsuspenders.InjectorError;
+	import org.swiftsuspenders.errors.InjectorMissingMappingError;
 	import org.swiftsuspenders.dependencyproviders.DependencyProvider;
 	import org.swiftsuspenders.utils.SsInternal;
-	import org.swiftsuspenders.errors.InjectorMissingMappingError;
 
 	public class MethodInjectionPoint extends InjectionPoint
 	{

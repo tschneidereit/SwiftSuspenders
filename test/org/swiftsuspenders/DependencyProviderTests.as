@@ -99,7 +99,7 @@ package org.swiftsuspenders
 			provider.destroy();
 			assertThat(singleton, hasPropertyWithValue("preDestroyCalled", true));
 		}
-		[Test(expects="org.swiftsuspenders.InjectorError")]
+		[Test(expects="org.swiftsuspenders.errors.InjectorError")]
 		public function usingDestroyedSingletonProviderThrows() : void
 		{
 			const provider : SingletonProvider = new SingletonProvider(Clazz, injector);

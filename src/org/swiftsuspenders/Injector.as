@@ -16,8 +16,12 @@ package org.swiftsuspenders
 	import flash.utils.getQualifiedClassName;
 
 	import org.swiftsuspenders.dependencyproviders.DependencyProvider;
+	import org.swiftsuspenders.dependencyproviders.FallbackDependencyProvider;
 	import org.swiftsuspenders.dependencyproviders.LocalOnlyProvider;
 	import org.swiftsuspenders.dependencyproviders.SoftDependencyProvider;
+	import org.swiftsuspenders.errors.InjectorError;
+	import org.swiftsuspenders.errors.InjectorInterfaceConstructionError;
+	import org.swiftsuspenders.errors.InjectorMissingMappingError;
 	import org.swiftsuspenders.mapping.InjectionMapping;
 	import org.swiftsuspenders.mapping.MappingEvent;
 	import org.swiftsuspenders.reflection.DescribeTypeJSONReflector;
@@ -27,11 +31,8 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.typedescriptions.InjectionPoint;
 	import org.swiftsuspenders.typedescriptions.PreDestroyInjectionPoint;
 	import org.swiftsuspenders.typedescriptions.TypeDescription;
-	import org.swiftsuspenders.utils.TypeDescriptor;
 	import org.swiftsuspenders.utils.SsInternal;
-	import org.swiftsuspenders.errors.InjectorInterfaceConstructionError;
-	import org.swiftsuspenders.errors.InjectorMissingMappingError;
-	import org.swiftsuspenders.dependencyproviders.FallbackDependencyProvider;
+	import org.swiftsuspenders.utils.TypeDescriptor;
 
 	use namespace SsInternal;
 
@@ -168,21 +169,30 @@ package org.swiftsuspenders
 	 * injections are started.
 	 */
 	public class Injector extends EventDispatcher
-	{		
+	{
 		//----------------------       Private / Protected Properties       ----------------------//
 		private static var INJECTION_POINTS_CACHE : Dictionary = new Dictionary(true);
-		
+
 		private var _parentInjector : Injector;
         private var _applicationDomain:ApplicationDomain;
 		private var _classDescriptor : TypeDescriptor;
 		private var _mappings : Dictionary;
 		private var _mappingsInProcess : Dictionary;
-		private var _defaultProviders : Dictionary;
 		private var _managedObjects : Dictionary;
 		private var _reflector : Reflector;
-		
-		private static const _baseTypes:Array = [Array, Boolean, Class, Function, int, Number, Object, String, uint];
-		
+		private var _fallbackProvider : FallbackDependencyProvider;
+		private var _blockParentFallbackProvider : Boolean = false;
+
+		private static const _baseTypes:Array = initBaseTypeMappingIds(
+				[Object, Array, Class, Function, Boolean, Number, int, uint, String]);
+
+		private static function initBaseTypeMappingIds(types : Array) : Array
+		{
+			return types.map(function(type : Class, index : uint, list : Array) : String
+				{
+					return getQualifiedClassName(type) + '|';
+				});
+		}
 
 
 		//----------------------            Internal Properties             ----------------------//
@@ -194,7 +204,6 @@ package org.swiftsuspenders
 		{
 			_mappings = new Dictionary();
 			_mappingsInProcess = new Dictionary();
-			_defaultProviders = new Dictionary();
 			_managedObjects = new Dictionary();
 			try
 			{
@@ -239,8 +248,8 @@ package org.swiftsuspenders
 		 * @param type The <code>class</code> describing the mapping
 		 * @param name The name, as a case-sensitive string, to further describe the mapping
 		 *
-		 * @throws org.swiftsuspenders.InjectorError Descriptions that are not mapped can't be unmapped
-		 * @throws org.swiftsuspenders.InjectorError Sealed mappings have to be unsealed before unmapping them
+		 * @throws org.swiftsuspenders.errors.InjectorError Descriptions that are not mapped can't be unmapped
+		 * @throws org.swiftsuspenders.errors.InjectorError Sealed mappings have to be unsealed before unmapping them
 		 *
 		 * @see #map()
 		 * @see org.swiftsuspenders.mapping.InjectionMapping
@@ -270,21 +279,15 @@ package org.swiftsuspenders
 		 * Indicates whether the injector can supply a response for the specified dependency either
 		 * by using a mapping of its own or by querying one of its ancestor injectors.
 		 *
-		 * @param type The dependency under query
+		 * @param type The type of the dependency under query
+		 * @param name The name of the dependency under query
 		 *
 		 * @return <code>true</code> if the dependency can be satisfied, <code>false</code> if not
 		 */
 		public function satisfies(type : Class, name : String = '') : Boolean
 		{
-			if(getProvider(getQualifiedClassName(type) + '|' + name) != null)
-			{
-				return true;
-			}
-			if(name.length > 0)
-			{
-				return false;
-			}
-			return getDefaultProvider(type, true) != null;
+			const mappingId : String = getQualifiedClassName(type) + '|' + name;
+			return getProvider(mappingId, true) != null;
 		}
 
 		/**
@@ -294,17 +297,15 @@ package org.swiftsuspenders
 		 * <p>In contrast to <code>#satisfies()</code>, <code>satisfiesDirectly</code> only informs
 		 * about mappings on this injector itself, without querying its ancestor injectors.</p>
 		 *
-		 * @param type The dependency under query
+		 * @param type The type of the dependency under query
+		 * @param name The name of the dependency under query
 		 *
 		 * @return <code>true</code> if the dependency can be satisfied, <code>false</code> if not
 		 */
 		public function satisfiesDirectly(type : Class, name : String = '') : Boolean
 		{
-			if (hasDirectMapping(type, name))
-			{
-				return true;
-			}
-			return (getDefaultProvider(type, false) != null);
+			return hasDirectMapping(type, name)
+				|| getDefaultProvider(getQualifiedClassName(type) + '|' + name, false) != null;
 		}
 
 		/**
@@ -316,11 +317,13 @@ package org.swiftsuspenders
 		 * This restriction is in place to prevent accidential changing of mappings in ancestor
 		 * injectors where only the child's response is meant to be altered.</p>
 		 * 
-		 * @param type The dependency to return the mapping for
-		 * 
+		 * @param type The type of the dependency to return the mapping for
+		 * @param name The name of the dependency to return the mapping for
+		 *
 		 * @return The mapping for the specified dependency class
 		 * 
-		 * @throws org.swiftsuspenders.InjectorError When no mapping was found for the specified dependency
+		 * @throws org.swiftsuspenders.errors.InjectorMissingMappingError when no mapping was found
+		 * for the specified dependency
 		 */
 		public function getMapping(type : Class, name : String = '') : InjectionMapping
 		{
@@ -328,8 +331,8 @@ package org.swiftsuspenders
 			var mapping : InjectionMapping = _mappings[mappingId];
 			if (!mapping)
 			{
-				throw new InjectorMissingMappingError('Error while retrieving an injector mapping: ' +
-						'No mapping defined for dependency ' + mappingId);
+				throw new InjectorMissingMappingError('Error while retrieving an injector mapping: '
+						+ 'No mapping defined for dependency ' + mappingId);
 			}
 			return mapping;
 		}
@@ -339,7 +342,8 @@ package org.swiftsuspenders
 		 *
 		 * @param target The instance to inject into
 		 *
-		 * @throws org.swiftsuspenders.InjectorError The <code>Injector</code> must have mappings for all injection points
+		 * @throws org.swiftsuspenders.errors.InjectorError The <code>Injector</code> must have mappings
+		 * for all injection points
 		 *
 		 * @see #map()
 		 */
@@ -352,9 +356,6 @@ package org.swiftsuspenders
 		/**
 		 * Instantiates the class identified by the given <code>type</code> and <code>name</code>.
 		 *
-		 * <p>If no <code>InjectionMapping</code> is found for the given <code>type</code> and no
-		 * <code>name</code> is given, the class is simply instantiated and then injected into.</p>
-		 *
 		 * <p>The parameter <code>targetType</code> is only useful if the
 		 * <code>InjectionMapping</code> used to satisfy the request might vary its result based on
 		 * that <code>targetType</code>. An Example of that would be a provider returning a logger
@@ -364,32 +365,70 @@ package org.swiftsuspenders
 		 * @param name The name, as a case-sensitive string, to use for mapping resolution
 		 * @param targetType The type of the instance that is dependent on the returned value
 		 *
-		 * @return The created instance
+		 * @return The mapped or created instance
+		 *
+		 * @throws org.swiftsuspenders.errors.InjectorMissingMappingError if no mapping was found
+		 * for the specified dependency and no <code>fallbackProvider</code> is set.
 		 */
 		public function getInstance(type : Class, name : String = '', targetType : Class = null) : *
 		{
 			const mappingId : String = getQualifiedClassName(type) + '|' + name;
-			var provider : DependencyProvider = getProvider(mappingId);
-			if (!provider && (name.length == 0))
-			{
-				provider = getDefaultProvider(type);
-			}
+			const provider : DependencyProvider =
+					getProvider(mappingId) || getDefaultProvider(mappingId, true);
 			if(provider)
 			{
 				const ctor : ConstructorInjectionPoint = _classDescriptor.getDescription(type).ctor;
 				return provider.apply(targetType, this, ctor ? ctor.injectParameters : null);
 			}
-			
-			var fallbackMessage:String = " The injector has no fallbackProvider (not necessarily a bad thing).";
-			if(_fallbackProvider)
-			{
-				fallbackMessage = "The fallbackProvider, " + _fallbackProvider + " was unable to fulfill this request.";
-			}
+
+			var fallbackMessage:String = _fallbackProvider
+				? "the fallbackProvider, '" + _fallbackProvider + "', was unable to fulfill this request."
+				: "the injector has no fallbackProvider.";
 			
 			throw new InjectorMissingMappingError('No mapping found for request ' + mappingId
-					+ '. ' + fallbackMessage);
-					
-			return null;
+					+ ' and ' + fallbackMessage);
+		}
+
+		/**
+		 * Returns an instance of the given type. If the Injector has a mapping for the type, that
+		 * is used for getting the instance. If not, a new instance of the class is created and
+		 * injected into.
+		 *
+		 * @param type The type to get an instance of
+		 * @return The instance that was created or retrieved from the mapped provider
+		 *
+		 * @throws org.swiftsuspenders.errors.InjectorMissingMappingError if no mapping is found
+		 * for one of the type's dependencies and no <code>fallbackProvider</code> is set
+		 * @throws org.swiftsuspenders.errors.InjectorInterfaceConstructionError if the given type
+		 * is an interface and no mapping was found
+		 */
+		public function getOrCreateNewInstance(type : Class) : *
+		{
+			return satisfies(type) && getInstance(type) || instantiateUnmapped(type);
+		}
+
+		/**
+		 * Creates an instance of the given type and injects into it.
+		 *
+		 * @param type The type to instantiate
+		 * @return The new instance, with all of its dependencies fulfilled
+		 *
+		 * @throws org.swiftsuspenders.errors.InjectorMissingMappingError if no mapping is found
+		 * for one of the type's dependencies and no <code>fallbackProvider</code> is set
+		 */
+		public function instantiateUnmapped(type : Class) : *
+		{
+			if(!canBeInstantiated(type))
+			{
+				throw new InjectorInterfaceConstructionError(
+					"Can't instantiate interface " + getQualifiedClassName(type));
+			}
+			const description : TypeDescription = _classDescriptor.getDescription(type);
+			const instance : * = description.ctor.createInstance(type, this);
+			hasEventListener(InjectionEvent.POST_INSTANTIATE) && dispatchEvent(
+				new InjectionEvent(InjectionEvent.POST_INSTANTIATE, instance, type));
+			applyInjectionPoints(instance, type, description);
+			return instance;
 		}
 
 		/**
@@ -438,8 +477,9 @@ package org.swiftsuspenders
 			}
 			_mappings = new Dictionary();
 			_mappingsInProcess = new Dictionary();
-			_defaultProviders = new Dictionary();
 			_managedObjects = new Dictionary();
+			_fallbackProvider = null;
+			_blockParentFallbackProvider = false;
 		}
 
 		/**
@@ -519,84 +559,35 @@ package org.swiftsuspenders
 		{
 			return _reflector.describeInjections(type);
 		}
-
-		// ADDED BY STRAY
-
-		private var _fallbackProvider:Object;
-
-		public function get fallbackProvider():Object
-		{
-			return _fallbackProvider;
-		}
-
-		public function set fallbackProvider(value:Object):void
-		{
-			if(value === _fallbackProvider)
-			{
-				return;
-			}
-			_defaultProviders = new Dictionary();
-
-			if((value == null) || (value is FallbackDependencyProvider) || (value is Class && _reflector.typeImplements(value as Class, FallbackDependencyProvider)))
-			{
-				_fallbackProvider = value;
-			}
-			else
-			{
-				throw new InjectorError(
-					"The fallbackProvider must be a Class or an"
-					+ " instance implementing FallbackDependencyProvider, but was " + value);
-			}
-		}
 		
-		public function instantiateUnmapped(type : Class) : *
-		{
-			if(! canBeInstantiated( type ))
-			{
-				throw new InjectorInterfaceConstructionError(
-						"Can't instantiate interface " + getQualifiedClassName(type));
-			}
-			const description : TypeDescription = _classDescriptor.getDescription(type);
-			const instance : * = description.ctor.createInstance(type, this);
-			hasEventListener(InjectionEvent.POST_INSTANTIATE) && dispatchEvent(
-				new InjectionEvent(InjectionEvent.POST_INSTANTIATE, instance, type));
-			applyInjectionPoints(instance, type, description);
-			return instance;
-		}
-		
-		public function getOrCreateNewInstance(type : Class) : *
-		{
-			if(satisfies(type))
-			{
-				return getInstance(type);
-			}
-			
-			return instantiateUnmapped(type);
-		}
-		
-		public function hasMapping(type : Class, name : String = ''):Boolean
+		public function hasMapping(type : Class, name : String = '') : Boolean
 		{
 			return getProvider(getQualifiedClassName(type) + '|' + name) != null;
 		}
 		
-		public function hasDirectMapping(type : Class, name : String = ''):Boolean
+		public function hasDirectMapping(type : Class, name : String = '') : Boolean
 		{
-			return providerMappings[getQualifiedClassName(type) + '|' + name] != null;
+			return _mappings[getQualifiedClassName(type) + '|' + name] != null;
 		}
-		
-		private var _blockParentFallbackProvider:Boolean = false;
 
-		public function get blockParentFallbackProvider():Boolean
+		public function get fallbackProvider() : FallbackDependencyProvider
+		{
+			return _fallbackProvider;
+		}
+
+		public function set fallbackProvider(provider : FallbackDependencyProvider) : void
+		{
+			_fallbackProvider = provider;
+		}
+
+		public function get blockParentFallbackProvider() : Boolean
 		{
 			return _blockParentFallbackProvider;
 		}
 
-		public function set blockParentFallbackProvider(value:Boolean):void
+		public function set blockParentFallbackProvider(value : Boolean) : void
 		{
-			if (value !== _blockParentFallbackProvider)
-			{
-				_blockParentFallbackProvider = value;
-			}
+			_blockParentFallbackProvider = value;
 		}
 
 		//----------------------             Internal Methods               ----------------------//
@@ -611,7 +602,8 @@ package org.swiftsuspenders
 			return description.ctor != null;
 		}
 
-		SsInternal function getProvider(mappingId : String) : DependencyProvider
+		SsInternal function getProvider(
+			mappingId : String, fallbackToDefault : Boolean = true) : DependencyProvider
 		{
 			var softProvider : DependencyProvider;
 			var injector : Injector = this;
@@ -640,59 +632,26 @@ package org.swiftsuspenders
 			{
 				return softProvider;
 			}
-			return null;
+			return fallbackToDefault ? getDefaultProvider(mappingId, true) : null;
 		}
 
-		SsInternal function getDefaultProvider(type : Class, consultParents : Boolean = true) : DependencyProvider
+		SsInternal function getDefaultProvider(
+			mappingId : String, consultParents : Boolean) : DependencyProvider
 		{
-			if((!_fallbackProvider) && (_blockParentFallbackProvider || (!(consultParents && _parentInjector))))
-			{
-				return null;
-			}
-			
 			//No meaningful way to automatically create base types without names
-			if(_baseTypes.indexOf(type) > -1)
+			if (_baseTypes.indexOf(mappingId) > -1)
 			{
 				return null;
 			}
-			
-			return getNearestDefaultProviderForType(type, consultParents);
-		}
-		
-		SsInternal function getNearestDefaultProviderForType(type : Class, consultParents : Boolean = true) : DependencyProvider
-		{
-			if(!_fallbackProvider && !_parentInjector)
-			{
-				return null;
-			}
-			
-			if(!_fallbackProvider && consultParents)
-			{
-				return _parentInjector.getNearestDefaultProviderForType( type );
-			}
-			
-			if(_defaultProviders[type])
-			{
-				return _defaultProviders[type];
-			}
-			
-			const provider:FallbackDependencyProvider = _fallbackProvider is Class
-				? new _fallbackProvider(type)
-				: _fallbackProvider as FallbackDependencyProvider;
-			
-			const description : TypeDescription = _classDescriptor.getDescription(type);
 
-			if(provider.satisfies(type, description))
+			if (_fallbackProvider && _fallbackProvider.prepareNextRequest(mappingId))
 			{
-				_defaultProviders[type] = provider;
-				return provider;
+				return _fallbackProvider;
 			}
-			
-			if(_parentInjector && consultParents)
-			{	
-				return _parentInjector.getNearestDefaultProviderForType( type );
+			if (consultParents && !_blockParentFallbackProvider && _parentInjector)
+			{
+				return _parentInjector.getDefaultProvider(mappingId,  consultParents);
 			}
-			
 			return null;
 		}
 

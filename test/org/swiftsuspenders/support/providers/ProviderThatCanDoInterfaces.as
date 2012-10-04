@@ -11,7 +11,6 @@ package org.swiftsuspenders.support.providers
 
 	import org.swiftsuspenders.Injector;
 	import org.swiftsuspenders.dependencyproviders.FallbackDependencyProvider;
-	import org.swiftsuspenders.typedescriptions.TypeDescription;
 
 	public class ProviderThatCanDoInterfaces implements FallbackDependencyProvider
 	{
@@ -33,14 +32,14 @@ package org.swiftsuspenders.support.providers
 		public function apply(
 			targetType : Class, activeInjector : Injector, injectParameters : Dictionary) : Object
 		{
-			return new Object();
+			return new _responseType();
 		}
 
 		public function destroy() : void
 		{
 		}
 		
-		public function satisfies(type:Class, description:TypeDescription): Boolean
+		public function prepareNextRequest(mappingId : String) : Boolean
 		{
 			return true;
 		}

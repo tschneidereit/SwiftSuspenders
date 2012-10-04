@@ -1,9 +1,16 @@
+/*
+ * Copyright (c) 2012 the original author or authors
+ *
+ * Permission is hereby granted to use, modify, and distribute this file
+ * in accordance with the terms of the license agreement accompanying it.
+ */
+
 package org.swiftsuspenders.support.providers
 {
-	import org.swiftsuspenders.Injector;
 	import flash.utils.Dictionary;
+
+	import org.swiftsuspenders.Injector;
 	import org.swiftsuspenders.dependencyproviders.FallbackDependencyProvider;
-	import org.swiftsuspenders.typedescriptions.TypeDescription;
 
 	public class MoodyProvider implements FallbackDependencyProvider
 	{
@@ -20,7 +27,7 @@ package org.swiftsuspenders.support.providers
 		// FallbackDependencyProvider Implementation
 		//---------------------------------------
 
-		public function satisfies(type : Class, description:TypeDescription):Boolean
+		public function prepareNextRequest(mappingId : String) : Boolean
 		{
 			return _satisfies;
 		}

@@ -7,11 +7,9 @@
 
 package org.swiftsuspenders.errors
 {
-	import org.swiftsuspenders.InjectorError;
-	
 	public class InjectorMissingMappingError extends InjectorError
 	{
-		public function InjectorMissingMappingError(message:*="", id:*=0)
+		public function InjectorMissingMappingError(message : * = "", id : * = 0)
 		{
 			super(message, id);
 		}

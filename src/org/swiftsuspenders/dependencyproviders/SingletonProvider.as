@@ -11,7 +11,7 @@ package org.swiftsuspenders.dependencyproviders
 	import flash.utils.getQualifiedClassName;
 
 	import org.swiftsuspenders.Injector;
-	import org.swiftsuspenders.InjectorError;
+	import org.swiftsuspenders.errors.InjectorError;
 	import org.swiftsuspenders.typedescriptions.PreDestroyInjectionPoint;
 	import org.swiftsuspenders.typedescriptions.TypeDescription;
 

@@ -23,6 +23,7 @@ package org.swiftsuspenders
 	import org.hamcrest.object.isFalse;
 	import org.hamcrest.object.instanceOf;
 	import org.swiftsuspenders.dependencyproviders.OtherMappingProvider;
+	import org.swiftsuspenders.errors.InjectorError;
 	import org.swiftsuspenders.mapping.InjectionMapping;
 	import org.swiftsuspenders.mapping.MappingEvent;
 	import org.swiftsuspenders.support.injectees.ClassInjectee;
@@ -426,7 +427,7 @@ package org.swiftsuspenders
 		[Test]
 		public function use_fallbackProvider_for_unmapped_dependency_if_given():void
 		{
-			injector.fallbackProvider = ClassProvider;
+			injector.fallbackProvider = new ProviderThatCanDoInterfaces(Clazz);
 			const injectee : ClassInjectee = new ClassInjectee();
 			injector.injectInto(injectee);
 			assertThat(injectee.property, isA(Clazz));
@@ -552,18 +553,11 @@ package org.swiftsuspenders
 			Assert.assertFalse('injectee1.property is not the same instance as injectee2.property',
 				injectee1.property == injectee2.property);
 		}
-
-		[Test(expects="org.swiftsuspenders.errors.InjectorMissingMappingError")]
-		public function getInstance_on_unmapped_interface_with_fallback_ClassProvider_throws_InjectorMissingMappingError() : void
-		{
-			injector.fallbackProvider = ClassProvider;
-			injector.getInstance(Interface);
-		}
 		
 		[Test(expects="org.swiftsuspenders.errors.InjectorInterfaceConstructionError")]
 		public function instantiateUnmapped_on_interface_throws_InjectorInterfaceConstructionError() : void
 		{
-			injector.fallbackProvider = ClassProvider;
+			injector.fallbackProvider = new ProviderThatCanDoInterfaces(Clazz);
 			injector.instantiateUnmapped(Interface);
 		}
 
@@ -618,7 +612,7 @@ package org.swiftsuspenders
 			Assert.assertNotNull(injector.getInstance(Interface));
 		}
 
-		[Test(expects="org.swiftsuspenders.InjectorError")]
+		[Test(expects="org.swiftsuspenders.errors.InjectorError")]
 		public function local_mappings_arent_shared_with_child_injectors() : void
 		{
 			const childInjector : Injector = injector.createChildInjector();
@@ -945,14 +939,6 @@ package org.swiftsuspenders
 		}
 		
 		[Test]
-		public function set_and_get_fallbackProvider_by_class() : void
-		{
-			const provider : Class = ClassProvider;
-			injector.fallbackProvider = provider;
-			assertThat(injector.fallbackProvider, equalTo(provider));
-		}
-		
-		[Test]
 		public function satisfies_isTrue_if_fallbackProvider_satisifies() : void
 		{
 			injector.fallbackProvider = new MoodyProvider(true);
@@ -966,61 +952,17 @@ package org.swiftsuspenders
 			assertThat(injector.satisfies(Clazz), isFalse());
 		}
 		
-		[Test(expects="org.swiftsuspenders.InjectorError")]
-		public function error_thrown_if_fallbackProvider_instance_doesnt_implement_FallbackDependencyProvider() : void
-		{
-			injector.fallbackProvider = new FactoryProvider(Clazz);
-		}
-		
-		[Test(expects="org.swiftsuspenders.InjectorError")]
-		public function error_thrown_if_fallbackProvider_class_doesnt_implement_FallbackDependencyProvider() : void
-		{
-			injector.fallbackProvider = FactoryProvider;
-		}
-		
 		[Test]
-		public function changing_the_fallbackProvider_cleans_defaultProvider_cache() : void
+		public function satisfies_returns_false_without_error_if_fallback_provider_cannot_satisfy_request() : void
 		{
-			injector.fallbackProvider = ClassProvider;
-			assertThat(injector.satisfies(Clazz), isTrue());
 			injector.fallbackProvider = new MoodyProvider(false);
-			assertThat(injector.satisfies(Clazz), isFalse());
-		}
-		
-		[Test]
-		public function setting_the_fallbackProvider_to_null_cleans_defaultProvider_cache() : void
-		{
-			injector.fallbackProvider = ClassProvider;
-			assertThat(injector.satisfies(Clazz), isTrue());
-			injector.fallbackProvider = null;
-			assertThat(injector.satisfies(Clazz), isFalse());
-		}
-		
-		[Test]
-		public function satisfies_returns_false_for_named_unmapped_dependency_with_class_defaultProvider() : void
-		{
-			injector.fallbackProvider = ClassProvider;
-			assertThat(injector.satisfies(Clazz, "named"), isFalse());
-		}
-		
-		[Test]
-		public function satisfies_returns_false_for_named_unmapped_dependency_with_instance_defaultProvider() : void
-		{
-			injector.fallbackProvider = new MoodyProvider(true);
-			assertThat(injector.satisfies(Clazz, "named"), isFalse());
-		}
-		
-		[Test]
-		public function satisfies_returns_false_without_error_if_interface_requested_from_ClassProvider() : void
-		{
-			injector.fallbackProvider = ClassProvider;
 			assertThat(injector.satisfies(Interface), isFalse());
 		}
 		
 		[Test]
 		public function satisfies_returns_true_without_error_if_interface_requested_from_ProviderThatCanDoInterfaces() : void
 		{
-			injector.fallbackProvider = ProviderThatCanDoInterfaces;
+			injector.fallbackProvider = new ProviderThatCanDoInterfaces(Clazz);
 			assertThat(injector.satisfies(Interface), isTrue());
 		}
 		
@@ -1125,7 +1067,7 @@ package org.swiftsuspenders
 		[Test]
 		public function satisfies_doesnt_use_fallbackProvider_from_ancestors_if_blockParentFallbackProvider_is_set() : void
 		{
-			injector.fallbackProvider = ClassProvider;
+			injector.fallbackProvider = new ProviderThatCanDoInterfaces(Clazz);
 			const childInjector:Injector = injector.createChildInjector();
 			childInjector.blockParentFallbackProvider = true;
 			assertThat(childInjector.satisfies(Clazz), isFalse());
@@ -1134,7 +1076,7 @@ package org.swiftsuspenders
 		[Test(expects="org.swiftsuspenders.errors.InjectorMissingMappingError")]
 		public function getInstance_doesnt_use_fallbackProvider_from_ancestors_if_blockParentFallbackProvider_is_set() : void
 		{
-			injector.fallbackProvider = ClassProvider;
+			injector.fallbackProvider = new ProviderThatCanDoInterfaces(Clazz);
 			const childInjector:Injector = injector.createChildInjector();
 			childInjector.blockParentFallbackProvider = true;
 			childInjector.getInstance(Clazz);

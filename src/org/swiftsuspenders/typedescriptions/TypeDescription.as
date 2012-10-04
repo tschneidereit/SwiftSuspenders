@@ -10,7 +10,7 @@ package org.swiftsuspenders.typedescriptions
 	import flash.utils.Dictionary;
 	import flash.utils.getQualifiedClassName;
 
-	import org.swiftsuspenders.InjectorError;
+	import org.swiftsuspenders.errors.InjectorError;
 
 	public class TypeDescription
 	{

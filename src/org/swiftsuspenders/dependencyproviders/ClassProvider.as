@@ -10,12 +10,12 @@ package org.swiftsuspenders.dependencyproviders
 	import flash.utils.Dictionary;
 
 	import org.swiftsuspenders.Injector;
-	import org.swiftsuspenders.typedescriptions.TypeDescription;
 
-	public class ClassProvider implements FallbackDependencyProvider
+	public class ClassProvider implements DependencyProvider
 	{
 		//----------------------       Private / Protected Properties       ----------------------//
 		private var _responseType : Class;
+
 
 		//----------------------               Public Methods               ----------------------//
 		public function ClassProvider(responseType : Class)
@@ -37,11 +37,6 @@ package org.swiftsuspenders.dependencyproviders
 
 		public function destroy() : void
 		{
-		}
-		
-		public function satisfies(type:Class, description:TypeDescription): Boolean
-		{
-			return (description.ctor != null);
 		}
 	}
 }

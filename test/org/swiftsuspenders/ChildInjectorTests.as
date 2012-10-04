@@ -15,12 +15,14 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.support.injectees.childinjectors.ChildInjectorCreatingProvider;
 	import org.swiftsuspenders.support.injectees.childinjectors.InjectorInjectee;
 	import org.swiftsuspenders.support.injectees.childinjectors.LeftRobotFoot;
+	import org.swiftsuspenders.support.injectees.childinjectors.NestedInjectorInjectee;
 	import org.swiftsuspenders.support.injectees.childinjectors.RightRobotFoot;
 	import org.swiftsuspenders.support.injectees.childinjectors.RobotAnkle;
 	import org.swiftsuspenders.support.injectees.childinjectors.RobotBody;
 	import org.swiftsuspenders.support.injectees.childinjectors.RobotFoot;
 	import org.swiftsuspenders.support.injectees.childinjectors.RobotLeg;
 	import org.swiftsuspenders.support.injectees.childinjectors.RobotToes;
+	import org.swiftsuspenders.support.providers.ProviderThatCanDoInterfaces;
 	import org.swiftsuspenders.support.types.Clazz;
 	import org.swiftsuspenders.support.types.Interface;
 	import org.swiftsuspenders.utils.SsInternal;
@@ -186,21 +188,21 @@ package org.swiftsuspenders
 		[Test]
 		public function injectorCanCreateChildInjectorDuringInjection():void
 		{
-			injector.fallbackProvider = ClassProvider;
 			injector.map(Injector).toProvider(new ChildInjectorCreatingProvider());
-			injector.map(InjectorInjectee).toType(InjectorInjectee);
+			injector.map(InjectorInjectee);
+			injector.map(NestedInjectorInjectee);
 			var injectee : InjectorInjectee = injector.getInstance(InjectorInjectee);
 			Assert.assertNotNull('Injection has been applied to injectorInjectee', injectee.injector);
 			Assert.assertTrue('injectorInjectee.injector is child of main injector',
 					injectee.injector.parentInjector == injector);
 			Assert.assertTrue('injectorInjectee.nestedInjectee is grandchild of main injector',
-					injectee.nestedInjectee.nestedInjectee.injector.parentInjector.parentInjector.parentInjector == injector);
+					injectee.nestedInjectee.injector.parentInjector.parentInjector == injector);
 		}
 		
 		[Test]
 		public function satisfies_with_fallbackProvider_trickles_down_to_children():void
 		{
-			injector.fallbackProvider = ClassProvider;
+			injector.fallbackProvider = new ProviderThatCanDoInterfaces(Clazz);
 			const childInjector:Injector = injector.createChildInjector();
 			Assert.assertTrue(childInjector.satisfies(Clazz));
 		}
@@ -208,7 +210,7 @@ package org.swiftsuspenders
 		[Test]
 		public function getInstance_with_fallbackProvider_trickles_down_to_children():void
 		{
-			injector.fallbackProvider = ClassProvider;
+			injector.fallbackProvider = new ProviderThatCanDoInterfaces(Clazz);
 			const childInjector:Injector = injector.createChildInjector();
 			Assert.assertTrue(childInjector.getInstance(Clazz) != null);
 		}

@@ -7,11 +7,9 @@
 
 package org.swiftsuspenders.errors
 {
-	import org.swiftsuspenders.InjectorError;
-	
 	public class InjectorInterfaceConstructionError extends InjectorError
 	{
-		public function InjectorInterfaceConstructionError(message:*="", id:*=0)
+		public function InjectorInterfaceConstructionError(message : * = "", id : * = 0)
 		{
 			super(message, id);
 		}

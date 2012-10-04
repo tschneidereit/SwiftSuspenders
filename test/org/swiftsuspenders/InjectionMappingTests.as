@@ -17,6 +17,7 @@ package org.swiftsuspenders
 	import org.hamcrest.object.notNullValue;
 	import org.swiftsuspenders.dependencyproviders.ClassProvider;
 	import org.swiftsuspenders.dependencyproviders.SingletonProvider;
+	import org.swiftsuspenders.errors.InjectorError;
 	import org.swiftsuspenders.mapping.InjectionMapping;
 	import org.swiftsuspenders.support.types.Clazz;
 	import org.swiftsuspenders.support.types.Interface;
@@ -123,14 +124,14 @@ package org.swiftsuspenders
 			assertThat(testedMethods, hasProperties(methods));
 		}
 
-		[Test(expects='org.swiftsuspenders.InjectorError')]
+		[Test(expects='org.swiftsuspenders.errors.InjectorError')]
 		public function unmappingASealedMappingThrows() : void
 		{
 			injector.map(Interface).seal();
 			injector.unmap(Interface);
 		}
 
-		[Test(expects='org.swiftsuspenders.InjectorError')]
+		[Test(expects='org.swiftsuspenders.errors.InjectorError')]
 		public function doubleSealingAMappingThrows() : void
 		{
 			injector.map(Interface).seal();
@@ -144,14 +145,14 @@ package org.swiftsuspenders
 			assertThat(config.seal(), notNullValue());
 		}
 
-		[Test(expects='org.swiftsuspenders.InjectorError')]
+		[Test(expects='org.swiftsuspenders.errors.InjectorError')]
 		public function unsealingAMappingWithoutKeyThrows() : void
 		{
 			injector.map(Interface).seal();
 			injector.map(Interface).unseal(null);
 		}
 
-		[Test(expects='org.swiftsuspenders.InjectorError')]
+		[Test(expects='org.swiftsuspenders.errors.InjectorError')]
 		public function unsealingAMappingWithWrongKeyThrows() : void
 		{
 			injector.map(Interface).seal();
