@@ -16,11 +16,9 @@
 A fallbackProvider is where the injector turns for help when it doesn't have a mapping.
 
 - Set through the `injector.fallbackProvider` property (default is `null`).
-- Either a class or instance.
 - Must implement `FallbackDependencyProvider`.
-- If a class is provided, a new instance of this class will be created for each dependency, with the dependency type passed to the constructor.
-- If an instance is provided, the same instance will be used for all dependencies.
-- Must implement the `satisfies` method, which returns a boolean saying whether it can or can't provide for this type.
+- The given instance will be used for all dependencies.
+- Must implement the `prepareNextRequest` method, which returns a boolean saying whether it can or can't provide for this request.
 
 ### Order of strategies for checking `satisfies` & fulfilling dependencies
 
@@ -45,16 +43,16 @@ If there is a fallbackProvider it will be checked.
 - Can be a facade delegating to a number of custom fallbackProviders.
 - Setting `blockParentFallbackProvider` flag on the injector prevents the injector from consulting ancestors. This only applies to fallback providers; parent mappings can still be used. Useful for child injectors in extensions.
 
-## `ClassProvider` fits the most common use case
+## `FreshInstanceProvider` fits the most common use case
 
 - Can provide an injector-instantiated instance of any Class.
 - Does not support interfaces.
 
 To configure your injector to always allow instantiation of unmapped types requested for injection, just do:
 
-	injector.fallbackProvider = ClassProvider;
+	injector.fallbackProvider = new FreshInstanceProvider();
 	
-The `ClassProvider` uses `injector.instantiateUnmapped` internally, so injected types can have nested injections fulfilled too.
+The `FreshInstanceProvider` uses `injector.instantiateUnmapped` internally, so injected types can have nested injections fulfilled too.
 
 ## `instantiateUnmapped` always returns a fresh instance
 
