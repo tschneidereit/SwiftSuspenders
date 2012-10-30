@@ -69,6 +69,12 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.support.providers.MoodyProvider;
 	import org.swiftsuspenders.support.providers.ProviderThatCanDoInterfaces;
 	import org.swiftsuspenders.dependencyproviders.FactoryProvider;
+	import org.swiftsuspenders.support.injectees.dependencychain.SharedInjectee;
+	import org.swiftsuspenders.support.injectees.dependencychain.ParentInjectee;
+	import org.swiftsuspenders.support.injectees.dependencychain.SharedInjectionID;
+	import org.swiftsuspenders.support.injectees.dependencychain.ChildInjectee;
+	import org.swiftsuspenders.support.injectees.dependencychain.GrandchildInjectee;
+	import org.swiftsuspenders.dependencyproviders.FreshInstanceProvider;
 
 	use namespace SsInternal;
 
@@ -1133,5 +1139,32 @@ package org.swiftsuspenders
 		//			Assert.assertEquals("Instance field 'property1' should be identical to Instance field 'namedProperty1'", injectee.property1, injectee.namedProperty1);
 		//			Assert.assertEquals("Instance field 'property1' should be identical to Instance field 'namedProperty2'", injectee.property1, injectee.namedProperty2);
 		//		}
+		
+		
+		// ADDED BY STRAY - 30/10/2012
+		
+		[Test]
+		public function instantiateUnmapped_by_default_fulfills_mapped_dependencies_in_chain_using_mappings_at_first_level():void
+		{
+			injector.map(SharedInjectionID).asSingleton();
+			injector.map(SharedInjectee).asSingleton();
+			injector.map(ChildInjectee);
+			injector.map(GrandchildInjectee);
+			const sharedInstance:SharedInjectee = injector.getInstance(SharedInjectee) as SharedInjectee;
+			const parentInstance:ParentInjectee = injector.instantiateUnmapped(ParentInjectee) as ParentInjectee;
+			assertThat(parentInstance.shared, equalTo(sharedInstance));
+		}
+		
+		[Test]
+		public function instantiateUnmapped_by_default_fulfills_unmapped_dependencies_in_chain_using_fresh_instances():void
+		{
+			injector.fallbackProvider = new FreshInstanceProvider();
+			injector.map(SharedInjectionID).asSingleton();
+			injector.map(SharedInjectee).asSingleton();
+			//const parentInstance1:ParentInjectee = injector.instantiateUnmapped(ParentInjectee) as ParentInjectee;
+			//const parentInstance2:ParentInjectee = injector.instantiateUnmapped(ParentInjectee) as ParentInjectee;
+			const childInstance1:ChildInjectee = injector.instantiateUnmapped(ChildInjectee) as ChildInjectee;
+			//assertThat(parentInstance1.child, not(equalTo(parentInstance2.child)));			
+		}
 	}
 }
