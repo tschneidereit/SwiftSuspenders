@@ -17,7 +17,8 @@ package org.swiftsuspenders.dependencyproviders
 		
 		public function get typeDescriptor():TypeDescriptor
 		{
-			return _typeDescriptor;
+			// no reading please
+			return null;
 		}
 		
 		public function set typeDescriptor(value:TypeDescriptor):void
