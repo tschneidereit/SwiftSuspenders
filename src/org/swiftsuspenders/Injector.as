@@ -578,6 +578,13 @@ package org.swiftsuspenders
 		public function set fallbackProvider(provider : FallbackDependencyProvider) : void
 		{
 			_fallbackProvider = provider;
+			
+			// Allows FBProviders needing to do inspection to make use of the shared cache.
+			// May be better to create own reflector and cache internally?
+			if(Object(_fallbackProvider).hasOwnProperty('typeDescriptor'))
+			{
+				_fallbackProvider['typeDescriptor'] = _classDescriptor;
+			}
 		}
 
 		public function get blockParentFallbackProvider() : Boolean

@@ -23,6 +23,9 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.support.types.Clazz;
 	import org.swiftsuspenders.support.types.ClazzExtension;
 	import org.swiftsuspenders.utils.SsInternal;
+	import org.swiftsuspenders.dependencyproviders.FreshInstanceProvider;
+	import flash.display.Sprite;
+	import flash.events.IEventDispatcher;
 
 	use namespace SsInternal;
 
@@ -130,5 +133,33 @@ package org.swiftsuspenders
 			Assert.assertEquals('className stored in provider is fqn of ClassInjectee',
 					getQualifiedClassName(ClassInjectee), provider.lastTargetClassName);
 		}
+		
+		[Test]
+		public function freshInstanceProviderCreatesExpectedType() : void
+		{
+			const provider : FreshInstanceProvider = new FreshInstanceProvider();
+			injector.fallbackProvider = provider;
+			provider.prepareNextRequest("flash.display.Sprite|");
+			const instance : Object = provider.apply(Sprite, injector, null);
+			Assert.assertTrue(instance != null);
+			Assert.assertTrue(instance is Sprite);
+		}
+		
+		[Test]
+		public function freshInstanceProviderRefusesToCreateInterface() : void
+		{
+			const provider : FreshInstanceProvider = new FreshInstanceProvider();
+			injector.fallbackProvider = provider;
+			Assert.assertFalse(provider.prepareNextRequest("flash.events.IEventDispatcher"));
+		}
+		
+		[Test]
+		public function freshInstanceProviderRefusesToCreateNamedMapping() : void
+		{
+			const provider : FreshInstanceProvider = new FreshInstanceProvider();
+			injector.fallbackProvider = provider;
+			Assert.assertFalse(provider.prepareNextRequest("flash.display.Sprite|blah"));
+		}
+		
 	}
 }
