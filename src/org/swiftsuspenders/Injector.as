@@ -33,6 +33,7 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.typedescriptions.TypeDescription;
 	import org.swiftsuspenders.utils.SsInternal;
 	import org.swiftsuspenders.utils.TypeDescriptor;
+	import org.swiftsuspenders.dependencyproviders.FreshInstanceProvider;
 
 	use namespace SsInternal;
 
@@ -427,7 +428,15 @@ package org.swiftsuspenders
 			const instance : * = description.ctor.createInstance(type, this);
 			hasEventListener(InjectionEvent.POST_INSTANTIATE) && dispatchEvent(
 				new InjectionEvent(InjectionEvent.POST_INSTANTIATE, instance, type));
-			applyInjectionPoints(instance, type, description);
+			
+			if(useMappingsForDependencyTree)
+			{
+				applyInjectionPoints(instance, type, description);
+			}
+			else
+			{
+				applyInjectionPointsUsingFreshInstances(instance, type, description);
+			}
 			return instance;
 		}
 
@@ -691,12 +700,26 @@ package org.swiftsuspenders
 		private function applyInjectionPoints(
 				target : Object, targetType : Class, description : TypeDescription) : void
 		{
+			applyInjectionPointsUsingInjector(target, targetType, description, this);
+		}
+		
+		private function applyInjectionPointsUsingFreshInstances(
+				target : Object, targetType : Class, description : TypeDescription) : void
+		{
+			const freshInstanceInjector:Injector = new Injector();
+			freshInstanceInjector.fallbackProvider = new FreshInstanceProvider();
+			applyInjectionPointsUsingInjector(target, targetType, description, freshInstanceInjector);
+		}
+		
+		private function applyInjectionPointsUsingInjector(
+				target : Object, targetType : Class, description : TypeDescription, injector : Injector) : void
+		{
 			var injectionPoint : InjectionPoint = description.injectionPoints;
 			hasEventListener(InjectionEvent.PRE_CONSTRUCT) && dispatchEvent(
 					new InjectionEvent(InjectionEvent.PRE_CONSTRUCT, target, targetType));
 			while (injectionPoint)
 			{
-				injectionPoint.applyInjection(target, targetType, this);
+				injectionPoint.applyInjection(target, targetType, injector);
 				injectionPoint = injectionPoint.next;
 			}
 			if (description.preDestroyMethods)

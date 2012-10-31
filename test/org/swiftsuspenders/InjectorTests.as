@@ -1193,5 +1193,12 @@ package org.swiftsuspenders
 			assertThat(parentInstance.shared, not(equalTo(parentInstance.child.shared)));
 			assertThat(parentInstance.child.grandchild.shared.sharedInjectionID, not(equalTo(sharedID)))
 		}
+		
+		[Test]
+		public function instantiateUnmapped_allFreshInstances_doesnt_require_fallback_provider():void
+		{
+			const parentInstance:ParentInjectee = injector.instantiateUnmapped(ParentInjectee, false) as ParentInjectee;			
+			assertThat(parentInstance.shared, not(equalTo(parentInstance.child.shared)));
+		}
 	}
 }
