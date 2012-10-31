@@ -416,7 +416,7 @@ package org.swiftsuspenders
 		 * @throws org.swiftsuspenders.errors.InjectorMissingMappingError if no mapping is found
 		 * for one of the type's dependencies and no <code>fallbackProvider</code> is set
 		 */
-		public function instantiateUnmapped(type : Class) : *
+		public function instantiateUnmapped(type : Class, useMappingsForDependencyTree : Boolean = true) : *
 		{
 			if(!canBeInstantiated(type))
 			{

@@ -1175,5 +1175,23 @@ package org.swiftsuspenders
 			const parentInstance:ParentInjectee = injector.instantiateUnmapped(ParentInjectee) as ParentInjectee;
 			assertThat(parentInstance.child.grandchild.shared, equalTo(parentInstance.child.shared));			
 		}
+		
+		[Test]
+		public function instantiateUnmapped_allFreshInstances_fulfills_mapped_dependencies_in_chain_using_fresh_instances():void
+		{
+			injector.map(SharedInjectionID).asSingleton();
+			injector.map(SharedInjectee).asSingleton();
+			injector.map(ChildInjectee);
+			injector.map(GrandchildInjectee);
+			const sharedID:SharedInjectionID = injector.getInstance(SharedInjectionID) as SharedInjectionID;
+			const sharedInstance:SharedInjectee = injector.getInstance(SharedInjectee) as SharedInjectee;
+			const parentInstance:ParentInjectee = injector.instantiateUnmapped(ParentInjectee, false) as ParentInjectee;
+			
+			assertThat(parentInstance.shared, not(equalTo(sharedInstance)));
+			assertThat(parentInstance.child.shared, not(equalTo(sharedInstance)));
+			assertThat(parentInstance.child.grandchild.shared, not(equalTo(sharedInstance)));
+			assertThat(parentInstance.shared, not(equalTo(parentInstance.child.shared)));
+			assertThat(parentInstance.child.grandchild.shared.sharedInjectionID, not(equalTo(sharedID)))
+		}
 	}
 }
