@@ -1140,7 +1140,6 @@ package org.swiftsuspenders
 		//			Assert.assertEquals("Instance field 'property1' should be identical to Instance field 'namedProperty2'", injectee.property1, injectee.namedProperty2);
 		//		}
 		
-		
 		// ADDED BY STRAY - 30/10/2012
 		
 		[Test]
@@ -1161,10 +1160,9 @@ package org.swiftsuspenders
 			injector.fallbackProvider = new FreshInstanceProvider();
 			injector.map(SharedInjectionID).asSingleton();
 			injector.map(SharedInjectee).asSingleton();
-			//const parentInstance1:ParentInjectee = injector.instantiateUnmapped(ParentInjectee) as ParentInjectee;
-			//const parentInstance2:ParentInjectee = injector.instantiateUnmapped(ParentInjectee) as ParentInjectee;
-			const childInstance1:ChildInjectee = injector.instantiateUnmapped(ChildInjectee) as ChildInjectee;
-			//assertThat(parentInstance1.child, not(equalTo(parentInstance2.child)));			
+			const parentInstance1:ParentInjectee = injector.instantiateUnmapped(ParentInjectee) as ParentInjectee;
+			const parentInstance2:ParentInjectee = injector.instantiateUnmapped(ParentInjectee) as ParentInjectee;
+			assertThat(parentInstance1.child, not(equalTo(parentInstance2.child)));			
 		}
 	}
 }

@@ -9,6 +9,7 @@ package org.swiftsuspenders.dependencyproviders
 	public class FreshInstanceProvider implements FallbackDependencyProvider
 	{
 		private var _typeDescriptor : TypeDescriptor;
+		private var _responseType : Class;
 	
 		public function FreshInstanceProvider()
 		{
@@ -39,8 +40,14 @@ package org.swiftsuspenders.dependencyproviders
 			
 			const mappingFQCN : String = mappingParts[0];
 			const mappingType : Class = getDefinitionByName(mappingFQCN) as Class;
-			return (mappingType && _typeDescriptor.getDescription(mappingType) &&
-					(_typeDescriptor.getDescription(mappingType).ctor != null) );
+			if (mappingType && _typeDescriptor.getDescription(mappingType) &&
+					(_typeDescriptor.getDescription(mappingType).ctor != null) )
+			{
+				_responseType = mappingType;
+				return true;
+			}
+			_responseType = null;
+			return false;
 		}
 
 		//---------------------------------------
@@ -49,9 +56,15 @@ package org.swiftsuspenders.dependencyproviders
 
 		public function apply(
 			targetType : Class, activeInjector : Injector, injectParameters : Dictionary) : Object
+		{
+			var response : Object;
+			if(_responseType)
 			{
-				return activeInjector.instantiateUnmapped(targetType);
+				response = activeInjector.instantiateUnmapped(_responseType);
 			}
+			_responseType = null;
+			return response;
+		}
 
 		public function destroy() : void
 		{
