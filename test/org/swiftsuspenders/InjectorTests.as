@@ -1163,6 +1163,17 @@ package org.swiftsuspenders
 			const parentInstance1:ParentInjectee = injector.instantiateUnmapped(ParentInjectee) as ParentInjectee;
 			const parentInstance2:ParentInjectee = injector.instantiateUnmapped(ParentInjectee) as ParentInjectee;
 			assertThat(parentInstance1.child, not(equalTo(parentInstance2.child)));			
+			assertThat(parentInstance1.child.grandchild, not(equalTo(parentInstance2.child.grandchild)));			
+		}
+		
+		[Test]
+		public function instantiateUnmapped_by_default_fulfills_mapped_dependencies_in_chain_using_mappings_at_deep_levels():void
+		{
+			injector.fallbackProvider = new FreshInstanceProvider();
+			injector.map(SharedInjectionID).asSingleton();
+			injector.map(SharedInjectee).asSingleton();
+			const parentInstance:ParentInjectee = injector.instantiateUnmapped(ParentInjectee) as ParentInjectee;
+			assertThat(parentInstance.child.grandchild.shared, equalTo(parentInstance.child.shared));			
 		}
 	}
 }
