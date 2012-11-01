@@ -34,6 +34,8 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.utils.SsInternal;
 	import org.swiftsuspenders.utils.TypeDescriptor;
 	import org.swiftsuspenders.dependencyproviders.FreshInstanceProvider;
+	import org.swiftsuspenders.errors.InjectorRemovingUndefinedMappingError;
+	import org.swiftsuspenders.errors.InjectorSealError;
 
 	use namespace SsInternal;
 
@@ -262,11 +264,11 @@ package org.swiftsuspenders
 			var mapping : InjectionMapping = _mappings[mappingId];
 			if (mapping && mapping.isSealed)
 			{
-				throw new InjectorError('Can\'t unmap a sealed mapping');
+				throw new InjectorSealError('Can\'t unmap a sealed mapping');
 			}
 			if (!mapping)
 			{
-				throw new InjectorError('Error while removing an injector mapping: ' +
+				throw new InjectorRemovingUndefinedMappingError('Error while removing an injector mapping: ' +
 						'No mapping defined for dependency ' + mappingId);
 			}
 			mapping.getProvider().destroy();

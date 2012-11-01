@@ -8,7 +8,7 @@
 package org.swiftsuspenders.mapping
 {
 	import org.swiftsuspenders.Injector;
-	import org.swiftsuspenders.errors.InjectorError;
+	import org.swiftsuspenders.errors.InjectorSealError;
 	import org.swiftsuspenders.dependencyproviders.ClassProvider;
 	import org.swiftsuspenders.dependencyproviders.DependencyProvider;
 	import org.swiftsuspenders.dependencyproviders.ForwardingProvider;
@@ -225,7 +225,7 @@ package org.swiftsuspenders.mapping
 		{
 			if (_sealed)
 			{
-				throw new InjectorError('Mapping is already sealed.');
+				throw new InjectorSealError('Mapping is already sealed.');
 			}
 			_sealed = true;
 			_sealKey = {};
@@ -249,11 +249,11 @@ package org.swiftsuspenders.mapping
 		{
 			if (!_sealed)
 			{
-				throw new InjectorError('Can\'t unseal a non-sealed mapping.');
+				throw new InjectorSealError('Can\'t unseal a non-sealed mapping.');
 			}
 			if (key !== _sealKey)
 			{
-				throw new InjectorError('Can\'t unseal mapping without the correct key.');
+				throw new InjectorSealError('Can\'t unseal mapping without the correct key.');
 			}
 			_sealed = false;
 			_sealKey = null;
@@ -337,7 +337,7 @@ package org.swiftsuspenders.mapping
 
 		private function throwSealedError() : void
 		{
-			throw new InjectorError('Can\'t change a sealed mapping');
+			throw new InjectorSealError('Can\'t change a sealed mapping');
 		}
 
 		private function dispatchPreChangeEvent() : void
