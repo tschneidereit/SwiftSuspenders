@@ -999,6 +999,13 @@ package org.swiftsuspenders
 		}
 		
 		[Test]
+		public function hasMapping_returns_false_where_mapping_doesnt_exist_and_fallbackProvider_is_set() : void
+		{
+			injector.fallbackProvider = new FreshInstanceProvider();
+			assertThat(injector.hasMapping(Clazz), isFalse());
+		}
+		
+		[Test]
 		public function hasDirectMapping_returns_false_for_parent_mappings() : void
 		{
 			injector.map(Clazz).toValue(new Clazz());
@@ -1167,6 +1174,13 @@ package org.swiftsuspenders
 		{
 			const parentInstance:ParentInjectee = injector.instantiateUnmapped(ParentInjectee, false) as ParentInjectee;			
 			assertThat(parentInstance.shared, not(equalTo(parentInstance.child.shared)));
+		}
+		
+		[Test]
+		public function instantiateUnmapped_doesnt_change_hasMapping():void
+		{
+			injector.instantiateUnmapped(Clazz);
+			assertThat(injector.hasMapping(Clazz), isFalse());
 		}
 	}
 }

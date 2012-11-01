@@ -573,7 +573,8 @@ package org.swiftsuspenders
 		
 		public function hasMapping(type : Class, name : String = '') : Boolean
 		{
-			return getProvider(getQualifiedClassName(type) + '|' + name) != null;
+			const provider : DependencyProvider = getProvider(getQualifiedClassName(type) + '|' + name);
+			return provider && (provider != this.fallbackProvider);
 		}
 		
 		public function hasDirectMapping(type : Class, name : String = '') : Boolean
