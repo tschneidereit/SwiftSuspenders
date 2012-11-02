@@ -22,53 +22,27 @@ package org.swiftsuspenders
 	import org.hamcrest.object.isTrue;
 	import org.hamcrest.object.isFalse;
 	import org.hamcrest.object.instanceOf;
+	import org.swiftsuspenders.dependencyproviders.ClassProvider;
+	import org.swiftsuspenders.dependencyproviders.FactoryProvider;
+	import org.swiftsuspenders.dependencyproviders.FreshInstanceProvider;
 	import org.swiftsuspenders.dependencyproviders.OtherMappingProvider;
 	import org.swiftsuspenders.errors.InjectorError;
+	import org.swiftsuspenders.errors.InjectorInterfaceConstructionError;
+	import org.swiftsuspenders.errors.InjectorMissingMappingError;
 	import org.swiftsuspenders.mapping.InjectionMapping;
 	import org.swiftsuspenders.mapping.MappingEvent;
-	import org.swiftsuspenders.support.injectees.ClassInjectee;
-	import org.swiftsuspenders.support.injectees.ComplexClassInjectee;
-	import org.swiftsuspenders.support.injectees.InterfaceInjectee;
-	import org.swiftsuspenders.support.injectees.MixedParametersConstructorInjectee;
-	import org.swiftsuspenders.support.injectees.MixedParametersMethodInjectee;
-	import org.swiftsuspenders.support.injectees.MultipleNamedSingletonsOfSameClassInjectee;
-	import org.swiftsuspenders.support.injectees.MultipleSingletonsOfSameClassInjectee;
-	import org.swiftsuspenders.support.injectees.NamedArrayCollectionInjectee;
-	import org.swiftsuspenders.support.injectees.NamedClassInjectee;
-	import org.swiftsuspenders.support.injectees.NamedInterfaceInjectee;
-	import org.swiftsuspenders.support.injectees.OneNamedParameterConstructorInjectee;
-	import org.swiftsuspenders.support.injectees.OneNamedParameterMethodInjectee;
-	import org.swiftsuspenders.support.injectees.OneParameterConstructorInjectee;
-	import org.swiftsuspenders.support.injectees.OneParameterMethodInjectee;
-	import org.swiftsuspenders.support.injectees.OptionalClassInjectee;
-	import org.swiftsuspenders.support.injectees.OptionalOneRequiredParameterMethodInjectee;
-	import org.swiftsuspenders.support.injectees.OrderedPostConstructInjectee;
-	import org.swiftsuspenders.support.injectees.PostConstructInjectedVarInjectee;
-	import org.swiftsuspenders.support.injectees.PostConstructWithArgInjectee;
-	import org.swiftsuspenders.support.injectees.RecursiveInterfaceInjectee;
-	import org.swiftsuspenders.support.injectees.SetterInjectee;
-	import org.swiftsuspenders.support.injectees.StringInjectee;
-	import org.swiftsuspenders.support.injectees.TwoNamedInterfaceFieldsInjectee;
-	import org.swiftsuspenders.support.injectees.TwoNamedParametersConstructorInjectee;
-	import org.swiftsuspenders.support.injectees.TwoNamedParametersMethodInjectee;
-	import org.swiftsuspenders.support.injectees.TwoParametersConstructorInjectee;
-	import org.swiftsuspenders.support.injectees.TwoParametersMethodInjectee;
-	import org.swiftsuspenders.support.injectees.UnknownInjectParametersListInjectee;
-	import org.swiftsuspenders.support.injectees.XMLInjectee;
+	import org.swiftsuspenders.support.injectees.*;
 	import org.swiftsuspenders.support.providers.UnknownParametersUsingProvider;
 	import org.swiftsuspenders.support.types.Clazz;
 	import org.swiftsuspenders.support.types.Clazz2;
 	import org.swiftsuspenders.support.types.ComplexClazz;
 	import org.swiftsuspenders.support.types.Interface;
 	import org.swiftsuspenders.support.types.Interface2;
-	import org.swiftsuspenders.typedescriptions.TypeDescription;
-	import org.swiftsuspenders.utils.SsInternal;
-	import org.swiftsuspenders.errors.InjectorInterfaceConstructionError;
-	import org.swiftsuspenders.errors.InjectorMissingMappingError;
-	import org.swiftsuspenders.dependencyproviders.ClassProvider;
 	import org.swiftsuspenders.support.providers.MoodyProvider;
 	import org.swiftsuspenders.support.providers.ProviderThatCanDoInterfaces;
-	import org.swiftsuspenders.dependencyproviders.FactoryProvider;
+	import org.swiftsuspenders.support.injectees.dependencychain.*;
+	import org.swiftsuspenders.typedescriptions.TypeDescription;
+	import org.swiftsuspenders.utils.SsInternal;
 
 	use namespace SsInternal;
 
@@ -1025,6 +999,13 @@ package org.swiftsuspenders
 		}
 		
 		[Test]
+		public function hasMapping_returns_false_where_mapping_doesnt_exist_and_fallbackProvider_is_set() : void
+		{
+			injector.fallbackProvider = new FreshInstanceProvider();
+			assertThat(injector.hasMapping(Clazz), isFalse());
+		}
+		
+		[Test]
 		public function hasDirectMapping_returns_false_for_parent_mappings() : void
 		{
 			injector.map(Clazz).toValue(new Clazz());
@@ -1133,5 +1114,73 @@ package org.swiftsuspenders
 		//			Assert.assertEquals("Instance field 'property1' should be identical to Instance field 'namedProperty1'", injectee.property1, injectee.namedProperty1);
 		//			Assert.assertEquals("Instance field 'property1' should be identical to Instance field 'namedProperty2'", injectee.property1, injectee.namedProperty2);
 		//		}
+		
+		// ADDED BY STRAY - 30/10/2012
+		
+		[Test]
+		public function instantiateUnmapped_by_default_fulfills_mapped_dependencies_in_chain_using_mappings_at_first_level():void
+		{
+			injector.map(SharedInjectionID).asSingleton();
+			injector.map(SharedInjectee).asSingleton();
+			injector.map(ChildInjectee);
+			injector.map(GrandchildInjectee);
+			const sharedInstance:SharedInjectee = injector.getInstance(SharedInjectee) as SharedInjectee;
+			const parentInstance:ParentInjectee = injector.instantiateUnmapped(ParentInjectee) as ParentInjectee;
+			assertThat(parentInstance.shared, equalTo(sharedInstance));
+		}
+		
+		[Test]
+		public function instantiateUnmapped_by_default_fulfills_unmapped_dependencies_in_chain_using_fresh_instances():void
+		{
+			injector.fallbackProvider = new FreshInstanceProvider();
+			injector.map(SharedInjectionID).asSingleton();
+			injector.map(SharedInjectee).asSingleton();
+			const parentInstance1:ParentInjectee = injector.instantiateUnmapped(ParentInjectee) as ParentInjectee;
+			const parentInstance2:ParentInjectee = injector.instantiateUnmapped(ParentInjectee) as ParentInjectee;
+			assertThat(parentInstance1.child, not(equalTo(parentInstance2.child)));			
+			assertThat(parentInstance1.child.grandchild, not(equalTo(parentInstance2.child.grandchild)));			
+		}
+		
+		[Test]
+		public function instantiateUnmapped_by_default_fulfills_mapped_dependencies_in_chain_using_mappings_at_deep_levels():void
+		{
+			injector.fallbackProvider = new FreshInstanceProvider();
+			injector.map(SharedInjectionID).asSingleton();
+			injector.map(SharedInjectee).asSingleton();
+			const parentInstance:ParentInjectee = injector.instantiateUnmapped(ParentInjectee) as ParentInjectee;
+			assertThat(parentInstance.child.grandchild.shared, equalTo(parentInstance.child.shared));			
+		}
+		
+		[Test]
+		public function instantiateUnmapped_allFreshInstances_fulfills_mapped_dependencies_in_chain_using_fresh_instances():void
+		{
+			injector.map(SharedInjectionID).asSingleton();
+			injector.map(SharedInjectee).asSingleton();
+			injector.map(ChildInjectee);
+			injector.map(GrandchildInjectee);
+			const sharedID:SharedInjectionID = injector.getInstance(SharedInjectionID) as SharedInjectionID;
+			const sharedInstance:SharedInjectee = injector.getInstance(SharedInjectee) as SharedInjectee;
+			const parentInstance:ParentInjectee = injector.instantiateUnmapped(ParentInjectee, false) as ParentInjectee;
+			
+			assertThat(parentInstance.shared, not(equalTo(sharedInstance)));
+			assertThat(parentInstance.child.shared, not(equalTo(sharedInstance)));
+			assertThat(parentInstance.child.grandchild.shared, not(equalTo(sharedInstance)));
+			assertThat(parentInstance.shared, not(equalTo(parentInstance.child.shared)));
+			assertThat(parentInstance.child.grandchild.shared.sharedInjectionID, not(equalTo(sharedID)))
+		}
+		
+		[Test]
+		public function instantiateUnmapped_allFreshInstances_doesnt_require_fallback_provider():void
+		{
+			const parentInstance:ParentInjectee = injector.instantiateUnmapped(ParentInjectee, false) as ParentInjectee;			
+			assertThat(parentInstance.shared, not(equalTo(parentInstance.child.shared)));
+		}
+		
+		[Test]
+		public function instantiateUnmapped_doesnt_change_hasMapping():void
+		{
+			injector.instantiateUnmapped(Clazz);
+			assertThat(injector.hasMapping(Clazz), isFalse());
+		}
 	}
 }

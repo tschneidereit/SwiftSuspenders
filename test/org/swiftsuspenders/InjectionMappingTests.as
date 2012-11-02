@@ -11,6 +11,7 @@ package org.swiftsuspenders
 
 	import org.hamcrest.assertThat;
 	import org.hamcrest.core.isA;
+	import org.hamcrest.core.not;
 	import org.hamcrest.object.equalTo;
 	import org.hamcrest.object.hasProperties;
 	import org.hamcrest.object.isTrue;
@@ -22,6 +23,7 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.support.types.Clazz;
 	import org.swiftsuspenders.support.types.Interface;
 	import org.swiftsuspenders.utils.SsInternal;
+	import org.swiftsuspenders.errors.InjectorRemovingUndefinedMappingError;
 
 	use namespace SsInternal;
 
@@ -124,14 +126,14 @@ package org.swiftsuspenders
 			assertThat(testedMethods, hasProperties(methods));
 		}
 
-		[Test(expects='org.swiftsuspenders.errors.InjectorError')]
+		[Test(expects='org.swiftsuspenders.errors.InjectorSealError')]
 		public function unmappingASealedMappingThrows() : void
 		{
 			injector.map(Interface).seal();
 			injector.unmap(Interface);
 		}
 
-		[Test(expects='org.swiftsuspenders.errors.InjectorError')]
+		[Test(expects='org.swiftsuspenders.errors.InjectorSealError')]
 		public function doubleSealingAMappingThrows() : void
 		{
 			injector.map(Interface).seal();
@@ -145,14 +147,14 @@ package org.swiftsuspenders
 			assertThat(config.seal(), notNullValue());
 		}
 
-		[Test(expects='org.swiftsuspenders.errors.InjectorError')]
+		[Test(expects='org.swiftsuspenders.errors.InjectorSealError')]
 		public function unsealingAMappingWithoutKeyThrows() : void
 		{
 			injector.map(Interface).seal();
 			injector.map(Interface).unseal(null);
 		}
 
-		[Test(expects='org.swiftsuspenders.errors.InjectorError')]
+		[Test(expects='org.swiftsuspenders.errors.InjectorSealError')]
 		public function unsealingAMappingWithWrongKeyThrows() : void
 		{
 			injector.map(Interface).seal();
@@ -166,12 +168,34 @@ package org.swiftsuspenders
 			injector.map(Interface).unseal(key);
 			injector.map(Interface).locally();
 		}
+		
+		[Test]
+		public function keys_returned_by_sealing_are_unique() : void
+		{
+			const firstKey : Object = injector.map(Interface).seal();
+			injector.map(Interface).unseal(firstKey);
+			const secondKey : Object = injector.map(Interface).seal();
+			assertThat(firstKey, not(equalTo(secondKey)));
+		}
 
 		[Test]
 		public function valueMappingSupportsNullValue() : void
 		{
 			injector.map(Interface).toValue(null);
 			injector.getInstance(Interface);
+		}
+		
+		[Test]
+		public function duplicate_mappings_dont_explode():void
+		{
+			injector.map(Clazz).asSingleton();
+			injector.map(Clazz).asSingleton();
+		}
+		
+		[Test(expects="org.swiftsuspenders.errors.InjectorRemovingUndefinedMappingError")]
+		public function removing_a_non_existent_mapping_throws_InjectorError():void
+		{
+			injector.unmap(Clazz);
 		}
 	}
 }

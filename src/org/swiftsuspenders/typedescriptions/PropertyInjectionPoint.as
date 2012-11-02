@@ -51,5 +51,10 @@ package org.swiftsuspenders.typedescriptions
 			}
 			target[_propertyName] = provider.apply(targetType, injector, injectParameters);
 		}
+		
+		public function toString():String
+		{
+			return "[ PropertyInjectionPoint mappingId:"+_mappingId+" propertyName:"+_propertyName+" ]"
+		}
 	}
 }

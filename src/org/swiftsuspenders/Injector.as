@@ -33,6 +33,9 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.typedescriptions.TypeDescription;
 	import org.swiftsuspenders.utils.SsInternal;
 	import org.swiftsuspenders.utils.TypeDescriptor;
+	import org.swiftsuspenders.dependencyproviders.FreshInstanceProvider;
+	import org.swiftsuspenders.errors.InjectorRemovingUndefinedMappingError;
+	import org.swiftsuspenders.errors.InjectorSealError;
 
 	use namespace SsInternal;
 
@@ -261,11 +264,11 @@ package org.swiftsuspenders
 			var mapping : InjectionMapping = _mappings[mappingId];
 			if (mapping && mapping.isSealed)
 			{
-				throw new InjectorError('Can\'t unmap a sealed mapping');
+				throw new InjectorSealError('Can\'t unmap a sealed mapping');
 			}
 			if (!mapping)
 			{
-				throw new InjectorError('Error while removing an injector mapping: ' +
+				throw new InjectorRemovingUndefinedMappingError('Error while removing an injector mapping: ' +
 						'No mapping defined for dependency ' + mappingId);
 			}
 			mapping.getProvider().destroy();
@@ -416,7 +419,7 @@ package org.swiftsuspenders
 		 * @throws org.swiftsuspenders.errors.InjectorMissingMappingError if no mapping is found
 		 * for one of the type's dependencies and no <code>fallbackProvider</code> is set
 		 */
-		public function instantiateUnmapped(type : Class) : *
+		public function instantiateUnmapped(type : Class, useMappingsForDependencyTree : Boolean = true) : *
 		{
 			if(!canBeInstantiated(type))
 			{
@@ -427,7 +430,15 @@ package org.swiftsuspenders
 			const instance : * = description.ctor.createInstance(type, this);
 			hasEventListener(InjectionEvent.POST_INSTANTIATE) && dispatchEvent(
 				new InjectionEvent(InjectionEvent.POST_INSTANTIATE, instance, type));
-			applyInjectionPoints(instance, type, description);
+			
+			if(useMappingsForDependencyTree)
+			{
+				applyInjectionPoints(instance, type, description);
+			}
+			else
+			{
+				applyInjectionPointsUsingFreshInstances(instance, type, description);
+			}
 			return instance;
 		}
 
@@ -562,7 +573,8 @@ package org.swiftsuspenders
 		
 		public function hasMapping(type : Class, name : String = '') : Boolean
 		{
-			return getProvider(getQualifiedClassName(type) + '|' + name) != null;
+			const provider : DependencyProvider = getProvider(getQualifiedClassName(type) + '|' + name);
+			return provider && (provider != this.fallbackProvider);
 		}
 		
 		public function hasDirectMapping(type : Class, name : String = '') : Boolean
@@ -578,6 +590,13 @@ package org.swiftsuspenders
 		public function set fallbackProvider(provider : FallbackDependencyProvider) : void
 		{
 			_fallbackProvider = provider;
+			
+			// Allows FBProviders needing to do inspection to make use of the shared cache.
+			// May be better to create own reflector and cache internally?
+			if(Object(_fallbackProvider).hasOwnProperty('typeDescriptor'))
+			{
+				_fallbackProvider['typeDescriptor'] = _classDescriptor;
+			}
 		}
 
 		public function get blockParentFallbackProvider() : Boolean
@@ -684,12 +703,26 @@ package org.swiftsuspenders
 		private function applyInjectionPoints(
 				target : Object, targetType : Class, description : TypeDescription) : void
 		{
+			applyInjectionPointsUsingInjector(target, targetType, description, this);
+		}
+		
+		private function applyInjectionPointsUsingFreshInstances(
+				target : Object, targetType : Class, description : TypeDescription) : void
+		{
+			const freshInstanceInjector:Injector = new Injector();
+			freshInstanceInjector.fallbackProvider = new FreshInstanceProvider();
+			applyInjectionPointsUsingInjector(target, targetType, description, freshInstanceInjector);
+		}
+		
+		private function applyInjectionPointsUsingInjector(
+				target : Object, targetType : Class, description : TypeDescription, injector : Injector) : void
+		{
 			var injectionPoint : InjectionPoint = description.injectionPoints;
 			hasEventListener(InjectionEvent.PRE_CONSTRUCT) && dispatchEvent(
 					new InjectionEvent(InjectionEvent.PRE_CONSTRUCT, target, targetType));
 			while (injectionPoint)
 			{
-				injectionPoint.applyInjection(target, targetType, this);
+				injectionPoint.applyInjection(target, targetType, injector);
 				injectionPoint = injectionPoint.next;
 			}
 			if (description.preDestroyMethods)
