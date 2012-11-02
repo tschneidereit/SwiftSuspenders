@@ -11,6 +11,7 @@ package org.swiftsuspenders
 
 	import org.hamcrest.assertThat;
 	import org.hamcrest.core.isA;
+	import org.hamcrest.core.not;
 	import org.hamcrest.object.equalTo;
 	import org.hamcrest.object.hasProperties;
 	import org.hamcrest.object.isTrue;
@@ -166,6 +167,15 @@ package org.swiftsuspenders
 			const key : Object = injector.map(Interface).seal();
 			injector.map(Interface).unseal(key);
 			injector.map(Interface).locally();
+		}
+		
+		[Test]
+		public function keys_returned_by_sealing_are_unique() : void
+		{
+			const firstKey : Object = injector.map(Interface).seal();
+			injector.map(Interface).unseal(firstKey);
+			const secondKey : Object = injector.map(Interface).seal();
+			assertThat(firstKey, not(equalTo(secondKey)));
 		}
 
 		[Test]
