@@ -402,9 +402,9 @@ package org.swiftsuspenders
 		 * @throws org.swiftsuspenders.errors.InjectorInterfaceConstructionError if the given type
 		 * is an interface and no mapping was found
 		 */
-		public function getOrCreateNewInstance(type : Class) : *
+		public function getOrCreateNewInstance(type : Class, name : String = '') : *
 		{
-			return satisfies(type) && getInstance(type) || instantiateUnmapped(type);
+			return satisfies(type, name) && getInstance(type, name) || instantiateUnmapped(type);
 		}
 
 		/**
