@@ -18,10 +18,11 @@ __Step 4: Install the third party dependencies into your local repository__
 
 * In OS X
 
-		bash -x maven-runonce.sh
+		cd build && bash -x maven-runonce.sh
 
 * In Windows 
 	
+		cd build
 		maven-runonce.bat
 
 >Note: we do this because unlike Ant, Maven requires all dependencies live within a repository somewhere. Because none of these dependencies are hosted externally on a remote repository, we need to install them locally into the repository. Going forward, the hope is that many of these dependencies will live in Maven Central, negating the need to install them locally. JM.
