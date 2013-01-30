@@ -125,7 +125,7 @@
 		<testSourceDirectory>test</testSourceDirectory>
 		<resources>
 			<resource>
-				<directory>src</directory>
+				<directory>resources</directory>
 			</resource>
 		</resources>
 		<testResources>
