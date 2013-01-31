@@ -19,8 +19,6 @@ package org.swiftsuspenders.typedescriptions
 	public class MethodInjectionPoint extends InjectionPoint
 	{
 		//----------------------       Private / Protected Properties       ----------------------//
-		private static const _parameterValues : Array = [];
-		
 		protected var _parameterMappingIDs : Array;
 		protected var _requiredParameters : int;
 
@@ -55,7 +53,7 @@ package org.swiftsuspenders.typedescriptions
 				target : Object, targetType : Class, injector : Injector) : Array
 		{
 			var length : int = _parameterMappingIDs.length;
-			var parameters : Array = _parameterValues;
+			var parameters : Array = [];
 			parameters.length = length;
 			for (var i : int = 0; i < length; i++)
 			{
