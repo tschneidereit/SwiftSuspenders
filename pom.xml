@@ -126,6 +126,9 @@
 		<resources>
 			<resource>
 				<directory>src</directory>
+				<includes>
+					<include>metadata.xml</include>
+				</includes>
 			</resource>
 		</resources>
 		<testResources>
@@ -155,11 +158,6 @@
 					<compilerWarnings>
 						<warn-no-constructor>false</warn-no-constructor>
 					</compilerWarnings>
-					<includeFiles>
-						<includes>
-							<include>metadata.xml</include>
-						</includes>
-					</includeFiles>
 					<includeTestFiles>
 						<includeTestFile>org/swiftsuspenders/suites/SwiftSuspendersTestSuite.as</includeTestFile>
 					</includeTestFiles>
