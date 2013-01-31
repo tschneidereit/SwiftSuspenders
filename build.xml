@@ -73,7 +73,7 @@
       <!-- We want all the org package classes in the SWC being built. -->
       <arg value="-include-sources=${main.src.loc}" />
 
-      <arg value="-include-file=metadata.xml,${main.src.loc}/metadata.xml" />
+      <arg value="-include-file=metadata.xml,${main.res.loc}/metadata.xml" />
 	
       <!-- Include classes from SWCs in this folder, but only the ones we use. -->
       <arg value="-library-path+=${lib.loc}" />
