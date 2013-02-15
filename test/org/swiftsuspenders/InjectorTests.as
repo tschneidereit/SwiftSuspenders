@@ -52,6 +52,7 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.support.injectees.TwoNamedParametersConstructorInjectee;
 	import org.swiftsuspenders.support.injectees.TwoNamedParametersMethodInjectee;
 	import org.swiftsuspenders.support.injectees.TwoParametersConstructorInjectee;
+	import org.swiftsuspenders.support.injectees.TwoParametersConstructorInjecteeWithConstructorInjectedDependencies
 	import org.swiftsuspenders.support.injectees.TwoParametersMethodInjectee;
 	import org.swiftsuspenders.support.injectees.UnknownInjectParametersListInjectee;
 	import org.swiftsuspenders.support.injectees.XMLInjectee;
@@ -1119,6 +1120,20 @@ package org.swiftsuspenders
 			Assert.assertEquals("Instance field 'property1' should be identical to Instance field 'property2'", injectee.property1, injectee.property2);
 			Assert.assertEquals("Instance field 'property1' should be identical to Instance field 'namedProperty1'", injectee.property1, injectee.namedProperty1);
 			Assert.assertEquals("Instance field 'property1' should be identical to Instance field 'namedProperty2'", injectee.property1, injectee.namedProperty2);
+		}
+
+		[Test]
+		public function two_parameters_constructor_injection_with_constructor_injected_dependencies_fulfilled():void
+		{
+			injector.map(Clazz);
+			injector.map(OneParameterConstructorInjectee);
+			injector.map(TwoParametersConstructorInjectee);
+			injector.map(String).toValue('stringDependency');
+
+			var injectee:TwoParametersConstructorInjecteeWithConstructorInjectedDependencies = 
+				injector.instantiateUnmapped(TwoParametersConstructorInjecteeWithConstructorInjectedDependencies);
+			Assert.assertNotNull("Instance of Class should have been injected for OneParameterConstructorInjectee parameter", injectee.getDependency1() );
+			Assert.assertNotNull("Instance of Class should have been injected for TwoParametersConstructorInjectee parameter", injectee.getDependency2() );
 		}
 
 		//		[Test]
