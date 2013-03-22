@@ -37,6 +37,7 @@ package org.swiftsuspenders.typedescriptions
 				case 8 : result = new type(p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7]); break;
 				case 9 : result = new type(p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8]); break;
 				case 10 : result = new type(p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8], p[9]); break;
+				default: throw new Error("The constructor for " + type + " has too many arguments, maximum is 10");
 			}
 			p.length = 0;
 			return result;
