@@ -12,7 +12,7 @@ layout = Layout::Default.new
 layout[:source, :main, :as3] = "src"
 layout[:source, :test, :as3] = "test"
 
-THIS_VERSION = "2.0.0b3-SNAPSHOT"
+THIS_VERSION = "2.0.0rc2"
 
 define "Swiftsuspenders", :layout => layout do
   
