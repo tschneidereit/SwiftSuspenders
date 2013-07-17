@@ -8,7 +8,6 @@
 package org.swiftsuspenders.mapping
 {
 	import org.swiftsuspenders.Injector;
-	import org.swiftsuspenders.errors.InjectorError;
 	import org.swiftsuspenders.dependencyproviders.ClassProvider;
 	import org.swiftsuspenders.dependencyproviders.DependencyProvider;
 	import org.swiftsuspenders.dependencyproviders.ForwardingProvider;
@@ -17,6 +16,7 @@ package org.swiftsuspenders.mapping
 	import org.swiftsuspenders.dependencyproviders.SingletonProvider;
 	import org.swiftsuspenders.dependencyproviders.SoftDependencyProvider;
 	import org.swiftsuspenders.dependencyproviders.ValueProvider;
+	import org.swiftsuspenders.errors.InjectorError;
 	import org.swiftsuspenders.utils.SsInternal;
 
 	public class InjectionMapping implements ProviderlessMapping, UnsealedMapping
@@ -155,6 +155,25 @@ package org.swiftsuspenders.mapping
 			_defaultProviderSet = false;
 			mapProvider(provider);
 			dispatchPostChangeEvent();
+			return this;
+		}
+
+		/**
+		 * Makes the mapping apply the <code>DependencyProvider</code> mapped to <code>type</code>
+		 * and (optionally) <code>name</code> and return the resulting value for each consecutive
+		 * request.
+		 *
+		 * @param type The type to use the provider of
+		 * @param name The name to use the provider of
+		 *
+		 * @return The <code>InjectionMapping</code> the method is invoked on
+		 *
+		 * @throws org.swiftsuspenders.errors.InjectorMissingMappingError when no mapping was found
+		 * for the specified dependency
+		 */
+		public function toProviderOf(type : Class, name:String = ''):UnsealedMapping{
+			const provider : DependencyProvider = _creatingInjector.getMapping(type, name).getProvider();
+			toProvider(provider);
 			return this;
 		}
 

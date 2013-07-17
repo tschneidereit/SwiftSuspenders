@@ -19,11 +19,16 @@ package org.swiftsuspenders
 	import org.hamcrest.core.not;
 	import org.hamcrest.object.equalTo;
 	import org.hamcrest.object.hasPropertyWithValue;
-	import org.hamcrest.object.isTrue;
-	import org.hamcrest.object.isFalse;
 	import org.hamcrest.object.instanceOf;
+	import org.hamcrest.object.isFalse;
+	import org.hamcrest.object.isTrue;
+	import org.swiftsuspenders.dependencyproviders.ClassProvider;
+	import org.swiftsuspenders.dependencyproviders.DependencyProvider;
+	import org.swiftsuspenders.dependencyproviders.FactoryProvider;
 	import org.swiftsuspenders.dependencyproviders.OtherMappingProvider;
 	import org.swiftsuspenders.errors.InjectorError;
+	import org.swiftsuspenders.errors.InjectorInterfaceConstructionError;
+	import org.swiftsuspenders.errors.InjectorMissingMappingError;
 	import org.swiftsuspenders.mapping.InjectionMapping;
 	import org.swiftsuspenders.mapping.MappingEvent;
 	import org.swiftsuspenders.support.injectees.ClassInjectee;
@@ -52,10 +57,12 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.support.injectees.TwoNamedParametersConstructorInjectee;
 	import org.swiftsuspenders.support.injectees.TwoNamedParametersMethodInjectee;
 	import org.swiftsuspenders.support.injectees.TwoParametersConstructorInjectee;
-	import org.swiftsuspenders.support.injectees.TwoParametersConstructorInjecteeWithConstructorInjectedDependencies
+	import org.swiftsuspenders.support.injectees.TwoParametersConstructorInjecteeWithConstructorInjectedDependencies;
 	import org.swiftsuspenders.support.injectees.TwoParametersMethodInjectee;
 	import org.swiftsuspenders.support.injectees.UnknownInjectParametersListInjectee;
 	import org.swiftsuspenders.support.injectees.XMLInjectee;
+	import org.swiftsuspenders.support.providers.MoodyProvider;
+	import org.swiftsuspenders.support.providers.ProviderThatCanDoInterfaces;
 	import org.swiftsuspenders.support.providers.UnknownParametersUsingProvider;
 	import org.swiftsuspenders.support.types.Clazz;
 	import org.swiftsuspenders.support.types.Clazz2;
@@ -64,12 +71,6 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.support.types.Interface2;
 	import org.swiftsuspenders.typedescriptions.TypeDescription;
 	import org.swiftsuspenders.utils.SsInternal;
-	import org.swiftsuspenders.errors.InjectorInterfaceConstructionError;
-	import org.swiftsuspenders.errors.InjectorMissingMappingError;
-	import org.swiftsuspenders.dependencyproviders.ClassProvider;
-	import org.swiftsuspenders.support.providers.MoodyProvider;
-	import org.swiftsuspenders.support.providers.ProviderThatCanDoInterfaces;
-	import org.swiftsuspenders.dependencyproviders.FactoryProvider;
 
 	use namespace SsInternal;
 
@@ -77,7 +78,7 @@ package org.swiftsuspenders
 	{
 		protected var injector:Injector;
 		protected var receivedInjectorEvents : Array;
-		
+
 		[Before]
 		public function runBeforeEachTest():void
 		{
@@ -92,7 +93,7 @@ package org.swiftsuspenders
 			injector = null;
 			receivedInjectorEvents = null;
 		}
-		
+
 		[Test]
 		public function unmap_removes_mapping():void
 		{
@@ -103,7 +104,7 @@ package org.swiftsuspenders
 			injector.unmap(Interface);
 			Assert.assertFalse(injector.satisfies(Interface));
 		}
-		
+
 		[Test]
 		public function injector_injects_bound_value_into_all_injectees():void
 		{
@@ -116,7 +117,7 @@ package org.swiftsuspenders
 			injector.injectInto(injectee2);
 			Assert.assertStrictlyEquals("Injected values should be equal", injectee.property, injectee2.property );
 		}
-		
+
 		[Test]
 		public function map_value_by_interface():void
 		{
@@ -126,7 +127,7 @@ package org.swiftsuspenders
 			injector.injectInto(injectee);
 			Assert.assertStrictlyEquals("Value should have been injected", value, injectee.property );
 		}
-		
+
 		[Test]
 		public function map_named_value_by_class():void
 		{
@@ -166,7 +167,7 @@ package org.swiftsuspenders
 			injector.injectInto(injectee);
 			Assert.assertNull('value shouldn\'t have been injected into', value.property);
 		}
-		
+
 		[Test]
 		public function map_multiple_interfaces_to_one_singleton_class():void
 		{
@@ -178,7 +179,7 @@ package org.swiftsuspenders
 			Assert.assertNotNull("Singleton Value for 'property2' should have been injected", injectee.property2 );
 			Assert.assertFalse("Singleton Values 'property1' and 'property2' should not be identical", injectee.property1 == injectee.property2 );
 		}
-		
+
 		[Test]
 		public function map_class_to_type_creates_new_instances():void
 		{
@@ -202,7 +203,7 @@ package org.swiftsuspenders
 			Assert.assertNotNull("Complex Value should have been injected", injectee.property  );
 			Assert.assertStrictlyEquals("Nested value should have been injected", value, injectee.property.value );
 		}
-		
+
 		[Test]
 		public function map_interface_to_type():void
 		{
@@ -211,7 +212,7 @@ package org.swiftsuspenders
 			injector.injectInto(injectee);
 			Assert.assertNotNull("Instance of Class should have been injected", injectee.property );
 		}
-		
+
 		[Test]
 		public function map_class_to_type_by_name():void
 		{
@@ -220,7 +221,7 @@ package org.swiftsuspenders
 			injector.injectInto(injectee);
 			Assert.assertNotNull("Instance of named Class should have been injected", injectee.property );
 		}
-		
+
 		[Test]
 		public function map_interface_to_type_by_name():void
 		{
@@ -229,7 +230,7 @@ package org.swiftsuspenders
 			injector.injectInto(injectee);
 			Assert.assertNotNull("Instance of named Class should have been injected", injectee.property );
 		}
-		
+
 		[Test]
 		public function map_class_to_singleton_provides_single_instance():void
 		{
@@ -241,7 +242,7 @@ package org.swiftsuspenders
 			injector.injectInto(injectee2);
 			Assert.assertStrictlyEquals("Injected values should be equal", injectee.property, injectee2.property );
 		}
-		
+
 		[Test]
 		public function map_interface_to_singleton_provides_single_instance():void
 		{
@@ -253,7 +254,7 @@ package org.swiftsuspenders
 			injector.injectInto(injectee2);
 			Assert.assertStrictlyEquals("Injected values should be equal", injectee.property, injectee2.property );
 		}
-		
+
 		[Test]
 		public function map_same_interface_with_different_names_to_different_singletons_provides_different_instances():void
 		{
@@ -265,7 +266,7 @@ package org.swiftsuspenders
 			Assert.assertTrue('Property "property2" should be of type "Clazz2"', injectee.property2 is Clazz2);
 			Assert.assertFalse('Properties "property1" and "property2" should have received different singletons', injectee.property1 == injectee.property2);
 		}
-		
+
 		[Test]
 		public function setter_injection_fulfills_dependency():void
 		{
@@ -277,7 +278,7 @@ package org.swiftsuspenders
 			injector.injectInto(injectee2);
 			Assert.assertFalse("Injected values should be different", injectee.property == injectee2.property );
 		}
-		
+
 		[Test]
 		public function one_parameter_method_injection_receives_dependency():void
 		{
@@ -289,7 +290,7 @@ package org.swiftsuspenders
 			injector.injectInto(injectee2);
 			Assert.assertFalse("Injected values should be different", injectee.getDependency() == injectee2.getDependency() );
 		}
-		
+
 		[Test]
 		public function one_named_parameter_method_injection_receives_dependency():void
 		{
@@ -301,7 +302,7 @@ package org.swiftsuspenders
 			injector.injectInto(injectee2);
 			Assert.assertFalse("Injected values should be different", injectee.getDependency() == injectee2.getDependency() );
 		}
-		
+
 		[Test]
 		public function two_parameter_method_injection_receives_both_dependencies():void
 		{
@@ -316,7 +317,7 @@ package org.swiftsuspenders
 			Assert.assertFalse("Injected values should be different", injectee.getDependency() == injectee2.getDependency() );
 			Assert.assertFalse("Injected values for Interface should be different", injectee.getDependency2() == injectee2.getDependency2() );
 		}
-		
+
 		[Test]
 		public function two_named_parameter_method_injection_receives_both_dependencies():void
 		{
@@ -331,7 +332,7 @@ package org.swiftsuspenders
 			Assert.assertFalse("Injected values should be different", injectee.getDependency() == injectee2.getDependency() );
 			Assert.assertFalse("Injected values for Interface should be different", injectee.getDependency2() == injectee2.getDependency2() );
 		}
-		
+
 		[Test]
 		public function mixed_named_and_unnamed_parameters_in_method_injection_fulfilled():void
 		{
@@ -349,7 +350,7 @@ package org.swiftsuspenders
 			Assert.assertFalse("Injected values for unnamed Clazz should be different", injectee.getDependency2() == injectee2.getDependency2() );
 			Assert.assertFalse("Injected values for named Interface should be different", injectee.getDependency3() == injectee2.getDependency3() );
 		}
-		
+
 		[Test]
 		public function one_parameter_constructor_injection_fulfilled():void
 		{
@@ -357,7 +358,7 @@ package org.swiftsuspenders
 			var injectee:OneParameterConstructorInjectee = injector.instantiateUnmapped(OneParameterConstructorInjectee);
 			Assert.assertNotNull("Instance of Class should have been injected for Clazz parameter", injectee.getDependency() );
 		}
-		
+
 		[Test]
 		public function two_parameter_constructor_injection_fulfilled():void
 		{
@@ -367,7 +368,7 @@ package org.swiftsuspenders
 			Assert.assertNotNull("Instance of Class should have been injected for named Clazz parameter", injectee.getDependency());
 			Assert.assertEquals("The String 'stringDependency' should have been injected for String parameter", injectee.getDependency2(), 'stringDependency');
 		}
-		
+
 		[Test]
 		public function one_named_parameter_constructor_injection_fulfilled():void
 		{
@@ -375,7 +376,7 @@ package org.swiftsuspenders
 			var injectee:OneNamedParameterConstructorInjectee = injector.instantiateUnmapped(OneNamedParameterConstructorInjectee);
 			Assert.assertNotNull("Instance of Class should have been injected for named Clazz parameter", injectee.getDependency() );
 		}
-		
+
 		[Test]
 		public function two_named_parameters_constructor_injection_fulfilled():void
 		{
@@ -385,7 +386,7 @@ package org.swiftsuspenders
 			Assert.assertNotNull("Instance of Class should have been injected for named Clazz parameter", injectee.getDependency());
 			Assert.assertEquals("The String 'stringDependency' should have been injected for named String parameter", injectee.getDependency2(), 'stringDependency');
 		}
-		
+
 		[Test]
 		public function mixed_named_and_unnamed_parameters_in_constructor_injection_fulfilled():void
 		{
@@ -397,7 +398,7 @@ package org.swiftsuspenders
 			Assert.assertNotNull("Instance of Class should have been injected for unnamed Clazz parameter", injectee.getDependency2() );
 			Assert.assertNotNull("Instance of Class should have been injected for Interface", injectee.getDependency3() );
 		}
-		
+
 		[Test]
 		public function named_array_injection_fulfilled():void
 		{
@@ -407,7 +408,7 @@ package org.swiftsuspenders
 			Assert.assertNotNull("Instance 'ac' should have been injected for named ArrayCollection parameter", injectee.ac );
 			Assert.assertEquals("Instance field 'ac' should be identical to local variable 'ac'", ac, injectee.ac);
 		}
-		
+
 		[Test]
 		public function inject_xml_value() : void
 		{
@@ -418,7 +419,7 @@ package org.swiftsuspenders
 			Assert.assertEquals('injected value should be indentical to mapped value',
 				injectee.property, value);
 		}
-		
+
 		[Test(expects="org.swiftsuspenders.errors.InjectorMissingMappingError")]
 		public function halt_on_missing_interface_dependency():void
 		{
@@ -433,21 +434,21 @@ package org.swiftsuspenders
 			injector.injectInto(injectee);
 			assertThat(injectee.property, isA(Clazz));
 		}
-		
+
 		[Test(expects="org.swiftsuspenders.errors.InjectorMissingMappingError")]
 		public function halt_on_missing_class_dependency_without_fallbackProvider():void
 		{
 			const injectee : ClassInjectee = new ClassInjectee();
 			injector.injectInto(injectee);
 		}
-		
+
 		[Test(expects="org.swiftsuspenders.errors.InjectorMissingMappingError")]
 		public function halt_on_missing_named_dependency():void
 		{
 			var injectee:NamedClassInjectee = new NamedClassInjectee();
 			injector.injectInto(injectee);
 		}
-		
+
 		[Test]
 		public function postConstruct_method_is_called():void
 		{
@@ -455,7 +456,7 @@ package org.swiftsuspenders
 			var value:Clazz = new Clazz();
 			injector.map(Clazz).toValue(value);
 			injector.injectInto(injectee);
-				
+
 			Assert.assertTrue(injectee.someProperty);
 		}
 
@@ -514,7 +515,7 @@ package org.swiftsuspenders
 		{
 			injector.getInstance(Clazz);
 		}
-		
+
 		[Test]
 		public function instantiateUnmapped_works_for_unmapped_class():void
 		{
@@ -554,7 +555,7 @@ package org.swiftsuspenders
 			Assert.assertFalse('injectee1.property is not the same instance as injectee2.property',
 				injectee1.property == injectee2.property);
 		}
-		
+
 		[Test(expects="org.swiftsuspenders.errors.InjectorInterfaceConstructionError")]
 		public function instantiateUnmapped_on_interface_throws_InjectorInterfaceConstructionError() : void
 		{
@@ -567,7 +568,7 @@ package org.swiftsuspenders
 		{
 			injector.getInstance(Interface);
 		}
-		
+
 		[Test(expects="org.swiftsuspenders.errors.InjectorMissingMappingError")]
 		public function getInstance_on_unmapped_class_with_fallback_provider_that_doesnt_satisfy_throws_InjectorMissingMappingError() : void
 		{
@@ -932,41 +933,41 @@ package org.swiftsuspenders
 			assertThat(target1, hasPropertyWithValue("preDestroyCalled", true));
 			assertThat(target2, hasPropertyWithValue("preDestroyCalled", true));
 		}
-		
+
 		[Test]
 		public function fallbackProvider_is_null_by_default() : void
 		{
 			assertThat(injector.fallbackProvider, equalTo(null));
 		}
-		
+
 		[Test]
 		public function satisfies_isTrue_if_fallbackProvider_satisifies() : void
 		{
 			injector.fallbackProvider = new MoodyProvider(true);
 			assertThat(injector.satisfies(Clazz), isTrue());
 		}
-		
+
 		[Test]
 		public function satisfies_isFalse_if_fallbackProvider_doesnt_satisfy() : void
 		{
 			injector.fallbackProvider = new MoodyProvider(false);
 			assertThat(injector.satisfies(Clazz), isFalse());
 		}
-		
+
 		[Test]
 		public function satisfies_returns_false_without_error_if_fallback_provider_cannot_satisfy_request() : void
 		{
 			injector.fallbackProvider = new MoodyProvider(false);
 			assertThat(injector.satisfies(Interface), isFalse());
 		}
-		
+
 		[Test]
 		public function satisfies_returns_true_without_error_if_interface_requested_from_ProviderThatCanDoInterfaces() : void
 		{
 			injector.fallbackProvider = new ProviderThatCanDoInterfaces(Clazz);
 			assertThat(injector.satisfies(Interface), isTrue());
 		}
-		
+
 		[Test]
 		public function satisfies_returns_false_for_unmapped_common_base_types() : void
 		{
@@ -979,14 +980,14 @@ package org.swiftsuspenders
 				assertThat(injector.satisfies(baseTypes[i]), isFalse());
 			}
 		}
-		
+
 		[Test]
 		public function satisfiesDirectly_isTrue_if_fallbackProvider_satisifies() : void
 		{
 			injector.fallbackProvider = new MoodyProvider(true);
 			assertThat(injector.satisfiesDirectly(Clazz), isTrue());
 		}
-		
+
 		[Test]
 		public function satisfiesDirectly_isFalse_if_no_local_fallbackProvider() : void
 		{
@@ -994,7 +995,7 @@ package org.swiftsuspenders
 			const childInjector:Injector = injector.createChildInjector();
 			assertThat(childInjector.satisfiesDirectly(Clazz), isFalse());
 		}
-		
+
 		[Test]
 		public function instantiateUnmapped_returns_new_instance_even_if_mapped_instance_exists() : void
 		{
@@ -1003,7 +1004,7 @@ package org.swiftsuspenders
 			const instance:Clazz = injector.instantiateUnmapped(Clazz);
 			assertThat(instance, not(equalTo(mappedValue)));
 		}
-		
+
 		[Test]
 		public function hasMapping_returns_true_for_parent_mappings() : void
 		{
@@ -1011,36 +1012,36 @@ package org.swiftsuspenders
 			const childInjector:Injector = injector.createChildInjector();
 			assertThat(childInjector.hasMapping(Clazz), isTrue());
 		}
-		
+
 		[Test]
 		public function hasMapping_returns_true_for_local_mappings() : void
 		{
 			injector.map(Clazz).toValue(new Clazz());
 			assertThat(injector.hasMapping(Clazz), isTrue());
 		}
-		
+
 		[Test]
 		public function hasMapping_returns_false_where_mapping_doesnt_exist() : void
 		{
 			assertThat(injector.hasMapping(Clazz), isFalse());
 		}
-		
+
 		[Test]
 		public function hasDirectMapping_returns_false_for_parent_mappings() : void
 		{
 			injector.map(Clazz).toValue(new Clazz());
 			const childInjector:Injector = injector.createChildInjector();
 			assertThat(childInjector.hasDirectMapping(Clazz), isFalse());
-			
+
 		}
-		
+
 		[Test]
 		public function hasDirectMapping_returns_true_for_local_mappings() : void
 		{
 			injector.map(Clazz).toValue(new Clazz());
 			assertThat(injector.hasDirectMapping(Clazz), isTrue());
 		}
-		
+
 		[Test]
 		public function getOrCreateNewInstance_provides_mapped_value_where_mapping_exists() : void
 		{
@@ -1049,14 +1050,14 @@ package org.swiftsuspenders
 			const instance2:Clazz = injector.getOrCreateNewInstance(Clazz);
 			assertThat(instance1, equalTo(instance2));
 		}
-		
+
 		[Test]
 		public function getOrCreateNewInstance_instantiates_new_instance_where_no_mapping_exists() : void
 		{
 			const instance1:Clazz = injector.getOrCreateNewInstance(Clazz);
 			assertThat(instance1, isA(Clazz));
 		}
-		
+
 		[Test]
 		public function getOrCreateNewInstance_instantiates_new_instances_each_time_where_no_mapping_exists() : void
 		{
@@ -1064,7 +1065,7 @@ package org.swiftsuspenders
 			const instance2:Clazz = injector.getOrCreateNewInstance(Clazz);
 			assertThat(instance1, not(equalTo(instance2)));
 		}
-		
+
 		[Test]
 		public function satisfies_doesnt_use_fallbackProvider_from_ancestors_if_blockParentFallbackProvider_is_set() : void
 		{
@@ -1073,7 +1074,7 @@ package org.swiftsuspenders
 			childInjector.blockParentFallbackProvider = true;
 			assertThat(childInjector.satisfies(Clazz), isFalse());
 		}
-		
+
 		[Test(expects="org.swiftsuspenders.errors.InjectorMissingMappingError")]
 		public function getInstance_doesnt_use_fallbackProvider_from_ancestors_if_blockParentFallbackProvider_is_set() : void
 		{
@@ -1082,9 +1083,9 @@ package org.swiftsuspenders
 			childInjector.blockParentFallbackProvider = true;
 			childInjector.getInstance(Clazz);
 		}
-		
+
 		// QUERY : This doesn't look like it's doing XML stuff??
-		
+
 		[Test]
 		public function performXMLConfiguredConstructorInjectionWithOneNamedParameter():void
 		{
@@ -1093,7 +1094,7 @@ package org.swiftsuspenders
 			var injectee:OneNamedParameterConstructorInjectee = injector.instantiateUnmapped(OneNamedParameterConstructorInjectee);
 			Assert.assertNotNull("Instance of Class should have been injected for named Clazz parameter", injectee.getDependency() );
 		}
-		
+
 		// Not sure what this test is doing
 
 		[Test]
@@ -1105,7 +1106,7 @@ package org.swiftsuspenders
 			var injectee:MultipleSingletonsOfSameClassInjectee = injector.instantiateUnmapped(MultipleSingletonsOfSameClassInjectee);
 			Assert.assertEquals("Instance field 'property1' should be identical to Instance field 'property2'", injectee.property1, injectee.property2);
 		}
-		
+
 		// Not sure what this test is doing
 
 		[Test]
@@ -1130,10 +1131,19 @@ package org.swiftsuspenders
 			injector.map(TwoParametersConstructorInjectee);
 			injector.map(String).toValue('stringDependency');
 
-			var injectee:TwoParametersConstructorInjecteeWithConstructorInjectedDependencies = 
+			var injectee:TwoParametersConstructorInjecteeWithConstructorInjectedDependencies =
 				injector.instantiateUnmapped(TwoParametersConstructorInjecteeWithConstructorInjectedDependencies);
 			Assert.assertNotNull("Instance of Class should have been injected for OneParameterConstructorInjectee parameter", injectee.getDependency1() );
 			Assert.assertNotNull("Instance of Class should have been injected for TwoParametersConstructorInjectee parameter", injectee.getDependency2() );
+		}
+
+		[Test]
+		public function toProviderOf_reuses_provider_of_requested_mapping() : void{
+			injector.map(String, 'first').toValue('first');
+			injector.map(String, 'second').toProviderOf(String, 'first');
+			const expected : DependencyProvider = injector.getMapping(String, 'first').getProvider();
+			const actual : DependencyProvider = injector.getMapping(String, 'second').getProvider();
+			assertThat(actual, equalTo(expected));
 		}
 
 		//		[Test]
