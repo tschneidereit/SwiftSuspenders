@@ -143,7 +143,7 @@ package org.swiftsuspenders
 			var object : Vector.<String> = new Vector.<String>();
 			var objectClass : Class = _reflector.getClass(object);
 			//See comment in getClass for why Vector.<*> is expected.
-			Assert.assertEquals('object\'s constructor is Object', objectClass, Vector.<*>);
+			Assert.assertEquals('object\'s constructor is Object', objectClass, Vector.<String>);
 		}
 	}
 }

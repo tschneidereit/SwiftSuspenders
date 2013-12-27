@@ -18,6 +18,7 @@ package org.swiftsuspenders.reflection
 
 		//----------------------       Private / Protected Properties       ----------------------//
 
+		private static const vectorPrefix:String = '__AS3__.vec::Vector';
 
 		//----------------------               Public Methods               ----------------------//
 		public function ReflectorBase()
@@ -29,19 +30,19 @@ package org.swiftsuspenders.reflection
 			/*
 			 There are several types for which the 'constructor' property doesn't work:
 			 - instances of Proxy, XML and XMLList throw exceptions when trying to access 'constructor'
+			 - instances of Vector, always returns Vector.<*> as their constructor
 			 - int and uint return Number as their constructor
 			 For these, we have to fall back to more verbose ways of getting the constructor.
-
-			 Additionally, Vector instances always return Vector.<*> when queried for their constructor.
-			 Ideally, that would also be resolved, but then Swiftsuspenders wouldn't be compatible
-			 with Flash Player < 10, anymore.
 			 */
-			//TODO: enable Vector type checking, we don't support FP 9, anymore
-			if (value is Proxy || value is Number || value is XML || value is XMLList)
+			if (value is Proxy || value is Number || value is XML || value is XMLList || isVector(value))
 			{
 				return Class(getDefinitionByName(getQualifiedClassName(value)));
 			}
 			return value.constructor;
+		}
+
+		private function isVector(value : *) : Boolean {
+			return (getQualifiedClassName(value).indexOf(vectorPrefix) == 0);
 		}
 
 		public function getFQCN(value : *, replaceColons : Boolean = false) : String
