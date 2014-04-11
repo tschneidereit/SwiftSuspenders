@@ -338,6 +338,19 @@ package org.swiftsuspenders
 		}
 
 		/**
+		 * Checks if an instance is managed by this Injector.
+		 *
+		 * <p>An instance is "managed" if it was created or injected into by this Injector.</p>
+		 *
+		 * @param instance The instance to check
+		 * @return True if the Injector is managing this instance
+		 */
+		public function hasManagedInstance(instance : Object) : Boolean
+		{
+			return _managedObjects[instance];
+		}
+
+		/**
 		 * Inspects the given object and injects into all injection points configured for its class.
 		 *
 		 * @param target The instance to inject into
@@ -440,10 +453,7 @@ package org.swiftsuspenders
 		 */
 		public function destroyInstance(instance : Object) : void
 		{
-			if (!instance)
-			{
-				return;
-			}
+			delete _managedObjects[instance];
 			const type : Class = _reflector.getClass(instance);
 			const typeDescription : TypeDescription = getTypeDescription(type);
 			for (var preDestroyHook : PreDestroyInjectionPoint = typeDescription.preDestroyMethods;
@@ -471,9 +481,18 @@ package org.swiftsuspenders
 			{
 				mapping.getProvider().destroy();
 			}
+			var objectsToRemove:Vector.<Object> = new Vector.<Object>();
 			for each (var instance : Object in _managedObjects)
 			{
-				destroyInstance(instance);
+				instance && objectsToRemove.push(instance);
+			}
+			while(objectsToRemove.length)
+			{
+				destroyInstance(objectsToRemove.pop());
+			}
+			for (var mappingId:String in providerMappings)
+			{
+				delete providerMappings[mappingId];
 			}
 			_mappings = new Dictionary();
 			_mappingsInProcess = new Dictionary();

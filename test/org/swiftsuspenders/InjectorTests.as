@@ -13,6 +13,8 @@ package org.swiftsuspenders
 
 	import mx.collections.ArrayCollection;
 
+	import org.flexunit.asserts.fail;
+
 	import org.hamcrest.assertThat;
 	import org.hamcrest.collection.array;
 	import org.hamcrest.core.isA;
@@ -69,6 +71,7 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.support.types.ComplexClazz;
 	import org.swiftsuspenders.support.types.Interface;
 	import org.swiftsuspenders.support.types.Interface2;
+	import org.swiftsuspenders.support.types.ObjectToDestroy;
 	import org.swiftsuspenders.typedescriptions.TypeDescription;
 	import org.swiftsuspenders.utils.SsInternal;
 
@@ -898,7 +901,17 @@ package org.swiftsuspenders
 		}
 
 		[Test]
-		public function destroyInstance_invokes_PreDestroy_methods_on_instance() : void
+		public function destroyInstance_invokes_PreDestroy_methods_on_managed_instance() : void
+		{
+			const target : Clazz = new Clazz();
+			assertThat(target, hasPropertyWithValue("preDestroyCalled", false));
+			injector.injectInto(target);
+			injector.destroyInstance(target);
+			assertThat(target, hasPropertyWithValue("preDestroyCalled", true));
+		}
+
+		[Test]
+		public function destroyInstance_invokes_PreDestroy_methods_on_unmanaged_instance() : void
 		{
 			const target : Clazz = new Clazz();
 			assertThat(target, hasPropertyWithValue("preDestroyCalled", false));
@@ -921,6 +934,40 @@ package org.swiftsuspenders
 		}
 
 		[Test]
+		public function teardown_does_not_destroy_what_is_already_destroyed() : void
+		{
+			injector.map(ObjectToDestroy).asSingleton();
+			const singleton : ObjectToDestroy = injector.getInstance(ObjectToDestroy);
+			injector.destroyInstance(singleton);
+			injector.teardown();
+			assertThat(singleton, hasPropertyWithValue("destroyCounter", 1));
+		}
+
+		[Test]
+		public function injectInto_removes_object_from_deleted_objects() : void
+		{
+			injector.map(ObjectToDestroy).asSingleton();
+			const singleton : ObjectToDestroy = injector.getInstance(ObjectToDestroy);
+			injector.destroyInstance(singleton);
+			injector.injectInto(singleton);
+			injector.teardown();
+			assertThat(singleton, hasPropertyWithValue("destroyCounter", 2));
+		}
+
+		[Test]
+		public function teardown_clears_provider_mappings():void
+		{
+			injector.map(Clazz);
+			injector.map(Interface);
+			injector.map(ObjectToDestroy).asSingleton();
+			injector.teardown();
+			for each(var o:Object in injector.SsInternal::providerMappings)
+			{
+				fail("providerMappings should be empty");
+			}
+		}
+
+		[Test]
 		public function teardown_destroys_all_instances_it_injected_into() : void
 		{
 			const target1 : Clazz = new Clazz();
@@ -932,6 +979,20 @@ package org.swiftsuspenders
 			injector.teardown();
 			assertThat(target1, hasPropertyWithValue("preDestroyCalled", true));
 			assertThat(target2, hasPropertyWithValue("preDestroyCalled", true));
+		}
+
+		[Test]
+		public function managed_instance_test() : void
+		{
+			const target1 : Clazz = new Clazz();
+			injector.injectInto(target1);
+			const target2 : Clazz = new Clazz();
+			injector.injectInto(target2);
+			Assert.assertTrue(injector.hasManagedInstance(target1));
+			Assert.assertTrue(injector.hasManagedInstance(target2));
+			injector.teardown();
+			Assert.assertFalse(injector.hasManagedInstance(target1));
+			Assert.assertFalse(injector.hasManagedInstance(target2));
 		}
 
 		[Test]
