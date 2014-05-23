@@ -54,6 +54,7 @@ package org.swiftsuspenders
 	import org.swiftsuspenders.support.injectees.PostConstructWithArgInjectee;
 	import org.swiftsuspenders.support.injectees.RecursiveInterfaceInjectee;
 	import org.swiftsuspenders.support.injectees.SetterInjectee;
+	import org.swiftsuspenders.support.injectees.SingletonInjectee;
 	import org.swiftsuspenders.support.injectees.StringInjectee;
 	import org.swiftsuspenders.support.injectees.TwoNamedInterfaceFieldsInjectee;
 	import org.swiftsuspenders.support.injectees.TwoNamedParametersConstructorInjectee;
@@ -1219,5 +1220,25 @@ package org.swiftsuspenders
 		//			Assert.assertEquals("Instance field 'property1' should be identical to Instance field 'namedProperty1'", injectee.property1, injectee.namedProperty1);
 		//			Assert.assertEquals("Instance field 'property1' should be identical to Instance field 'namedProperty2'", injectee.property1, injectee.namedProperty2);
 		//		}
+
+		[Test]
+		public function immediately_initialize_singleton_provider_asSingleton():void
+		{
+			SingletonInjectee.reset();
+			Assert.assertFalse("SingletonInjectee#hasInitialized", SingletonInjectee.hasInitialized);
+
+			injector.map(SingletonInjectee).asSingleton(true);
+			Assert.assertTrue("SingletonInjectee#hasInitialized", SingletonInjectee.hasInitialized);
+		}
+
+		[Test]
+		public function immediately_initialize_singleton_provider_toSingleton():void
+		{
+			SingletonInjectee.reset();
+			Assert.assertFalse("SingletonInjectee#hasInitialized", SingletonInjectee.hasInitialized);
+
+			injector.map(SingletonInjectee).toSingleton(SingletonInjectee, true);
+			Assert.assertTrue("SingletonInjectee#hasInitialized", SingletonInjectee.hasInitialized);
+		}
 	}
 }

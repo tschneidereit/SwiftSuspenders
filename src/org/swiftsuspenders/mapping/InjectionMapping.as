@@ -53,15 +53,17 @@ package org.swiftsuspenders.mapping
 		 *
 		 * <p>Syntactic sugar method wholly equivalent to using <code>toSingleton(type)</code>.</p>
 		 *
+		 * @param initializeImmediately Determines when the instance should be created, immediately after mapping or after the first request (default)
+		 *
 		 * @return The <code>InjectionMapping</code> the method is invoked on
 		 *
 		 * @throws org.swiftsuspenders.errors.InjectorError Sealed mappings can't be changed in any way
 		 *
 		 * @see #toSingleton()
 		 */
-		public function asSingleton() : UnsealedMapping
+		public function asSingleton(initializeImmediately : Boolean = false) : UnsealedMapping
 		{
-			toSingleton(_type);
+			toSingleton(_type, initializeImmediately);
 			return this;
 		}
 
@@ -95,6 +97,7 @@ package org.swiftsuspenders.mapping
 		 * <code>injector</code> denotes the Injector that should manage the singleton.</p>
 		 *
 		 * @param type The <code>class</code> to instantiate upon each request
+		 * @param initializeImmediately Determines when the instance should be created, immediately after mapping or after the first request (default)
 		 *
 		 * @return The <code>InjectionMapping</code> the method is invoked on
 		 *
@@ -102,9 +105,12 @@ package org.swiftsuspenders.mapping
 		 *
 		 * @see #toProvider()
 		 */
-		public function toSingleton(type : Class) : UnsealedMapping
+		public function toSingleton(type : Class, initializeImmediately : Boolean = false) : UnsealedMapping
 		{
 			toProvider(new SingletonProvider(type, _creatingInjector));
+			if (initializeImmediately) {
+				_creatingInjector.getInstance(_type, _name);
+			}
 			return this;
 		}
 
