@@ -877,7 +877,9 @@ package org.swiftsuspenders
 		public function injector_executes_injected_PostConstruct_method_vars() : void
 		{
 			var callbackInvoked : Boolean;
-			injector.map(Function).toValue(function() : void {callbackInvoked = true});
+			injector.map(Function).toValue(function () : void {
+				callbackInvoked = true;
+			});
 			injector.instantiateUnmapped(PostConstructInjectedVarInjectee);
 			assertThat(callbackInvoked, isTrue());
 		}
@@ -885,7 +887,9 @@ package org.swiftsuspenders
 		[Test]
 		public function injector_executes_injected_PostConstruct_method_vars_in_injectee_scope() : void
 		{
-			injector.map(Function).toValue(function() : void {this.property = new Clazz();});
+			injector.map(Function).toValue(function () : void {
+				this.property = new Clazz();
+			});
 			const injectee : PostConstructInjectedVarInjectee =
 				injector.instantiateUnmapped(PostConstructInjectedVarInjectee);
 			assertThat(injectee.property, isA(Clazz));
@@ -1094,7 +1098,6 @@ package org.swiftsuspenders
 			injector.map(Clazz).toValue(new Clazz());
 			const childInjector:Injector = injector.createChildInjector();
 			assertThat(childInjector.hasDirectMapping(Clazz), isFalse());
-
 		}
 
 		[Test]
@@ -1206,6 +1209,40 @@ package org.swiftsuspenders
 			const expected : DependencyProvider = injector.getMapping(String, 'first').getProvider();
 			const actual : DependencyProvider = injector.getMapping(String, 'second').getProvider();
 			assertThat(actual, equalTo(expected));
+		}
+
+		[Test]
+		public function map_value_with_automatic_injected_values():void
+		{
+			var injectee : ClassInjectee = new ClassInjectee();
+			injector.map(Clazz).asSingleton();
+			injector.map(ClassInjectee).toValue(injectee, true);
+			Assert.assertStrictlyEquals("Value should have been injected", injectee.property, injector.getInstance(Clazz));
+		}
+
+		[Test]
+		public function map_value_without_automatic_injected_values():void
+		{
+			var injectee : ClassInjectee = new ClassInjectee();
+			injector.map(Clazz).asSingleton();
+			injector.map(ClassInjectee).toValue(injectee);
+			Assert.assertNull("Value shouldn't been injected", injectee.property);
+		}
+
+		[Test]
+		public function map_value_with_automatic_destroy_on_unmap() : void {
+			var value : Clazz = new Clazz();
+			injector.map(Clazz).toValue(value, true, true);
+			injector.unmap(Clazz);
+			Assert.assertTrue("Instance should be destroyed", value.preDestroyCalled);
+		}
+
+		[Test]
+		public function map_value_without_automatic_destroy_on_unmap() : void {
+			var value : Clazz = new Clazz();
+			injector.map(Clazz).toValue(value);
+			injector.unmap(Clazz);
+			Assert.assertFalse("Instance shouldn't be destroyed", value.preDestroyCalled);
 		}
 
 		//		[Test]

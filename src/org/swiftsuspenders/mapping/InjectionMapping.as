@@ -34,7 +34,6 @@ package org.swiftsuspenders.mapping
 		private var _sealed : Boolean;
 		private var _sealKey : Object;
 
-
 		//----------------------               Public Methods               ----------------------//
 		public function InjectionMapping(
 			creatingInjector : Injector, type : Class, name : String, mappingId : String)
@@ -121,16 +120,24 @@ package org.swiftsuspenders.mapping
 		 * <code>toProvider(new ValueProvider(value))</code>.</p>
 		 *
 		 * @param value The instance to return upon each request
+		 * @param autoInject Inspects the given object and injects into all injection points configured for its class directly after mapping
+		 * @param destroyOnUnmap Destroy the given object after it will unmapped
 		 *
 		 * @return The <code>InjectionMapping</code> the method is invoked on
 		 *
 		 * @throws org.swiftsuspenders.errors.InjectorError Sealed mappings can't be changed in any way
 		 *
 		 * @see #toProvider()
+		 * @see Injector#injectInto()
+		 * @see Injector#destroyInstance()
 		 */
-		public function toValue(value : Object) : UnsealedMapping
+		public function toValue(value : Object, autoInject : Boolean = false, destroyOnUnmap : Boolean = false) : UnsealedMapping
 		{
-			toProvider(new ValueProvider(value));
+			toProvider(new ValueProvider(value, destroyOnUnmap ? _creatingInjector : null));
+			if (autoInject)
+			{
+				_creatingInjector.injectInto(value);
+			}
 			return this;
 		}
 
