@@ -37,10 +37,11 @@ package org.swiftsuspenders.dependencyproviders
 
 		public function destroy() : void
 		{
-			if (_creatingInjector) {
+			if (_value && _creatingInjector && _creatingInjector.hasManagedInstance(_value))
+			{
 				_creatingInjector.destroyInstance(_value);
-				_creatingInjector = null;
 			}
+			_creatingInjector = null;
 			_value = null;
 		}
 	}
