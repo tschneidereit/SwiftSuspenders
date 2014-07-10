@@ -19,17 +19,17 @@ package org.swiftsuspenders.mapping
 		/**
 		 * @copy InjectionMapping#toValue()
 		 */
-		function toValue(value : Object) : UnsealedMapping;
+		function toValue(value : Object, autoInject : Boolean = false, destroyOnUnmap : Boolean = false) : UnsealedMapping;
 
 		/**
 		 * @copy InjectionMapping#toSingleton()
 		 */
-		function toSingleton(type : Class) : UnsealedMapping;
+		function toSingleton(type : Class, initializeImmediately : Boolean = false) : UnsealedMapping;
 
 		/**
 		 * @copy InjectionMapping#asSingleton()
 		 */
-		function asSingleton() : UnsealedMapping;
+		function asSingleton(initializeImmediately : Boolean = false) : UnsealedMapping;
 
 		/**
 		 * @copy InjectionMapping#toProvider()

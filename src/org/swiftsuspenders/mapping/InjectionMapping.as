@@ -8,7 +8,6 @@
 package org.swiftsuspenders.mapping
 {
 	import org.swiftsuspenders.Injector;
-	import org.swiftsuspenders.errors.InjectorError;
 	import org.swiftsuspenders.dependencyproviders.ClassProvider;
 	import org.swiftsuspenders.dependencyproviders.DependencyProvider;
 	import org.swiftsuspenders.dependencyproviders.ForwardingProvider;
@@ -17,6 +16,7 @@ package org.swiftsuspenders.mapping
 	import org.swiftsuspenders.dependencyproviders.SingletonProvider;
 	import org.swiftsuspenders.dependencyproviders.SoftDependencyProvider;
 	import org.swiftsuspenders.dependencyproviders.ValueProvider;
+	import org.swiftsuspenders.errors.InjectorError;
 	import org.swiftsuspenders.utils.SsInternal;
 
 	public class InjectionMapping implements ProviderlessMapping, UnsealedMapping
@@ -33,7 +33,6 @@ package org.swiftsuspenders.mapping
 		private var _local : Boolean;
 		private var _sealed : Boolean;
 		private var _sealKey : Object;
-
 
 		//----------------------               Public Methods               ----------------------//
 		public function InjectionMapping(
@@ -53,15 +52,17 @@ package org.swiftsuspenders.mapping
 		 *
 		 * <p>Syntactic sugar method wholly equivalent to using <code>toSingleton(type)</code>.</p>
 		 *
+		 * @param initializeImmediately Determines when the instance should be created, immediately after mapping or after the first request (default)
+		 *
 		 * @return The <code>InjectionMapping</code> the method is invoked on
 		 *
 		 * @throws org.swiftsuspenders.errors.InjectorError Sealed mappings can't be changed in any way
 		 *
 		 * @see #toSingleton()
 		 */
-		public function asSingleton() : UnsealedMapping
+		public function asSingleton(initializeImmediately : Boolean = false) : UnsealedMapping
 		{
-			toSingleton(_type);
+			toSingleton(_type, initializeImmediately);
 			return this;
 		}
 
@@ -95,6 +96,7 @@ package org.swiftsuspenders.mapping
 		 * <code>injector</code> denotes the Injector that should manage the singleton.</p>
 		 *
 		 * @param type The <code>class</code> to instantiate upon each request
+		 * @param initializeImmediately Determines when the instance should be created, immediately after mapping or after the first request (default)
 		 *
 		 * @return The <code>InjectionMapping</code> the method is invoked on
 		 *
@@ -102,9 +104,12 @@ package org.swiftsuspenders.mapping
 		 *
 		 * @see #toProvider()
 		 */
-		public function toSingleton(type : Class) : UnsealedMapping
+		public function toSingleton(type : Class, initializeImmediately : Boolean = false) : UnsealedMapping
 		{
 			toProvider(new SingletonProvider(type, _creatingInjector));
+			if (initializeImmediately) {
+				_creatingInjector.getInstance(_type, _name);
+			}
 			return this;
 		}
 
@@ -115,16 +120,24 @@ package org.swiftsuspenders.mapping
 		 * <code>toProvider(new ValueProvider(value))</code>.</p>
 		 *
 		 * @param value The instance to return upon each request
+		 * @param autoInject Inspects the given object and injects into all injection points configured for its class directly after mapping
+		 * @param destroyOnUnmap Destroy the given object after it will unmapped
 		 *
 		 * @return The <code>InjectionMapping</code> the method is invoked on
 		 *
 		 * @throws org.swiftsuspenders.errors.InjectorError Sealed mappings can't be changed in any way
 		 *
 		 * @see #toProvider()
+		 * @see Injector#injectInto()
+		 * @see Injector#destroyInstance()
 		 */
-		public function toValue(value : Object) : UnsealedMapping
+		public function toValue(value : Object, autoInject : Boolean = false, destroyOnUnmap : Boolean = false) : UnsealedMapping
 		{
-			toProvider(new ValueProvider(value));
+			toProvider(new ValueProvider(value, destroyOnUnmap ? _creatingInjector : null));
+			if (autoInject)
+			{
+				_creatingInjector.injectInto(value);
+			}
 			return this;
 		}
 
@@ -155,6 +168,25 @@ package org.swiftsuspenders.mapping
 			_defaultProviderSet = false;
 			mapProvider(provider);
 			dispatchPostChangeEvent();
+			return this;
+		}
+
+		/**
+		 * Makes the mapping apply the <code>DependencyProvider</code> mapped to <code>type</code>
+		 * and (optionally) <code>name</code> and return the resulting value for each consecutive
+		 * request.
+		 *
+		 * @param type The type to use the provider of
+		 * @param name The name to use the provider of
+		 *
+		 * @return The <code>InjectionMapping</code> the method is invoked on
+		 *
+		 * @throws org.swiftsuspenders.errors.InjectorMissingMappingError when no mapping was found
+		 * for the specified dependency
+		 */
+		public function toProviderOf(type : Class, name:String = ''):UnsealedMapping{
+			const provider : DependencyProvider = _creatingInjector.getMapping(type, name).getProvider();
+			toProvider(provider);
 			return this;
 		}
 

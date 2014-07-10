@@ -153,7 +153,7 @@ package org.swiftsuspenders
         {
             var childInjector : Injector = injector.createChildInjector();
             var class1 : Clazz = new Clazz();
-            injector.map(Clazz).toValue(class1);  
+            injector.map(Clazz).toValue(class1);
             
             Assert.assertTrue('Child injector should return true for satisfies that exists on parent injector',
                 childInjector.satisfies(Clazz));

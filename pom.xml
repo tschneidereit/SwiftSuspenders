@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright (c) 2011 the original author or authors
+  ~ Copyright (c) 2014 the original author or authors
   ~
   ~ Permission is hereby granted to use, modify, and distribute this file
   ~ in accordance with the terms of the license agreement accompanying it.
@@ -20,7 +20,7 @@
 	<groupId>org.swiftsuspenders</groupId>
 	<artifactId>swiftsuspenders</artifactId>
 	
-	<version>2.0.0-b3-SNAPSHOT</version>
+	<version>2.1.0</version>
 	
 	<packaging>swc</packaging>
 	

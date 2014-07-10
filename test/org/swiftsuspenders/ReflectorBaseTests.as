@@ -142,8 +142,31 @@ package org.swiftsuspenders
 		{
 			var object : Vector.<String> = new Vector.<String>();
 			var objectClass : Class = _reflector.getClass(object);
-			//See comment in getClass for why Vector.<*> is expected.
-			Assert.assertEquals('object\'s constructor is Object', objectClass, Vector.<*>);
+			Assert.assertEquals('object\'s constructor is Object', objectClass, Vector.<String>);
+		}
+
+		[Test]
+		public function getClassReturnsConstructorForVectorInt() : void
+		{
+			var object : Vector.<int> = new Vector.<int>();
+			var objectClass : Class = _reflector.getClass(object);
+			Assert.assertEquals('object\'s constructor is Object', objectClass, Vector.<int>);
+		}
+
+		[Test]
+		public function getClassReturnsConstructorForVectorUint() : void
+		{
+			var object : Vector.<uint> = new Vector.<uint>();
+			var objectClass : Class = _reflector.getClass(object);
+			Assert.assertEquals('object\'s constructor is Object', objectClass, Vector.<uint>);
+		}
+
+		[Test]
+		public function getClassReturnsConstructorForVectorNumber() : void
+		{
+			var object : Vector.<Number> = new Vector.<Number>();
+			var objectClass : Class = _reflector.getClass(object);
+			Assert.assertEquals('object\'s constructor is Object', objectClass, Vector.<Number>);
 		}
 	}
 }

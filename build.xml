@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--
-  ~ Copyright (c) 2012 the original author or authors
+  ~ Copyright (c) 2014 the original author or authors
   ~
   ~ Permission is hereby granted to use, modify, and distribute this file
   ~ in accordance with the terms of the license agreement accompanying it.
@@ -78,8 +78,6 @@
       <!-- Include classes from SWCs in this folder, but only the ones we use. -->
       <arg value="-library-path+=${lib.loc}" />
 
-		<arg value="-target-player=10.2"/>
-	
 	  <!-- Keep the magic alive. -->
       <arg value="-keep-as3-metadata+=Inject" />
 	  <arg value="-keep-as3-metadata+=PostConstruct" />
@@ -115,8 +113,6 @@
       <!-- Include classes from SWCs in this folder, but only the ones we use. -->
       <arg value="-library-path+=${lib.loc}" />
 
-	  <arg value="-target-player=10.2"/>
-	
 	  <!-- So true. -->
       <arg value="-incremental=true" />
       <arg value="-static-link-runtime-shared-libraries=true" />

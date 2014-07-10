@@ -12,8 +12,6 @@ package org.swiftsuspenders.dependencyproviders
 
 	import org.swiftsuspenders.Injector;
 	import org.swiftsuspenders.errors.InjectorError;
-	import org.swiftsuspenders.typedescriptions.PreDestroyInjectionPoint;
-	import org.swiftsuspenders.typedescriptions.TypeDescription;
 
 	public class SingletonProvider implements DependencyProvider
 	{
@@ -64,17 +62,11 @@ package org.swiftsuspenders.dependencyproviders
 		public function destroy() : void
 		{
 			_destroyed = true;
-			if (!_response)
+			if (_response && _creatingInjector && _creatingInjector.hasManagedInstance(_response))
 			{
-				return;
+				_creatingInjector.destroyInstance(_response);
 			}
-			const typeDescription : TypeDescription =
-				_creatingInjector.getTypeDescription(_responseType);
-			for (var preDestroyHook : PreDestroyInjectionPoint = typeDescription.preDestroyMethods;
-			     preDestroyHook; preDestroyHook = PreDestroyInjectionPoint(preDestroyHook.next))
-			{
-				preDestroyHook.applyInjection(_response, _responseType, _creatingInjector);
-			}
+			_creatingInjector = null;
 			_response = null;
 		}
 	}

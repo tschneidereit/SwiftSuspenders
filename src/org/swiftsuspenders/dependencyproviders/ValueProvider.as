@@ -15,11 +15,13 @@ package org.swiftsuspenders.dependencyproviders
 	{
 		//----------------------       Private / Protected Properties       ----------------------//
 		private var _value : Object;
+		private var _creatingInjector : Injector;
 
 		//----------------------               Public Methods               ----------------------//
-		public function ValueProvider(value : Object)
+		public function ValueProvider(value : Object, creatingInjector : Injector = null)
 		{
 			_value = value;
+			_creatingInjector = creatingInjector;
 		}
 
 		/**
@@ -35,7 +37,12 @@ package org.swiftsuspenders.dependencyproviders
 
 		public function destroy() : void
 		{
-			//TODO: figure out whether to invoke pre destroy methods here. And how.
+			if (_value && _creatingInjector && _creatingInjector.hasManagedInstance(_value))
+			{
+				_creatingInjector.destroyInstance(_value);
+			}
+			_creatingInjector = null;
+			_value = null;
 		}
 	}
 }
